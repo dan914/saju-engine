@@ -14,6 +14,6 @@
   },
   "lmt": {
     "allowed": false,
-    "note": "applyLMTClock is dev-doc only; production must not call it"
+    "note": "LMTClock function is dev-doc only; production must not call it"
   }
 }
