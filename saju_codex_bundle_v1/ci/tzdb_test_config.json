@@ -1,0 +1,10 @@
+{
+  "threshold_seconds": 1,
+  "tzpaths": {
+    "old": "/opt/zoneinfo_old",
+    "new": "/opt/zoneinfo_new"
+  },
+  "samples_csv": "tzdb_samples.csv",
+  "report_csv": "tzdb_report.csv",
+  "report_json": "tzdb_report.json"
+}

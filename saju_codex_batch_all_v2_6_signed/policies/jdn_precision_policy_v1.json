@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "rule": "Apply day/hour boundary in UTC before JDN→Ganzhi mapping; compare with millisecond precision.",
+  "boundary": {
+    "type": "LCRO",
+    "zi_start_local": "23:00"
+  },
+  "evidence_fields": [
+    "day_start_utc",
+    "birth_utc",
+    "comparison_millis"
+  ]
+}

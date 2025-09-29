@@ -1,0 +1,63 @@
+{
+  "version": "1.0",
+  "priority": [
+    "sanhe",
+    "banhe",
+    "sanhui",
+    "chong",
+    "xing_po_hai",
+    "he_wu"
+  ],
+  "dedupe": {
+    "mode": "first_hit_wins",
+    "scope": "per_pair"
+  },
+  "caps": {
+    "per_structure_abs_max": 4,
+    "per_type_abs_max": 4,
+    "total_abs_max": 8
+  },
+  "weights": {
+    "sanhe": {
+      "k_same": 6,
+      "k_parent": 4,
+      "k_child": -4,
+      "k_controller": -6,
+      "k_controlled": 0
+    },
+    "banhe": {
+      "k_same": 3,
+      "k_parent": 2,
+      "k_child": -2,
+      "k_controller": -3,
+      "k_controlled": 0
+    },
+    "sanhui": {
+      "k_same": 3,
+      "k_parent": 2,
+      "k_child": -2,
+      "k_controller": -3,
+      "k_controlled": 0
+    },
+    "chong": {
+      "hit_main": -6,
+      "hit_sub": -4,
+      "month_multiplier": 1.5,
+      "other_multiplier": 1.0
+    },
+    "xing_po_hai": {
+      "hit_main": -3,
+      "hit_sub": -2,
+      "month_multiplier": 1.2,
+      "other_multiplier": 1.0
+    },
+    "he_wu": {
+      "support_same_or_parent": 1,
+      "others": 0
+    }
+  },
+  "display": {
+    "presence_excerpt_only": true,
+    "max_items": 6
+  }
+}

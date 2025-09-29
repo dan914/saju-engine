@@ -1,0 +1,76 @@
+{
+  "engine": {
+    "mode": "KR_classic",
+    "ver": "1.4"
+  },
+  "inputs": {
+    "birth_local": "2000-09-14 10:00",
+    "place": "Seoul",
+    "tzid": "Asia/Seoul"
+  },
+  "time_resolve": {
+    "utc": "2000-09-14T01:00:00Z",
+    "tzdb_ver": "2025a",
+    "dst": false,
+    "offset_sec": 32400
+  },
+  "solar_terms": {
+    "prev_term": "白露",
+    "prev_ts": "2000-09-07T12:23:00Z",
+    "next_term": "秋分"
+  },
+  "ΔT": {
+    "value_sec": 68.3,
+    "model": "Espenak–Meeus",
+    "uncertainty_sec": 0.2,
+    "flag": false
+  },
+  "pillars": {
+    "year": "庚辰",
+    "month": "乙酉",
+    "day": "乙亥",
+    "hour": "辛巳"
+  },
+  "month_branch": "酉",
+  "wang_map": {
+    "金": "旺",
+    "水": "相",
+    "土": "休",
+    "火": "囚",
+    "木": "死"
+  },
+  "strength_scoring": {
+    "month_state": 40,
+    "branch_root": 16,
+    "stem_visible": 8,
+    "combo_clash": -4,
+    "season_adjust": 0,
+    "total": 60,
+    "grade": "太強"
+  },
+  "root": {
+    "level": "부분충족",
+    "hits": [
+      {
+        "branch": "寅",
+        "slot": "本"
+      }
+    ]
+  },
+  "seal": {
+    "level": "부분충족",
+    "hits": [
+      {
+        "where": "branch",
+        "detail": "亥(壬)"
+      }
+    ]
+  },
+  "policy_refs": {
+    "seasons_wang_map": "v1.0",
+    "strength_criteria": "v1.0",
+    "zanggan_table": "v1.0",
+    "root_seal_criteria": "v1.0",
+    "deltaT_policy": "v1.0"
+  }
+}

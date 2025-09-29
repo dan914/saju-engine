@@ -1,0 +1,5 @@
+{
+  "version": "1.0",
+  "polisher_template": "# Facts (immutable)\\n{{facts_json}}\\n\\n- Tier: {{tier_text}}\\n- Support: {{supportive_energy_text}}\\n- Caution: {{caution_text}}\\n\\nWrite Korean advice with honorific '{{honorific}}'; avoid {{banned_phrases}}; never add numbers.",
+  "checker_prompt": "Verify numeric immutability, banned phrases, and required disclaimers for badges: {{badges}}. Facts: {{facts_json}}\\nOutput: {{model_output}}"
+}

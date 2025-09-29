@@ -1,0 +1,21 @@
+﻿zone,local_datetime,note
+Asia/Seoul,1987-05-10 02:30,"DST start gap; 02:00->03:00, 02:30 nonexistent (KR DST 1987)"
+Asia/Seoul,1987-10-11 02:30,"DST end overlap; 03:00->02:00, 02:30 repeats (KR DST 1987)"
+Asia/Seoul,1988-05-08 02:30,"DST start gap; 02:00->03:00, 02:30 nonexistent (KR DST 1988)"
+Asia/Seoul,1954-03-21 00:00,Standard offset change to UTC+8:30 (historical)
+Asia/Seoul,1961-08-10 00:00,Standard offset change back to UTC+9 (historical)
+Asia/Pyongyang,2015-08-15 23:30,Just before switch to UTC+8:30 (Pyongyang Time)
+Asia/Pyongyang,2015-08-16 00:30,Just after switch to UTC+8:30
+Asia/Pyongyang,2018-05-04 23:30,Just before reversion to UTC+9 (last moment of +08:30)
+Asia/Pyongyang,2018-05-05 00:30,Just after reversion to UTC+9
+Asia/Pyongyang,2016-01-01 12:00,Mid-period sanity check under UTC+8:30
+Asia/Tokyo,1948-05-02 00:30,DST start gap; 00:00->01:00 (nonexistent)
+Asia/Tokyo,1948-09-11 01:30,DST end overlap; 02:00->01:00 (repeated hour)
+Asia/Tokyo,1951-09-08 02:30,Post final DST rollback; confirm stable UTC+9 thereafter
+Asia/Tokyo,2025-01-01 00:00,Modern era control (no DST)
+Asia/Shanghai,1986-05-04 02:30,DST start gap; 02:00->03:00 (nonexistent)
+Asia/Shanghai,1986-09-14 01:30,DST end overlap; 02:00->01:00 (repeated hour)
+Asia/Shanghai,1991-09-15 01:30,Final DST end in China; confirm post-1991 no DST
+Asia/Shanghai,1980-05-01 00:00,China unified to UTC+8; historical check
+Asia/Seoul,2025-01-01 00:00,Modern era control (KST UTC+9)
+Asia/Shanghai,2025-01-01 00:00,Modern era control (CST UTC+8)

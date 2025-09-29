@@ -1,0 +1,19 @@
+{
+  "version": "1.0",
+  "term_boundary_hold_sec": 1.0,
+  "action": "human_review_queue",
+  "alternative": {
+    "dual_engine_consensus": {
+      "enabled": true,
+      "engines": [
+        "primary_EM",
+        "secondary_crosscheck"
+      ],
+      "auto_approve_if_equal": true
+    }
+  },
+  "badges": [
+    "near_term_boundary"
+  ],
+  "evidence_field": "boundary_review"
+}

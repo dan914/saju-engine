@@ -1,0 +1,30 @@
+{
+  "root_scores": {
+    "wealth": 4,
+    "seal": 3
+  },
+  "wealth_location_hits": [
+    {
+      "branch": "月",
+      "level": "sub",
+      "weight_applied": 1.5
+    },
+    {
+      "branch": "日",
+      "level": "sub",
+      "weight_applied": 1.0
+    },
+    {
+      "month_stem_exposed": true,
+      "bonus_applied": 0.5
+    }
+  ],
+  "wealth_location_bonus_total_raw": 3.0,
+  "wealth_location_bonus_total_capped": 2.0,
+  "diff_after_bonus": 3.0,
+  "side_conditions": {
+    "wealth_month_state": "旺",
+    "wealth_seal_branch_conflict": false
+  },
+  "seal_validity_result": "none"
+}

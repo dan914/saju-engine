@@ -1,0 +1,13 @@
+[
+  {
+    "name": "Echo checksum",
+    "input": {
+      "calc_checksum": "sha256:abc"
+    },
+    "assert": {
+      "equals": {
+        "$.calc_checksum": "sha256:abc"
+      }
+    }
+  }
+]

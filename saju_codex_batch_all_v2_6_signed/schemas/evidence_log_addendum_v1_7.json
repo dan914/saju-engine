@@ -1,0 +1,22 @@
+{
+  "version": "1.7",
+  "add_fields": {
+    "relations": {
+      "presence_only": false,
+      "items": [
+        {
+          "type": "sanhe|banhe|sanhui|chong|xing|po|hai|he_wu",
+          "pair": "支-支|支-月支",
+          "element": "木|火|土|金|水",
+          "delta_applied": "number",
+          "stage": "pre_cap|post_cap"
+        }
+      ],
+      "delta_total": "number",
+      "budget": {
+        "max_pct": "number",
+        "capped": "boolean"
+      }
+    }
+  }
+}

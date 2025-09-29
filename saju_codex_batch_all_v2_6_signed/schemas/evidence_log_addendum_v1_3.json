@@ -1,0 +1,19 @@
+{
+  "version": "1.3",
+  "add_fields": {
+    "seal_validity": {
+      "wealth_location_bonus_total": "number",
+      "wealth_location_hits": [
+        {
+          "branch": "月|日|時|年",
+          "level": "main|sub",
+          "weight_applied": "number"
+        },
+        {
+          "month_stem_exposed": "boolean",
+          "bonus_applied": "number"
+        }
+      ]
+    }
+  }
+}

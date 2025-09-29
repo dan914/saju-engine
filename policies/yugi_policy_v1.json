@@ -1,0 +1,8 @@
+{
+  "version": "1.0",
+  "root_scoring": { "main": 5, "sub": 3, "minor": 0 },
+  "rules": [
+    "余氣(minor) gives 0 for non-month branches.",
+    "If minor appears in month_branch only, elevate to sub for scoring in that branch."
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "version": "1.2",
+  "add_fields": {
+    "lunar_info": {
+      "is_leap_month": "bool",
+      "leap_month_number": "int",
+      "actual_month_branch": "地支",
+      "next_solar_term": "string",
+      "next_term_utc": "ISO"
+    },
+    "boundary_review": {
+      "near_term_boundary_sec": "float",
+      "action": "human_review|auto_approved_by_dual_engine|none",
+      "secondary_engine_agreed": "bool"
+    },
+    "yugi": { "month_branch_minor_elevated": "bool" },
+    "five_he": { "transform_applied": "bool", "scope": "interpretation_only|none" },
+    "jdn_precision": {
+      "day_start_utc": "ISO",
+      "birth_utc": "ISO",
+      "comparison_millis": "int"
+    }
+  }
+}

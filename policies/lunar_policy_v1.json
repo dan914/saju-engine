@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "principle": "Month pillars are determined strictly by solar-term entry (定氣, 入節). Leap lunar months do not affect month_branch; they only affect lunar labeling.",
+  "evidence_fields": ["lunar_info.is_leap_month","lunar_info.leap_month_number","lunar_info.actual_month_branch","lunar_info.next_solar_term","lunar_info.next_term_utc"],
+  "ui_notice": "If is_leap_month=true, show '윤달' badge and the actual month_branch derived from solar terms.",
+  "examples": [
+    {"date_local":"2025-07-25","note":"윤6월(소서~입추 이전) → month_branch='未'"},
+    {"date_local":"2025-08-10","note":"윤6월(입추 이후) → month_branch='申'"}
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "version": "1.0",
+  "segments": [
+    "초",
+    "중",
+    "말"
+  ],
+  "bias": {
+    "寅": {
+      "초": {
+        "temp": "cool",
+        "humid": "neutral"
+      },
+      "중": {
+        "temp": "mild",
+        "humid": "neutral"
+      },
+      "말": {
+        "temp": "mild",
+        "humid": "dry"
+      }
+    },
+    "卯": {
+      "초": {
+        "temp": "mild",
+        "humid": "dry"
+      },
+      "중": {
+        "temp": "mild",
+        "humid": "neutral"
+      },
+      "말": {
+        "temp": "warm",
+        "humid": "neutral"
+      }
+    },
+    "辰": {
+      "초": {
+        "temp": "warm",
+        "humid": "neutral"
+      },
+      "중": {
+        "temp": "warm",
+        "humid": "humid"
+      },
+      "말": {
+        "temp": "warm",
+        "humid": "humid"
+      }
+    },
+    "巳": {
+      "초": {
+        "temp": "warm",
+        "humid": "dry"
+      },
+      "중": {
+        "temp": "hot",
+        "humid": "dry"
+      },
+      "말": {
+        "temp": "hot",
+        "humid": "neutral"
+      }
+    },
+    "午": {
+      "초": {
+        "temp": "hot",
+        "humid": "dry"
+      },
+      "중": {
+        "temp": "hot",
+        "humid": "neutral"
+      },
+      "말": {
+        "temp": "warm",
+        "humid": "humid"
+      }
+    },
+    "未": {
+      "초": {
+        "temp": "warm",
+        "humid": "humid"
+      },
+      "중": {
+        "temp": "warm",
+        "humid": "humid"
+      },
+      "말": {
+        "temp": "mild",
+        "humid": "humid"
+      }
+    },
+    "申": {
+      "초": {
+        "temp": "mild",
+        "humid": "dry"
+      },
+      "중": {
+        "temp": "mild",
+        "humid": "neutral"
+      },
+      "말": {
+        "temp": "cool",
+        "humid": "neutral"
+      }
+    },
+    "酉": {
+      "초": {
+        "temp": "cool",
+        "humid": "dry"
+      },
+      "중": {
+        "temp": "cool",
+        "humid": "dry"
+      },
+      "말": {
+        "temp": "cool",
+        "humid": "neutral"
+      }
+    },
+    "戌": {
+      "초": {
+        "temp": "cool",
+        "humid": "neutral"
+      },
+      "중": {
+        "temp": "cool",
+        "humid": "neutral"
+      },
+      "말": {
+        "temp": "cool",
+        "humid": "humid"
+      }
+    },
+    "亥": {
+      "초": {
+        "temp": "cold",
+        "humid": "wet"
+      },
+      "중": {
+        "temp": "cold",
+        "humid": "neutral"
+      },
+      "말": {
+        "temp": "cold",
+        "humid": "neutral"
+      }
+    },
+    "子": {
+      "초": {
+        "temp": "cold",
+        "humid": "dry"
+      },
+      "중": {
+        "temp": "cold",
+        "humid": "neutral"
+      },
+      "말": {
+        "temp": "cool",
+        "humid": "neutral"
+      }
+    },
+    "丑": {
+      "초": {
+        "temp": "cool",
+        "humid": "wet"
+      },
+      "중": {
+        "temp": "cool",
+        "humid": "neutral"
+      },
+      "말": {
+        "temp": "neutral",
+        "humid": "dry"
+      }
+    }
+  },
+  "advice_matrix_spec": "(temp_bias, humid_bias, day_master, strength_grade) -> advice_buckets"
+}

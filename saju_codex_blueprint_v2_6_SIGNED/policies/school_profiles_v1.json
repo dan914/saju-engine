@@ -1,0 +1,41 @@
+{
+  "version": "1.0-SIGNED",
+  "default_profile": "practical_balanced",
+  "profiles": {
+    "classic_conservative": {
+      "relation_caps": {
+        "total_abs_max": 6
+      },
+      "five_he": {
+        "allow_structural_transform": false
+      },
+      "notes": "전통 엄격"
+    },
+    "practical_balanced": {
+      "relation_caps": {
+        "total_abs_max": 8
+      },
+      "five_he": {
+        "allow_structural_transform": false
+      },
+      "notes": "현장 절충(기본값)"
+    },
+    "sanhe_strict": {
+      "relation_caps": {
+        "total_abs_max": 10
+      },
+      "five_he": {
+        "allow_structural_transform": true,
+        "scope_override": "lab_only"
+      },
+      "transform_gates": {
+        "sanhe_plus_month": true
+      },
+      "notes": "삼합 변환 엄격허용(랩 한정)"
+    }
+  },
+  "ui": {
+    "expose": false,
+    "pro_mode_switch": true
+  }
+}

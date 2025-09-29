@@ -1,0 +1,30 @@
+{
+  "version": "1.1",
+  "source_zanggan_table_version": "v1.0",
+  "root_scoring": {
+    "main": 5,
+    "sub": 3,
+    "minor": 0,
+    "sub_cap_per_branch": 1
+  },
+  "elevation_rule": "Elevate only when branch == month_branch AND target_level=='minor'",
+  "month_elevation_map": {
+    "未": {
+      "丁": "sub"
+    },
+    "戌": {
+      "丁": "sub"
+    },
+    "丑": {
+      "癸": "sub"
+    },
+    "辰": {
+      "癸": "sub"
+    }
+  },
+  "notes": [
+    "월지 외 余氣는 득지 미반영(0)",
+    "해당 천간이 이미 본기/중기인 경우 승격 미적용(중복 방지)",
+    "월지 내 승격은 분기당 1회 cap"
+  ]
+}

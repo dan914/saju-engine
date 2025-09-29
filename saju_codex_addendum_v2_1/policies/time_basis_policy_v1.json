@@ -1,0 +1,19 @@
+{
+  "version": "1.0",
+  "time_basis": "STD",
+  "tzdb": "IANA tzdb (system-provided)",
+  "dst": "follow tzdb history",
+  "day_boundary": {
+    "hour": "23:00",
+    "policy": "LCRO"
+  },
+  "zi_split": {
+    "enabled": false,
+    "mode": "lab_only",
+    "note": "KR_trad(Lab) can enable split-zi without LMT"
+  },
+  "lmt": {
+    "allowed": false,
+    "note": "applyLMTClock is dev-doc only; production must not call it"
+  }
+}

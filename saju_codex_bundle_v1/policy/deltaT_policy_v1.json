@@ -1,0 +1,122 @@
+{
+  "version": "1.0",
+  "generated_at": "2025-09-26T10:02:41.912866Z",
+  "purpose": "ΔT operational thresholds, alerts, and fallbacks for solar-term & boundary-sensitive calculations (1600–2200).",
+  "models": {
+    "EM": {
+      "name": "Espenak–Meeus (NASA) polynomial",
+      "range_years": [
+        -1999,
+        3000
+      ],
+      "role": "primary_compute",
+      "notes": "Piecewise polynomials; extrapolates beyond present."
+    },
+    "SM": {
+      "name": "Stephenson & Morrison historical tables",
+      "range_years": [
+        -700,
+        2000
+      ],
+      "role": "historical_reference",
+      "notes": "Basis for EM; uncertainty emphasized."
+    },
+    "MeeusSimons": {
+      "name": "Meeus & Simons polyfit",
+      "range_years": [
+        1620,
+        2000
+      ],
+      "role": "validation",
+      "max_error_sec": 3.2
+    },
+    "IERS": {
+      "name": "IERS EOP UT1–UTC predictions",
+      "range_years": [
+        1962,
+        null
+      ],
+      "role": "near_term_authority",
+      "prediction_horizon_days": 365
+    },
+    "Horizons": {
+      "name": "JPL Horizons ΔT handling",
+      "range_years": [
+        1900,
+        2200
+      ],
+      "role": "ephemeris_crosscheck",
+      "far_future_behavior": "freeze_last"
+    }
+  },
+  "thresholds": {
+    "standard_alert_sec": 5,
+    "strict_alert_sec": 2,
+    "engine_discrepancy_sec": 1,
+    "em_vs_horizons_divergence_sec": 3,
+    "boundary_near_standard_sec": 5,
+    "boundary_near_strict_sec": 1
+  },
+  "fallback_triggers": [
+    {
+      "trigger": "deltaT_uncertainty_exceeds",
+      "threshold_sec": ">=standard_alert_sec",
+      "action": "prefer_precomputed_table_or_mark_uncertain"
+    },
+    {
+      "trigger": "engine_discrepancy",
+      "threshold_sec": ">engine_discrepancy_sec",
+      "action": "pause_autopublish_crosscheck_third_source_warn"
+    },
+    {
+      "trigger": "near_boundary_standard",
+      "threshold_sec": "<=boundary_near_standard_sec",
+      "action": "warn_user_and_seek_high_precision_source"
+    },
+    {
+      "trigger": "near_boundary_strict",
+      "threshold_sec": "<=boundary_near_strict_sec",
+      "action": "withhold_classification_present_both_sides"
+    },
+    {
+      "trigger": "em_vs_horizons_divergence",
+      "threshold_sec": ">=em_vs_horizons_divergence_sec",
+      "action": "switch_safe_mode_use_table_or_conservative_model_with_warning"
+    }
+  ],
+  "source_precedence": [
+    {
+      "years": [
+        1800,
+        2100
+      ],
+      "prefer": "precomputed_table",
+      "fallback": "EM"
+    },
+    {
+      "years": [
+        1600,
+        1799
+      ],
+      "prefer": "EM",
+      "note": "σ up to ~5–20s near 1600; warn accordingly"
+    },
+    {
+      "years": [
+        2101,
+        2200
+      ],
+      "prefer": "EM",
+      "note": "Uncertainty grows; strict-mode warnings common"
+    }
+  ],
+  "logging_fields": [
+    "model_used",
+    "deltaT_sec",
+    "uncertainty_sec",
+    "alert_flags",
+    "boundary_margin_sec",
+    "engine_diff_sec",
+    "policy_version"
+  ]
+}

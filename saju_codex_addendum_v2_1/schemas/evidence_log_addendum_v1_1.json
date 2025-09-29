@@ -1,0 +1,36 @@
+{
+  "version": "1.1",
+  "add_fields": {
+    "month_stem_effect": {
+      "type": "object",
+      "fields": [
+        "type",
+        "pct_applied"
+      ]
+    },
+    "banhe": {
+      "present": "bool",
+      "weight": "number"
+    },
+    "five_he": {
+      "transform_applied": "bool",
+      "scope": "string"
+    },
+    "zixing": {
+      "triggered": "bool",
+      "reasons": "array"
+    },
+    "seal_validity": {
+      "broken_by_wealth": "bool",
+      "suppressed_by_officer_killer": "bool"
+    },
+    "day_boundary_policy": {
+      "type": "string",
+      "value": "unified_zi|split_zi"
+    },
+    "time_basis": {
+      "type": "string",
+      "value": "STD"
+    }
+  }
+}

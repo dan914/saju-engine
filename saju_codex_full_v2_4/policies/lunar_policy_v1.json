@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "principle": "Month pillars are determined strictly by solar-term entry (定氣). Leap lunar months only affect labeling.",
+  "evidence_fields": [
+    "lunar_info.is_leap_month",
+    "lunar_info.leap_month_number",
+    "lunar_info.actual_month_branch",
+    "lunar_info.next_solar_term",
+    "lunar_info.next_term_utc"
+  ]
+}

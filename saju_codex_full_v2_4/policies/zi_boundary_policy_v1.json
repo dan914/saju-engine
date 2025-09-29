@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "default": {
+    "type": "unified_zi",
+    "range": "23:00-01:00"
+  },
+  "lab_options": {
+    "split_zi": {
+      "enabled": true,
+      "prev_day_segment": "23:00-23:59",
+      "next_day_segment": "00:00-00:59"
+    }
+  },
+  "evidence_field": "day_boundary_policy"
+}

@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "order": [
+    "sanhe_transform",
+    "banhe_synergy",
+    "sanhui_synergy",
+    "chong",
+    "xing",
+    "po",
+    "hai",
+    "he_nontransform"
+  ]
+}

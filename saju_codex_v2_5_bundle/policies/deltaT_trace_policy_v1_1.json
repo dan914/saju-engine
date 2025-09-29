@@ -1,0 +1,34 @@
+{
+  "version": "1.1",
+  "source": "Espenak–Meeus polynomial",
+  "precomputed_table": {
+    "enabled": true,
+    "years": [
+      1600,
+      2200
+    ],
+    "resolution": "year",
+    "fallback": "polynomial"
+  },
+  "crosscheck": {
+    "engines": [
+      "IERS_BulletinA"
+    ],
+    "model_divergence_hold_s": 3.0
+  },
+  "alerts": {
+    "standard_alert_s": 5.0,
+    "strict_alert_s": 1.0
+  },
+  "log_points": [
+    "birth",
+    "prev_term",
+    "next_term"
+  ],
+  "evidence_fields": [
+    "deltaT.birth.value_s",
+    "deltaT.model",
+    "deltaT.source",
+    "deltaT.alert_level"
+  ]
+}

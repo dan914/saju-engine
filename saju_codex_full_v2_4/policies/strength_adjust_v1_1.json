@@ -1,0 +1,137 @@
+{
+  "version": "1.1",
+  "seasonal_state_weights": {
+    "旺": 40,
+    "相": 28,
+    "休": 12,
+    "囚": -10,
+    "死": -24
+  },
+  "month_stem_adjust": {
+    "counter": -0.15,
+    "leak": -0.1,
+    "assist": 0.1,
+    "none": 0.0,
+    "cap_abs": 0.15
+  },
+  "root_norm": {
+    "max_points": 28,
+    "scale_to": 30
+  },
+  "seal_norm": {
+    "max_points": 20,
+    "scale_to": 20
+  },
+  "require_structure_for_relation_adjust": true,
+  "relation_adjust": {
+    "caps": {
+      "total_abs_max": 10,
+      "per_type_abs_max": 6
+    },
+    "priority": [
+      "sanhe_transform",
+      "banhe_synergy",
+      "sanhui_synergy",
+      "chong",
+      "xing_po_hai",
+      "he_nontransform"
+    ],
+    "sanhe_transform": {
+      "gates": {
+        "complete_triad": true,
+        "season_support": true,
+        "no_major_conflict": true
+      },
+      "delta": {
+        "k_same": 6,
+        "k_parent": 4,
+        "k_child": -4,
+        "k_controller": -6,
+        "k_controlled": 0
+      }
+    },
+    "banhe_synergy": {
+      "gates": {
+        "two_branches_plus_month": true,
+        "season_support": true
+      },
+      "delta": {
+        "k_same": 3,
+        "k_parent": 2,
+        "k_child": -2,
+        "k_controller": -3,
+        "k_controlled": 0
+      }
+    },
+    "sanhui_synergy": {
+      "gates": {
+        "two_or_more_in_same_season": true
+      },
+      "delta": {
+        "k_same": 3,
+        "k_parent": 2,
+        "k_child": -2,
+        "k_controller": -3,
+        "k_controlled": 0
+      }
+    },
+    "chong": {
+      "delta": {
+        "hit_main": -6,
+        "hit_sub": -4
+      },
+      "multipliers": {
+        "month_branch": 1.5,
+        "other": 1.0
+      }
+    },
+    "xing_po_hai": {
+      "delta": {
+        "hit_main": -3,
+        "hit_sub": -2
+      },
+      "multipliers": {
+        "month_branch": 1.2,
+        "other": 1.0
+      }
+    },
+    "he_nontransform": {
+      "delta": {
+        "support_same_or_parent": 1,
+        "others": 0
+      }
+    }
+  },
+  "grading": {
+    "index_clamp": [
+      0,
+      100
+    ],
+    "tiers": [
+      {
+        "name": "신강",
+        "min": 70
+      },
+      {
+        "name": "편강",
+        "min": 60
+      },
+      {
+        "name": "중화",
+        "min": 45
+      },
+      {
+        "name": "편약",
+        "min": 35
+      },
+      {
+        "name": "신약",
+        "min": 0
+      }
+    ],
+    "hysteresis": 2,
+    "ui_mapping": {
+      "expose_numbers": false
+    }
+  }
+}

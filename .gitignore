@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.env
+.venv/
+.env.local
+
+# Node/Flutter
+node_modules/
+.dist/
+build/
+.dart_tool/
+.packages
+.idea/
+.vscode/
+
+# Data caches
+*.parquet
+*.feather
+*.sqlite
+.cache/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store

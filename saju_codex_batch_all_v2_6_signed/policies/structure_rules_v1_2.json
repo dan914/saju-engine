@@ -1,0 +1,86 @@
+{
+  "version": "1.2",
+  "structures": [
+    "정관",
+    "편재",
+    "식상",
+    "인성"
+  ],
+  "priority": [
+    "정관",
+    "편재",
+    "식상",
+    "인성"
+  ],
+  "weights": {
+    "month_support_main": 8,
+    "month_support_sub": 4,
+    "stem_exposed": 3,
+    "branch_root": 2,
+    "ally_presence": 2,
+    "damage_chong": -4,
+    "damage_hai_xing_po": -2,
+    "counterparty_dominant": -6
+  },
+  "guards": {
+    "resolved_min": 10,
+    "proto_min": 6,
+    "tie_delta": 2
+  },
+  "exclusivity": {
+    "max_candidates": 2,
+    "break_ties_by": [
+      "month_support_main",
+      "stem_exposed",
+      "branch_root"
+    ]
+  },
+  "structure_specific_adjust": {
+    "정관": {
+      "favor": [
+        "관"
+      ],
+      "assist": [
+        "인"
+      ],
+      "risk": [
+        "식",
+        "재"
+      ]
+    },
+    "편재": {
+      "favor": [
+        "재"
+      ],
+      "assist": [
+        "관"
+      ],
+      "risk": [
+        "인"
+      ]
+    },
+    "식상": {
+      "favor": [
+        "식",
+        "상"
+      ],
+      "assist": [
+        "재"
+      ],
+      "risk": [
+        "관"
+      ]
+    },
+    "인성": {
+      "favor": [
+        "인"
+      ],
+      "assist": [
+        "비"
+      ],
+      "risk": [
+        "재"
+      ]
+    }
+  }
+}

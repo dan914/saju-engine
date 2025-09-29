@@ -1,0 +1,34 @@
+{
+  "version": "1.0",
+  "new_fields": {
+    "LMT": {
+      "applied": "bool",
+      "offset_sec": "number",
+      "lon_deg": "number"
+    },
+    "structure": {
+      "primary": "string|null",
+      "confidence": "high|mid|low|none",
+      "candidates": "array"
+    },
+    "climate": {
+      "segment": "支-초|중|말",
+      "temp_bias": "cold|cool|mild|warm|hot|neutral",
+      "humid_bias": "dry|neutral|humid",
+      "advice": "array"
+    },
+    "shensha": {
+      "enabled": "bool",
+      "list": "array"
+    },
+    "luck": {
+      "method": "string",
+      "direction": "forward|reverse",
+      "sex_at_birth?": "M|F|X",
+      "year_stem?": "天干"
+    },
+    "cautions": {
+      "badges": "array"
+    }
+  }
+}

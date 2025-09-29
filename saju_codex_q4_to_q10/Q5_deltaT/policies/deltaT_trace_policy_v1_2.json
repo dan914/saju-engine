@@ -1,0 +1,18 @@
+{
+  "version": "1.2-FINAL",
+  "authority": "table_then_EM",
+  "alerts": {
+    "standard_threshold_s": 5.0,
+    "strict_threshold_s": 1.0,
+    "model_divergence_hold_s": 3.0,
+    "near_boundary_hold_s": 1.0
+  },
+  "evidence_fields": [
+    "terms_dataset_sha256",
+    "deltaT_table_sha256",
+    "deltaT.model_id",
+    "deltaT.source_id",
+    "deltaT.value_s",
+    "boundary_review"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "version": "1.5",
+  "add_fields": {
+    "structure_v2": {
+      "secondary": "string?",
+      "instability_reason": [
+        "string"
+      ]
+    },
+    "five_he": {
+      "gate_reason": "string"
+    },
+    "deltaT": {
+      "model": "string",
+      "source": "string"
+    }
+  }
+}

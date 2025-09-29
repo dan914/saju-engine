@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "gates": [
+    {
+      "dup_same_branch": ">=2"
+    },
+    {
+      "month_status_in": [
+        "旺",
+        "相"
+      ]
+    },
+    {
+      "coexist_with": [
+        "chong",
+        "xing",
+        "po",
+        "hai"
+      ]
+    }
+  ],
+  "effect": "apply_self_conflict_interpretation_only"
+}

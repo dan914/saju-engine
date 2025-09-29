@@ -1,0 +1,23 @@
+{
+  "version": "1.2-SIGNED",
+  "source": "EM polynomial + curated table",
+  "strict_mode": {
+    "enabled": true,
+    "alert_s": 1.0,
+    "dual_engine_required": true
+  },
+  "tzdb_regression_link": {
+    "enabled": true,
+    "trigger_on_boundary_impact": true
+  },
+  "evidence_fields": [
+    "terms_dataset_sha256",
+    "deltaT_table_sha256",
+    "tzdb_version",
+    "deltaT.birth.value_s",
+    "deltaT.prev_term.value_s",
+    "deltaT.next_term.value_s",
+    "deltaT.alert_level",
+    "birth_input_precision"
+  ]
+}

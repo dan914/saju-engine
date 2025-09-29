@@ -1,0 +1,10 @@
+{
+  "version": "2.6-SIGNED",
+  "buckets": {
+    "school_profiles": 30,
+    "five_he_struct_transform_lab": 50,
+    "zongge_guard_cases": 40,
+    "kr_core_regressions": 120
+  },
+  "total_target": 240
+}

@@ -1,0 +1,13 @@
+{
+  "version": "1.2-SIGNED",
+  "source": "EM polynomial + curated table",
+  "strict_mode": {
+    "enabled": true,
+    "alert_s": 1.0,
+    "dual_engine_required": true
+  },
+  "tzdb_regression_link": {
+    "enabled": true,
+    "trigger_on_boundary_impact": true
+  }
+}

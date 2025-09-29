@@ -1,0 +1,21 @@
+{
+  "version": "1.3-SIGNED",
+  "env": {
+    "prod": {
+      "events": {
+        "SCHOOL_PROFILE_APPLIED": {
+          "severity": "info",
+          "action": "log"
+        },
+        "FIVE_HE_LAB_TRANSFORM": {
+          "severity": "warning",
+          "action": "slack"
+        },
+        "STRUCTURE_TIE_BREAK": {
+          "severity": "info",
+          "action": "log"
+        }
+      }
+    }
+  }
+}

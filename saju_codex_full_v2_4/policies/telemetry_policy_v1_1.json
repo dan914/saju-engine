@@ -1,0 +1,45 @@
+{
+  "version": "1.1",
+  "env": {
+    "prod": {
+      "events": {
+        "LMT_APPLIED_TRUE": {
+          "severity": "debug",
+          "action": "none"
+        },
+        "LMT_ATTEMPT_BLOCKED": {
+          "severity": "warning",
+          "action": "slack"
+        },
+        "STD_VERIFICATION_DIFF_GT_1S": {
+          "severity": "warning",
+          "action": "slack"
+        },
+        "TZDB_BOUNDARY_IMPACT": {
+          "severity": "warning",
+          "action": "slack"
+        }
+      }
+    },
+    "staging": {
+      "events": {
+        "LMT_APPLIED_TRUE": {
+          "severity": "critical",
+          "action": "page_oncall"
+        },
+        "LMT_ATTEMPT_BLOCKED": {
+          "severity": "warning",
+          "action": "slack"
+        },
+        "STD_VERIFICATION_DIFF_GT_1S": {
+          "severity": "warning",
+          "action": "slack"
+        },
+        "TZDB_BOUNDARY_IMPACT": {
+          "severity": "warning",
+          "action": "slack"
+        }
+      }
+    }
+  }
+}

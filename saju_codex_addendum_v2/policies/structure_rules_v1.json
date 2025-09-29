@@ -1,0 +1,55 @@
+{
+  "version": "1.0",
+  "structures": [
+    "정관",
+    "칠살",
+    "정재",
+    "편재",
+    "식신",
+    "상관",
+    "정인",
+    "편인",
+    "비겁",
+    "종강",
+    "종약"
+  ],
+  "weights": {
+    "month_support_main": 8,
+    "month_support_sub": 4,
+    "stem_visible": 3,
+    "branch_root": 2,
+    "bonus_day_branch": 1,
+    "damage_chong": -4,
+    "damage_hai": -2,
+    "damage_xingpo": -2
+  },
+  "guards": {
+    "jong_gang": [
+      "month_wang_or_xiang",
+      "self_party_strong",
+      "cai_guan_shi_weak"
+    ],
+    "jong_yak": [
+      "month_si_or_qiu",
+      "no_root_no_seal",
+      "cai_guan_shi_strong"
+    ]
+  },
+  "thresholds": {
+    "primary": 10,
+    "candidate": 6
+  },
+  "output_contract": {
+    "primary": "string|null",
+    "confidence": "high|mid|low|none",
+    "candidates": [
+      {
+        "type": "string",
+        "score": "number",
+        "reasons": [
+          "string"
+        ]
+      }
+    ]
+  }
+}

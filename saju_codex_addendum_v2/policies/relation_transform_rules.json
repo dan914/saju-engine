@@ -1,0 +1,98 @@
+{
+  "version": "1.0",
+  "priority": [
+    "sanhe_transform",
+    "sanhui_boost",
+    "chong",
+    "xing_po_hai",
+    "he_nontransform"
+  ],
+  "definitions": {
+    "sanhe_groups": {
+      "wood": [
+        "亥",
+        "卯",
+        "未"
+      ],
+      "fire": [
+        "寅",
+        "午",
+        "戌"
+      ],
+      "metal": [
+        "巳",
+        "酉",
+        "丑"
+      ],
+      "water": [
+        "申",
+        "子",
+        "辰"
+      ]
+    },
+    "sanhui_groups": {
+      "spring": [
+        "寅",
+        "卯",
+        "辰"
+      ],
+      "summer": [
+        "巳",
+        "午",
+        "未"
+      ],
+      "autumn": [
+        "申",
+        "酉",
+        "戌"
+      ],
+      "winter": [
+        "亥",
+        "子",
+        "丑"
+      ]
+    },
+    "chong_pairs": [
+      [
+        "子",
+        "午"
+      ],
+      [
+        "丑",
+        "未"
+      ],
+      [
+        "寅",
+        "申"
+      ],
+      [
+        "卯",
+        "酉"
+      ],
+      [
+        "辰",
+        "戌"
+      ],
+      [
+        "巳",
+        "亥"
+      ]
+    ]
+  },
+  "sanhe_transform": {
+    "conditions": {
+      "complete_three": true,
+      "two_plus_month_support": true,
+      "seasonal_support": "旺|相",
+      "no_strong_conflict": true,
+      "min_strength_each": ">=1"
+    },
+    "effect": "transform_to_element"
+  },
+  "sanhui_boost": {
+    "conditions": {
+      "complete_three": true
+    },
+    "effect": "boost_season_element_only"
+  }
+}

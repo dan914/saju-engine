@@ -1,0 +1,11 @@
+{
+  "version": "2.6-SIGNED",
+  "buckets": {
+    "structure_expansion_v2": 50,
+    "five_he_struct_transform_lab": 50,
+    "deltaT_strict_boundary": 40,
+    "tzdb_kor_prk_boundary": 30,
+    "leap_month_badge": 30
+  },
+  "total_target": 200
+}

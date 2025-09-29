@@ -1,0 +1,21 @@
+{
+  "version": "1.3-FINAL",
+  "events": {
+    "STRUCTURE_UNSTABLE": {
+      "severity": "warning",
+      "emit": [
+        "log",
+        "slack",
+        "metrics"
+      ]
+    },
+    "FIVE_HE_LAB_TRANSFORM": {
+      "severity": "warning",
+      "emit": [
+        "log",
+        "slack",
+        "metrics"
+      ]
+    }
+  }
+}

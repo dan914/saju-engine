@@ -1,0 +1,20 @@
+{
+  "version": "1.4",
+  "add_fields": {
+    "structure_v2": {
+      "primary": "정관|편재|식상|인성|null",
+      "candidates": [
+        {
+          "type": "string",
+          "score": "number",
+          "reasons": [
+            "string"
+          ]
+        }
+      ],
+      "status": "none|proto|resolved",
+      "confidence": "low|mid|high",
+      "rules_version": "string"
+    }
+  }
+}

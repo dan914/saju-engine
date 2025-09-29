@@ -1,0 +1,15 @@
+{
+  "version": "1.6",
+  "add_fields": {
+    "school_profile": {
+      "id": "string",
+      "notes": "string"
+    },
+    "five_he": {
+      "post_effects": "string"
+    },
+    "structure_v2": {
+      "resolved_at_version": "string"
+    }
+  }
+}

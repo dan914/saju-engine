@@ -1,0 +1,24 @@
+{
+  "version": "1.1",
+  "state_points": {
+    "旺": 40,
+    "相": 28,
+    "休": 12,
+    "囚": -10,
+    "死": -24
+  },
+  "month_stem_adjust": {
+    "counter_penalty_pct": 0.1,
+    "leak_penalty_pct": 0.05,
+    "assist_bonus_pct": 0.1,
+    "cap_pct": 0.15
+  },
+  "seal_validity_checks": {
+    "break_by_wealth": {
+      "lower_to": "none"
+    },
+    "suppressed_by_officer_killer": {
+      "lower_to": "partial"
+    }
+  }
+}

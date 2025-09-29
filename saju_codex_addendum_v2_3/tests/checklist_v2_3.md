@@ -1,0 +1,11 @@
+# v2.3 Test Checklist
+- Bonus accumulation & cap:
+  - 월/일/시 sub roots + 월간 노출 → raw 3.0 → capped 2.0.
+- No double counting:
+  - 같은 branch에서 main+sub 동시 존재해도 보정은 분기당 1회.
+- Min-level gate:
+  - 余氣-only(월지 외) → 보정 0.
+- Side conditions:
+  - wealth_month_state not in 旺/相 and no conflict → even if diff>=2, do NOT break seal.
+- Evidence:
+  - `seal_validity.wealth_location_bonus_total` and `wealth_location_hits` populated.

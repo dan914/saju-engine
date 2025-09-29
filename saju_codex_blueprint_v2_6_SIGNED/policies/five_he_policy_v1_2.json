@@ -1,0 +1,19 @@
+{
+  "version": "1.2-SIGNED",
+  "transform_scope": "lab_or_pro_only",
+  "conditions": {
+    "require_month_support": true,
+    "require_huashen_stem": true,
+    "deny_if_conflict": true,
+    "require_no_counter_dominance": true
+  },
+  "post_transform_effects": {
+    "recompute_ten_gods": true,
+    "mark_calculation_branch": "lab_only"
+  },
+  "evidence_fields": [
+    "five_he.transform_applied",
+    "five_he.scope",
+    "five_he.post_effects"
+  ]
+}

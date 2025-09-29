@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "methods": {
+    "traditional_sex": {
+      "default": true,
+      "rule": "male->forward, female->reverse"
+    },
+    "year_stem_yinyang": {
+      "default": false,
+      "rule": "yang->forward, yin->reverse"
+    },
+    "manual": {
+      "default": false,
+      "rule": "user sets forward/reverse"
+    }
+  },
+  "evidence_fields": [
+    "method",
+    "direction",
+    "sex_at_birth?",
+    "year_stem?"
+  ]
+}

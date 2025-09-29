@@ -1,0 +1,17 @@
+{
+  "version": "1.1",
+  "transform_scope": "interpretation_only",
+  "conditions": {
+    "require_month_support": true,
+    "require_huashen_stem": true,
+    "deny_if_conflict": true
+  },
+  "lab_option": {
+    "allow_structural_transform": false
+  },
+  "evidence_fields": [
+    "five_he.transform_applied",
+    "five_he.scope",
+    "five_he.gate_reason"
+  ]
+}

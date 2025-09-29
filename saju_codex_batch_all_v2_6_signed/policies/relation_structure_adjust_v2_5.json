@@ -1,0 +1,40 @@
+{
+  "version": "2.5-SIGNED",
+  "apply_when": "structure.status == 'resolved'",
+  "matrix": {
+    "편관(칠살)": {
+      "sanhe_transform": {
+        "to_favor": 2,
+        "to_risk": -3
+      },
+      "chong": {
+        "hit_favor": -2,
+        "hit_risk": 2
+      }
+    },
+    "정재": {
+      "sanhe_transform": {
+        "to_favor": 2,
+        "to_risk": -2
+      },
+      "chong": {
+        "hit_favor": -1,
+        "hit_risk": 1
+      }
+    },
+    "비겁": {
+      "sanhe_transform": {
+        "to_favor": 1,
+        "to_risk": -2
+      },
+      "chong": {
+        "hit_favor": 0,
+        "hit_risk": -1
+      }
+    }
+  },
+  "caps": {
+    "per_structure_abs_max": 4,
+    "total_abs_max": 10
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "version": "1.0",
+  "buckets": [
+    {
+      "year": 1600,
+      "sigma_sec": 20
+    },
+    {
+      "year": 1700,
+      "sigma_sec": 5
+    },
+    {
+      "year": 1800,
+      "sigma_sec": 1
+    },
+    {
+      "year": 1900,
+      "sigma_sec": 0.1
+    },
+    {
+      "year": 2000,
+      "sigma_sec": 0.05
+    },
+    {
+      "year": 2050,
+      "sigma_sec": 5
+    },
+    {
+      "year": 2100,
+      "sigma_sec": 30
+    },
+    {
+      "year": 2150,
+      "sigma_sec": 60
+    },
+    {
+      "year": 2200,
+      "sigma_sec": 90
+    }
+  ],
+  "notes": "Order-of-magnitude uncertainties; tune with latest NASA/IERS publications."
+}

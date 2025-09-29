@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "time_basis": "STD",
+  "tzdb": "IANA",
+  "dst": "auto",
+  "day_boundary": {
+    "hour": "23:00",
+    "policy": "LCRO"
+  },
+  "lmt": {
+    "allowed": false
+  }
+}

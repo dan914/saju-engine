@@ -1,0 +1,1 @@
+# v2.6 — SIGNED with changes (default practical_balanced; caps adjusted; sanhe_strict lab_only; buckets updated)

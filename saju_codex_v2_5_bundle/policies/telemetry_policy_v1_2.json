@@ -1,0 +1,37 @@
+{
+  "version": "1.2",
+  "env": {
+    "prod": {
+      "events": {
+        "STRUCTURE_UNSTABLE": {
+          "severity": "warning",
+          "action": "slack"
+        },
+        "RELATION_GATE_TOGGLED": {
+          "severity": "info",
+          "action": "log"
+        },
+        "FIVE_HE_DENIED_BY_CONFLICT": {
+          "severity": "info",
+          "action": "log"
+        }
+      }
+    },
+    "staging": {
+      "events": {
+        "STRUCTURE_UNSTABLE": {
+          "severity": "warning",
+          "action": "slack"
+        },
+        "RELATION_GATE_TOGGLED": {
+          "severity": "info",
+          "action": "log"
+        },
+        "FIVE_HE_DENIED_BY_CONFLICT": {
+          "severity": "info",
+          "action": "log"
+        }
+      }
+    }
+  }
+}

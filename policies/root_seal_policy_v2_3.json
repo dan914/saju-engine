@@ -1,0 +1,82 @@
+{
+  "version": "2.3",
+  "depends": {
+    "zanggan_table": "v1.0",
+    "yugi_policy": "v1.1"
+  },
+  "root_scoring": {
+    "main": 5,
+    "sub": 3,
+    "minor": 0,
+    "month_bonus": 2,
+    "sub_cap_per_branch": 1
+  },
+  "seal_scoring": {
+    "stem": 5,
+    "main": 4,
+    "sub": 2,
+    "minor": 0,
+    "month_bonus": 1
+  },
+  "thresholds": {
+    "root_full": 5,
+    "root_partial": 3,
+    "seal_full": 5,
+    "seal_partial": 2
+  },
+  "wealth_location_bonus": {
+    "enabled": true,
+    "min_level": "sub",
+    "weights": {
+      "month_branch": 1.5,
+      "day_branch": 1.0,
+      "hour_branch": 0.5
+    },
+    "consider_year_branch": false,
+    "month_stem_exposed_bonus": 0.5,
+    "cap_total": 2.0
+  },
+  "validity": {
+    "wealth_breaks_seal": {
+      "formula": "((wealth_root_score + wealth_location_bonus_total) - seal_root_score) >= 2",
+      "and_also": [
+        {
+          "or": [
+            {
+              "wealth_month_state_in": [
+                "旺",
+                "相"
+              ]
+            },
+            {
+              "wealth_seal_branch_conflict": true
+            }
+          ]
+        }
+      ],
+      "effect": "seal_level->none",
+      "evidence_fields": [
+        "seal_validity.broken_by_wealth",
+        "seal_validity.wealth_location_bonus_total",
+        "seal_validity.wealth_location_hits"
+      ]
+    },
+    "officer_suppresses_seal": {
+      "when_all": [
+        {
+          "officer_root_score": ">=5"
+        },
+        {
+          "officer_stem_exposed": true
+        },
+        {
+          "no_output_counterbalance": true
+        }
+      ],
+      "effect": "seal_level->partial",
+      "evidence_fields": [
+        "seal_validity.suppressed_by_officer_killer"
+      ]
+    }
+  }
+}

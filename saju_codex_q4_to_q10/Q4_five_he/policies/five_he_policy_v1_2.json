@@ -1,0 +1,20 @@
+{
+  "version": "1.2-FINAL",
+  "modes": {
+    "v2_5_default": {
+      "transform_scope": "interpretation_only"
+    },
+    "v2_6_pro_shadow": {
+      "transform_scope": "shadow_structural"
+    },
+    "v2_6_lab_full": {
+      "transform_scope": "full_structural"
+    }
+  },
+  "guards": {
+    "require_month_support": true,
+    "require_huashen_stem": true,
+    "deny_if_conflict": true,
+    "deny_if_structure_unresolved": true
+  }
+}

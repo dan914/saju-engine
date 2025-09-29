@@ -1,0 +1,18 @@
+{
+  "version": "2.5-SIGNED",
+  "structures": [
+    "정관",
+    "편관(칠살)",
+    "정재",
+    "편재",
+    "식상",
+    "인성",
+    "비겁",
+    "종격_proto"
+  ],
+  "guards": {
+    "resolved_min": 12,
+    "proto_min": 7,
+    "tie_delta": 2
+  }
+}

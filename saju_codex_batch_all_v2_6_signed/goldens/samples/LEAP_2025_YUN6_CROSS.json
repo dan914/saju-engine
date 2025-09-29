@@ -1,0 +1,19 @@
+{
+  "case_id": "LEAP_2025_YUN6_CROSS",
+  "input": {
+    "local_dt": "2025-08-10T10:00:00",
+    "timezone": "Asia/Seoul",
+    "location": "Seoul, KR"
+  },
+  "expected": {
+    "flags": {
+      "leap_month": true
+    },
+    "lunar_info": {
+      "actual_month_branch": "申"
+    }
+  },
+  "tzdb_version": "2025a",
+  "terms_dataset_version": "v1_2025",
+  "deltaT_policy_version": "1.2"
+}

@@ -1,0 +1,6 @@
+{
+  "version": "1.0",
+  "require_structure": true,
+  "fallback_when_no_structure": "suppress_auto_recommendation",
+  "ui_copy": "강약과 조후는 참고용입니다. 정확한 용신은 격국 분석과 함께 전문 상담을 권장합니다."
+}

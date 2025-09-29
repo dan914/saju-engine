@@ -1,0 +1,33 @@
+{
+  "version": "1.0",
+  "policy": {
+    "impact_on_calculation": false,
+    "ui_mode": "pro_only"
+  },
+  "items": [
+    {
+      "name": "桃花(도화)",
+      "key": "taohua",
+      "desc_modern": "표현/매력 강조, 대인 주목도 상승",
+      "where_rule": "日支 in {子午卯酉} → 桃花"
+    },
+    {
+      "name": "文昌",
+      "key": "wenchang",
+      "desc_modern": "지적 표현, 문서/학습 운",
+      "where_rule": "年干/日干 기반 특정 지지 위치"
+    },
+    {
+      "name": "天乙貴人",
+      "key": "tianyiguiren",
+      "desc_modern": "조력, 도움수",
+      "where_rule": "日干별 지지 2개"
+    },
+    {
+      "name": "驛馬",
+      "key": "yima",
+      "desc_modern": "이동/변화",
+      "where_rule": "年支 삼합의 충 지지"
+    }
+  ]
+}

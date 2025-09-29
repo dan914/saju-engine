@@ -1,0 +1,19 @@
+{
+  "case_id": "BOUNDARY_2025_LICHUN_PM1S",
+  "input": {
+    "local_dt": "2025-02-04T00:00:00.000",
+    "timezone": "Asia/Seoul",
+    "location": "Seoul, KR"
+  },
+  "expected": {
+    "flags": {
+      "near_term_boundary": true
+    },
+    "badges": [
+      "near_term_boundary"
+    ]
+  },
+  "tzdb_version": "2025a",
+  "terms_dataset_version": "v1_2025",
+  "deltaT_policy_version": "1.0"
+}

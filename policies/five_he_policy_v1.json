@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "transform_scope": "interpretation_only",
+  "conditions": {
+    "require_month_support": true,
+    "require_huashen_stem": true,
+    "deny_if_conflict": true
+  },
+  "explanation": "When five-he transforms meet all conditions, reflect in interpretation layer; do not replace stems for core Ten-God recalculation.",
+  "evidence_fields": ["five_he.transform_applied","five_he.scope"]
+}

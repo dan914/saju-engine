@@ -1,0 +1,35 @@
+
+name: TZDB Regression
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'policy/tzdb/**'
+      - '.github/workflows/tzdb-regression.yml'
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Prepare paths
+        run: |
+          mkdir -p artifacts
+          # TODO: Provide OLD_TZPATH and NEW_TZPATH (e.g., mount extracted zoneinfo trees)
+          echo "OLD_TZPATH=/opt/zoneinfo_old" >> $GITHUB_ENV
+          echo "NEW_TZPATH=/opt/zoneinfo_new" >> $GITHUB_ENV
+      - name: Run comparison
+        run: |
+          python tzdb_regress.py --old-tzpath "$OLD_TZPATH" --new-tzpath "$NEW_TZPATH" \
+            --samples tzdb_samples.csv --threshold 1 \
+            --out-json artifacts/tzdb_report.json --out-csv artifacts/tzdb_report.csv
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: tzdb-regression-report
+          path: artifacts/

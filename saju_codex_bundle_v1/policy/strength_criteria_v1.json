@@ -1,0 +1,48 @@
+{
+  "weights": {
+    "month_state": {
+      "旺": 40,
+      "相": 28,
+      "休": 12,
+      "囚": -10,
+      "死": -24
+    },
+    "branch_root": {
+      "day_branch_same": 16,
+      "other_branch_root": 8
+    },
+    "stem_visible": {
+      "bi_jie": 8,
+      "yin": 10,
+      "shi_shang": 6,
+      "cai": 6,
+      "guan": 6
+    },
+    "combo_clash": {
+      "sanhe": 6,
+      "liuhe": 4,
+      "chong": -8,
+      "xing": -4,
+      "po": -4,
+      "hai": -4
+    },
+    "season_adjust": {
+      "土月_인성일간_보정": 8
+    }
+  },
+  "thresholds": {
+    "極強": 70,
+    "太強": 55,
+    "中和": 35,
+    "偏弱": 20,
+    "極弱": -999
+  },
+  "outputs": [
+    "身強",
+    "偏強",
+    "中和",
+    "偏弱",
+    "身弱"
+  ],
+  "version": "1.0"
+}

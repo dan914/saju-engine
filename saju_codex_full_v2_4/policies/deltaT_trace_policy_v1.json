@@ -1,0 +1,28 @@
+{
+  "version": "1.0",
+  "source": "Espenak–Meeus polynomial",
+  "mode": "runtime_eval",
+  "eval_points": [
+    "birth",
+    "prev_term",
+    "next_term"
+  ],
+  "crosscheck": {
+    "engines": [
+      "IERS_BulletinA",
+      "JPL_Horizons"
+    ],
+    "model_divergence_hold_s": 3.0
+  },
+  "alerts": {
+    "standard_alert_s": 5.0,
+    "strict_alert_s": 1.0
+  },
+  "evidence_fields": [
+    "deltaT.birth.value_s",
+    "deltaT.prev_term.value_s",
+    "deltaT.next_term.value_s",
+    "deltaT.model_divergence_s",
+    "deltaT.alert_level"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "version": "1.1",
+  "source_zanggan_table_version": "v1.0",
+  "root_scoring": {
+    "main": 5,
+    "sub": 3,
+    "minor": 0,
+    "sub_cap_per_branch": 1
+  },
+  "elevation_rule": "Elevate only when branch == month_branch.",
+  "elevation_map": {
+    "丑": [
+      "辛"
+    ],
+    "寅": [
+      "戊"
+    ],
+    "辰": [
+      "癸"
+    ],
+    "巳": [
+      "庚"
+    ],
+    "未": [
+      "乙"
+    ],
+    "申": [
+      "戊"
+    ],
+    "戌": [
+      "丁"
+    ],
+    "亥": [
+      "甲"
+    ]
+  }
+}

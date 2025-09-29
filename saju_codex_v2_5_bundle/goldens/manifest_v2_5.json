@@ -1,0 +1,10 @@
+{
+  "version": "2.5-SIGNED",
+  "buckets": {
+    "structure_expansion": 60,
+    "five_he_gates": 20,
+    "deltaT_table_parity": 20,
+    "kr_core_regressions": 100
+  },
+  "total_target": 200
+}

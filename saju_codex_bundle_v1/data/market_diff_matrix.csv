@@ -1,0 +1,7 @@
+﻿app,region,platforms,day_boundary_toggle_23h,LMT_support,RST_support,DST_doc,month_boundary_basis,year_boundary_basis,notes
+포스텔러 만세력,KR,iOS/Android,True,True,True,True,절입(정기) (문서/설명 추정),입춘(세수) (문서/설명 추정),설명에 시태양시·야/조자시·동경시 보정 명시
+낭만만세력,KR,iOS/Android,True,True,False,True,절입(정기),입춘/동지 선택,"야/조자시, 표준시→지역시, 동지/입춘 선택 제공"
+도사폰(만세력·역학도구),KR,iOS,True,True,False,True,절입(정기) (설명 추정),입춘(추정),"야/조자시, 동경시/한국시, DST 적용 명시"
+정해 만세력(8-codes),KR,iOS/Android,False,False,False,,절입(정기) (공식 가이드),입춘(공식),"문서에 월주=절입, 일주=23:00 채택 명시"
+知易八字（海外版）,CN,iOS,True,True,True,True,평기/정기 선택,미상(일반적으로 입춘),"평기/정기, 真太阳时, 夏令时 지원"
+八字排盘·从真版,CN,iOS,True,,True,,정기 (중국 표준),미상,"真太阳时, 早/晚子时 지원"

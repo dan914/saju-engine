@@ -1,0 +1,49 @@
+{
+  "version": "1.0",
+  "apply_when": "structure.status == 'resolved'",
+  "matrix": {
+    "정관": {
+      "sanhe_transform": {
+        "to_favor": 2,
+        "to_risk": -3
+      },
+      "chong": {
+        "hit_favor": -2,
+        "hit_risk": 1
+      }
+    },
+    "편재": {
+      "sanhe_transform": {
+        "to_favor": 2,
+        "to_risk": -2
+      },
+      "chong": {
+        "hit_favor": -1,
+        "hit_risk": 1
+      }
+    },
+    "식상": {
+      "sanhe_transform": {
+        "to_favor": 2,
+        "to_risk": -2
+      },
+      "chong": {
+        "hit_favor": 1,
+        "hit_risk": -2
+      }
+    },
+    "인성": {
+      "sanhe_transform": {
+        "to_favor": 2,
+        "to_risk": -2
+      },
+      "chong": {
+        "hit_favor": -1,
+        "hit_risk": 1
+      }
+    }
+  },
+  "caps": {
+    "per_structure_abs_max": 4
+  }
+}

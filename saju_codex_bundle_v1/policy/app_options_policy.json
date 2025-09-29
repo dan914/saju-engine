@@ -1,0 +1,38 @@
+{
+  "version": "1.0",
+  "engine_mode": "KR_classic_v1.4",
+  "defaults": {
+    "day_boundary": "23:00",
+    "time_basis": "STD",
+    "dst": "auto",
+    "month_boundary": "solar_term_entry",
+    "year_boundary": "lichun",
+    "expose_nontraditional": false
+  },
+  "pro_lab": {
+    "enabled": false,
+    "toggles": {
+      "day_boundary": [
+        "23:00"
+      ],
+      "time_basis": [
+        "STD"
+      ],
+      "month_boundary": [
+        "solar_term_entry",
+        "midterm_month"
+      ],
+      "year_boundary": [
+        "lichun",
+        "dongzhi"
+      ]
+    },
+    "ui_warnings": true,
+    "footnote_on_export": true
+  },
+  "evidence_log": {
+    "show_rules_version": true,
+    "show_tz_events": true,
+    "show_deltaT": true
+  }
+}
