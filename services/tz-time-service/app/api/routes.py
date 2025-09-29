@@ -1,4 +1,5 @@
 """API endpoints for timezone conversions."""
+
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, status

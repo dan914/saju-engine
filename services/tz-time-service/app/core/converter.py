@@ -1,13 +1,15 @@
 """Placeholder timezone conversion logic."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
+from services.common import TraceMetadata
+
 from ..models import TimeConversionRequest, TimeConversionResponse
 from .events import TimeEventDetector
-from services.common import TraceMetadata
 
 
 def _ensure_awareness(instant: datetime, tz_name: str) -> datetime:
@@ -32,7 +34,11 @@ class TimezoneConverter:
         trace = TraceMetadata(
             rule_id="KR_classic_v1.4",
             delta_t_seconds=0.0,
-            tz={"source": request.source_tz, "target": request.target_tz, "tzdbVersion": self.tzdb_version},
+            tz={
+                "source": request.source_tz,
+                "target": request.target_tz,
+                "tzdbVersion": self.tzdb_version,
+            },
             flags={"tzTransition": bool(events)},
         )
         return TimeConversionResponse(

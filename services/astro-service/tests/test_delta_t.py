@@ -6,4 +6,3 @@ def test_delta_t_policy_thresholds() -> None:
     assert policy.thresholds["standard"] >= 5
     prefer, fallback = policy.select_source(1900)
     assert prefer is not None
-

@@ -1,16 +1,25 @@
 """Advanced relation transformations based on addendum v2 policies."""
+
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
-import json
 
 POLICY_BASE = Path(__file__).resolve().parents[5]
-RELATION_POLICY_V25 = POLICY_BASE / "saju_codex_v2_5_bundle" / "policies" / "relation_structure_adjust_v2_5.json"
-RELATION_POLICY_V21 = POLICY_BASE / "saju_codex_addendum_v2_1" / "policies" / "relation_transform_rules_v1_1.json"
-RELATION_POLICY_V2 = POLICY_BASE / "saju_codex_addendum_v2" / "policies" / "relation_transform_rules.json"
-FIVE_HE_POLICY_V12 = POLICY_BASE / "saju_codex_blueprint_v2_6_SIGNED" / "policies" / "five_he_policy_v1_2.json"
+RELATION_POLICY_V25 = (
+    POLICY_BASE / "saju_codex_v2_5_bundle" / "policies" / "relation_structure_adjust_v2_5.json"
+)
+RELATION_POLICY_V21 = (
+    POLICY_BASE / "saju_codex_addendum_v2_1" / "policies" / "relation_transform_rules_v1_1.json"
+)
+RELATION_POLICY_V2 = (
+    POLICY_BASE / "saju_codex_addendum_v2" / "policies" / "relation_transform_rules.json"
+)
+FIVE_HE_POLICY_V12 = (
+    POLICY_BASE / "saju_codex_blueprint_v2_6_SIGNED" / "policies" / "five_he_policy_v1_2.json"
+)
 FIVE_HE_POLICY_V10 = POLICY_BASE / "policies" / "five_he_policy_v1.json"
 ZIXING_POLICY_PATH = POLICY_BASE / "saju_codex_addendum_v2_1" / "policies" / "zixing_rules_v1.json"
 
@@ -52,7 +61,11 @@ class RelationTransformer:
 
     @classmethod
     def from_file(cls, path: Optional[Path] = None) -> "RelationTransformer":
-        policy_path = path or (RELATION_POLICY_V25 if RELATION_POLICY_V25.exists() else (RELATION_POLICY_V21 if RELATION_POLICY_V21.exists() else RELATION_POLICY_V2))
+        policy_path = path or (
+            RELATION_POLICY_V25
+            if RELATION_POLICY_V25.exists()
+            else (RELATION_POLICY_V21 if RELATION_POLICY_V21.exists() else RELATION_POLICY_V2)
+        )
         with policy_path.open("r", encoding="utf-8") as f:
             data = json.load(f)
         return cls(data)
@@ -92,9 +105,17 @@ class RelationTransformer:
 
         if priority_entry:
             hit, transform_to, boosts, notes = priority_entry
-            return RelationResult(priority_hit=hit, transform_to=transform_to, boosts=boosts, notes=notes, extras=extras)
+            return RelationResult(
+                priority_hit=hit,
+                transform_to=transform_to,
+                boosts=boosts,
+                notes=notes,
+                extras=extras,
+            )
 
-        return RelationResult(priority_hit=None, transform_to=None, boosts=[], notes=[], extras=extras)
+        return RelationResult(
+            priority_hit=None, transform_to=None, boosts=[], notes=[], extras=extras
+        )
 
     def _check_sanhe_transform(self, ctx: RelationContext) -> Optional[str]:
         sanhe_groups: Dict[str, List[str]] = self._definitions.get("sanhe_groups", {})
@@ -116,7 +137,9 @@ class RelationTransformer:
         return boosts
 
     @staticmethod
-    def _check_pairs(branches: Iterable[str], pairs: Iterable[Iterable[str]]) -> Optional[List[str]]:
+    def _check_pairs(
+        branches: Iterable[str], pairs: Iterable[Iterable[str]]
+    ) -> Optional[List[str]]:
         branch_set = set(branches)
         for pair in pairs:
             if set(pair).issubset(branch_set):

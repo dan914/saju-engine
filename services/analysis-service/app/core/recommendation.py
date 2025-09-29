@@ -1,12 +1,18 @@
 """Recommendation guard per policy."""
+
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict
-import json
 
-POLICY_PATH = Path(__file__).resolve().parents[5] / "saju_codex_addendum_v2_1" / "policies" / "recommendation_policy_v1.json"
+POLICY_PATH = (
+    Path(__file__).resolve().parents[5]
+    / "saju_codex_addendum_v2_1"
+    / "policies"
+    / "recommendation_policy_v1.json"
+)
 
 
 @dataclass(slots=True)

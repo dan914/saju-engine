@@ -13,7 +13,9 @@ def test_compute_luck_start_age() -> None:
 
 def test_luck_direction_default() -> None:
     calc = LuckCalculator()
-    ctx = LuckContext(local_dt=datetime(1992, 7, 15, 23, 40), timezone="Asia/Seoul", gender="female")
+    ctx = LuckContext(
+        local_dt=datetime(1992, 7, 15, 23, 40), timezone="Asia/Seoul", gender="female"
+    )
     direction = calc.luck_direction(ctx)
     assert "direction" in direction
 

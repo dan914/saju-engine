@@ -1,11 +1,13 @@
 """Domain service orchestrating solar term lookups."""
+
 from __future__ import annotations
 
 from zoneinfo import ZoneInfo
 
+from services.common import TraceMetadata
+
 from ..models import TermEntry, TermQuery, TermResponse
 from .loader import SolarTermLoader
-from services.common import TraceMetadata
 
 
 def _with_timezone(entry: TermEntry, tz: ZoneInfo) -> TermEntry:
@@ -23,10 +25,7 @@ class SolarTermService:
 
     def get_terms(self, query: TermQuery) -> TermResponse:
         tz = ZoneInfo(query.timezone)
-        entries = [
-            _with_timezone(entry, tz)
-            for entry in self._loader.load_year(query.year)
-        ]
+        entries = [_with_timezone(entry, tz) for entry in self._loader.load_year(query.year)]
         trace = TraceMetadata(
             rule_id="KR_classic_v1.4",
             delta_t_seconds=57.4,

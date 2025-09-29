@@ -23,9 +23,9 @@ def test_strength_evaluator_combo_adjustment():
         visible_counts={"bi_jie": 1},
         combos={"sanhe": 1, "chong": 1},
     )
-    assert isinstance(details['total'], (int, float))
-    assert details['grade_code'] in evaluator.scorer.thresholds
-    assert isinstance(details['grade'], str)
-    assert 'month_stem_effect' in details
-    assert 'wealth_location_bonus_total' in details
-    assert 'seal_validity' in details
+    assert isinstance(details["total"], (int, float))
+    assert details["grade_code"] in evaluator.scorer.thresholds
+    assert isinstance(details["grade"], str)
+    assert "month_stem_effect" in details
+    assert "wealth_location_bonus_total" in details
+    assert "seal_validity" in details

@@ -1,18 +1,26 @@
 """Root/seal strength scoring utilities."""
+
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Tuple
-import json
+from typing import Dict, Iterable, List
 
 from .constants import STEM_TO_ELEMENT
 from .wang import WangStateMapper
 
 ZANGGAN_PATH = Path(__file__).resolve().parents[4] / "rulesets" / "zanggan_table.json"
-STRENGTH_CRITERIA_PATH = Path(__file__).resolve().parents[4] / "saju_codex_bundle_v1" / "policy" / "strength_criteria_v1.json"
+STRENGTH_CRITERIA_PATH = (
+    Path(__file__).resolve().parents[4]
+    / "saju_codex_bundle_v1"
+    / "policy"
+    / "strength_criteria_v1.json"
+)
 STRENGTH_SCALE_PATH = Path(__file__).resolve().parents[4] / "policies" / "strength_scale_v1_1.json"
-ROOT_SEAL_POLICY_PATH = Path(__file__).resolve().parents[4] / "policies" / "root_seal_policy_v2_3.json"
+ROOT_SEAL_POLICY_PATH = (
+    Path(__file__).resolve().parents[4] / "policies" / "root_seal_policy_v2_3.json"
+)
 YUGI_POLICY_PATH = Path(__file__).resolve().parents[4] / "policies" / "yugi_policy_v1_1.json"
 
 
@@ -137,9 +145,7 @@ class RootSealScorer:
         return label, level
 
     def compute_wealth_location_bonus(
-        self,
-        hits: Iterable[Dict[str, str]] | None,
-        month_stem_exposed: bool = False
+        self, hits: Iterable[Dict[str, str]] | None, month_stem_exposed: bool = False
     ) -> tuple[float, list[Dict[str, object]]]:
         policy = self.wealth_policy or {"enabled": False}
         if not policy.get("enabled", False):
@@ -199,9 +205,15 @@ class RootSealScorer:
                     if "or" in cond:
                         side_ok = False
                         for option in cond["or"]:
-                            if option.get("wealth_month_state_in") and wealth_month_state in option["wealth_month_state_in"]:
+                            if (
+                                option.get("wealth_month_state_in")
+                                and wealth_month_state in option["wealth_month_state_in"]
+                            ):
                                 side_ok = True
-                            if option.get("wealth_seal_branch_conflict") and wealth_seal_branch_conflict:
+                            if (
+                                option.get("wealth_seal_branch_conflict")
+                                and wealth_seal_branch_conflict
+                            ):
                                 side_ok = True
                         if not side_ok:
                             break
@@ -250,7 +262,7 @@ class StrengthEvaluator:
         month_score = self.scorer.score_month_state(month_branch, day_stem)
         root_score = self.scorer.score_roots(day_stem, day_branch, branch_roots)
         visible_score = self.scorer.score_visible_stems(visible_counts)
-        combo_weights = self.scorer.weights.get('combo_clash', {})
+        combo_weights = self.scorer.weights.get("combo_clash", {})
         combo_score = sum(combo_weights.get(key, 0) * count for key, count in combos.items())
         season_adjust = 0
         month_stem_effect = 0
@@ -261,8 +273,18 @@ class StrengthEvaluator:
             month_stem_effect = int(min(base, abs(month_score) * cap))
             if month_score < 0:
                 month_stem_effect *= -1
-        wealth_bonus, wealth_hits_log = self.scorer.compute_wealth_location_bonus(wealth_hits, month_stem_exposed)
-        total = month_score + root_score + visible_score + combo_score + season_adjust + month_stem_effect + wealth_bonus
+        wealth_bonus, wealth_hits_log = self.scorer.compute_wealth_location_bonus(
+            wealth_hits, month_stem_exposed
+        )
+        total = (
+            month_score
+            + root_score
+            + visible_score
+            + combo_score
+            + season_adjust
+            + month_stem_effect
+            + wealth_bonus
+        )
         grade_code, grade_level = self.scorer.grade_info(total)
         seal_validity = self.scorer.evaluate_seal_validity(
             wealth_root_score=wealth_root_score,
@@ -276,17 +298,17 @@ class StrengthEvaluator:
         )
         seal_validity["wealth_location_hits"] = wealth_hits_log
         result: Dict[str, object] = {
-            'month_state': month_score,
-            'branch_root': root_score,
-            'stem_visible': visible_score,
-            'combo_clash': combo_score,
-            'season_adjust': season_adjust,
-            'month_stem_effect': month_stem_effect,
-            'wealth_location_bonus_total': wealth_bonus,
-            'wealth_location_hits': wealth_hits_log,
-            'total': total,
-            'grade_code': grade_code,
-            'grade': grade_level,
-            'seal_validity': seal_validity,
+            "month_state": month_score,
+            "branch_root": root_score,
+            "stem_visible": visible_score,
+            "combo_clash": combo_score,
+            "season_adjust": season_adjust,
+            "month_stem_effect": month_stem_effect,
+            "wealth_location_bonus_total": wealth_bonus,
+            "wealth_location_hits": wealth_hits_log,
+            "total": total,
+            "grade_code": grade_code,
+            "grade": grade_level,
+            "seal_validity": seal_validity,
         }
         return result

@@ -1,6 +1,11 @@
 from datetime import datetime
 
-from app.core.month import DEFAULT_DATA_PATH, MonthBranchResolver, SimpleSolarTermLoader, default_month_resolver
+from app.core.month import (
+    DEFAULT_DATA_PATH,
+    MonthBranchResolver,
+    SimpleSolarTermLoader,
+    default_month_resolver,
+)
 from app.core.resolve import TimeResolver
 
 

@@ -1,4 +1,5 @@
 """Core computations for four pillars."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass

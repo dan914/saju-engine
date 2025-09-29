@@ -1,4 +1,5 @@
 from typing import Any
+
 """Pydantic models representing precomputed solar term data."""
 from __future__ import annotations
 

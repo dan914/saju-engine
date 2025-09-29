@@ -1,4 +1,5 @@
 """Factory helpers for FastAPI services in the 사주 앱 v1.4 suite."""
+
 from __future__ import annotations
 
 from typing import Any

@@ -1,4 +1,5 @@
 """Resolve local datetime to UTC applying zi-start-23 day boundary."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass

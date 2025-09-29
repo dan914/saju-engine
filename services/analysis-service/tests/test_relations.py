@@ -46,7 +46,9 @@ def test_five_he_and_zixing_extras() -> None:
     ctx = RelationContext(
         branches=["子", "丑", "辰"],
         month_branch="丑",
-        five_he_pairs=[{"pair": "甲己", "month_support": True, "huashen_present": True, "has_conflict": False}],
+        five_he_pairs=[
+            {"pair": "甲己", "month_support": True, "huashen_present": True, "has_conflict": False}
+        ],
         zixing_counts={"丑": 2},
         branch_states={"丑": "旺"},
     )

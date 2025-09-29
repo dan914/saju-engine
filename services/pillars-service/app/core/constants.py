@@ -1,12 +1,11 @@
 """Common constants for four pillars calculations."""
+
 from __future__ import annotations
 
 HEAVENLY_STEMS = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 EARTHLY_BRANCHES = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
 
-SEXAGENARY_CYCLE = [
-    HEAVENLY_STEMS[i % 10] + EARTHLY_BRANCHES[i % 12] for i in range(60)
-]
+SEXAGENARY_CYCLE = [HEAVENLY_STEMS[i % 10] + EARTHLY_BRANCHES[i % 12] for i in range(60)]
 
 YEAR_ANCHOR = (1984, "甲子")  # 1984 JiaZi year anchor
 DAY_ANCHOR = (1984, 2, 2, "甲子")  # 1984-02-02 JiaZi day anchor
@@ -81,4 +80,3 @@ BRANCH_TO_ELEMENT = {
     "子": "水",
     "丑": "土",
 }
-

@@ -1,4 +1,5 @@
 """Data models for KR_classic v1.4 four pillars computation."""
+
 from __future__ import annotations
 
 from datetime import datetime

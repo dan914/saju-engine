@@ -1,4 +1,5 @@
 """LLM validation and guard utilities for analysis responses."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass

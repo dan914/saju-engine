@@ -1,4 +1,5 @@
 from typing import Any
+
 """Pydantic models for timezone conversion service."""
 from __future__ import annotations
 

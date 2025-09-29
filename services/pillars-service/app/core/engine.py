@@ -1,4 +1,5 @@
 """Deterministic engine for four pillars."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -6,9 +7,15 @@ from datetime import datetime
 
 from services.common import TraceMetadata
 
-from ..models import PillarComponent, PillarResult, PillarsComputeRequest, PillarsComputeResponse, TraceInfo
-from .pillars import PillarsCalculator, default_calculator
+from ..models import (
+    PillarComponent,
+    PillarResult,
+    PillarsComputeRequest,
+    PillarsComputeResponse,
+    TraceInfo,
+)
 from .evidence import EvidenceBuilder
+from .pillars import PillarsCalculator, default_calculator
 
 
 @dataclass(slots=True)
@@ -35,7 +42,12 @@ class PillarsEngine:
         evidence = self.evidence_builder.build(
             local_dt=request.localDateTime,
             timezone_name=request.timezone,
-            pillars_result={"year": result["year"], "month": result["month"], "day": result["day"], "hour": result["hour"]},
+            pillars_result={
+                "year": result["year"],
+                "month": result["month"],
+                "day": result["day"],
+                "hour": result["hour"],
+            },
             month_term=month_term,
             month_branch=month_branch,
         )

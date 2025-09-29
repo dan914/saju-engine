@@ -1,4 +1,5 @@
 """API Gateway skeleton for 사주 앱 v1.4."""
+
 from __future__ import annotations
 
 from services.common import create_service_app

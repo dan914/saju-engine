@@ -1,4 +1,5 @@
 """API endpoints for analysis service."""
+
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, status
@@ -33,5 +34,7 @@ def analyze(
     """Return ten gods / relations / strength analysis."""
     response = engine.analyze(payload)
     llm_payload = guard.prepare_payload(response)
-    final_response = guard.postprocess(response, llm_payload, structure_primary=response.structure.primary, topic_tags=[])
+    final_response = guard.postprocess(
+        response, llm_payload, structure_primary=response.structure.primary, topic_tags=[]
+    )
     return final_response

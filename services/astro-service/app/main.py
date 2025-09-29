@@ -1,4 +1,5 @@
 """Astronomy data service."""
+
 from __future__ import annotations
 
 from services.common import create_service_app

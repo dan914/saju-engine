@@ -1,6 +1,5 @@
+from app.main import APP_META, app
 from fastapi.testclient import TestClient
-
-from app.main import app, APP_META
 
 client = TestClient(app)
 

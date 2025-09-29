@@ -1,12 +1,18 @@
 """Delta T policy utilities."""
+
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Tuple
-import json
 
-POLICY_PATH = Path(__file__).resolve().parents[4] / "saju_codex_bundle_v1" / "policy" / "deltaT_policy_v1.json"
+POLICY_PATH = (
+    Path(__file__).resolve().parents[4]
+    / "saju_codex_bundle_v1"
+    / "policy"
+    / "deltaT_policy_v1.json"
+)
 
 
 @dataclass(slots=True)

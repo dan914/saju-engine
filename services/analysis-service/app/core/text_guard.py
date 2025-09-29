@@ -1,13 +1,18 @@
 """Text guard policy enforcement."""
+
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, List
 
-import json
-
-POLICY_PATH = Path(__file__).resolve().parents[5] / "saju_codex_addendum_v2" / "policies" / "text_guard_policy_v1.json"
+POLICY_PATH = (
+    Path(__file__).resolve().parents[5]
+    / "saju_codex_addendum_v2"
+    / "policies"
+    / "text_guard_policy_v1.json"
+)
 
 
 @dataclass(slots=True)
@@ -34,6 +39,10 @@ class TextGuard:
             if term in filtered:
                 filtered = filtered.replace(term, "\u25cf\u25cf")
         topics = set(topic_tags)
-        if topics & set(self.must_append_when_topics) and self.append_note and self.append_note not in filtered:
+        if (
+            topics & set(self.must_append_when_topics)
+            and self.append_note
+            and self.append_note not in filtered
+        ):
             filtered = filtered.rstrip() + " " + self.append_note
         return filtered
