@@ -30,7 +30,7 @@ jobs:
           echo "Working directory: $(pwd)"
           echo "Git HEAD: $(git rev-parse HEAD)"
           echo "Tracked Python/TS files count: $(git ls-files '*.py' '*.ts' | wc -l)"
-          if git grep -l "applyLMTClock\(" -- '*.py' '*.ts'; then
+          if git grep -F "applyLMTClock(" -- '*.py' '*.ts'; then
             echo 'ERROR: applyLMTClock usage detected in tracked files' >&2
             exit 1
           else
