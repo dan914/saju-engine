@@ -22,6 +22,7 @@ from ..models import (
 from .luck import LuckCalculator, LuckContext, ShenshaCatalog
 from .recommendation import RecommendationGuard
 from .relations import RelationContext, RelationTransformer
+from .school import SchoolProfileManager
 from .structure import StructureContext, StructureDetector
 
 # TODO: Fix cross-service import - hyphens in module names not supported
