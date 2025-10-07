@@ -24,6 +24,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ripgrep
 
+      - name: Ensure LMT disabled (check source before pip install)
+        run: |
+          echo "=== Checking for applyLMTClock in source files ==="
+          echo "Working directory: $(pwd)"
+          echo "Git HEAD: $(git rev-parse HEAD)"
+          echo "Tracked Python/TS files count: $(git ls-files '*.py' '*.ts' | wc -l)"
+          if git grep -l "applyLMTClock\(" -- '*.py' '*.ts'; then
+            echo 'ERROR: applyLMTClock usage detected in tracked files' >&2
+            exit 1
+          else
+            echo 'SUCCESS: No applyLMTClock references found in tracked files.'
+          fi
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -33,15 +46,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e .[dev]
-
-      - name: Ensure LMT disabled
-        run: |
-          if rg --files-with-matches "applyLMTClock\(" --glob '*.py' --glob '*.ts' .; then
-            echo 'applyLMTClock usage detected' >&2
-            exit 1
-          else
-            echo 'No applyLMTClock references found.'
-          fi
 
       - name: Run formatters (check mode)
         run: |
