@@ -18,18 +18,18 @@ class LuckCalculator:
     """Temporary placeholder for LuckCalculator to fix CI."""
 
     def compute_start_age(self, context: "LuckContext") -> dict:
-        """Stub method."""
+        """Stub method returning placeholder values."""
         return {
-            "prev_term": None,
-            "next_term": None,
-            "interval_days": None,
-            "days_from_prev": None,
-            "start_age": None,
+            "prev_term": "unknown",
+            "next_term": "unknown",
+            "interval_days": 0,
+            "days_from_prev": 0,
+            "start_age": 0,
         }
 
     def luck_direction(self, context: "LuckContext") -> dict:
-        """Stub method."""
-        return {"direction": None, "method": None, "sex_at_birth": None}
+        """Stub method returning placeholder values."""
+        return {"direction": "forward", "method": "unknown", "sex_at_birth": "unknown"}
 
 
 @dataclass
