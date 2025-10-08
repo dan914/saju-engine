@@ -31,4 +31,7 @@ def test_day_start_respects_policy() -> None:
     response = client.post("/v2/pillars/compute", json=payload)
     assert response.status_code == 200
     day_start = response.json()["pillars"]["day"]["dayStartLocal"]
-    assert day_start.endswith("23:00:00")
+    # ISO8601(+오프셋) 문자열이므로 접미사 비교가 아니라 파싱으로 검증한다.
+    from datetime import datetime
+    dt = datetime.fromisoformat(day_start)
+    assert (dt.hour, dt.minute, dt.second) == (23, 0, 0)
