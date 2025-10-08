@@ -19,23 +19,38 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check if Python code changed
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            python:
+              - 'services/**/*.py'
+              - 'scripts/**/*.py'
+              - 'pyproject.toml'
+              - '.github/workflows/ci.yml'
+
       - name: Set up Python
+        if: steps.changes.outputs.python == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
       - name: Install dependencies
+        if: steps.changes.outputs.python == 'true'
         run: |
           python -m pip install --upgrade pip
           pip install -e .[dev]
 
       - name: Run formatters (check mode)
+        if: steps.changes.outputs.python == 'true'
         run: |
           black --check .
           isort --check-only .
           ruff check .
 
       - name: Run pytest (core services)
+        if: steps.changes.outputs.python == 'true'
         run: |
           pytest services/api-gateway
           pytest services/astro-service

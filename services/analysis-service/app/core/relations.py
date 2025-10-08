@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional, Tuple
 
 POLICY_BASE = Path(__file__).resolve().parents[5]
 RELATION_POLICY_V25 = (
@@ -21,6 +21,8 @@ FIVE_HE_POLICY_V12 = (
     POLICY_BASE / "saju_codex_blueprint_v2_6_SIGNED" / "policies" / "five_he_policy_v1_2.json"
 )
 FIVE_HE_POLICY_V10 = POLICY_BASE / "policies" / "five_he_policy_v1.json"
+# Fallback to v1.0 if v1.2 doesn't exist
+FIVE_HE_POLICY_PATH = FIVE_HE_POLICY_V12 if FIVE_HE_POLICY_V12.exists() else FIVE_HE_POLICY_V10
 ZIXING_POLICY_PATH = POLICY_BASE / "saju_codex_addendum_v2_1" / "policies" / "zixing_rules_v1.json"
 
 
