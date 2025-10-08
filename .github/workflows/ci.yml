@@ -57,6 +57,10 @@ jobs:
           for service in api-gateway astro-service tz-time-service pillars-service analysis-service; do
             if [ -d "services/$service/tests" ]; then
               echo "Testing $service..."
+              # Install service test dependencies if pyproject.toml exists
+              if [ -f "services/$service/pyproject.toml" ]; then
+                (cd "services/$service" && pip install -e .[test] 2>/dev/null || true)
+              fi
               (cd "services/$service" && python -m pytest tests/ -v) || exit 1
             else
               echo "Skipping $service (no tests directory)"
