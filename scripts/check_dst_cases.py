@@ -5,6 +5,7 @@ Check what's happening with DST cases H01 and H02.
 
 from datetime import datetime
 from zoneinfo import ZoneInfo
+
 from calculate_pillars_traditional import calculate_four_pillars
 
 dst_cases = [
@@ -19,7 +20,7 @@ print()
 
 for test_id, birth_dt, note in dst_cases:
     # Create timezone-aware datetime
-    tz = ZoneInfo('Asia/Seoul')
+    tz = ZoneInfo("Asia/Seoul")
     birth_dt_tz = birth_dt.replace(tzinfo=tz)
 
     print(f"{test_id} | {note}")
@@ -28,14 +29,11 @@ for test_id, birth_dt, note in dst_cases:
 
     # Calculate pillars
     result = calculate_four_pillars(
-        birth_dt,
-        tz_str='Asia/Seoul',
-        mode='traditional_kr',
-        return_metadata=True
+        birth_dt, tz_str="Asia/Seoul", mode="traditional_kr", return_metadata=True
     )
 
-    meta = result['metadata']
-    lmt_time = meta['lmt_adjusted_time']
+    meta = result["metadata"]
+    lmt_time = meta["lmt_adjusted_time"]
     lmt_hour = int(lmt_time[11:13])
 
     print(f"  LMT adjusted:   {lmt_time}")
@@ -44,9 +42,18 @@ for test_id, birth_dt, note in dst_cases:
 
     # Check what hour branch should be
     hour_branches = {
-        (23, 1): '子', (1, 3): '丑', (3, 5): '寅', (5, 7): '卯',
-        (7, 9): '辰', (9, 11): '巳', (11, 13): '午', (13, 15): '未',
-        (15, 17): '申', (17, 19): '酉', (19, 21): '戌', (21, 23): '亥'
+        (23, 1): "子",
+        (1, 3): "丑",
+        (3, 5): "寅",
+        (5, 7): "卯",
+        (7, 9): "辰",
+        (9, 11): "巳",
+        (11, 13): "午",
+        (13, 15): "未",
+        (15, 17): "申",
+        (17, 19): "酉",
+        (19, 21): "戌",
+        (21, 23): "亥",
     }
 
     expected_branch = None

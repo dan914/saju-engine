@@ -4,12 +4,11 @@ from __future__ import annotations
 
 import csv
 import json
+import sys
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Iterable
-
-import sys
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
@@ -210,17 +209,20 @@ def build_records() -> list[dict[str, str]]:
                 "month_term": month_term or "",
                 "delta_t_seconds": "",
                 "dataset_version": DATASET_VERSION,
-                "notes": json.dumps({
-                    "num": row.get("num"),
-                    "solar_yun": row.get("solar_yun"),
-                    "lunar_date": row.get("lunar_date"),
-                    "lunar_yun": row.get("lunar_yun"),
-                    "month_code": row.get("month_code"),
-                    "month_24": row.get("month_24"),
-                    "day_time": row.get("day_time"),
-                    "div_hour": row.get("div_hour"),
-                    "div_minute": row.get("div_minute"),
-                }, ensure_ascii=False),
+                "notes": json.dumps(
+                    {
+                        "num": row.get("num"),
+                        "solar_yun": row.get("solar_yun"),
+                        "lunar_date": row.get("lunar_date"),
+                        "lunar_yun": row.get("lunar_yun"),
+                        "month_code": row.get("month_code"),
+                        "month_24": row.get("month_24"),
+                        "day_time": row.get("day_time"),
+                        "div_hour": row.get("div_hour"),
+                        "div_minute": row.get("div_minute"),
+                    },
+                    ensure_ascii=False,
+                ),
             }
             records.append(record)
     return records

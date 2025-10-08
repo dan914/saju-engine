@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import csv
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-CANONICAL_TERMS_DIR = Path('data/canonical/terms')
-OUTPUT_DIR = Path('data/canonical/terms_predicted')
+CANONICAL_TERMS_DIR = Path("data/canonical/terms")
+OUTPUT_DIR = Path("data/canonical/terms_predicted")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 TERMS = [
@@ -36,15 +36,15 @@ REFERENCE_YEAR = 2000
 def load_term_seconds() -> Dict[str, List[Tuple[int, float]]]:
     data: Dict[str, List[Tuple[int, float]]] = {term: [] for term in TERMS}
     for year in range(START_YEAR, END_YEAR_CANONICAL + 1):
-        path = CANONICAL_TERMS_DIR / f'terms_{year}.csv'
+        path = CANONICAL_TERMS_DIR / f"terms_{year}.csv"
         if not path.exists():
             continue
         jan1 = datetime(year, 1, 1, tzinfo=timezone.utc)
-        with path.open('r', encoding='utf-8') as fh:
+        with path.open("r", encoding="utf-8") as fh:
             reader = csv.DictReader(fh)
             for row in reader:
-                term = row['term']
-                dt = datetime.fromisoformat(row['utc_time'].replace('Z', '+00:00'))
+                term = row["term"]
+                dt = datetime.fromisoformat(row["utc_time"].replace("Z", "+00:00"))
                 seconds = (dt - jan1).total_seconds()
                 data[term].append((year, seconds))
     return data
@@ -54,7 +54,7 @@ def solve_quadratic(points: List[Tuple[int, float]]) -> Tuple[float, float, floa
     # Fit seconds = a + b*x + c*x^2, where x = year - REFERENCE_YEAR
     n = len(points)
     if n < 3:
-        raise ValueError('Need at least 3 points for quadratic fit')
+        raise ValueError("Need at least 3 points for quadratic fit")
     xs = [year - REFERENCE_YEAR for year, _ in points]
     ys = [seconds for _, seconds in points]
     sum_x = sum(xs)
@@ -81,7 +81,7 @@ def solve_quadratic(points: List[Tuple[int, float]]) -> Tuple[float, float, floa
         # Pivot
         pivot = A[i][i]
         if abs(pivot) < 1e-12:
-            raise ValueError('Singular matrix in regression')
+            raise ValueError("Singular matrix in regression")
         for j in range(i, 3):
             A[i][j] /= pivot
         B[i] /= pivot
@@ -104,11 +104,18 @@ def predict_seconds(year: int, coeffs: Tuple[float, float, float]) -> float:
 
 
 def write_year(year: int, rows: List[Dict[str, str]]) -> None:
-    path = OUTPUT_DIR / f'terms_{year}.csv'
-    with path.open('w', encoding='utf-8', newline='') as fh:
+    path = OUTPUT_DIR / f"terms_{year}.csv"
+    with path.open("w", encoding="utf-8", newline="") as fh:
         writer = csv.DictWriter(
             fh,
-            fieldnames=['term', 'lambda_deg', 'utc_time', 'delta_t_seconds', 'source', 'algo_version'],
+            fieldnames=[
+                "term",
+                "lambda_deg",
+                "utc_time",
+                "delta_t_seconds",
+                "source",
+                "algo_version",
+            ],
         )
         writer.writeheader()
         writer.writerows(rows)
@@ -118,7 +125,7 @@ def main() -> None:
     data = load_term_seconds()
     for term, points in data.items():
         if len(points) < 6:
-            raise SystemExit(f'Insufficient data for term {term}')
+            raise SystemExit(f"Insufficient data for term {term}")
     coeffs_map = {term: solve_quadratic(points) for term, points in data.items()}
     for year in range(PREDICT_START_YEAR, PREDICT_END_YEAR + 1):
         rows: List[Dict[str, str]] = []
@@ -129,17 +136,17 @@ def main() -> None:
             dt = jan1 + timedelta(seconds=seconds)
             rows.append(
                 {
-                    'term': term,
-                    'lambda_deg': '0',
-                    'utc_time': dt.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                    'delta_t_seconds': '0.0',
-                    'source': 'POLY_EXTRAPOLATION',
-                    'algo_version': 'quadratic',
+                    "term": term,
+                    "lambda_deg": "0",
+                    "utc_time": dt.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "delta_t_seconds": "0.0",
+                    "source": "POLY_EXTRAPOLATION",
+                    "algo_version": "quadratic",
                 }
             )
         write_year(year, rows)
-        print(f'Predicted terms for {year}')
+        print(f"Predicted terms for {year}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

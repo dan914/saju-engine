@@ -11,7 +11,7 @@ KFA_DIR = REPO_ROOT / "data" / "canonical" / "terms_kfa"
 
 def parse_utc_time(utc_str: str) -> datetime:
     """Parse UTC timestamp from CSV."""
-    dt = datetime.fromisoformat(utc_str.replace('Z', '+00:00'))
+    dt = datetime.fromisoformat(utc_str.replace("Z", "+00:00"))
     return dt.replace(tzinfo=None)
 
 
@@ -26,15 +26,15 @@ def compare_year(year: int) -> dict:
     pred_terms = {}
     kfa_terms = {}
 
-    with pred_path.open('r', encoding='utf-8') as f:
+    with pred_path.open("r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            pred_terms[row['term']] = parse_utc_time(row['utc_time'])
+            pred_terms[row["term"]] = parse_utc_time(row["utc_time"])
 
-    with kfa_path.open('r', encoding='utf-8') as f:
+    with kfa_path.open("r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            kfa_terms[row['term']] = parse_utc_time(row['utc_time'])
+            kfa_terms[row["term"]] = parse_utc_time(row["utc_time"])
 
     discrepancies = []
     all_terms = set(pred_terms.keys()) | set(kfa_terms.keys())
@@ -44,31 +44,35 @@ def compare_year(year: int) -> dict:
         kfa_time = kfa_terms.get(term)
 
         if not pred_time or not kfa_time:
-            discrepancies.append({
-                'term': term,
-                'issue': 'MISSING',
-                'predicted': str(pred_time) if pred_time else 'MISSING',
-                'kfa': str(kfa_time) if kfa_time else 'MISSING'
-            })
+            discrepancies.append(
+                {
+                    "term": term,
+                    "issue": "MISSING",
+                    "predicted": str(pred_time) if pred_time else "MISSING",
+                    "kfa": str(kfa_time) if kfa_time else "MISSING",
+                }
+            )
             continue
 
         diff_seconds = abs((pred_time - kfa_time).total_seconds())
         diff_minutes = diff_seconds / 60
 
         if diff_minutes > 1:
-            discrepancies.append({
-                'term': term,
-                'diff_minutes': diff_minutes,
-                'diff_hours': diff_minutes / 60,
-                'predicted': pred_time,
-                'kfa': kfa_time
-            })
+            discrepancies.append(
+                {
+                    "term": term,
+                    "diff_minutes": diff_minutes,
+                    "diff_hours": diff_minutes / 60,
+                    "predicted": pred_time,
+                    "kfa": kfa_time,
+                }
+            )
 
     return {
-        'year': year,
-        'pred_count': len(pred_terms),
-        'kfa_count': len(kfa_terms),
-        'discrepancies': discrepancies
+        "year": year,
+        "pred_count": len(pred_terms),
+        "kfa_count": len(kfa_terms),
+        "discrepancies": discrepancies,
     }
 
 
@@ -88,16 +92,20 @@ def main():
 
         years_compared += 1
 
-        if result['discrepancies']:
-            all_discrepancies.extend(result['discrepancies'])
+        if result["discrepancies"]:
+            all_discrepancies.extend(result["discrepancies"])
             print(f"\n{year}: {len(result['discrepancies'])} discrepancies")
-            for disc in result['discrepancies']:
-                if 'issue' in disc:
-                    print(f"  {disc['term']:4s}: {disc['issue']} - Pred={disc['predicted']}, KFA={disc['kfa']}")
+            for disc in result["discrepancies"]:
+                if "issue" in disc:
+                    print(
+                        f"  {disc['term']:4s}: {disc['issue']} - Pred={disc['predicted']}, KFA={disc['kfa']}"
+                    )
                 else:
-                    print(f"  {disc['term']:4s}: {disc['diff_hours']:6.2f} hrs"
-                          f"  | Predicted: {disc['predicted']}"
-                          f"  | KFA: {disc['kfa']}")
+                    print(
+                        f"  {disc['term']:4s}: {disc['diff_hours']:6.2f} hrs"
+                        f"  | Predicted: {disc['predicted']}"
+                        f"  | KFA: {disc['kfa']}"
+                    )
 
     print("\n" + "=" * 100)
     print("SUMMARY")
@@ -106,19 +114,24 @@ def main():
     print(f"Total discrepancies: {len(all_discrepancies)}")
 
     if all_discrepancies:
-        numeric_discs = [d for d in all_discrepancies if 'diff_hours' in d]
+        numeric_discs = [d for d in all_discrepancies if "diff_hours" in d]
         if numeric_discs:
-            avg_diff_hours = sum(d['diff_hours'] for d in numeric_discs) / len(numeric_discs)
-            max_diff = max(numeric_discs, key=lambda x: x['diff_hours'])
+            avg_diff_hours = sum(d["diff_hours"] for d in numeric_discs) / len(numeric_discs)
+            max_diff = max(numeric_discs, key=lambda x: x["diff_hours"])
 
-            print(f"\nAverage difference: {avg_diff_hours:.2f} hours ({avg_diff_hours*60:.1f} minutes)")
+            print(
+                f"\nAverage difference: {avg_diff_hours:.2f} hours ({avg_diff_hours*60:.1f} minutes)"
+            )
             print(f"Maximum difference: {max_diff['diff_hours']:.2f} hours")
-            print(f"  {max_diff['term']} in year (estimated): Pred={max_diff['predicted']}, KFA={max_diff['kfa']}")
+            print(
+                f"  {max_diff['term']} in year (estimated): Pred={max_diff['predicted']}, KFA={max_diff['kfa']}"
+            )
 
     print("\n" + "=" * 100)
     print("CONCLUSION")
     print("=" * 100)
-    print("""
+    print(
+        """
 The PREDICTED data (from quadratic extrapolation) was OVERWRITTEN by KFA data.
 
 **PREDICTED source:**
@@ -138,7 +151,8 @@ The PREDICTED data (from quadratic extrapolation) was OVERWRITTEN by KFA data.
 - Keep predicted terms as backup in data/canonical/terms_predicted/
 
 **ACTION:** No rollback needed. KFA is better quality.
-    """)
+    """
+    )
 
 
 if __name__ == "__main__":

@@ -5,9 +5,9 @@ from __future__ import annotations
 import shutil
 from pathlib import Path
 
-OBSERVED_DIR = Path('data/canonical/terms')
-PREDICTED_DIR = Path('data/canonical/terms_predicted')
-RUNTIME_DIR = Path('data')
+OBSERVED_DIR = Path("data/canonical/terms")
+PREDICTED_DIR = Path("data/canonical/terms_predicted")
+RUNTIME_DIR = Path("data")
 RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
 
 OBSERVED_RANGE = range(1930, 2021)
@@ -15,12 +15,12 @@ PREDICTED_RANGE = range(2021, 2051)
 
 
 def copy_year(src_dir: Path, year: int) -> None:
-    src = src_dir / f'terms_{year}.csv'
+    src = src_dir / f"terms_{year}.csv"
     if not src.exists():
-        raise FileNotFoundError(f'Missing terms file for {year}: {src}')
-    dst = RUNTIME_DIR / f'terms_{year}.csv'
+        raise FileNotFoundError(f"Missing terms file for {year}: {src}")
+    dst = RUNTIME_DIR / f"terms_{year}.csv"
     shutil.copy2(src, dst)
-    print(f'Updated {dst}')
+    print(f"Updated {dst}")
 
 
 def main() -> None:
@@ -30,5 +30,5 @@ def main() -> None:
         copy_year(PREDICTED_DIR, year)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

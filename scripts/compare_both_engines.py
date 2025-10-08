@@ -7,8 +7,8 @@ Engine 2: PillarsCalculator + CanonicalCalendar - Orphaned engine with CSV looku
 """
 
 import sys
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 # Setup paths
 repo_root = Path(__file__).resolve().parents[1]
@@ -48,10 +48,10 @@ timezone = "Asia/Seoul"
 result1 = calculate_four_pillars(
     birth_dt=birth_dt,
     tz_str=timezone,
-    mode='traditional_kr',
-    zi_hour_mode='traditional',
+    mode="traditional_kr",
+    zi_hour_mode="traditional",
     use_refined=True,
-    return_metadata=True
+    return_metadata=True,
 )
 
 print("Results:")
@@ -61,8 +61,8 @@ print(f"  일주 (Day):   {result1['day']}")
 print(f"  시주 (Hour):  {result1['hour']}")
 print()
 
-if 'metadata' in result1:
-    meta = result1['metadata']
+if "metadata" in result1:
+    meta = result1["metadata"]
     print("Metadata:")
     print(f"  LMT offset: {meta.get('lmt_offset', 0)} minutes")
     print(f"  DST applied: {meta.get('dst_applied', False)}")
@@ -90,10 +90,7 @@ try:
 
     calculator = default_calculator()
 
-    result2 = calculator.compute(
-        local_dt=birth_dt,
-        timezone=timezone
-    )
+    result2 = calculator.compute(local_dt=birth_dt, timezone=timezone)
 
     print("Results:")
     print(f"  년주 (Year):  {result2['year']}")
@@ -102,7 +99,7 @@ try:
     print(f"  시주 (Hour):  {result2['hour']}")
     print()
 
-    if result2.get('month_term'):
+    if result2.get("month_term"):
         print("Metadata:")
         print(f"  Month term: {result2['month_term']}")
         print(f"  Day start: {result2.get('day_start', 'N/A')}")
@@ -127,10 +124,10 @@ if result2:
     print(f"{'Pillar':<12} {'Engine 1 (Active)':<20} {'Engine 2 (Orphaned)':<20} {'Match?':<10}")
     print("-" * 80)
 
-    year_match = "✓" if result1['year'] == result2['year'] else "✗"
-    month_match = "✓" if result1['month'] == result2['month'] else "✗"
-    day_match = "✓" if result1['day'] == result2['day'] else "✗"
-    hour_match = "✓" if result1['hour'] == result2['hour'] else "✗"
+    year_match = "✓" if result1["year"] == result2["year"] else "✗"
+    month_match = "✓" if result1["month"] == result2["month"] else "✗"
+    day_match = "✓" if result1["day"] == result2["day"] else "✗"
+    hour_match = "✓" if result1["hour"] == result2["hour"] else "✗"
 
     print(f"{'년주 (Year)':<12} {result1['year']:<20} {result2['year']:<20} {year_match:<10}")
     print(f"{'월주 (Month)':<12} {result1['month']:<20} {result2['month']:<20} {month_match:<10}")

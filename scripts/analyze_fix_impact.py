@@ -6,7 +6,9 @@ Shows which test cases will have different results.
 """
 
 from datetime import datetime, timedelta
+
 from calculate_pillars_traditional import calculate_four_pillars
+
 
 def analyze_case(dt, label):
     """Analyze a single case under both old and new logic."""
@@ -14,11 +16,11 @@ def analyze_case(dt, label):
     # Current (old) logic: Check zi using original hour
     result_current = calculate_four_pillars(
         dt,
-        tz_str='Asia/Seoul',
-        mode='traditional_kr',
+        tz_str="Asia/Seoul",
+        mode="traditional_kr",
         validate_input=True,
         return_metadata=True,
-        zi_hour_mode='traditional'
+        zi_hour_mode="traditional",
     )
 
     # Simulate new logic manually
@@ -39,11 +41,11 @@ def analyze_case(dt, label):
     # Calculate what new result would be
     result_new = calculate_four_pillars(
         dt,
-        tz_str='Asia/Seoul',
-        mode='traditional_kr',
+        tz_str="Asia/Seoul",
+        mode="traditional_kr",
         validate_input=True,
         return_metadata=True,
-        zi_hour_mode='modern'  # Use modern to get LMT date without zi rule
+        zi_hour_mode="modern",  # Use modern to get LMT date without zi rule
     )
 
     # Then manually check if new zi rule would apply
@@ -55,8 +57,8 @@ def analyze_case(dt, label):
         will_change = False
 
     # Compare
-    current_day = result_current['metadata']['day_for_pillar']
-    current_zi = result_current['metadata']['zi_transition_applied']
+    current_day = result_current["metadata"]["day_for_pillar"]
+    current_zi = result_current["metadata"]["zi_transition_applied"]
     current_pillars = f"{result_current['year']} {result_current['month']} {result_current['day']} {result_current['hour']}"
 
     original_hour = dt.hour
@@ -88,9 +90,9 @@ def analyze_case(dt, label):
 
 
 def main():
-    print("="*100)
+    print("=" * 100)
     print("IMPACT ANALYSIS: Old Logic (check original hour) vs New Logic (check LMT hour)")
-    print("="*100)
+    print("=" * 100)
 
     # Test cases from our suites
     test_cases = [
@@ -105,17 +107,14 @@ def main():
         (datetime(2019, 8, 7, 23, 58), "REF-08: 2019-08-07 23:58"),
         (datetime(2021, 1, 1, 0, 1), "REF-09: 2021-01-01 00:01 ← THE FAILING CASE"),
         (datetime(2024, 11, 7, 6, 5), "REF-10: 2024-11-07 06:05"),
-
         # 30-case edge cases
         (datetime(2000, 9, 14, 10, 0), "N01: 2000-09-14 10:00"),
         (datetime(1999, 12, 31, 23, 30), "N06: 1999-12-31 23:30 (NYE)"),
         (datetime(2020, 2, 3, 23, 59), "E08: 2020-02-03 23:59 (before lichun)"),
         (datetime(2020, 2, 4, 0, 1), "E07: 2020-02-04 00:01 (after lichun)"),
-
         # Critical boundary cases
         (datetime(2000, 9, 14, 23, 30), "ZI-01: 23:30 (original zi test)"),
         (datetime(2000, 9, 14, 0, 30), "ZI-MORNING: 00:30 (조자시)"),
-
         # Edge cases around LMT boundary
         (datetime(2000, 1, 1, 23, 0), "EDGE: 23:00 exact"),
         (datetime(2000, 1, 1, 23, 15), "EDGE: 23:15 (→ LMT 22:43)"),
@@ -137,9 +136,9 @@ def main():
             no_changes.append(label)
 
     # Summary
-    print("\n" + "="*100)
+    print("\n" + "=" * 100)
     print("SUMMARY")
-    print("="*100)
+    print("=" * 100)
     print(f"\nTotal cases analyzed: {len(test_cases)}")
     print(f"Will CHANGE: {len(changes)}")
     print(f"Stay SAME:   {len(no_changes)}")
@@ -154,10 +153,11 @@ def main():
         for case in no_changes:
             print(f"    - {case}")
 
-    print("\n" + "="*100)
+    print("\n" + "=" * 100)
     print("KEY INSIGHT")
-    print("="*100)
-    print("""
+    print("=" * 100)
+    print(
+        """
 Cases that CHANGE are those where:
   - Original hour is 23 BUT LMT hour is NOT 23
     (e.g., 23:15 → LMT 22:43, loses zi status)
@@ -167,7 +167,8 @@ Cases that CHANGE are those where:
 This happens in a ~32-minute window around midnight:
   - Input 23:00-23:31 → LMT 22:28-22:59 (loses zi)
   - Input 00:00-00:27 → LMT prev day 23:28-23:59 (gains zi)
-    """)
+    """
+    )
 
 
 if __name__ == "__main__":

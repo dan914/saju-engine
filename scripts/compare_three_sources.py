@@ -2,29 +2,49 @@
 
 import csv
 import sqlite3
+from collections import defaultdict
 from datetime import datetime, timedelta
 from pathlib import Path
-from collections import defaultdict
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SKY_LIZARD_DIR = REPO_ROOT / "data" / "canonical" / "terms"
 KFA_DIR = REPO_ROOT / "data" / "canonical" / "terms_kfa"
-MANSEORYEOK_DB = Path("/Users/yujumyeong/Downloads/korean_fortune_apps_complete/manseoryeok_database/perpetualcalendarlite.sqlite")
+MANSEORYEOK_DB = Path(
+    "/Users/yujumyeong/Downloads/korean_fortune_apps_complete/manseoryeok_database/perpetualcalendarlite.sqlite"
+)
 
 # Mapping Korean term names to Chinese characters
 KOREAN_TO_CHINESE = {
-    "소한": "小寒", "대한": "大寒", "입춘": "立春", "우수": "雨水",
-    "경칩": "驚蟄", "춘분": "春分", "청명": "清明", "곡우": "穀雨",
-    "입하": "立夏", "소만": "小滿", "망종": "芒種", "하지": "夏至",
-    "소서": "小暑", "대서": "大暑", "입추": "立秋", "처서": "處暑",
-    "백로": "白露", "추분": "秋分", "한로": "寒露", "상강": "霜降",
-    "입동": "立冬", "소설": "小雪", "대설": "大雪", "동지": "冬至"
+    "소한": "小寒",
+    "대한": "大寒",
+    "입춘": "立春",
+    "우수": "雨水",
+    "경칩": "驚蟄",
+    "춘분": "春分",
+    "청명": "清明",
+    "곡우": "穀雨",
+    "입하": "立夏",
+    "소만": "小滿",
+    "망종": "芒種",
+    "하지": "夏至",
+    "소서": "小暑",
+    "대서": "大暑",
+    "입추": "立秋",
+    "처서": "處暑",
+    "백로": "白露",
+    "추분": "秋分",
+    "한로": "寒露",
+    "상강": "霜降",
+    "입동": "立冬",
+    "소설": "小雪",
+    "대설": "大雪",
+    "동지": "冬至",
 }
 
 
 def parse_utc_time(utc_str: str) -> datetime:
     """Parse UTC timestamp from CSV."""
-    dt = datetime.fromisoformat(utc_str.replace('Z', '+00:00'))
+    dt = datetime.fromisoformat(utc_str.replace("Z", "+00:00"))
     # Return as naive UTC datetime for comparison
     return dt.replace(tzinfo=None)
 
@@ -36,11 +56,11 @@ def load_sky_lizard_terms(year: int) -> dict[str, datetime]:
     if not csv_path.exists():
         return terms
 
-    with csv_path.open('r', encoding='utf-8') as f:
+    with csv_path.open("r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            term = row['term']
-            utc_time = parse_utc_time(row['utc_time'])
+            term = row["term"]
+            utc_time = parse_utc_time(row["utc_time"])
             terms[term] = utc_time
     return terms
 
@@ -52,11 +72,11 @@ def load_kfa_terms(year: int) -> dict[str, datetime]:
     if not csv_path.exists():
         return terms
 
-    with csv_path.open('r', encoding='utf-8') as f:
+    with csv_path.open("r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            term = row['term']
-            utc_time = parse_utc_time(row['utc_time'])
+            term = row["term"]
+            utc_time = parse_utc_time(row["utc_time"])
             terms[term] = utc_time
     return terms
 
@@ -71,12 +91,15 @@ def load_manseoryeok_terms(year: int) -> dict[str, datetime]:
     cursor = conn.cursor()
 
     # Query for year's solar terms
-    cursor.execute("""
+    cursor.execute(
+        """
         SELECT umdate, jeol, jeoliptime
         FROM mansedata
         WHERE umdate LIKE ? AND jeoliptime <> ''
         ORDER BY umdate
-    """, (f"{year}%",))
+    """,
+        (f"{year}%",),
+    )
 
     for umdate, jeol_korean, jeoliptime in cursor.fetchall():
         # umdate format: YYYYMMDD (lunar date)
@@ -90,8 +113,8 @@ def load_manseoryeok_terms(year: int) -> dict[str, datetime]:
             year_val = int(umdate[:4])
             month_val = int(umdate[4:6])
             day_val = int(umdate[6:8])
-            hour_val = int(jeoliptime.split(':')[0])
-            minute_val = int(jeoliptime.split(':')[1])
+            hour_val = int(jeoliptime.split(":")[0])
+            minute_val = int(jeoliptime.split(":")[1])
 
             # Create KST datetime and convert to UTC
             kst_time = datetime(year_val, month_val, day_val, hour_val, minute_val)
@@ -114,21 +137,17 @@ def compare_year(year: int) -> dict:
     # Get all unique term names
     all_terms = set(sl_terms.keys()) | set(kfa_terms.keys()) | set(manse_terms.keys())
 
-    results = {
-        'year': year,
-        'terms': {},
-        'discrepancies': []
-    }
+    results = {"year": year, "terms": {}, "discrepancies": []}
 
     for term in sorted(all_terms):
         sl_time = sl_terms.get(term)
         kfa_time = kfa_terms.get(term)
         manse_time = manse_terms.get(term)
 
-        results['terms'][term] = {
-            'sky_lizard': sl_time.isoformat() if sl_time else None,
-            'kfa': kfa_time.isoformat() if kfa_time else None,
-            'manseoryeok': manse_time.isoformat() if manse_time else None
+        results["terms"][term] = {
+            "sky_lizard": sl_time.isoformat() if sl_time else None,
+            "kfa": kfa_time.isoformat() if kfa_time else None,
+            "manseoryeok": manse_time.isoformat() if manse_time else None,
         }
 
         # Check for discrepancies
@@ -140,13 +159,15 @@ def compare_year(year: int) -> dict:
         max_diff = max((t1 - t2).total_seconds() / 60 for t1 in times for t2 in times)
 
         if max_diff > 5:  # More than 5 minutes difference
-            results['discrepancies'].append({
-                'term': term,
-                'max_diff_minutes': max_diff,
-                'sky_lizard': sl_time.isoformat() if sl_time else 'N/A',
-                'kfa': kfa_time.isoformat() if kfa_time else 'N/A',
-                'manseoryeok': manse_time.isoformat() if manse_time else 'N/A'
-            })
+            results["discrepancies"].append(
+                {
+                    "term": term,
+                    "max_diff_minutes": max_diff,
+                    "sky_lizard": sl_time.isoformat() if sl_time else "N/A",
+                    "kfa": kfa_time.isoformat() if kfa_time else "N/A",
+                    "manseoryeok": manse_time.isoformat() if manse_time else "N/A",
+                }
+            )
 
     return results
 
@@ -162,25 +183,25 @@ def main():
     for year in test_years:
         print(f"\n{'=' * 80}")
         print(f"Year: {year}")
-        print('=' * 80)
+        print("=" * 80)
 
         results = compare_year(year)
 
         # Print summary
-        sl_count = sum(1 for t in results['terms'].values() if t['sky_lizard'])
-        kfa_count = sum(1 for t in results['terms'].values() if t['kfa'])
-        manse_count = sum(1 for t in results['terms'].values() if t['manseoryeok'])
+        sl_count = sum(1 for t in results["terms"].values() if t["sky_lizard"])
+        kfa_count = sum(1 for t in results["terms"].values() if t["kfa"])
+        manse_count = sum(1 for t in results["terms"].values() if t["manseoryeok"])
 
         print(f"\nTerm counts:")
         print(f"  SKY_LIZARD:  {sl_count} terms")
         print(f"  KFA:         {kfa_count} terms")
         print(f"  Manseoryeok: {manse_count} terms")
 
-        if results['discrepancies']:
+        if results["discrepancies"]:
             print(f"\n⚠️  Found {len(results['discrepancies'])} discrepancies (>5 min difference):")
             print()
 
-            for disc in results['discrepancies']:
+            for disc in results["discrepancies"]:
                 print(f"  {disc['term']}:")
                 print(f"    Max difference: {disc['max_diff_minutes']:.1f} minutes")
                 print(f"    SKY_LIZARD:  {disc['sky_lizard']}")
@@ -193,7 +214,8 @@ def main():
     print("\n" + "=" * 80)
     print("RECOMMENDATIONS:")
     print("=" * 80)
-    print("""
+    print(
+        """
 Based on the comparison:
 
 1. SKY_LIZARD (1930-2020):
@@ -215,7 +237,8 @@ SUGGESTED STRATEGY:
 - 1930-2020: Use SKY_LIZARD as canonical
 - Pre-1930, 2021-2050: Use KFA
 - Always validate critical dates against multiple sources
-""")
+"""
+    )
 
 
 if __name__ == "__main__":

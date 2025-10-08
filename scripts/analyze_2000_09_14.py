@@ -16,6 +16,7 @@ from app.core.korean_enricher import KoreanLabelEnricher
 from app.models import AnalysisRequest
 from app.models.analysis import PillarInput
 
+
 def main():
     print("=" * 80)
     print("사주 전체 분석 - 2000년 9월 14일 오전 10시 (양력, 서울)")
@@ -29,10 +30,10 @@ def main():
     print("-" * 80)
 
     pillars_data = {
-        "year": PillarInput(pillar="庚辰"),   # 2000년 = 경진년
+        "year": PillarInput(pillar="庚辰"),  # 2000년 = 경진년
         "month": PillarInput(pillar="乙酉"),  # 음력 8월(양력 9월 백로 후) = 을유월
-        "day": PillarInput(pillar="丁巳"),     # 일주 (만세력 필요)
-        "hour": PillarInput(pillar="乙巳")    # 10시 = 사시 (巳時)
+        "day": PillarInput(pillar="丁巳"),  # 일주 (만세력 필요)
+        "hour": PillarInput(pillar="乙巳"),  # 10시 = 사시 (巳時)
     }
 
     print(f"년주(年柱): {pillars_data['year'].pillar} (庚辰 경진)")
@@ -58,7 +59,9 @@ def main():
     print("📊 십신(十神) - Ten Gods:")
     print("-" * 80)
     for pillar, god in result.ten_gods.summary.items():
-        pillar_name = {"year": "년주", "month": "월주", "day": "일주", "hour": "시주"}.get(pillar, pillar)
+        pillar_name = {"year": "년주", "month": "월주", "day": "일주", "hour": "시주"}.get(
+            pillar, pillar
+        )
         print(f"  {pillar_name:6s}: {god}")
     print()
 
@@ -176,15 +179,20 @@ def main():
         print(f"  격국: {enriched['structure']['primary']} → {enriched['structure']['primary_ko']}")
 
     if "confidence_ko" in enriched.get("structure", {}):
-        print(f"  신뢰도: {enriched['structure']['confidence']} → {enriched['structure']['confidence_ko']}")
+        print(
+            f"  신뢰도: {enriched['structure']['confidence']} → {enriched['structure']['confidence_ko']}"
+        )
 
     if "direction_ko" in enriched.get("luck_direction", {}):
-        print(f"  대운방향: {enriched['luck_direction']['direction']} → {enriched['luck_direction']['direction_ko']}")
+        print(
+            f"  대운방향: {enriched['luck_direction']['direction']} → {enriched['luck_direction']['direction_ko']}"
+        )
 
     print()
     print("=" * 80)
     print("✅ 사주 분석 완료!")
     print("=" * 80)
+
 
 if __name__ == "__main__":
     main()

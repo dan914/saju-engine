@@ -2,24 +2,25 @@
 """Debug 2021-01-01 00:01 case - why do we get different day/hour pillars?"""
 
 from datetime import datetime
+
 from calculate_pillars_traditional import calculate_four_pillars
 
 # The problematic case
 dt = datetime(2021, 1, 1, 0, 1)
 
-print("="*100)
+print("=" * 100)
 print("DEBUGGING: 2021-01-01 00:01")
-print("="*100)
+print("=" * 100)
 print()
 
 # Calculate with traditional mode
 result = calculate_four_pillars(
     dt,
-    tz_str='Asia/Seoul',
-    mode='traditional_kr',
+    tz_str="Asia/Seoul",
+    mode="traditional_kr",
     validate_input=True,
     return_metadata=True,
-    zi_hour_mode='traditional'
+    zi_hour_mode="traditional",
 )
 
 print("INPUT:")
@@ -37,7 +38,7 @@ print(f"  Hour:  {result['hour']}")
 print()
 
 print("METADATA:")
-meta = result['metadata']
+meta = result["metadata"]
 print(f"  LMT offset: {meta['lmt_offset']} minutes")
 print(f"  LMT adjusted time: {meta['lmt_adjusted_time']}")
 print(f"  子時 transition applied: {meta['zi_transition_applied']}")
@@ -57,16 +58,19 @@ print("  Our calculation:")
 print(f"    Year:  {result['year']}")
 print(f"    Month: {result['month']}")
 print(f"    Day:   {result['day']}  ← {'✅ MATCH' if result['day'] == '己酉' else '❌ DIFFERENT'}")
-print(f"    Hour:  {result['hour']}  ← {'✅ MATCH' if result['hour'] == '甲子' else '❌ DIFFERENT'}")
+print(
+    f"    Hour:  {result['hour']}  ← {'✅ MATCH' if result['hour'] == '甲子' else '❌ DIFFERENT'}"
+)
 print()
 
-print("="*100)
+print("=" * 100)
 print("ANALYSIS")
-print("="*100)
+print("=" * 100)
 print()
 
 # Calculate the date used for day pillar
 from datetime import timedelta
+
 input_date = dt.date()
 lmt_adjusted_date = (dt - timedelta(minutes=32)).date()
 
@@ -105,57 +109,69 @@ print("4. Our LMT pushes 00:01 back to 23:29 (previous day)")
 print()
 
 # Calculate without LMT to see
-print("="*100)
+print("=" * 100)
 print("TEST: Without LMT adjustment")
-print("="*100)
+print("=" * 100)
 result_no_lmt = calculate_four_pillars(
     dt,
-    tz_str='Asia/Seoul',
-    mode='traditional_kr',
+    tz_str="Asia/Seoul",
+    mode="traditional_kr",
     validate_input=True,
     return_metadata=True,
-    lmt_offset_minutes=0  # No LMT
+    lmt_offset_minutes=0,  # No LMT
 )
-print(f"Day:  {result_no_lmt['day']}  ← {('✅ MATCHES REFERENCE' if result_no_lmt['day'] == '己酉' else 'Still different')}")
-print(f"Hour: {result_no_lmt['hour']}  ← {('✅ MATCHES REFERENCE' if result_no_lmt['hour'] == '甲子' else 'Still different')}")
+print(
+    f"Day:  {result_no_lmt['day']}  ← {('✅ MATCHES REFERENCE' if result_no_lmt['day'] == '己酉' else 'Still different')}"
+)
+print(
+    f"Hour: {result_no_lmt['hour']}  ← {('✅ MATCHES REFERENCE' if result_no_lmt['hour'] == '甲子' else 'Still different')}"
+)
 print()
 
 # Calculate with modern zi_hour_mode
-print("="*100)
+print("=" * 100)
 print("TEST: Modern zi_hour_mode (no 子時 rule)")
-print("="*100)
+print("=" * 100)
 result_modern = calculate_four_pillars(
     dt,
-    tz_str='Asia/Seoul',
-    mode='traditional_kr',
+    tz_str="Asia/Seoul",
+    mode="traditional_kr",
     validate_input=True,
     return_metadata=True,
-    zi_hour_mode='modern'
+    zi_hour_mode="modern",
 )
-print(f"Day:  {result_modern['day']}  ← {('✅ MATCHES REFERENCE' if result_modern['day'] == '己酉' else 'Still different')}")
-print(f"Hour: {result_modern['hour']}  ← {('✅ MATCHES REFERENCE' if result_modern['hour'] == '甲子' else 'Still different')}")
+print(
+    f"Day:  {result_modern['day']}  ← {('✅ MATCHES REFERENCE' if result_modern['day'] == '己酉' else 'Still different')}"
+)
+print(
+    f"Hour: {result_modern['hour']}  ← {('✅ MATCHES REFERENCE' if result_modern['hour'] == '甲子' else 'Still different')}"
+)
 print()
 
 # Test with no LMT and modern mode
-print("="*100)
+print("=" * 100)
 print("TEST: No LMT + Modern mode")
-print("="*100)
+print("=" * 100)
 result_neither = calculate_four_pillars(
     dt,
-    tz_str='Asia/Seoul',
-    mode='traditional_kr',
+    tz_str="Asia/Seoul",
+    mode="traditional_kr",
     validate_input=True,
     return_metadata=True,
     lmt_offset_minutes=0,
-    zi_hour_mode='modern'
+    zi_hour_mode="modern",
 )
-print(f"Day:  {result_neither['day']}  ← {('✅ MATCHES REFERENCE' if result_neither['day'] == '己酉' else 'Still different')}")
-print(f"Hour: {result_neither['hour']}  ← {('✅ MATCHES REFERENCE' if result_neither['hour'] == '甲子' else 'Still different')}")
+print(
+    f"Day:  {result_neither['day']}  ← {('✅ MATCHES REFERENCE' if result_neither['day'] == '己酉' else 'Still different')}"
+)
+print(
+    f"Hour: {result_neither['hour']}  ← {('✅ MATCHES REFERENCE' if result_neither['hour'] == '甲子' else 'Still different')}"
+)
 print()
 
-print("="*100)
+print("=" * 100)
 print("CONCLUSION")
-print("="*100)
+print("=" * 100)
 print()
 print("The discrepancy is due to:")
 print("1. We apply LMT (-32 min): 2021-01-01 00:01 → 2020-12-31 23:29")

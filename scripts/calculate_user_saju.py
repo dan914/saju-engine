@@ -5,10 +5,10 @@ Birth: 2000-09-14 10:00 (양력, 오전 10시)
 Location: Seoul, Korea (Asia/Seoul timezone)
 """
 
-import sys
-from pathlib import Path
-from datetime import datetime
 import json
+import sys
+from datetime import datetime
+from pathlib import Path
 
 # Add services to path
 repo_root = Path(__file__).resolve().parents[1]
@@ -24,6 +24,7 @@ sys.path.insert(0, str(repo_root / "services" / "analysis-service"))
 from app.core.engine import AnalysisEngine
 from app.core.korean_enricher import KoreanLabelEnricher
 from app.models import AnalysisRequest
+
 
 def main():
     print("=" * 80)
@@ -41,11 +42,7 @@ def main():
     birth_dt = datetime(2000, 9, 14, 10, 0, 0)
     timezone = "Asia/Seoul"
 
-    request = ComputeRequest(
-        birth_dt=birth_dt,
-        timezone=timezone,
-        zi_hour_mode="default"
-    )
+    request = ComputeRequest(birth_dt=birth_dt, timezone=timezone, zi_hour_mode="default")
 
     print(f"입력 정보:")
     print(f"  생년월일시: {birth_dt}")
@@ -56,10 +53,18 @@ def main():
     result = pillars_engine.compute(request)
 
     print(f"사주 기둥:")
-    print(f"  년주(年柱): {result.pillars.year.pillar} ({result.pillars.year.pillar[0]} {result.pillars.year.pillar[1]})")
-    print(f"  월주(月柱): {result.pillars.month.pillar} ({result.pillars.month.pillar[0]} {result.pillars.month.pillar[1]})")
-    print(f"  일주(日柱): {result.pillars.day.pillar} ({result.pillars.day.pillar[0]} {result.pillars.day.pillar[1]})")
-    print(f"  시주(時柱): {result.pillars.hour.pillar} ({result.pillars.hour.pillar[0]} {result.pillars.hour.pillar[1]})")
+    print(
+        f"  년주(年柱): {result.pillars.year.pillar} ({result.pillars.year.pillar[0]} {result.pillars.year.pillar[1]})"
+    )
+    print(
+        f"  월주(月柱): {result.pillars.month.pillar} ({result.pillars.month.pillar[0]} {result.pillars.month.pillar[1]})"
+    )
+    print(
+        f"  일주(日柱): {result.pillars.day.pillar} ({result.pillars.day.pillar[0]} {result.pillars.day.pillar[1]})"
+    )
+    print(
+        f"  시주(時柱): {result.pillars.hour.pillar} ({result.pillars.hour.pillar[0]} {result.pillars.hour.pillar[1]})"
+    )
     print()
 
     print(f"추가 정보:")
@@ -76,10 +81,7 @@ def main():
     analysis_engine = AnalysisEngine()
 
     # Create analysis request from pillars
-    analysis_request = AnalysisRequest(
-        pillars=result.pillars.model_dump(),
-        options={}
-    )
+    analysis_request = AnalysisRequest(pillars=result.pillars.model_dump(), options={})
 
     # Run analysis
     analysis_result = analysis_engine.analyze(analysis_request)
@@ -106,9 +108,16 @@ def main():
         print(f"  파(破): {analysis_result.relations.po}")
     if analysis_result.relations.hai:
         print(f"  해(害): {analysis_result.relations.hai}")
-    if not any([analysis_result.relations.he6, analysis_result.relations.sanhe,
-                analysis_result.relations.chong, analysis_result.relations.xing,
-                analysis_result.relations.po, analysis_result.relations.hai]):
+    if not any(
+        [
+            analysis_result.relations.he6,
+            analysis_result.relations.sanhe,
+            analysis_result.relations.chong,
+            analysis_result.relations.xing,
+            analysis_result.relations.po,
+            analysis_result.relations.hai,
+        ]
+    ):
         print("  (관계 없음)")
     print()
 
@@ -177,7 +186,7 @@ def main():
     # Show enriched Strength
     print("강약 (한국어 보강):")
     print("-" * 80)
-    if 'level_ko' in enriched.get('strength', {}):
+    if "level_ko" in enriched.get("strength", {}):
         print(f"  일간 세력: {enriched['strength']['level']} → {enriched['strength']['level_ko']}")
     else:
         print(f"  일간 세력: {enriched['strength']['level']}")
@@ -186,19 +195,25 @@ def main():
     # Show enriched Structure
     print("격국 (한국어 보강):")
     print("-" * 80)
-    if 'primary_ko' in enriched.get('structure', {}):
-        print(f"  주격국: {enriched['structure']['primary']} → {enriched['structure']['primary_ko']}")
+    if "primary_ko" in enriched.get("structure", {}):
+        print(
+            f"  주격국: {enriched['structure']['primary']} → {enriched['structure']['primary_ko']}"
+        )
     else:
         print(f"  주격국: {enriched['structure']['primary']}")
-    if 'confidence_ko' in enriched.get('structure', {}):
-        print(f"  신뢰도: {enriched['structure']['confidence']} → {enriched['structure']['confidence_ko']}")
+    if "confidence_ko" in enriched.get("structure", {}):
+        print(
+            f"  신뢰도: {enriched['structure']['confidence']} → {enriched['structure']['confidence_ko']}"
+        )
     print()
 
     # Show enriched Luck Direction
     print("대운 방향 (한국어 보강):")
     print("-" * 80)
-    if 'direction_ko' in enriched.get('luck_direction', {}):
-        print(f"  방향: {enriched['luck_direction']['direction']} → {enriched['luck_direction']['direction_ko']}")
+    if "direction_ko" in enriched.get("luck_direction", {}):
+        print(
+            f"  방향: {enriched['luck_direction']['direction']} → {enriched['luck_direction']['direction_ko']}"
+        )
     else:
         print(f"  방향: {enriched['luck_direction']['direction']}")
     print()
@@ -206,6 +221,7 @@ def main():
     print("=" * 80)
     print("✅ 사주 분석 완료!")
     print("=" * 80)
+
 
 if __name__ == "__main__":
     main()

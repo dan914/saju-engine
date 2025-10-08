@@ -11,7 +11,7 @@ KFA_DIR = REPO_ROOT / "data" / "canonical" / "terms_kfa"
 
 def parse_utc_time(utc_str: str) -> datetime:
     """Parse UTC timestamp from CSV."""
-    dt = datetime.fromisoformat(utc_str.replace('Z', '+00:00'))
+    dt = datetime.fromisoformat(utc_str.replace("Z", "+00:00"))
     return dt.replace(tzinfo=None)
 
 
@@ -26,15 +26,15 @@ def compare_year(year: int) -> dict:
     sl_terms = {}
     kfa_terms = {}
 
-    with sl_path.open('r', encoding='utf-8') as f:
+    with sl_path.open("r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            sl_terms[row['term']] = parse_utc_time(row['utc_time'])
+            sl_terms[row["term"]] = parse_utc_time(row["utc_time"])
 
-    with kfa_path.open('r', encoding='utf-8') as f:
+    with kfa_path.open("r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            kfa_terms[row['term']] = parse_utc_time(row['utc_time'])
+            kfa_terms[row["term"]] = parse_utc_time(row["utc_time"])
 
     discrepancies = []
     for term in sorted(set(sl_terms.keys()) & set(kfa_terms.keys())):
@@ -44,19 +44,21 @@ def compare_year(year: int) -> dict:
         diff_minutes = diff_seconds / 60
 
         if diff_minutes > 1:  # More than 1 minute difference
-            discrepancies.append({
-                'year': year,
-                'term': term,
-                'diff_minutes': diff_minutes,
-                'sky_lizard': sl_time,
-                'kfa': kfa_time
-            })
+            discrepancies.append(
+                {
+                    "year": year,
+                    "term": term,
+                    "diff_minutes": diff_minutes,
+                    "sky_lizard": sl_time,
+                    "kfa": kfa_time,
+                }
+            )
 
     return {
-        'year': year,
-        'sl_count': len(sl_terms),
-        'kfa_count': len(kfa_terms),
-        'discrepancies': discrepancies
+        "year": year,
+        "sl_count": len(sl_terms),
+        "kfa_count": len(kfa_terms),
+        "discrepancies": discrepancies,
     }
 
 
@@ -75,17 +77,19 @@ def main():
         if not result:
             continue
 
-        total_comparisons += result['sl_count']
+        total_comparisons += result["sl_count"]
 
-        if result['discrepancies']:
+        if result["discrepancies"]:
             years_with_discrepancies += 1
-            all_discrepancies.extend(result['discrepancies'])
+            all_discrepancies.extend(result["discrepancies"])
 
             print(f"\n{year}: {len(result['discrepancies'])} discrepancies")
-            for disc in result['discrepancies']:
-                print(f"  {disc['term']:4s}: {disc['diff_minutes']:6.1f} min"
-                      f"  | SL: {disc['sky_lizard']}"
-                      f"  | KFA: {disc['kfa']}")
+            for disc in result["discrepancies"]:
+                print(
+                    f"  {disc['term']:4s}: {disc['diff_minutes']:6.1f} min"
+                    f"  | SL: {disc['sky_lizard']}"
+                    f"  | KFA: {disc['kfa']}"
+                )
 
     print("\n" + "=" * 100)
     print("SUMMARY")
@@ -96,17 +100,19 @@ def main():
     print(f"Total discrepancies: {len(all_discrepancies)}")
 
     if all_discrepancies:
-        avg_diff = sum(d['diff_minutes'] for d in all_discrepancies) / len(all_discrepancies)
-        max_diff = max(all_discrepancies, key=lambda x: x['diff_minutes'])
+        avg_diff = sum(d["diff_minutes"] for d in all_discrepancies) / len(all_discrepancies)
+        max_diff = max(all_discrepancies, key=lambda x: x["diff_minutes"])
 
         print(f"\nAverage difference: {avg_diff:.2f} minutes")
         print(f"Maximum difference: {max_diff['diff_minutes']:.1f} minutes")
-        print(f"  {max_diff['year']} {max_diff['term']}: SL={max_diff['sky_lizard']}, KFA={max_diff['kfa']}")
+        print(
+            f"  {max_diff['year']} {max_diff['term']}: SL={max_diff['sky_lizard']}, KFA={max_diff['kfa']}"
+        )
 
         # Categorize by difference magnitude
-        small = sum(1 for d in all_discrepancies if d['diff_minutes'] < 5)
-        medium = sum(1 for d in all_discrepancies if 5 <= d['diff_minutes'] < 15)
-        large = sum(1 for d in all_discrepancies if d['diff_minutes'] >= 15)
+        small = sum(1 for d in all_discrepancies if d["diff_minutes"] < 5)
+        medium = sum(1 for d in all_discrepancies if 5 <= d["diff_minutes"] < 15)
+        large = sum(1 for d in all_discrepancies if d["diff_minutes"] >= 15)
 
         print(f"\nDiscrepancy breakdown:")
         print(f"  < 5 minutes: {small}")
@@ -116,7 +122,8 @@ def main():
     print("\n" + "=" * 100)
     print("ANALYSIS & RECOMMENDATIONS")
     print("=" * 100)
-    print("""
+    print(
+        """
 1. **Data Quality Assessment:**
    - Both sources appear to use similar algorithms
    - Small differences (1-15 min) likely due to:
@@ -141,7 +148,8 @@ def main():
    - Merge SKY_LIZARD (1930-2020) + KFA (other years) into runtime data/
    - Add source attribution to each terms_*.csv file
    - Run regression tests with canonical pillar data
-""")
+"""
+    )
 
 
 if __name__ == "__main__":

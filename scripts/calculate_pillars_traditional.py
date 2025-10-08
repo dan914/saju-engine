@@ -11,56 +11,142 @@ This implementation uses:
 import csv
 from datetime import datetime, timedelta
 from pathlib import Path
-from zoneinfo import ZoneInfo
 from typing import Optional
+from zoneinfo import ZoneInfo
 
 # Constants
 SEXAGENARY_CYCLE = [
-    '甲子', '乙丑', '丙寅', '丁卯', '戊辰', '己巳', '庚午', '辛未', '壬申', '癸酉',
-    '甲戌', '乙亥', '丙子', '丁丑', '戊寅', '己卯', '庚辰', '辛巳', '壬午', '癸未',
-    '甲申', '乙酉', '丙戌', '丁亥', '戊子', '己丑', '庚寅', '辛卯', '壬辰', '癸巳',
-    '甲午', '乙未', '丙申', '丁酉', '戊戌', '己亥', '庚子', '辛丑', '壬寅', '癸卯',
-    '甲辰', '乙巳', '丙午', '丁未', '戊申', '己酉', '庚戌', '辛亥', '壬子', '癸丑',
-    '甲寅', '乙卯', '丙辰', '丁巳', '戊午', '己未', '庚申', '辛酉', '壬戌', '癸亥'
+    "甲子",
+    "乙丑",
+    "丙寅",
+    "丁卯",
+    "戊辰",
+    "己巳",
+    "庚午",
+    "辛未",
+    "壬申",
+    "癸酉",
+    "甲戌",
+    "乙亥",
+    "丙子",
+    "丁丑",
+    "戊寅",
+    "己卯",
+    "庚辰",
+    "辛巳",
+    "壬午",
+    "癸未",
+    "甲申",
+    "乙酉",
+    "丙戌",
+    "丁亥",
+    "戊子",
+    "己丑",
+    "庚寅",
+    "辛卯",
+    "壬辰",
+    "癸巳",
+    "甲午",
+    "乙未",
+    "丙申",
+    "丁酉",
+    "戊戌",
+    "己亥",
+    "庚子",
+    "辛丑",
+    "壬寅",
+    "癸卯",
+    "甲辰",
+    "乙巳",
+    "丙午",
+    "丁未",
+    "戊申",
+    "己酉",
+    "庚戌",
+    "辛亥",
+    "壬子",
+    "癸丑",
+    "甲寅",
+    "乙卯",
+    "丙辰",
+    "丁巳",
+    "戊午",
+    "己未",
+    "庚申",
+    "辛酉",
+    "壬戌",
+    "癸亥",
 ]
 
-HEAVENLY_STEMS = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
-EARTHLY_BRANCHES = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
-HOUR_BRANCHES = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
+HEAVENLY_STEMS = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+EARTHLY_BRANCHES = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
+HOUR_BRANCHES = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
 
 YEAR_STEM_TO_MONTH_START = {
-    '甲': '丙', '己': '丙',
-    '乙': '戊', '庚': '戊',
-    '丙': '庚', '辛': '庚',
-    '丁': '壬', '壬': '壬',
-    '戊': '甲', '癸': '甲'
+    "甲": "丙",
+    "己": "丙",
+    "乙": "戊",
+    "庚": "戊",
+    "丙": "庚",
+    "辛": "庚",
+    "丁": "壬",
+    "壬": "壬",
+    "戊": "甲",
+    "癸": "甲",
 }
 
 DAY_STEM_TO_HOUR_START = {
-    '甲': '甲', '己': '甲',
-    '乙': '丙', '庚': '丙',
-    '丙': '戊', '辛': '戊',
-    '丁': '庚', '壬': '庚',
-    '戊': '壬', '癸': '壬'
+    "甲": "甲",
+    "己": "甲",
+    "乙": "丙",
+    "庚": "丙",
+    "丙": "戊",
+    "辛": "戊",
+    "丁": "庚",
+    "壬": "庚",
+    "戊": "壬",
+    "癸": "壬",
 }
 
 TERM_TO_BRANCH = {
-    '小寒': '丑', '立春': '寅', '驚蟄': '卯', '清明': '辰',
-    '立夏': '巳', '芒種': '午', '小暑': '未', '立秋': '申',
-    '白露': '酉', '寒露': '戌', '立冬': '亥', '大雪': '子'
+    "小寒": "丑",
+    "立春": "寅",
+    "驚蟄": "卯",
+    "清明": "辰",
+    "立夏": "巳",
+    "芒種": "午",
+    "小暑": "未",
+    "立秋": "申",
+    "白露": "酉",
+    "寒露": "戌",
+    "立冬": "亥",
+    "大雪": "子",
 }
 
-MAJOR_TERMS = ['小寒', '立春', '驚蟄', '清明', '立夏', '芒種', '小暑', '立秋', '白露', '寒露', '立冬', '大雪']
+MAJOR_TERMS = [
+    "小寒",
+    "立春",
+    "驚蟄",
+    "清明",
+    "立夏",
+    "芒種",
+    "小暑",
+    "立秋",
+    "白露",
+    "寒露",
+    "立冬",
+    "大雪",
+]
 
-KOREAN_STEMS = ['갑', '을', '병', '정', '무', '기', '경', '신', '임', '계']
-KOREAN_BRANCHES = ['자', '축', '인', '묘', '진', '사', '오', '미', '신', '유', '술', '해']
+KOREAN_STEMS = ["갑", "을", "병", "정", "무", "기", "경", "신", "임", "계"]
+KOREAN_BRANCHES = ["자", "축", "인", "묘", "진", "사", "오", "미", "신", "유", "술", "해"]
 
 # LMT offsets for major cities (minutes)
 LMT_OFFSETS = {
-    'Asia/Seoul': -32,      # 126.978°E vs 135°E
-    'Asia/Busan': -24,      # 129.075°E vs 135°E
-    'Asia/Tokyo': -31,      # 139.692°E vs 135°E
-    'Asia/Shanghai': +21,   # 121.472°E vs 120°E
+    "Asia/Seoul": -32,  # 126.978°E vs 135°E
+    "Asia/Busan": -24,  # 129.075°E vs 135°E
+    "Asia/Tokyo": -31,  # 139.692°E vs 135°E
+    "Asia/Shanghai": +21,  # 121.472°E vs 120°E
 }
 
 
@@ -86,15 +172,12 @@ def load_terms_for_year(year: int, use_refined: bool = True) -> list:
         return []
 
     terms = []
-    with terms_file.open('r') as f:
+    with terms_file.open("r") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            utc_time_str = row['utc_time']
-            utc_time = datetime.fromisoformat(utc_time_str.replace('Z', '+00:00'))
-            terms.append({
-                'term': row['term'],
-                'utc_time': utc_time
-            })
+            utc_time_str = row["utc_time"]
+            utc_time = datetime.fromisoformat(utc_time_str.replace("Z", "+00:00"))
+            terms.append({"term": row["term"], "utc_time": utc_time})
     return terms
 
 
@@ -103,7 +186,7 @@ def apply_traditional_adjustments(
     tz_str: str,
     lmt_offset_minutes: Optional[int] = None,
     apply_dst: bool = True,
-    zi_hour_mode: str = 'traditional'
+    zi_hour_mode: str = "traditional",
 ) -> dict:
     """
     Apply DST, LMT and 子時 (Zi Hour) day transition rule.
@@ -185,7 +268,7 @@ def apply_traditional_adjustments(
     # Step 2: Apply 子時 transition rule (based on mode)
     zi_transition_applied = False
 
-    if zi_hour_mode == 'traditional':
+    if zi_hour_mode == "traditional":
         # Traditional: Day changes at 23:00 (based on ASTRONOMICAL/LMT time)
         # Check zi hour AFTER LMT adjustment - uses solar time, not clock time
         if lmt_adjusted.hour == 23:
@@ -197,7 +280,7 @@ def apply_traditional_adjustments(
             # Late 子時 (00:00-00:59) and all other hours use same day (조자시)
             day_for_pillar = lmt_adjusted.date()
 
-    elif zi_hour_mode == 'modern':
+    elif zi_hour_mode == "modern":
         # Modern: Day changes at 00:00 (midnight boundary)
         # Use the ORIGINAL input date (not LMT-adjusted date)
         # This respects the user's calendar date regardless of astronomical time
@@ -214,18 +297,20 @@ def apply_traditional_adjustments(
             day_for_pillar = lmt_adjusted.date()
 
     return {
-        'lmt_adjusted': lmt_adjusted,
-        'time_after_dst': birth_dt,  # Time after DST but before LMT (for hour pillar)
-        'day_for_pillar': day_for_pillar,
-        'lmt_offset': lmt_offset_minutes,
-        'zi_transition': zi_transition_applied,
-        'zi_hour_mode': zi_hour_mode,
-        'dst_applied': dst_applied,
-        'warnings': warnings
+        "lmt_adjusted": lmt_adjusted,
+        "time_after_dst": birth_dt,  # Time after DST but before LMT (for hour pillar)
+        "day_for_pillar": day_for_pillar,
+        "lmt_offset": lmt_offset_minutes,
+        "zi_transition": zi_transition_applied,
+        "zi_hour_mode": zi_hour_mode,
+        "dst_applied": dst_applied,
+        "warnings": warnings,
     }
 
 
-def calculate_year_pillar(birth_dt: datetime, tz: ZoneInfo, terms_current: list, terms_prev: list) -> tuple:
+def calculate_year_pillar(
+    birth_dt: datetime, tz: ZoneInfo, terms_current: list, terms_prev: list
+) -> tuple:
     """
     Calculate year pillar based on 立春 (Lichun) solar term.
 
@@ -238,8 +323,8 @@ def calculate_year_pillar(birth_dt: datetime, tz: ZoneInfo, terms_current: list,
     all_terms = terms_prev + terms_current
     lichun = None
     for term in all_terms:
-        if term['term'] == '立春':
-            local_time = term['utc_time'].astimezone(tz)
+        if term["term"] == "立春":
+            local_time = term["utc_time"].astimezone(tz)
             if local_time.year == aware_dt.year:
                 lichun = local_time
                 break
@@ -259,8 +344,9 @@ def calculate_year_pillar(birth_dt: datetime, tz: ZoneInfo, terms_current: list,
     return year_pillar, year_for_calculation
 
 
-def calculate_month_pillar(lmt_adjusted: datetime, tz: ZoneInfo, year_pillar: str,
-                          terms_current: list, terms_prev: list) -> tuple:
+def calculate_month_pillar(
+    lmt_adjusted: datetime, tz: ZoneInfo, year_pillar: str, terms_current: list, terms_prev: list
+) -> tuple:
     """
     Calculate month pillar based on major solar terms.
 
@@ -275,9 +361,9 @@ def calculate_month_pillar(lmt_adjusted: datetime, tz: ZoneInfo, year_pillar: st
     # Find current major term
     current_term = None
     for term in all_terms:
-        if term['term'] not in MAJOR_TERMS:
+        if term["term"] not in MAJOR_TERMS:
             continue
-        local_time = term['utc_time'].astimezone(tz)
+        local_time = term["utc_time"].astimezone(tz)
         if local_time <= aware_dt:
             current_term = term
         else:
@@ -286,20 +372,20 @@ def calculate_month_pillar(lmt_adjusted: datetime, tz: ZoneInfo, year_pillar: st
     if not current_term:
         return None, None
 
-    month_branch = TERM_TO_BRANCH[current_term['term']]
+    month_branch = TERM_TO_BRANCH[current_term["term"]]
 
     # Calculate month stem from year stem
     year_stem = year_pillar[0]
     month_start_stem = YEAR_STEM_TO_MONTH_START[year_stem]
     start_stem_index = HEAVENLY_STEMS.index(month_start_stem)
-    anchor_branch_index = EARTHLY_BRANCHES.index('寅')
+    anchor_branch_index = EARTHLY_BRANCHES.index("寅")
     month_branch_index = EARTHLY_BRANCHES.index(month_branch)
     offset = (month_branch_index - anchor_branch_index) % 12
     month_stem_index = (start_stem_index + offset) % 10
     month_stem = HEAVENLY_STEMS[month_stem_index]
     month_pillar = month_stem + month_branch
 
-    return month_pillar, current_term['term']
+    return month_pillar, current_term["term"]
 
 
 def calculate_day_pillar(day_for_pillar: datetime.date) -> str:
@@ -310,7 +396,7 @@ def calculate_day_pillar(day_for_pillar: datetime.date) -> str:
         day_for_pillar: Date after LMT and 子時 adjustments
     """
     anchor_date = datetime(1900, 1, 1).date()  # 1900-01-01 = 甲戌
-    anchor_index = SEXAGENARY_CYCLE.index('甲戌')  # 10
+    anchor_index = SEXAGENARY_CYCLE.index("甲戌")  # 10
 
     delta_days = (day_for_pillar - anchor_date).days
     day_index = (anchor_index + delta_days) % 60
@@ -345,13 +431,13 @@ def calculate_hour_pillar(lmt_adjusted: datetime, day_stem: str) -> str:
 
 def calculate_four_pillars(
     birth_dt: datetime,
-    tz_str: str = 'Asia/Seoul',
-    mode: str = 'traditional_kr',
+    tz_str: str = "Asia/Seoul",
+    mode: str = "traditional_kr",
     validate_input: bool = True,
     lmt_offset_minutes: Optional[int] = None,
     use_refined: bool = True,
     return_metadata: bool = False,
-    zi_hour_mode: str = 'traditional'
+    zi_hour_mode: str = "traditional",
 ) -> dict:
     """
     Calculate Four Pillars with configurable calculation mode.
@@ -382,12 +468,16 @@ def calculate_four_pillars(
         # Import validator
         import sys
         from pathlib import Path
-        sys.path.insert(0, str(Path(__file__).parent.parent / "services" / "pillars-service" / "app" / "core"))
+
+        sys.path.insert(
+            0, str(Path(__file__).parent.parent / "services" / "pillars-service" / "app" / "core")
+        )
         try:
             import input_validator as iv
+
             valid, error = iv.BirthDateTimeValidator.validate_datetime_object(birth_dt)
             if not valid:
-                return {'error': f'Invalid input: {error}'}
+                return {"error": f"Invalid input: {error}"}
         except ImportError:
             # Validator not available, skip validation
             pass
@@ -400,30 +490,30 @@ def calculate_four_pillars(
     terms_prev = load_terms_for_year(aware_dt.year - 1, use_refined)
 
     if not terms_current and not terms_prev:
-        return {'error': f'No terms data for {aware_dt.year}'}
+        return {"error": f"No terms data for {aware_dt.year}"}
 
     # Apply adjustments based on mode
-    if mode == 'traditional_kr':
-        adjustments = apply_traditional_adjustments(aware_dt, tz_str, lmt_offset_minutes, zi_hour_mode=zi_hour_mode)
-        lmt_adjusted = adjustments['lmt_adjusted']
-        day_for_pillar = adjustments['day_for_pillar']
+    if mode == "traditional_kr":
+        adjustments = apply_traditional_adjustments(
+            aware_dt, tz_str, lmt_offset_minutes, zi_hour_mode=zi_hour_mode
+        )
+        lmt_adjusted = adjustments["lmt_adjusted"]
+        day_for_pillar = adjustments["day_for_pillar"]
     else:  # modern mode
         lmt_adjusted = aware_dt
         day_for_pillar = aware_dt.date()
-        adjustments = {
-            'lmt_offset': 0,
-            'zi_transition': False
-        }
+        adjustments = {"lmt_offset": 0, "zi_transition": False}
 
     # Calculate year pillar
     year_pillar, year_used = calculate_year_pillar(lmt_adjusted, tz, terms_current, terms_prev)
 
     # Calculate month pillar
-    month_pillar, solar_term = calculate_month_pillar(lmt_adjusted, tz, year_pillar,
-                                                      terms_current, terms_prev)
+    month_pillar, solar_term = calculate_month_pillar(
+        lmt_adjusted, tz, year_pillar, terms_current, terms_prev
+    )
 
     if not month_pillar:
-        return {'error': 'No applicable solar term'}
+        return {"error": "No applicable solar term"}
 
     # Calculate day pillar (using adjusted date from 子時 rule)
     day_pillar = calculate_day_pillar(day_for_pillar)
@@ -432,27 +522,22 @@ def calculate_four_pillars(
     day_stem = day_pillar[0]
     hour_pillar = calculate_hour_pillar(lmt_adjusted, day_stem)
 
-    result = {
-        'year': year_pillar,
-        'month': month_pillar,
-        'day': day_pillar,
-        'hour': hour_pillar
-    }
+    result = {"year": year_pillar, "month": month_pillar, "day": day_pillar, "hour": hour_pillar}
 
     if return_metadata:
-        result['metadata'] = {
-            'mode': mode,
-            'lmt_offset': adjustments['lmt_offset'],
-            'lmt_adjusted_time': lmt_adjusted.strftime('%Y-%m-%d %H:%M:%S'),
-            'zi_transition_applied': adjustments['zi_transition'],
-            'zi_hour_mode': adjustments.get('zi_hour_mode', 'traditional'),
-            'dst_applied': adjustments.get('dst_applied', False),
-            'day_for_pillar': day_for_pillar.strftime('%Y-%m-%d'),
-            'solar_term': solar_term,
-            'year_used': year_used,
-            'data_source': 'CANONICAL_V1',
-            'algo_version': 'v1.6.1+dst+zi_toggle',
-            'warnings': adjustments.get('warnings', [])
+        result["metadata"] = {
+            "mode": mode,
+            "lmt_offset": adjustments["lmt_offset"],
+            "lmt_adjusted_time": lmt_adjusted.strftime("%Y-%m-%d %H:%M:%S"),
+            "zi_transition_applied": adjustments["zi_transition"],
+            "zi_hour_mode": adjustments.get("zi_hour_mode", "traditional"),
+            "dst_applied": adjustments.get("dst_applied", False),
+            "day_for_pillar": day_for_pillar.strftime("%Y-%m-%d"),
+            "solar_term": solar_term,
+            "year_used": year_used,
+            "data_source": "CANONICAL_V1",
+            "algo_version": "v1.6.1+dst+zi_toggle",
+            "warnings": adjustments.get("warnings", []),
         }
 
     return result
@@ -481,8 +566,8 @@ if __name__ == "__main__":
     failed = 0
 
     for test_id, date_str, time_str, tz_str, ref_yr, ref_mo, ref_dy, ref_hr in test_cases:
-        date_parts = date_str.split('-')
-        time_parts = time_str.split(':')
+        date_parts = date_str.split("-")
+        time_parts = time_str.split(":")
 
         year = int(date_parts[0])
         month = int(date_parts[1])
@@ -491,21 +576,23 @@ if __name__ == "__main__":
         minute = int(time_parts[1])
 
         birth_dt = datetime(year, month, day, hour, minute)
-        result = calculate_four_pillars(birth_dt, tz_str, mode='traditional_kr', return_metadata=True)
+        result = calculate_four_pillars(
+            birth_dt, tz_str, mode="traditional_kr", return_metadata=True
+        )
 
         print(f"\n[{test_id}] {date_str} {time_str} {tz_str}")
         print("-" * 120)
 
-        if 'error' in result:
+        if "error" in result:
             print(f"ERROR: {result['error']}")
             failed += 4
         else:
             # Check each pillar
             pillars = [
-                ('Year', result['year'], ref_yr),
-                ('Month', result['month'], ref_mo),
-                ('Day', result['day'], ref_dy),
-                ('Hour', result['hour'], ref_hr)
+                ("Year", result["year"], ref_yr),
+                ("Month", result["month"], ref_mo),
+                ("Day", result["day"], ref_dy),
+                ("Hour", result["hour"], ref_hr),
             ]
 
             test_passed = 0
@@ -519,7 +606,7 @@ if __name__ == "__main__":
                     failed += 1
 
             # Show metadata
-            meta = result['metadata']
+            meta = result["metadata"]
             print(f"\nMetadata:")
             print(f"  LMT offset: {meta['lmt_offset']} minutes")
             print(f"  LMT adjusted: {meta['lmt_adjusted_time']}")

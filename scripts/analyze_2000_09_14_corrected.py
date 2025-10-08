@@ -5,22 +5,23 @@ Using REAL calculate_four_pillars() engine with all analysis engines
 """
 
 import sys
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 # Setup path
 repo_root = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(repo_root / "scripts"))
 sys.path.insert(0, str(repo_root / "services" / "analysis-service"))
 
-# Import pillars calculator
-from calculate_pillars_traditional import calculate_four_pillars
-
 # Import analysis components
 from app.core.engine import AnalysisEngine
 from app.core.korean_enricher import KoreanLabelEnricher
 from app.models import AnalysisRequest
 from app.models.analysis import PillarInput
+
+# Import pillars calculator
+from calculate_pillars_traditional import calculate_four_pillars
+
 
 def main():
     print("=" * 80)
@@ -44,10 +45,10 @@ def main():
     pillars_result = calculate_four_pillars(
         birth_dt=birth_dt,
         tz_str=timezone,
-        mode='traditional_kr',
-        zi_hour_mode='traditional',
+        mode="traditional_kr",
+        zi_hour_mode="traditional",
         use_refined=True,
-        return_metadata=True
+        return_metadata=True,
     )
 
     print("계산된 사주 기둥:")
@@ -57,8 +58,8 @@ def main():
     print(f"  시주(時柱): {pillars_result['hour']}")
     print()
 
-    if 'metadata' in pillars_result:
-        meta = pillars_result['metadata']
+    if "metadata" in pillars_result:
+        meta = pillars_result["metadata"]
         print("계산 상세:")
         print(f"  LMT 보정: {meta.get('lmt_offset', 0)}분")
         print(f"  DST 적용: {meta.get('dst_applied', False)}")
@@ -73,20 +74,16 @@ def main():
 
     # Prepare pillars data for analysis
     pillars_data = {
-        "year": PillarInput(pillar=pillars_result['year']),
-        "month": PillarInput(pillar=pillars_result['month']),
-        "day": PillarInput(pillar=pillars_result['day']),
-        "hour": PillarInput(pillar=pillars_result['hour'])
+        "year": PillarInput(pillar=pillars_result["year"]),
+        "month": PillarInput(pillar=pillars_result["month"]),
+        "day": PillarInput(pillar=pillars_result["day"]),
+        "hour": PillarInput(pillar=pillars_result["hour"]),
     }
 
     engine = AnalysisEngine()
     # Pass birth datetime through options for luck calculation
     request = AnalysisRequest(
-        pillars=pillars_data,
-        options={
-            "birth_dt": birth_dt.isoformat(),
-            "timezone": timezone
-        }
+        pillars=pillars_data, options={"birth_dt": birth_dt.isoformat(), "timezone": timezone}
     )
     result = engine.analyze(request)
 
@@ -94,7 +91,9 @@ def main():
     print("📊 십신(十神) - Ten Gods:")
     print("-" * 80)
     for pillar, god in result.ten_gods.summary.items():
-        pillar_name = {"year": "년주", "month": "월주", "day": "일주", "hour": "시주"}.get(pillar, pillar)
+        pillar_name = {"year": "년주", "month": "월주", "day": "일주", "hour": "시주"}.get(
+            pillar, pillar
+        )
         print(f"  {pillar_name:6s}: {god}")
     print()
 
@@ -212,15 +211,20 @@ def main():
         print(f"  격국: {enriched['structure']['primary']} → {enriched['structure']['primary_ko']}")
 
     if "confidence_ko" in enriched.get("structure", {}):
-        print(f"  신뢰도: {enriched['structure']['confidence']} → {enriched['structure']['confidence_ko']}")
+        print(
+            f"  신뢰도: {enriched['structure']['confidence']} → {enriched['structure']['confidence_ko']}"
+        )
 
     if "direction_ko" in enriched.get("luck_direction", {}):
-        print(f"  대운방향: {enriched['luck_direction']['direction']} → {enriched['luck_direction']['direction_ko']}")
+        print(
+            f"  대운방향: {enriched['luck_direction']['direction']} → {enriched['luck_direction']['direction_ko']}"
+        )
 
     print()
     print("=" * 80)
     print("✅ 사주 분석 완료!")
     print("=" * 80)
+
 
 if __name__ == "__main__":
     main()

@@ -9,10 +9,9 @@ Usage:
     python devtools/sign_policies.py
 """
 
-import json
 import hashlib
+import json
 from pathlib import Path
-
 
 ROOT = Path(__file__).resolve().parents[1]
 POL_DIR = ROOT / "saju_codex_batch_all_v2_6_signed" / "policies"
@@ -50,7 +49,7 @@ def main():
     sigs = {
         "sixty_jiazi": sha256(jiazi) if jiazi.exists() else "<REPLACE_SIG_JIAZI>",
         "lifecycle_stages": sha256(lifecycle) if lifecycle.exists() else "<REPLACE_SIG_LIFECYCLE>",
-        "branch_tengods_policy": sha256(tengods) if tengods.exists() else "<REPLACE_SIG_TENGODS>"
+        "branch_tengods_policy": sha256(tengods) if tengods.exists() else "<REPLACE_SIG_TENGODS>",
     }
 
     # Load luck policy

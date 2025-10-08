@@ -7,6 +7,7 @@ but our engine didn't.
 """
 
 from datetime import datetime
+
 from calculate_pillars_traditional import calculate_four_pillars
 
 
@@ -20,31 +21,28 @@ def test_dst_cases():
 
     # Expected results from FortuneTeller
     expected = {
-        'H01': {'year': '丁卯', 'month': '乙巳', 'day': '己未', 'hour': '甲子'},
-        'H02': {'year': '戊辰', 'month': '丁巳', 'day': '癸亥', 'hour': '壬子'},
+        "H01": {"year": "丁卯", "month": "乙巳", "day": "己未", "hour": "甲子"},
+        "H02": {"year": "戊辰", "month": "丁巳", "day": "癸亥", "hour": "壬子"},
     }
 
     test_cases = [
-        ('H01', datetime(1987, 5, 10, 2, 30)),
-        ('H02', datetime(1988, 5, 8, 2, 30)),
+        ("H01", datetime(1987, 5, 10, 2, 30)),
+        ("H02", datetime(1988, 5, 8, 2, 30)),
     ]
 
     for test_id, birth_dt in test_cases:
         result = calculate_four_pillars(
-            birth_dt,
-            tz_str='Asia/Seoul',
-            mode='traditional_kr',
-            return_metadata=True
+            birth_dt, tz_str="Asia/Seoul", mode="traditional_kr", return_metadata=True
         )
 
         exp = expected[test_id]
-        meta = result['metadata']
+        meta = result["metadata"]
 
         # Check match
-        year_match = result['year'] == exp['year']
-        month_match = result['month'] == exp['month']
-        day_match = result['day'] == exp['day']
-        hour_match = result['hour'] == exp['hour']
+        year_match = result["year"] == exp["year"]
+        month_match = result["month"] == exp["month"]
+        day_match = result["day"] == exp["day"]
+        hour_match = result["hour"] == exp["hour"]
 
         matches = sum([year_match, month_match, day_match, hour_match])
 
@@ -59,8 +57,8 @@ def test_dst_cases():
         print(f"  DST:      {meta['dst_applied']}")
         print(f"  LMT time: {meta['lmt_adjusted_time']}")
 
-        if meta.get('warnings'):
-            for warning in meta['warnings']:
+        if meta.get("warnings"):
+            for warning in meta["warnings"]:
                 print(f"  ⚠️  {warning}")
 
         print()

@@ -26,12 +26,7 @@ def merge_terms():
     # - 1930-2020: Use SKY_LIZARD (primary source, production app data)
     # - Pre-1930, 2021-2050: Use KFA (only source available, academic quality)
 
-    stats = {
-        'sky_lizard': 0,
-        'kfa': 0,
-        'skipped': 0,
-        'errors': []
-    }
+    stats = {"sky_lizard": 0, "kfa": 0, "skipped": 0, "errors": []}
 
     # Copy SKY_LIZARD data (1930-2020)
     print(f"\n1. Copying SKY_LIZARD terms ({SKY_LIZARD_RANGE[0]}-{SKY_LIZARD_RANGE[1]})...")
@@ -42,14 +37,14 @@ def merge_terms():
         if src.exists():
             try:
                 shutil.copy2(src, dst)
-                stats['sky_lizard'] += 1
+                stats["sky_lizard"] += 1
                 if year % 10 == 0:
                     print(f"   Copied {year}")
             except Exception as e:
-                stats['errors'].append(f"Error copying {year}: {e}")
+                stats["errors"].append(f"Error copying {year}: {e}")
         else:
-            stats['skipped'] += 1
-            stats['errors'].append(f"SKY_LIZARD missing year {year}")
+            stats["skipped"] += 1
+            stats["errors"].append(f"SKY_LIZARD missing year {year}")
 
     print(f"   ✓ Copied {stats['sky_lizard']} years from SKY_LIZARD")
 
@@ -62,13 +57,13 @@ def merge_terms():
         if src.exists():
             try:
                 shutil.copy2(src, dst)
-                stats['kfa'] += 1
+                stats["kfa"] += 1
                 if year % 10 == 0:
                     print(f"   Copied {year}")
             except Exception as e:
-                stats['errors'].append(f"Error copying {year}: {e}")
+                stats["errors"].append(f"Error copying {year}: {e}")
         else:
-            stats['skipped'] += 1
+            stats["skipped"] += 1
 
     print(f"   ✓ Copied {stats['kfa']} years from KFA (pre-1930)")
 
@@ -86,11 +81,11 @@ def merge_terms():
                 if year % 10 == 0:
                     print(f"   Copied {year}")
             except Exception as e:
-                stats['errors'].append(f"Error copying {year}: {e}")
+                stats["errors"].append(f"Error copying {year}: {e}")
         else:
-            stats['skipped'] += 1
+            stats["skipped"] += 1
 
-    stats['kfa'] += kfa_post_count
+    stats["kfa"] += kfa_post_count
     print(f"   ✓ Copied {kfa_post_count} years from KFA (post-2020)")
 
     # Summary
@@ -102,11 +97,11 @@ def merge_terms():
     print(f"  - KFA (1900-1929, 2021-2050): {stats['kfa']}")
     print(f"Skipped/Missing: {stats['skipped']}")
 
-    if stats['errors']:
+    if stats["errors"]:
         print(f"\n⚠️  Errors ({len(stats['errors'])}):")
-        for error in stats['errors'][:10]:
+        for error in stats["errors"][:10]:
             print(f"  - {error}")
-        if len(stats['errors']) > 10:
+        if len(stats["errors"]) > 10:
             print(f"  ... and {len(stats['errors']) - 10} more")
 
     # Verify coverage
@@ -114,11 +109,13 @@ def merge_terms():
     print("COVERAGE VERIFICATION")
     print("=" * 80)
 
-    runtime_years = sorted([
-        int(f.stem.split('_')[1])
-        for f in RUNTIME_DATA_DIR.glob("terms_*.csv")
-        if f.stem.startswith('terms_')
-    ])
+    runtime_years = sorted(
+        [
+            int(f.stem.split("_")[1])
+            for f in RUNTIME_DATA_DIR.glob("terms_*.csv")
+            if f.stem.startswith("terms_")
+        ]
+    )
 
     if runtime_years:
         print(f"Runtime data coverage: {min(runtime_years)}-{max(runtime_years)}")
@@ -127,8 +124,8 @@ def merge_terms():
         # Check for gaps
         gaps = []
         for i in range(len(runtime_years) - 1):
-            if runtime_years[i+1] - runtime_years[i] > 1:
-                gaps.append((runtime_years[i], runtime_years[i+1]))
+            if runtime_years[i + 1] - runtime_years[i] > 1:
+                gaps.append((runtime_years[i], runtime_years[i + 1]))
 
         if gaps:
             print(f"\n⚠️  Found {len(gaps)} gaps in coverage:")
@@ -140,13 +137,15 @@ def merge_terms():
     print("\n" + "=" * 80)
     print("NEXT STEPS")
     print("=" * 80)
-    print("""
+    print(
+        """
 1. Verify the merged data loads correctly in the pillars service
 2. Run canonical comparison tests (compare_canonical.py)
 3. Check for any month pillar calculation discrepancies
 4. Update documentation with data source information
 5. Consider adding a metadata field to track which source was used per year
-    """)
+    """
+    )
 
 
 if __name__ == "__main__":

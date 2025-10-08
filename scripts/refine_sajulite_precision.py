@@ -23,10 +23,30 @@ OUTPUT_DIR = Path(__file__).resolve().parents[1] / "data" / "canonical" / "terms
 
 # 24 Solar Terms
 JEOLGI_NAMES = [
-    '小寒', '大寒', '立春', '雨水', '驚蟄', '春分',
-    '清明', '穀雨', '立夏', '小滿', '芒種', '夏至',
-    '小暑', '大暑', '立秋', '處暑', '白露', '秋分',
-    '寒露', '霜降', '立冬', '小雪', '大雪', '冬至'
+    "小寒",
+    "大寒",
+    "立春",
+    "雨水",
+    "驚蟄",
+    "春分",
+    "清明",
+    "穀雨",
+    "立夏",
+    "小滿",
+    "芒種",
+    "夏至",
+    "小暑",
+    "大暑",
+    "立秋",
+    "處暑",
+    "白露",
+    "秋分",
+    "寒露",
+    "霜降",
+    "立冬",
+    "小雪",
+    "大雪",
+    "冬至",
 ]
 
 # Major terms (12 per year)
@@ -37,11 +57,11 @@ MAJOR_TERM_INDICES = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]
 # In astronomical coordinates: 小寒 = 285° (vernal equinox = 0°)
 # In shifted coordinates: 小寒 = 0°
 MAJOR_TERM_LAMBDAS: Dict[int, float] = {
-    1: 0,     # 小寒
-    3: 30,    # 立春
-    5: 60,    # 驚蟄
-    7: 90,    # 清明
-    9: 120,   # 立夏
+    1: 0,  # 小寒
+    3: 30,  # 立春
+    5: 60,  # 驚蟄
+    7: 90,  # 清明
+    9: 120,  # 立夏
     11: 150,  # 芒種
     13: 180,  # 小暑
     15: 210,  # 立秋
@@ -59,6 +79,7 @@ SHIFTED_TO_ASTRO_OFFSET = 285  # 小寒 in astronomical coords
 @dataclass
 class RefinedTerm:
     """Refined solar term with astronomical precision."""
+
     term: str
     lambda_deg: float
     utc_time: datetime
@@ -75,7 +96,14 @@ def datetime_to_jd(dt: datetime) -> float:
 
     year = dt_utc.year
     month = dt_utc.month
-    day = dt_utc.day + (dt_utc.hour + (dt_utc.minute + (dt_utc.second + dt_utc.microsecond / 1_000_000) / 60.0) / 60.0) / 24.0
+    day = (
+        dt_utc.day
+        + (
+            dt_utc.hour
+            + (dt_utc.minute + (dt_utc.second + dt_utc.microsecond / 1_000_000) / 60.0) / 60.0
+        )
+        / 24.0
+    )
 
     if month <= 2:
         year -= 1
@@ -130,7 +158,7 @@ def delta_t_seconds(year: int, month: int) -> float:
 
     if 1900 <= y < 1999:
         t = y - 1900
-        return -0.00002 * t ** 3 + 0.00631686 * t ** 2 + 0.775518 * t + 32.0
+        return -0.00002 * t**3 + 0.00631686 * t**2 + 0.775518 * t + 32.0
 
     if 1999 <= y <= 2150:
         t = y - 2000
@@ -160,9 +188,11 @@ def sun_lambda_apparent_tt(jd_tt: float) -> float:
 
     # Equation of center
     M_rad = math.radians(M)
-    C = ((1.914602 - 0.004817 * T - 0.000014 * T * T) * math.sin(M_rad)
-         + (0.019993 - 0.000101 * T) * math.sin(2 * M_rad)
-         + 0.000289 * math.sin(3 * M_rad))
+    C = (
+        (1.914602 - 0.004817 * T - 0.000014 * T * T) * math.sin(M_rad)
+        + (0.019993 - 0.000101 * T) * math.sin(2 * M_rad)
+        + 0.000289 * math.sin(3 * M_rad)
+    )
 
     # True longitude
     true_long = L0 + C
@@ -182,8 +212,12 @@ def wrap_angle(angle: float) -> float:
     return wrapped
 
 
-def find_solar_term_time(target_lambda_deg: float, initial_guess_dt: datetime,
-                         max_iterations: int = 15, tolerance_seconds: float = 30) -> tuple[datetime, float]:
+def find_solar_term_time(
+    target_lambda_deg: float,
+    initial_guess_dt: datetime,
+    max_iterations: int = 15,
+    tolerance_seconds: float = 30,
+) -> tuple[datetime, float]:
     """Find precise solar term time using bisection within a bounded window.
 
     Args:
@@ -246,19 +280,19 @@ def find_solar_term_time(target_lambda_deg: float, initial_guess_dt: datetime,
 
 def load_sajulite_data():
     """Load Saju Lite JSON data."""
-    with SAJULITE_JSON.open('r', encoding='utf-8') as f:
+    with SAJULITE_JSON.open("r", encoding="utf-8") as f:
         return json.load(f)
 
 
 def refine_year_terms(year: int, jeolgi_data: list) -> list[RefinedTerm]:
     """Refine all terms for a given year."""
     # Get Saju Lite data for this year
-    year_data = [row for row in jeolgi_data if row['year'] == year]
+    year_data = [row for row in jeolgi_data if row["year"] == year]
 
     refined_terms = []
 
     for row in year_data:
-        jeolgi_code = row['jeolgi']
+        jeolgi_code = row["jeolgi"]
 
         # Only process major terms
         if jeolgi_code not in MAJOR_TERM_INDICES:
@@ -268,11 +302,11 @@ def refine_year_terms(year: int, jeolgi_data: list) -> list[RefinedTerm]:
         target_lambda = MAJOR_TERM_LAMBDAS[jeolgi_code]
 
         # Construct initial guess from Saju Lite (KST, rounded to hour)
-        hour = row['hour']
+        hour = row["hour"]
         if hour == 24:
-            kst_guess = datetime(row['year'], row['month'], row['day'], 0) + timedelta(days=1)
+            kst_guess = datetime(row["year"], row["month"], row["day"], 0) + timedelta(days=1)
         else:
-            kst_guess = datetime(row['year'], row['month'], row['day'], hour)
+            kst_guess = datetime(row["year"], row["month"], row["day"], hour)
 
         # Convert KST to UTC for astronomical calculation
         utc_guess = kst_guess - timedelta(hours=9)
@@ -280,14 +314,16 @@ def refine_year_terms(year: int, jeolgi_data: list) -> list[RefinedTerm]:
         # Refine to astronomical precision
         refined_utc, dt_sec = find_solar_term_time(target_lambda, utc_guess)
 
-        refined_terms.append(RefinedTerm(
-            term=term_name,
-            lambda_deg=target_lambda,
-            utc_time=refined_utc,
-            delta_t_seconds=dt_sec,
-            source='SAJU_LITE_REFINED',
-            algo_version='v1.5.10+astro'
-        ))
+        refined_terms.append(
+            RefinedTerm(
+                term=term_name,
+                lambda_deg=target_lambda,
+                utc_time=refined_utc,
+                delta_t_seconds=dt_sec,
+                source="SAJU_LITE_REFINED",
+                algo_version="v1.5.10+astro",
+            )
+        )
 
     # Sort by lambda degree (seasonal order)
     refined_terms.sort(key=lambda x: x.lambda_deg)
@@ -301,21 +337,31 @@ def write_year_csv(year: int, terms: list[RefinedTerm]):
 
     output_file = OUTPUT_DIR / f"terms_{year}.csv"
 
-    with output_file.open('w', encoding='utf-8', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=[
-            'term', 'lambda_deg', 'utc_time', 'delta_t_seconds', 'source', 'algo_version'
-        ])
+    with output_file.open("w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=[
+                "term",
+                "lambda_deg",
+                "utc_time",
+                "delta_t_seconds",
+                "source",
+                "algo_version",
+            ],
+        )
         writer.writeheader()
 
         for term in terms:
-            writer.writerow({
-                'term': term.term,
-                'lambda_deg': term.lambda_deg,
-                'utc_time': term.utc_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                'delta_t_seconds': f"{term.delta_t_seconds:.2f}",
-                'source': term.source,
-                'algo_version': term.algo_version
-            })
+            writer.writerow(
+                {
+                    "term": term.term,
+                    "lambda_deg": term.lambda_deg,
+                    "utc_time": term.utc_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "delta_t_seconds": f"{term.delta_t_seconds:.2f}",
+                    "source": term.source,
+                    "algo_version": term.algo_version,
+                }
+            )
 
     return len(terms)
 
@@ -329,28 +375,24 @@ def main():
     # Load Saju Lite data
     print("\n1. Loading Saju Lite data...")
     data = load_sajulite_data()
-    jeolgi_data = data['tb_jeolgi']['data']
+    jeolgi_data = data["tb_jeolgi"]["data"]
     print(f"   ✓ Loaded {len(jeolgi_data)} solar term records")
 
     # Get year range
-    years = sorted(set(row['year'] for row in jeolgi_data))
+    years = sorted(set(row["year"] for row in jeolgi_data))
     print(f"\n2. Processing {len(years)} years ({min(years)}-{max(years)})...")
 
-    stats = {
-        'total_years': 0,
-        'total_terms': 0,
-        'years_with_12_terms': 0
-    }
+    stats = {"total_years": 0, "total_terms": 0, "years_with_12_terms": 0}
 
     for year in years:
         refined_terms = refine_year_terms(year, jeolgi_data)
 
         if len(refined_terms) == 12:
-            stats['years_with_12_terms'] += 1
+            stats["years_with_12_terms"] += 1
 
         term_count = write_year_csv(year, refined_terms)
-        stats['total_years'] += 1
-        stats['total_terms'] += term_count
+        stats["total_years"] += 1
+        stats["total_terms"] += term_count
 
         if year % 10 == 0:
             print(f"   Refined {year} ({term_count} terms)")
@@ -369,13 +411,15 @@ def main():
     print("\n" + "=" * 80)
     print("IMPROVEMENTS")
     print("=" * 80)
-    print("""
+    print(
+        """
 ✓ Hour-rounded timestamps → Minute-level precision
 ✓ Applied ΔT corrections for Earth rotation irregularities
 ✓ Astronomical solar longitude calculations (VSOP87-based)
 ✓ Proper timezone handling (KST→UTC with astronomical refinement)
 ✓ Newton-Raphson iteration for convergence to target longitude
-    """)
+    """
+    )
 
 
 if __name__ == "__main__":

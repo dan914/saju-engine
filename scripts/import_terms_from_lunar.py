@@ -160,7 +160,14 @@ def write_year_files(year_terms: dict[int, list[dict[str, str]]]) -> None:
         with out_path.open("w", encoding="utf-8", newline="") as fh:
             writer = csv.DictWriter(
                 fh,
-                fieldnames=["term", "lambda_deg", "utc_time", "delta_t_seconds", "source", "algo_version"],
+                fieldnames=[
+                    "term",
+                    "lambda_deg",
+                    "utc_time",
+                    "delta_t_seconds",
+                    "source",
+                    "algo_version",
+                ],
             )
             writer.writeheader()
             writer.writerows(entries)

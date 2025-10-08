@@ -7,6 +7,7 @@ for births during 23:00-23:59 hour.
 """
 
 from datetime import datetime
+
 from calculate_pillars_traditional import calculate_four_pillars
 
 
@@ -26,29 +27,29 @@ def test_zi_hour_modes():
 
     test_cases = [
         {
-            'id': 'ZI-01',
-            'dt': datetime(2000, 9, 14, 23, 30),
-            'description': '23:30 (子時 middle)',
+            "id": "ZI-01",
+            "dt": datetime(2000, 9, 14, 23, 30),
+            "description": "23:30 (子時 middle)",
         },
         {
-            'id': 'ZI-02',
-            'dt': datetime(1987, 5, 10, 23, 15),
-            'description': '23:15 during DST (子時 early)',
+            "id": "ZI-02",
+            "dt": datetime(1987, 5, 10, 23, 15),
+            "description": "23:15 during DST (子時 early)",
         },
         {
-            'id': 'ZI-03',
-            'dt': datetime(2020, 12, 31, 23, 59),
-            'description': '23:59 (子時 end, year boundary)',
+            "id": "ZI-03",
+            "dt": datetime(2020, 12, 31, 23, 59),
+            "description": "23:59 (子時 end, year boundary)",
         },
         {
-            'id': 'NON-ZI-01',
-            'dt': datetime(2000, 9, 14, 0, 30),
-            'description': '00:30 (조자시, should be same in both modes)',
+            "id": "NON-ZI-01",
+            "dt": datetime(2000, 9, 14, 0, 30),
+            "description": "00:30 (조자시, should be same in both modes)",
         },
         {
-            'id': 'NON-ZI-02',
-            'dt': datetime(2000, 9, 14, 12, 0),
-            'description': '12:00 noon (should be same in both modes)',
+            "id": "NON-ZI-02",
+            "dt": datetime(2000, 9, 14, 12, 0),
+            "description": "12:00 noon (should be same in both modes)",
         },
     ]
 
@@ -56,28 +57,28 @@ def test_zi_hour_modes():
     failed = 0
 
     for case in test_cases:
-        test_id = case['id']
-        dt = case['dt']
-        description = case['description']
+        test_id = case["id"]
+        dt = case["dt"]
+        description = case["description"]
 
         # Calculate with traditional mode
         result_trad = calculate_four_pillars(
             dt,
-            tz_str='Asia/Seoul',
-            mode='traditional_kr',
+            tz_str="Asia/Seoul",
+            mode="traditional_kr",
             validate_input=True,
             return_metadata=True,
-            zi_hour_mode='traditional'
+            zi_hour_mode="traditional",
         )
 
         # Calculate with modern mode
         result_modern = calculate_four_pillars(
             dt,
-            tz_str='Asia/Seoul',
-            mode='traditional_kr',
+            tz_str="Asia/Seoul",
+            mode="traditional_kr",
             validate_input=True,
             return_metadata=True,
-            zi_hour_mode='modern'
+            zi_hour_mode="modern",
         )
 
         # Extract pillars
@@ -85,14 +86,14 @@ def test_zi_hour_modes():
         modern_pillars = f"{result_modern['year']} {result_modern['month']} {result_modern['day']} {result_modern['hour']}"
 
         # Extract day pillars for comparison
-        trad_day = result_trad['day']
-        modern_day = result_modern['day']
+        trad_day = result_trad["day"]
+        modern_day = result_modern["day"]
 
         # Extract metadata
-        trad_zi_applied = result_trad['metadata']['zi_transition_applied']
-        modern_zi_applied = result_modern['metadata']['zi_transition_applied']
-        trad_day_for_pillar = result_trad['metadata']['day_for_pillar']
-        modern_day_for_pillar = result_modern['metadata']['day_for_pillar']
+        trad_zi_applied = result_trad["metadata"]["zi_transition_applied"]
+        modern_zi_applied = result_modern["metadata"]["zi_transition_applied"]
+        trad_day_for_pillar = result_trad["metadata"]["day_for_pillar"]
+        modern_day_for_pillar = result_modern["metadata"]["day_for_pillar"]
 
         # Check if it's a 子時 hour (23:00-23:59)
         is_zi_hour = dt.hour == 23
@@ -126,8 +127,12 @@ def test_zi_hour_modes():
 
         # Print result
         print(f"{status} | {test_id:12} | {description}")
-        print(f"         | {'Traditional:':<12} | {trad_pillars:30} | Zi applied: {trad_zi_applied} | Day: {trad_day_for_pillar}")
-        print(f"         | {'Modern:':<12} | {modern_pillars:30} | Zi applied: {modern_zi_applied} | Day: {modern_day_for_pillar}")
+        print(
+            f"         | {'Traditional:':<12} | {trad_pillars:30} | Zi applied: {trad_zi_applied} | Day: {trad_day_for_pillar}"
+        )
+        print(
+            f"         | {'Modern:':<12} | {modern_pillars:30} | Zi applied: {modern_zi_applied} | Day: {modern_day_for_pillar}"
+        )
         print(f"         | {'Note:':<12} | {note}")
         print()
 

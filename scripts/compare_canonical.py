@@ -184,7 +184,9 @@ def main() -> None:
     summary = comparator.summary()
     print(json.dumps(summary, indent=2, ensure_ascii=False))
     if args.out and comparator.mismatches:
-        args.out.write_text(json.dumps(comparator.mismatches, indent=2, ensure_ascii=False), encoding="utf-8")
+        args.out.write_text(
+            json.dumps(comparator.mismatches, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
         print(f"Mismatch details saved to {args.out}")
 
 

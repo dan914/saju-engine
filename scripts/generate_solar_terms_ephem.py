@@ -62,6 +62,7 @@ TERM_APPROX = {
 OUTPUT_DIR = Path("data/canonical/terms_ephem")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
+
 @dataclass
 class TermResult:
     name: str
@@ -79,7 +80,14 @@ def datetime_to_jd(dt: datetime) -> float:
     dt_utc = dt.astimezone(timezone.utc)
     year = dt_utc.year
     month = dt_utc.month
-    day = dt_utc.day + (dt_utc.hour + (dt_utc.minute + (dt_utc.second + dt_utc.microsecond / 1_000_000) / 60.0) / 60.0) / 24.0
+    day = (
+        dt_utc.day
+        + (
+            dt_utc.hour
+            + (dt_utc.minute + (dt_utc.second + dt_utc.microsecond / 1_000_000) / 60.0) / 60.0
+        )
+        / 24.0
+    )
     if month <= 2:
         year -= 1
         month += 12
@@ -120,7 +128,7 @@ def delta_t_seconds(year: int, month: int) -> float:
     y = year + (month - 0.5) / 12.0
     if 1900 <= y < 1999:
         t = y - 1900
-        return -0.00002 * t ** 3 + 0.00631686 * t ** 2 + 0.775518 * t + 32.0
+        return -0.00002 * t**3 + 0.00631686 * t**2 + 0.775518 * t + 32.0
     if 1999 <= y <= 2150:
         t = y - 2000
         return 62.92 + 0.32217 * t + 0.005589 * t * t
@@ -135,9 +143,11 @@ def sun_lambda_apparent_tt(jd_tt: float) -> float:
     M = 357.52911 + 35999.05029 * T - 0.0001537 * T * T - 0.00000048 * T * T * T
     e = 0.016708634 - 0.000042037 * T - 0.0000001267 * T * T
     M_rad = math.radians(M)
-    C = ((1.914602 - 0.004817 * T - 0.000014 * T * T) * math.sin(M_rad)
-         + (0.019993 - 0.000101 * T) * math.sin(2 * M_rad)
-         + 0.000289 * math.sin(3 * M_rad))
+    C = (
+        (1.914602 - 0.004817 * T - 0.000014 * T * T) * math.sin(M_rad)
+        + (0.019993 - 0.000101 * T) * math.sin(2 * M_rad)
+        + 0.000289 * math.sin(3 * M_rad)
+    )
     true_long = L0 + C
     omega = math.radians(125.04 - 1934.136 * T)
     lambda_apparent = true_long - 0.00569 - 0.00478 * math.sin(omega)
@@ -190,7 +200,9 @@ def term_results_for_year(year: int, prev_term_tt: Dict[str, float]) -> Iterable
             seed_tt = prev_term_tt[term_name] + 365.2422
         else:
             month_seed, day_seed = TERM_APPROX[term_name]
-            approx_dt = datetime(year if month_seed > 1 else year, month_seed, day_seed, 12, tzinfo=timezone.utc)
+            approx_dt = datetime(
+                year if month_seed > 1 else year, month_seed, day_seed, 12, tzinfo=timezone.utc
+            )
             delta_t = delta_t_seconds(year, month_seed)
             seed_tt = datetime_to_jd(approx_dt) + delta_t / 86400.0
 
@@ -204,34 +216,43 @@ def term_results_for_year(year: int, prev_term_tt: Dict[str, float]) -> Iterable
         delta_t = delta_t_seconds(year, month_seed)
         jd_utc = tt_cross - delta_t / 86400.0
         dt_utc = jd_to_datetime(jd_utc)
-        kst = dt_utc.astimezone(ZoneInfo('Asia/Seoul'))
-        myt = dt_utc.astimezone(ZoneInfo('Asia/Kuching'))
+        kst = dt_utc.astimezone(ZoneInfo("Asia/Seoul"))
+        myt = dt_utc.astimezone(ZoneInfo("Asia/Kuching"))
         prev_term_tt[term_name] = tt_cross
         yield TermResult(term_name, longitude_deg, tt_cross, dt_utc, kst, myt, delta_t)
 
 
 def write_year(year: int, results: Iterable[TermResult]) -> None:
     rows = sorted(results, key=lambda r: TERMS_LONGITUDE[r.name])
-    path = OUTPUT_DIR / f'terms_{year}.csv'
-    with path.open('w', encoding='utf-8', newline='') as fh:
+    path = OUTPUT_DIR / f"terms_{year}.csv"
+    with path.open("w", encoding="utf-8", newline="") as fh:
         writer = csv.DictWriter(
             fh,
             fieldnames=[
-                'term', 'term_deg', 'utc', 'kst', 'myt', 'delta_t_seconds', 'source', 'algo_version'
+                "term",
+                "term_deg",
+                "utc",
+                "kst",
+                "myt",
+                "delta_t_seconds",
+                "source",
+                "algo_version",
             ],
         )
         writer.writeheader()
         for result in rows:
-            writer.writerow({
-                'term': result.name,
-                'term_deg': f"{result.longitude_deg:.1f}",
-                'utc': result.dt_utc.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z',
-                'kst': result.dt_kst.isoformat(),
-                'myt': result.dt_myt.isoformat(),
-                'delta_t_seconds': f"{result.delta_t_sec:.2f}",
-                'source': 'meeus_apparent',
-                'algo_version': 'v1',
-            })
+            writer.writerow(
+                {
+                    "term": result.name,
+                    "term_deg": f"{result.longitude_deg:.1f}",
+                    "utc": result.dt_utc.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z",
+                    "kst": result.dt_kst.isoformat(),
+                    "myt": result.dt_myt.isoformat(),
+                    "delta_t_seconds": f"{result.delta_t_sec:.2f}",
+                    "source": "meeus_apparent",
+                    "algo_version": "v1",
+                }
+            )
 
 
 def main(start: int, end: int) -> None:
@@ -239,15 +260,16 @@ def main(start: int, end: int) -> None:
     for year in range(start, end + 1):
         results = list(term_results_for_year(year, prev_term_tt))
         write_year(year, results)
-        print(f'Generated terms for {year}')
+        print(f"Generated terms for {year}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('start', type=int)
-    parser.add_argument('end', type=int)
+    parser.add_argument("start", type=int)
+    parser.add_argument("end", type=int)
     args = parser.parse_args()
     from zoneinfo import ZoneInfo  # ensure available
+
     main(args.start, args.end)

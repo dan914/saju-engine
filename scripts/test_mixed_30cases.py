@@ -23,10 +23,10 @@ from calculate_pillars_traditional import calculate_four_pillars
 def parse_time(time_str):
     """Parse time string, handling special cases."""
     # Handle invalid time formats
-    if ':' not in time_str:
+    if ":" not in time_str:
         return None
 
-    parts = time_str.split(':')
+    parts = time_str.split(":")
     if len(parts) != 2:
         return None
 
@@ -54,7 +54,7 @@ def test_30_mixed_cases(input_csv, output_csv):
     print("=" * 130)
 
     # Read input CSV
-    with open(input_csv, 'r', encoding='utf-8') as f:
+    with open(input_csv, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         test_cases = list(reader)
 
@@ -67,39 +67,41 @@ def test_30_mixed_cases(input_csv, output_csv):
     skipped = 0
 
     for case in test_cases:
-        test_id = case['id']
-        date_str = case['date_local']
-        time_str = case['time_local']
-        tz_str = case['tz']
-        location = case['location']
-        note = case['note']
-        for_ft = case['for_forceteller'] == 'True'
+        test_id = case["id"]
+        date_str = case["date_local"]
+        time_str = case["time_local"]
+        tz_str = case["tz"]
+        location = case["location"]
+        note = case["note"]
+        for_ft = case["for_forceteller"] == "True"
 
         # Parse time
         time_parts = parse_time(time_str)
         if time_parts is None:
             print(f"⚠️  SKIP {test_id:4} | {date_str} {time_str:8} | Invalid time format | {note}")
-            results.append({
-                'id': test_id,
-                'date_local': date_str,
-                'time_local': time_str,
-                'tz': tz_str,
-                'location': location,
-                'note': note,
-                'for_forceteller': for_ft,
-                'ft_year': '',
-                'ft_month': '',
-                'ft_day': '',
-                'ft_hour': '',
-                'engine_year': 'ERROR',
-                'engine_month': 'Invalid time format',
-                'engine_day': '',
-                'engine_hour': '',
-                'match_year': '',
-                'match_month': '',
-                'match_day': '',
-                'match_hour': ''
-            })
+            results.append(
+                {
+                    "id": test_id,
+                    "date_local": date_str,
+                    "time_local": time_str,
+                    "tz": tz_str,
+                    "location": location,
+                    "note": note,
+                    "for_forceteller": for_ft,
+                    "ft_year": "",
+                    "ft_month": "",
+                    "ft_day": "",
+                    "ft_hour": "",
+                    "engine_year": "ERROR",
+                    "engine_month": "Invalid time format",
+                    "engine_day": "",
+                    "engine_hour": "",
+                    "match_year": "",
+                    "match_month": "",
+                    "match_day": "",
+                    "match_hour": "",
+                }
+            )
             skipped += 1
             continue
 
@@ -107,140 +109,164 @@ def test_30_mixed_cases(input_csv, output_csv):
 
         # Parse date
         try:
-            year, month, day = map(int, date_str.split('-'))
+            year, month, day = map(int, date_str.split("-"))
             birth_dt = datetime(year, month, day, hour, minute)
         except (ValueError, AttributeError) as e:
             print(f"⚠️  SKIP {test_id:4} | {date_str} {time_str:8} | Invalid date: {e} | {note}")
-            results.append({
-                'id': test_id,
-                'date_local': date_str,
-                'time_local': time_str,
-                'tz': tz_str,
-                'location': location,
-                'note': note,
-                'for_forceteller': for_ft,
-                'ft_year': '',
-                'ft_month': '',
-                'ft_day': '',
-                'ft_hour': '',
-                'engine_year': 'ERROR',
-                'engine_month': f'Invalid date: {e}',
-                'engine_day': '',
-                'engine_hour': '',
-                'match_year': '',
-                'match_month': '',
-                'match_day': '',
-                'match_hour': ''
-            })
+            results.append(
+                {
+                    "id": test_id,
+                    "date_local": date_str,
+                    "time_local": time_str,
+                    "tz": tz_str,
+                    "location": location,
+                    "note": note,
+                    "for_forceteller": for_ft,
+                    "ft_year": "",
+                    "ft_month": "",
+                    "ft_day": "",
+                    "ft_hour": "",
+                    "engine_year": "ERROR",
+                    "engine_month": f"Invalid date: {e}",
+                    "engine_day": "",
+                    "engine_hour": "",
+                    "match_year": "",
+                    "match_month": "",
+                    "match_day": "",
+                    "match_hour": "",
+                }
+            )
             skipped += 1
             continue
 
         # Calculate pillars
         try:
             result = calculate_four_pillars(
-                birth_dt,
-                tz_str=tz_str,
-                mode='traditional_kr',
-                return_metadata=True
+                birth_dt, tz_str=tz_str, mode="traditional_kr", return_metadata=True
             )
 
-            if 'error' in result:
-                print(f"❌ FAIL {test_id:4} | {date_str} {time_str:8} | Error: {result['error']} | {note}")
-                results.append({
-                    'id': test_id,
-                    'date_local': date_str,
-                    'time_local': time_str,
-                    'tz': tz_str,
-                    'location': location,
-                    'note': note,
-                    'for_forceteller': for_ft,
-                    'ft_year': '',
-                    'ft_month': '',
-                    'ft_day': '',
-                    'ft_hour': '',
-                    'engine_year': 'ERROR',
-                    'engine_month': result['error'],
-                    'engine_day': '',
-                    'engine_hour': '',
-                    'match_year': '',
-                    'match_month': '',
-                    'match_day': '',
-                    'match_hour': ''
-                })
+            if "error" in result:
+                print(
+                    f"❌ FAIL {test_id:4} | {date_str} {time_str:8} | Error: {result['error']} | {note}"
+                )
+                results.append(
+                    {
+                        "id": test_id,
+                        "date_local": date_str,
+                        "time_local": time_str,
+                        "tz": tz_str,
+                        "location": location,
+                        "note": note,
+                        "for_forceteller": for_ft,
+                        "ft_year": "",
+                        "ft_month": "",
+                        "ft_day": "",
+                        "ft_hour": "",
+                        "engine_year": "ERROR",
+                        "engine_month": result["error"],
+                        "engine_day": "",
+                        "engine_hour": "",
+                        "match_year": "",
+                        "match_month": "",
+                        "match_day": "",
+                        "match_hour": "",
+                    }
+                )
                 failed += 1
                 continue
 
             # Success
-            year_pillar = result['year']
-            month_pillar = result['month']
-            day_pillar = result['day']
-            hour_pillar = result['hour']
+            year_pillar = result["year"]
+            month_pillar = result["month"]
+            day_pillar = result["day"]
+            hour_pillar = result["hour"]
 
-            meta = result['metadata']
-            zi_applied = '子時✓' if meta['zi_transition_applied'] else '子時✗'
+            meta = result["metadata"]
+            zi_applied = "子時✓" if meta["zi_transition_applied"] else "子時✗"
 
-            print(f"✅ PASS {test_id:4} | {date_str} {time_str:8} | "
-                  f"LMT: {meta['lmt_adjusted_time'][11:16]} | {zi_applied} | "
-                  f"{year_pillar} {month_pillar} {day_pillar} {hour_pillar} | {note}")
+            print(
+                f"✅ PASS {test_id:4} | {date_str} {time_str:8} | "
+                f"LMT: {meta['lmt_adjusted_time'][11:16]} | {zi_applied} | "
+                f"{year_pillar} {month_pillar} {day_pillar} {hour_pillar} | {note}"
+            )
 
-            results.append({
-                'id': test_id,
-                'date_local': date_str,
-                'time_local': time_str,
-                'tz': tz_str,
-                'location': location,
-                'note': note,
-                'for_forceteller': for_ft,
-                'ft_year': '',
-                'ft_month': '',
-                'ft_day': '',
-                'ft_hour': '',
-                'engine_year': year_pillar,
-                'engine_month': month_pillar,
-                'engine_day': day_pillar,
-                'engine_hour': hour_pillar,
-                'match_year': '',
-                'match_month': '',
-                'match_day': '',
-                'match_hour': ''
-            })
+            results.append(
+                {
+                    "id": test_id,
+                    "date_local": date_str,
+                    "time_local": time_str,
+                    "tz": tz_str,
+                    "location": location,
+                    "note": note,
+                    "for_forceteller": for_ft,
+                    "ft_year": "",
+                    "ft_month": "",
+                    "ft_day": "",
+                    "ft_hour": "",
+                    "engine_year": year_pillar,
+                    "engine_month": month_pillar,
+                    "engine_day": day_pillar,
+                    "engine_hour": hour_pillar,
+                    "match_year": "",
+                    "match_month": "",
+                    "match_day": "",
+                    "match_hour": "",
+                }
+            )
             passed += 1
 
         except Exception as e:
             print(f"❌ FAIL {test_id:4} | {date_str} {time_str:8} | Exception: {e} | {note}")
-            results.append({
-                'id': test_id,
-                'date_local': date_str,
-                'time_local': time_str,
-                'tz': tz_str,
-                'location': location,
-                'note': note,
-                'for_forceteller': for_ft,
-                'ft_year': '',
-                'ft_month': '',
-                'ft_day': '',
-                'ft_hour': '',
-                'engine_year': 'ERROR',
-                'engine_month': str(e),
-                'engine_day': '',
-                'engine_hour': '',
-                'match_year': '',
-                'match_month': '',
-                'match_day': '',
-                'match_hour': ''
-            })
+            results.append(
+                {
+                    "id": test_id,
+                    "date_local": date_str,
+                    "time_local": time_str,
+                    "tz": tz_str,
+                    "location": location,
+                    "note": note,
+                    "for_forceteller": for_ft,
+                    "ft_year": "",
+                    "ft_month": "",
+                    "ft_day": "",
+                    "ft_hour": "",
+                    "engine_year": "ERROR",
+                    "engine_month": str(e),
+                    "engine_day": "",
+                    "engine_hour": "",
+                    "match_year": "",
+                    "match_month": "",
+                    "match_day": "",
+                    "match_hour": "",
+                }
+            )
             failed += 1
 
     # Write results to CSV
     print("\n" + "=" * 130)
     print("Writing results to CSV...")
 
-    with open(output_csv, 'w', encoding='utf-8', newline='') as f:
+    with open(output_csv, "w", encoding="utf-8", newline="") as f:
         fieldnames = [
-            'id', 'date_local', 'time_local', 'tz', 'location', 'note', 'for_forceteller',
-            'ft_year', 'ft_month', 'ft_day', 'ft_hour',
-            'engine_year', 'engine_month', 'engine_day', 'engine_hour',
-            'match_year', 'match_month', 'match_day', 'match_hour'
+            "id",
+            "date_local",
+            "time_local",
+            "tz",
+            "location",
+            "note",
+            "for_forceteller",
+            "ft_year",
+            "ft_month",
+            "ft_day",
+            "ft_hour",
+            "engine_year",
+            "engine_month",
+            "engine_day",
+            "engine_hour",
+            "match_year",
+            "match_month",
+            "match_day",
+            "match_hour",
         ]
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()

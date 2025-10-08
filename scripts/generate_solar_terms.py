@@ -103,7 +103,9 @@ def datetime_to_jd(dt: datetime) -> float:
     dt = dt.astimezone(timezone.utc)
     year = dt.year
     month = dt.month
-    day = dt.day + dt.hour / 24 + dt.minute / 1440 + dt.second / 86400 + dt.microsecond / 86400 / 1e6
+    day = (
+        dt.day + dt.hour / 24 + dt.minute / 1440 + dt.second / 86400 + dt.microsecond / 86400 / 1e6
+    )
     if month <= 2:
         year -= 1
         month += 12
@@ -220,7 +222,14 @@ def write_year(year: int, rows: list[dict[str, str]]) -> None:
     with path.open("w", encoding="utf-8", newline="") as fh:
         writer = csv.DictWriter(
             fh,
-            fieldnames=["term", "lambda_deg", "utc_time", "delta_t_seconds", "source", "algo_version"],
+            fieldnames=[
+                "term",
+                "lambda_deg",
+                "utc_time",
+                "delta_t_seconds",
+                "source",
+                "algo_version",
+            ],
         )
         writer.writeheader()
         writer.writerows(rows)

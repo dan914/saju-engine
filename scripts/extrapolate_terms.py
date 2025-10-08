@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import csv
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List
 
-CANONICAL_TERMS_DIR = Path('data/canonical/terms')
-OUTPUT_DIR = Path('data/canonical/terms_extrapolated')
+CANONICAL_TERMS_DIR = Path("data/canonical/terms")
+OUTPUT_DIR = Path("data/canonical/terms_extrapolated")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 TERMS = [
@@ -46,15 +46,15 @@ FUTURE_END_YEAR = 2050
 def load_term_seconds() -> Dict[str, List[tuple[int, float]]]:
     data: Dict[str, List[tuple[int, float]]] = {term: [] for term in TERMS}
     for year in range(START_YEAR, END_YEAR_CANONICAL + 1):
-        path = CANONICAL_TERMS_DIR / f'terms_{year}.csv'
+        path = CANONICAL_TERMS_DIR / f"terms_{year}.csv"
         if not path.exists():
             continue
         jan1 = datetime(year, 1, 1, tzinfo=timezone.utc)
-        with path.open('r', encoding='utf-8') as fh:
+        with path.open("r", encoding="utf-8") as fh:
             reader = csv.DictReader(fh)
             for row in reader:
-                term = row['term']
-                dt = datetime.fromisoformat(row['utc_time'].replace('Z', '+00:00'))
+                term = row["term"]
+                dt = datetime.fromisoformat(row["utc_time"].replace("Z", "+00:00"))
                 seconds = (dt - jan1).total_seconds()
                 data[term].append((year, seconds))
     return data
@@ -86,11 +86,18 @@ def extrapolate_term(term: str, points: List[tuple[int, float]]) -> Dict[int, fl
 
 def write_year(year: int, rows: List[dict[str, str]]) -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    path = OUTPUT_DIR / f'terms_{year}.csv'
-    with path.open('w', encoding='utf-8', newline='') as fh:
+    path = OUTPUT_DIR / f"terms_{year}.csv"
+    with path.open("w", encoding="utf-8", newline="") as fh:
         writer = csv.DictWriter(
             fh,
-            fieldnames=['term', 'lambda_deg', 'utc_time', 'delta_t_seconds', 'source', 'algo_version']
+            fieldnames=[
+                "term",
+                "lambda_deg",
+                "utc_time",
+                "delta_t_seconds",
+                "source",
+                "algo_version",
+            ],
         )
         writer.writeheader()
         writer.writerows(rows)
@@ -109,16 +116,16 @@ def main() -> None:
             dt = jan1 + timedelta(seconds=seconds)
             rows.append(
                 {
-                    'term': term,
-                    'lambda_deg': '0',  # placeholder, not needed for month resolution
-                    'utc_time': dt.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                    'delta_t_seconds': '0.0',
-                    'source': 'REGRESSION_EXTRAPOLATION',
-                    'algo_version': 'linear',
+                    "term": term,
+                    "lambda_deg": "0",  # placeholder, not needed for month resolution
+                    "utc_time": dt.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "delta_t_seconds": "0.0",
+                    "source": "REGRESSION_EXTRAPOLATION",
+                    "algo_version": "linear",
                 }
             )
         write_year(year, rows)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
