@@ -1,0 +1,28 @@
+{
+  "version": "1.0",
+  "generated_on": "2025-10-05T00:00:00+09:00",
+  "source_refs": [
+    "子平眞詮 (Ziping Zhenquan), 中華書局註解本",
+    "滴天髓 (Di Tian Sui), 上海古籍"
+  ],
+  "yang_stems": ["甲", "丙", "戊", "庚", "壬"],
+  "yin_stems": ["乙", "丁", "己", "辛", "癸"],
+  "direction_rules": {
+    "yang": "forward",
+    "yin": "backward"
+  },
+  "labels": {
+    "zh": {
+      "yang": "陽",
+      "yin": "陰"
+    },
+    "ko": {
+      "yang": "양",
+      "yin": "음"
+    },
+    "en": {
+      "yang": "Yang",
+      "yin": "Yin"
+    }
+  }
+}

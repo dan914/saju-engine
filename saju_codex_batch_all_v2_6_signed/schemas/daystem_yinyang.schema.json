@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Day Stem Yin/Yang Metadata",
+  "description": "Classification of Ten Heavenly Stems by yin/yang polarity for lifecycle stage calculation",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "generated_on": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "yang_stems": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["甲", "丙", "戊", "庚", "壬"]
+      },
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true
+    },
+    "yin_stems": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["乙", "丁", "己", "辛", "癸"]
+      },
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true
+    },
+    "direction_rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "yang": {
+          "type": "string",
+          "enum": ["forward", "backward"]
+        },
+        "yin": {
+          "type": "string",
+          "enum": ["forward", "backward"]
+        }
+      },
+      "required": ["yang", "yin"]
+    },
+    "labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "zh": {
+          "type": "object",
+          "properties": {
+            "yang": {"type": "string"},
+            "yin": {"type": "string"}
+          },
+          "required": ["yang", "yin"]
+        },
+        "ko": {
+          "type": "object",
+          "properties": {
+            "yang": {"type": "string"},
+            "yin": {"type": "string"}
+          },
+          "required": ["yang", "yin"]
+        },
+        "en": {
+          "type": "object",
+          "properties": {
+            "yang": {"type": "string"},
+            "yin": {"type": "string"}
+          },
+          "required": ["yang", "yin"]
+        }
+      },
+      "required": ["zh", "ko", "en"]
+    }
+  },
+  "required": ["version", "generated_on", "source_refs", "yang_stems", "yin_stems", "direction_rules", "labels"]
+}

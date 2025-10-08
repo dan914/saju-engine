@@ -29,7 +29,7 @@ class TimeResolver:
 POLICY_DIR = Path(__file__).resolve().parents[5] / "saju_codex_addendum_v2"
 LUCK_POLICY_PATH = POLICY_DIR / "policies" / "luck_policy_v1.json"
 SHENSHA_CATALOG_PATH = POLICY_DIR / "policies" / "shensha_catalog_v1.json"
-TERM_DATA_PATH = Path(__file__).resolve().parents[5] / "data" / "sample"
+TERM_DATA_PATH = Path(__file__).resolve().parents[5] / "data"
 
 
 @dataclass(slots=True)

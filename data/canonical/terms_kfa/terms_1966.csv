@@ -1,0 +1,13 @@
+term,lambda_deg,utc_time,delta_t_seconds,source,algo_version
+清明,15.0,1966-04-05T05:57:00Z,,kfa_manseoryeok,v1
+立夏,45.0,1966-05-05T23:30:00Z,,kfa_manseoryeok,v1
+芒種,75.0,1966-06-06T03:50:00Z,,kfa_manseoryeok,v1
+小暑,90.0,1966-07-07T14:07:00Z,,kfa_manseoryeok,v1
+立秋,120.0,1966-08-07T23:49:00Z,,kfa_manseoryeok,v1
+白露,150.0,1966-09-08T02:32:00Z,,kfa_manseoryeok,v1
+寒露,165.0,1966-10-08T17:00:00Z,,kfa_manseoryeok,v1
+立冬,195.0,1966-11-07T17:57:00Z,,kfa_manseoryeok,v1
+大雪,225.0,1966-12-07T13:38:00Z,,kfa_manseoryeok,v1
+小寒,285.0,1966-01-05T18:55:00Z,,kfa_manseoryeok,v1
+立春,315.0,1966-02-04T06:38:00Z,,kfa_manseoryeok,v1
+驚蟄,345.0,1966-03-06T00:52:00Z,,kfa_manseoryeok,v1

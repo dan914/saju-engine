@@ -1,0 +1,300 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Luck Pillars Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "Dir": {
+      "type": "string",
+      "enum": ["forward", "backward"]
+    },
+    "AnchorType": {
+      "type": "string",
+      "enum": ["jie", "qi"]
+    }
+  },
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "generated_on": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "disclaimer": {
+      "type": "string"
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sixty_jiazi": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string",
+              "enum": ["sixty_jiazi"]
+            },
+            "version": {
+              "type": "string"
+            },
+            "signature": {
+              "type": "string"
+            }
+          },
+          "required": ["name", "version", "signature"]
+        },
+        "lifecycle_stages": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string",
+              "enum": ["lifecycle_stages"]
+            },
+            "version": {
+              "type": "string"
+            },
+            "signature": {
+              "type": "string"
+            }
+          },
+          "required": ["name", "version", "signature"]
+        },
+        "tengods_logic": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string",
+              "enum": ["branch_tengods_policy"]
+            },
+            "version": {
+              "type": "string"
+            },
+            "signature": {
+              "type": "string"
+            },
+            "use": {
+              "type": "string",
+              "enum": ["logic_only_for_stem_relations"]
+            }
+          },
+          "required": ["name", "version", "signature", "use"]
+        }
+      },
+      "required": ["sixty_jiazi", "lifecycle_stages", "tengods_logic"]
+    },
+    "direction": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rule": {
+          "type": "string",
+          "enum": ["year_stem_yinyang_x_gender"]
+        },
+        "matrix": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "male": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yang": {
+                  "$ref": "#/$defs/Dir"
+                },
+                "yin": {
+                  "$ref": "#/$defs/Dir"
+                }
+              },
+              "required": ["yang", "yin"]
+            },
+            "female": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yang": {
+                  "$ref": "#/$defs/Dir"
+                },
+                "yin": {
+                  "$ref": "#/$defs/Dir"
+                }
+              },
+              "required": ["yang", "yin"]
+            }
+          },
+          "required": ["male", "female"]
+        },
+        "labels": {
+          "type": "object"
+        }
+      },
+      "required": ["rule", "matrix"]
+    },
+    "start_age": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": ["solar_term_interval"]
+        },
+        "reference": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "$ref": "#/$defs/AnchorType"
+            },
+            "forward": {
+              "type": "string",
+              "enum": ["next"]
+            },
+            "backward": {
+              "type": "string",
+              "enum": ["prev"]
+            }
+          },
+          "required": ["type", "forward", "backward"]
+        },
+        "conversion": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "days_per_year": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "hours_per_day": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          },
+          "required": ["days_per_year", "hours_per_day"]
+        },
+        "rounding": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "decimals": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2
+            },
+            "mode": {
+              "type": "string",
+              "enum": ["half_up", "floor", "ceil"]
+            }
+          },
+          "required": ["decimals", "mode"]
+        }
+      },
+      "required": ["method", "reference", "conversion", "rounding"]
+    },
+    "generation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "start_from_next_after_month": {
+          "type": "boolean"
+        },
+        "age_series": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "step_years": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 12
+            },
+            "display_decimals": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2
+            },
+            "display_round": {
+              "type": "string",
+              "enum": ["floor", "ceil", "half_up"]
+            }
+          },
+          "required": ["step_years", "count", "display_decimals", "display_round"]
+        },
+        "emit": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ten_god_for_stem": {
+              "type": "boolean"
+            },
+            "lifecycle_for_branch": {
+              "type": "boolean"
+            }
+          },
+          "required": ["ten_god_for_stem", "lifecycle_for_branch"]
+        }
+      },
+      "required": ["start_from_next_after_month", "age_series", "emit"]
+    },
+    "labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ko": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "luck_pillar": {
+              "type": "string"
+            },
+            "age": {
+              "type": "string"
+            },
+            "ten_god": {
+              "type": "string"
+            },
+            "lifecycle": {
+              "type": "string"
+            }
+          },
+          "required": ["luck_pillar", "age", "ten_god", "lifecycle"]
+        },
+        "en": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "luck_pillar": {
+              "type": "string"
+            },
+            "age": {
+              "type": "string"
+            },
+            "ten_god": {
+              "type": "string"
+            },
+            "lifecycle": {
+              "type": "string"
+            }
+          },
+          "required": ["luck_pillar", "age", "ten_god", "lifecycle"]
+        }
+      },
+      "required": ["ko", "en"]
+    }
+  },
+  "required": ["version", "generated_on", "source_refs", "disclaimer", "dependencies", "direction", "start_age", "generation", "labels"]
+}
