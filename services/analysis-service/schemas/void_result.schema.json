@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "void_result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["policy_version", "policy_signature", "day_index", "xun_start", "kong"],
+  "properties": {
+    "policy_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "policy_signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "day_index": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 59
+    },
+    "xun_start": {
+      "type": "integer",
+      "enum": [0, 10, 20, 30, 40, 50]
+    },
+    "kong": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "string",
+        "enum": ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"]
+      }
+    }
+  }
+}
