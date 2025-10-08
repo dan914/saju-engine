@@ -32,6 +32,7 @@ class PillarsEngine:
             rule_id="KR_classic_v1.4",
             delta_t_seconds=57.4,
             tz={"iana": request.timezone, "event": "none", "tzdbVersion": "2025a"},
+            astro={"lambda_deg": 0.0, "delta_t": 57.4},
             boundary_policy="LCRO",
             epsilon_seconds=0.001,
             flags={"edge": False, "tzTransition": False, "deltaT>5s": False},
