@@ -33,5 +33,6 @@ def test_day_start_respects_policy() -> None:
     day_start = response.json()["pillars"]["day"]["dayStartLocal"]
     # ISO8601(+오프셋) 문자열이므로 접미사 비교가 아니라 파싱으로 검증한다.
     from datetime import datetime
+
     dt = datetime.fromisoformat(day_start)
     assert (dt.hour, dt.minute, dt.second) == (23, 0, 0)
