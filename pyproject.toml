@@ -68,8 +68,6 @@ select = ["E", "F", "I", "C90"]
 "services/tz-time-service/app/api/__init__.py" = ["F401"]
 
 # Import ordering - needs restructuring
-"services/astro-service/app/models/terms.py" = ["E402", "F404"]
-"services/tz-time-service/app/models/conversion.py" = ["E402", "F404"]
 "services/tz-time-service/app/core/events.py" = ["F841"]
 
 # Line length - acceptable for tests and long assertions
