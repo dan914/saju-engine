@@ -12,7 +12,7 @@ from ..models import TermQuery, TermResponse
 router = APIRouter(tags=["terms"])
 
 
-DATA_ROOT = Path(__file__).resolve().parents[4] / "data"
+DATA_ROOT = Path(__file__).resolve().parents[4] / "data" / "sample"
 
 
 def get_loader() -> SolarTermLoader:
