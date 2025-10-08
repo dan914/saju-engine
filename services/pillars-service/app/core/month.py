@@ -118,7 +118,7 @@ class MonthBranchResolver:
         return branch, local_current
 
 
-DEFAULT_DATA_PATH = Path(__file__).resolve().parents[4] / "data" / "sample"
+DEFAULT_DATA_PATH = Path(__file__).resolve().parents[4] / "data"
 
 
 def default_month_resolver() -> MonthBranchResolver:

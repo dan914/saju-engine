@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.saju.engine/policies/sixty_jiazi.schema.json",
+  "title": "Sixty Jiazi Policy Schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version","generated_on","engine_name_ko","source_refs","disclaimer","fields","records","relationships","dependencies","signature"],
+  "properties": {
+    "version": { "type": "string" },
+    "generated_on": { "type": "string", "format": "date-time" },
+    "engine_name_ko": { "type": "string" },
+    "source_refs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "disclaimer": { "type": "string" },
+    "fields": {
+      "type": "array",
+      "const": ["index","stem","branch","stem_index","branch_index","element","polarity","nayin","nayin_element","label_ko","label_zh","label_en"]
+    },
+    "records": {
+      "type": "array",
+      "minItems": 60,
+      "maxItems": 60,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["index","stem","branch","stem_index","branch_index","element","polarity","nayin","nayin_element","label_ko","label_zh","label_en"],
+        "properties": {
+          "index": { "type": "integer", "minimum": 1, "maximum": 60 },
+          "stem": { "enum": ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"] },
+          "branch": { "enum": ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"] },
+          "stem_index": { "type": "integer", "minimum": 1, "maximum": 10 },
+          "branch_index": { "type": "integer", "minimum": 1, "maximum": 12 },
+          "element": { "enum": ["木","火","土","金","水"] },
+          "polarity": { "enum": ["陽","陰"] },
+          "nayin": { "enum": ["海中金","炉中火","大林木","路旁土","剑锋金","山头火","涧下水","城头土","白蜡金","杨柳木","泉中水","屋上土","霹雳火","松柏木","长流水","砂中金","山下火","平地木","壁上土","金箔金","覆灯火","天河水","大驿土","钗钏金","桑柘木","大溪水","沙中土","天上火","石榴木","大海水"] },
+          "nayin_element": { "enum": ["木","火","土","金","水"] },
+          "label_ko": { "type": "string" },
+          "label_zh": { "type": "string" },
+          "label_en": { "type": "string" }
+        }
+      }
+    },
+    "relationships": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["next_cycle","yin_yang_distribution","element_distribution"],
+      "properties": {
+        "next_cycle": { "type": "string" },
+        "yin_yang_distribution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["yang","yin"],
+          "properties": {
+            "yang": { "type": "integer", "minimum": 0, "maximum": 60 },
+            "yin": { "type": "integer", "minimum": 0, "maximum": 60 }
+          }
+        },
+        "element_distribution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["木","火","土","金","水"],
+          "properties": {
+            "木": { "type": "integer", "minimum": 0, "maximum": 60 },
+            "火": { "type": "integer", "minimum": 0, "maximum": 60 },
+            "土": { "type": "integer", "minimum": 0, "maximum": 60 },
+            "金": { "type": "integer", "minimum": 0, "maximum": 60 },
+            "水": { "type": "integer", "minimum": 0, "maximum": 60 }
+          }
+        }
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["elements_distribution","branch_tengods_policy"],
+      "properties": {
+        "elements_distribution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name","version","signature"],
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" },
+            "signature": { "type": "string" }
+          }
+        },
+        "branch_tengods_policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name","version","signature"],
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" },
+            "signature": { "type": "string" }
+          }
+        },
+        "localization_en": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name","version","signature"],
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" },
+            "signature": { "type": "string" }
+          }
+        }
+      }
+    },
+    "ci_checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "on_fail": { "enum": ["fail_build","warn"] },
+        "assertions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id","expr"],
+            "properties": {
+              "id": { "type": "string" },
+              "expr": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "signature_mode": { "enum": ["sha256_auto_injected"] },
+    "signature": { "type": "string" }
+  },
+  "description": "Note: pairwise NaYin rules are enforced via CI assertions and property tests. The schema accepts optional ci_checks and localization_en dependency."
+}

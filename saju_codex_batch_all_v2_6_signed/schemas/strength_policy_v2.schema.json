@@ -1,0 +1,457 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.saju.engine/policies/strength_policy_v2.schema.json",
+  "title": "StrengthEvaluator v2 Policy Schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version","generated_on","signature","engine_name_ko","source_refs",
+    "disclaimer","dependencies","weights","relations",
+    "deukryeong","deukji","deuksi","deukse","buckets","rounding"
+  ],
+  "properties": {
+    "version": { "type": "string" },
+    "generated_on": { "type": "string", "format": "date-time" },
+    "signature": { "type": "string" },
+    "engine_name_ko": { "type": "string" },
+    "source_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+    "disclaimer": { "type": "string" },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["elements_distribution","lifecycle_stages","relation_policy","climate_map"],
+      "properties": {
+        "elements_distribution": {
+          "type": "object",
+          "required": ["name","version","signature"],
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" },
+            "signature": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "lifecycle_stages": {
+          "type": "object",
+          "required": ["name","version","signature"],
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" },
+            "signature": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "relation_policy": {
+          "type": "object",
+          "required": ["name","version","signature"],
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" },
+            "signature": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "climate_map": {
+          "type": "object",
+          "required": ["name","version","signature"],
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" },
+            "signature": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "relation_policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "apply": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "ci_checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "on_fail": { "enum": ["fail_build","warn"] },
+        "assertions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id","expr"],
+            "properties": {
+              "id": { "type": "string" },
+              "expr": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "common_hidden_weights": { "$ref": "#/$defs/hiddenWeightsDef" },
+    "weights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["deukryeong","deukji","deuksi","deukse"],
+      "properties": {
+        "deukryeong": { "type": "number", "minimum": 0, "maximum": 100 },
+        "deukji": { "type": "number", "minimum": 0, "maximum": 100 },
+        "deuksi": { "type": "number", "minimum": 0, "maximum": 100 },
+        "deukse": { "type": "number", "minimum": 0, "maximum": 100 }
+      },
+      "$comment": "가중치 합=100은 JSON Schema로 강제하지 않음. CI assertions(W_SUM_100)로 검증."
+    },
+    "relations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["elements","sheng","ke"],
+      "properties": {
+        "elements": {
+          "type": "array",
+          "items": { "enum": ["木","火","土","金","水"] },
+          "minItems": 5,
+          "maxItems": 5
+        },
+        "sheng": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["木","火","土","金","水"],
+          "properties": {
+            "木": { "enum": ["火"] },
+            "火": { "enum": ["土"] },
+            "土": { "enum": ["金"] },
+            "金": { "enum": ["水"] },
+            "水": { "enum": ["木"] }
+          }
+        },
+        "ke": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["木","火","土","金","水"],
+          "properties": {
+            "木": { "enum": ["土"] },
+            "火": { "enum": ["金"] },
+            "土": { "enum": ["水"] },
+            "金": { "enum": ["木"] },
+            "水": { "enum": ["火"] }
+          }
+        }
+      }
+    },
+    "deukryeong": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["month_wang_map","scoring"],
+      "properties": {
+        "month_wang_map": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "子": { "$ref": "#/$defs/wangRow" },
+            "丑": { "$ref": "#/$defs/wangRow" },
+            "寅": { "$ref": "#/$defs/wangRow" },
+            "卯": { "$ref": "#/$defs/wangRow" },
+            "辰": { "$ref": "#/$defs/wangRow" },
+            "巳": { "$ref": "#/$defs/wangRow" },
+            "午": { "$ref": "#/$defs/wangRow" },
+            "未": { "$ref": "#/$defs/wangRow" },
+            "申": { "$ref": "#/$defs/wangRow" },
+            "酉": { "$ref": "#/$defs/wangRow" },
+            "戌": { "$ref": "#/$defs/wangRow" },
+            "亥": { "$ref": "#/$defs/wangRow" }
+          }
+        },
+        "scoring": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["full_threshold","partial_threshold","match_day_element","opposite"],
+          "properties": {
+            "full_threshold": { "type": "number", "minimum": 0, "maximum": 1 },
+            "partial_threshold": { "type": "number", "minimum": 0, "maximum": 1 },
+            "match_day_element": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["full","partial"],
+              "properties": {
+                "full": { "type": "number", "minimum": 0, "maximum": 1 },
+                "partial": { "type": "number", "minimum": 0, "maximum": 1 }
+              }
+            },
+            "opposite": { "type": "number", "maximum": 0 }
+          }
+        }
+      }
+    },
+    "deukji": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pillar_weights","affinity","normalization"],
+      "properties": {
+        "pillar_weights": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["year","month","day","hour"],
+          "properties": {
+            "year": { "type": "number", "minimum": 0, "maximum": 2 },
+            "month": { "type": "number", "minimum": 0, "maximum": 2 },
+            "day": { "type": "number", "minimum": 0, "maximum": 2 },
+            "hour": { "type": "number", "minimum": 0, "maximum": 2 }
+          }
+        },
+        "hidden_weights": { "$ref": "#/$defs/hiddenWeightsDef" },
+        "hidden_weights_ref": { "type": "string", "format": "json-pointer" },
+        "affinity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["same","sheng_to_day","ke_by_day","ke_to_day","sheng_by_day"],
+          "properties": {
+            "same": { "type": "number" },
+            "sheng_to_day": { "type": "number" },
+            "ke_by_day": { "type": "number" },
+            "ke_to_day": { "type": "number" },
+            "sheng_by_day": { "type": "number" }
+          }
+        },
+        "normalization": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["min","max","clamp"],
+          "properties": {
+            "min": { "type": "number" },
+            "max": { "type": "number" },
+            "clamp": { "type": "boolean" }
+          }
+        }
+      },
+      "allOf": [
+        { "oneOf": [ { "required": ["hidden_weights"] }, { "required": ["hidden_weights_ref"] } ] }
+      ]
+    },
+    "deuksi": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["branch_primary_element_map","hour_branch_weight","hour_hidden_weight","affinity","hidden_weights_ref","normalization"],
+      "properties": {
+        "branch_primary_element_map": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "子": { "enum": ["木","火","土","金","水"] },
+            "丑": { "enum": ["木","火","土","金","水"] },
+            "寅": { "enum": ["木","火","土","金","水"] },
+            "卯": { "enum": ["木","火","土","金","水"] },
+            "辰": { "enum": ["木","火","土","金","水"] },
+            "巳": { "enum": ["木","火","土","金","水"] },
+            "午": { "enum": ["木","火","土","金","水"] },
+            "未": { "enum": ["木","火","土","金","水"] },
+            "申": { "enum": ["木","火","土","金","水"] },
+            "酉": { "enum": ["木","火","土","金","水"] },
+            "戌": { "enum": ["木","火","土","金","水"] },
+            "亥": { "enum": ["木","火","土","金","水"] }
+          }
+        },
+        "hour_branch_weight": { "type": "number", "minimum": 0, "maximum": 1 },
+        "hour_hidden_weight": { "type": "number", "minimum": 0, "maximum": 1 },
+        "affinity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["same","sheng_to_day","ke_by_day","ke_to_day","sheng_by_day"],
+          "properties": {
+            "same": { "type": "number" },
+            "sheng_to_day": { "type": "number" },
+            "ke_by_day": { "type": "number" },
+            "ke_to_day": { "type": "number" },
+            "sheng_by_day": { "type": "number" }
+          }
+        },
+        "hidden_weights_ref": { "type": "string", "format": "json-pointer" },
+        "normalization": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["min","max","clamp"],
+          "properties": {
+            "min": { "type": "number" },
+            "max": { "type": "number" },
+            "clamp": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "deukse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["balance","climate_adjust"],
+      "properties": {
+        "balance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["vector","target_percent","var_max","dispersion_penalty","skew_penalty","normalize"],
+          "properties": {
+            "vector": {
+              "type": "array",
+              "items": { "enum": ["木","火","土","金","水"] },
+              "minItems": 5,
+              "maxItems": 5
+            },
+            "target_percent": { "type": "number", "minimum": 0, "maximum": 100 },
+            "var_max": { "type": "number", "exclusiveMinimum": 0 },
+            "dispersion_penalty": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["method","scale","cap"],
+              "properties": {
+                "method": { "enum": ["variance"] },
+                "scale": { "type": "number" },
+                "cap": { "type": "number" }
+              }
+            },
+            "skew_penalty": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["method","threshold","scale"],
+              "properties": {
+                "method": { "enum": ["max_gap"] },
+                "threshold": { "type": "number", "minimum": 0, "maximum": 100 },
+                "scale": { "type": "number" }
+              }
+            },
+            "normalize": { "type": "boolean" }
+          }
+        },
+        "climate_adjust": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["segments","apply_mode","target_percent","adjust_vectors","cap"],
+          "properties": {
+            "segments": {
+              "type": "array",
+              "items": { "enum": ["寒","熱","燥","濕"] },
+              "uniqueItems": true,
+              "minItems": 4,
+              "maxItems": 4
+            },
+            "apply_mode": { "enum": ["deficit_scaled"] },
+            "target_percent": { "type": "number", "minimum": 0, "maximum": 100 },
+            "adjust_vectors": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "寒": { "$ref": "#/$defs/adjustRow" },
+                "熱": { "$ref": "#/$defs/adjustRow" },
+                "燥": { "$ref": "#/$defs/adjustRow" },
+                "濕": { "$ref": "#/$defs/adjustRow" }
+              }
+            },
+            "cap": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["min","max"],
+              "properties": {
+                "min": { "type": "number" },
+                "max": { "type": "number" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "buckets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["thresholds","labels"],
+      "properties": {
+        "thresholds": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tae_gang","jung_gang","jung_hwa","jung_yak","tae_yak"],
+          "properties": {
+            "tae_gang": { "type": "number", "minimum": 0, "maximum": 100 },
+            "jung_gang": { "type": "number", "minimum": 0, "maximum": 100 },
+            "jung_hwa": { "type": "number", "minimum": 0, "maximum": 100 },
+            "jung_yak": { "type": "number", "minimum": 0, "maximum": 100 },
+            "tae_yak": { "type": "number", "minimum": 0, "maximum": 100 }
+          }
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ko","zh","en"],
+          "properties": {
+            "ko": { "$ref": "#/$defs/labelRow" },
+            "zh": { "$ref": "#/$defs/labelRow" },
+            "en": { "$ref": "#/$defs/labelRow" }
+          }
+        }
+      }
+    },
+    "rounding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score_decimals","mode","label_on_raw"],
+      "properties": {
+        "score_decimals": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "mode": { "enum": ["half_up","half_even"] },
+        "label_on_raw": { "type": "boolean" }
+      }
+    }
+  },
+  "$defs": {
+    "hiddenWeightsDef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary","secondary","tertiary"],
+      "properties": {
+        "primary": { "type": "number", "minimum": 0, "maximum": 1 },
+        "secondary": { "type": "number", "minimum": 0, "maximum": 1 },
+        "tertiary": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "wangRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["木","火","土","金","水"],
+      "properties": {
+        "木": { "type": "number", "minimum": 0, "maximum": 1 },
+        "火": { "type": "number", "minimum": 0, "maximum": 1 },
+        "土": { "type": "number", "minimum": 0, "maximum": 1 },
+        "金": { "type": "number", "minimum": 0, "maximum": 1 },
+        "水": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "adjustRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "木": { "type": "number" },
+        "火": { "type": "number" },
+        "土": { "type": "number" },
+        "金": { "type": "number" },
+        "水": { "type": "number" }
+      }
+    },
+    "labelRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tae_gang","jung_gang","jung_hwa","jung_yak","tae_yak"],
+      "properties": {
+        "tae_gang": { "type": "string" },
+        "jung_gang": { "type": "string" },
+        "jung_hwa": { "type": "string" },
+        "jung_yak": { "type": "string" },
+        "tae_yak": { "type": "string" }
+      }
+    }
+  },
+  "description": "Note: Weight sum (=100) and bucket ordering are verified via CI assertions (ci_checks). Hidden weights can be inline or referenced via JSON Pointer (#/common_hidden_weights)."
+}

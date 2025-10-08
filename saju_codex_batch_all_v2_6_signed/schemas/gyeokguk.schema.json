@@ -1,0 +1,242 @@
+{
+"$schema": "https://json-schema.org/draft/2020-12/schema",
+"$id": "https://example.org/schemas/gyeokguk.schema.json",
+"title": "Gyeokguk Evidence Schema v1.0",
+"type": "object",
+"additionalProperties": false,
+"required": ["module","policy_version","policy_signature","locale_used","dependencies","inputs","trace","aggregation","output","meta"],
+"properties": {
+"module": { "const": "gyeokguk_v1.0" },
+"policy_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+"policy_signature": { "type": "string" },
+"locale_used": { "type": "string", "pattern": "^[a-z]{2}-[A-Z]{2}$" },
+"dependencies": {
+"type": "object",
+"required": ["modules","dataset"],
+"properties": {
+"modules": {
+"type": "array",
+"minItems": 1,
+"items": {
+"type": "object",
+"required": ["name","version","role"],
+"properties": {
+"name": { "type": "string" },
+"version": { "type": "string" },
+"role": { "type": "string" },
+"signature": { "type": "string" },
+"data_hash": { "type": "string" }
+},
+"additionalProperties": true
+}
+},
+"dataset": {
+"type": "object",
+"required": ["sixty_jiazi","jieqi"],
+"properties": {
+"sixty_jiazi": {
+"type": "object",
+"required": ["name","version"],
+"properties": {
+"name": { "type": "string" },
+"version": { "type": "string" },
+"signature": { "type": "string" }
+}
+},
+"jieqi": {
+"type": "object",
+"required": ["name","version"],
+"properties": {
+"name": { "type": "string" },
+"version": { "type": "string" },
+"signature": { "type": "string" }
+}
+}
+},
+"additionalProperties": false
+}
+},
+"additionalProperties": false
+},
+"inputs": {
+"type": "object",
+"required": ["context","evidence_refs"],
+"properties": {
+"context": {
+"type": "object",
+"required": ["day_master","month_branch","season","strength_state"],
+"properties": {
+"day_master": { "type": "string", "enum": ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"] },
+"month_branch": { "type": "string", "enum": ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"] },
+"season": { "type": "string", "enum": ["spring","summer","autumn","winter"] },
+"strength_state": { "type": "string", "enum": ["weak","balanced","strong"] },
+"climate": {
+"type": "object",
+"required": ["temperature","humidity"],
+"properties": {
+"temperature": { "type": "string", "enum": ["hot","warm","neutral","cool","cold"] },
+"humidity": { "type": "string", "enum": ["dry","neutral","humid"] }
+},
+"additionalProperties": false
+}
+},
+"additionalProperties": false
+},
+"evidence_refs": {
+"type": "object",
+"required": ["strength_v2","branch_tengods_v1.1","relation_v1.0"],
+"properties": {
+"strength_v2": {
+"type": "object",
+"required": ["id","hash","score_normalized"],
+"properties": {
+"id": { "type": "string" },
+"hash": { "type": "string" },
+"score_normalized": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
+},
+"additionalProperties": true
+},
+"branch_tengods_v1.1": {
+"type": "object",
+"required": ["id","hash","score_normalized"],
+"properties": {
+"id": { "type": "string" },
+"hash": { "type": "string" },
+"score_normalized": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
+},
+"additionalProperties": true
+},
+"relation_v1.0": {
+"type": "object",
+"required": ["id","hash","score_normalized"],
+"properties": {
+"id": { "type": "string" },
+"hash": { "type": "string" },
+"score_normalized": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
+},
+"additionalProperties": true
+},
+"yongshin_v1.0": {
+"type": "object",
+"required": ["id","hash","score_normalized"],
+"properties": {
+"id": { "type": "string" },
+"hash": { "type": "string" },
+"score_normalized": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
+},
+"additionalProperties": true
+}
+},
+"additionalProperties": true
+}
+},
+"additionalProperties": false
+},
+"trace": {
+"type": "array",
+"items": {
+"type": "object",
+"required": ["component","matched","score","label_ko","policy_rule_id"],
+"properties": {
+"component": { "type": "string", "enum": ["格局判定","成格條件","破格條件","扶抑","關係","조후","십신"] },
+"relation": { "type": "string" },
+"matched": { "type": "boolean" },
+"score": { "type": "number" },
+"label_ko": { "type": "string" },
+"policy_rule_id": { "type": "string" }
+},
+"additionalProperties": true
+}
+},
+"aggregation": {
+"type": "object",
+"required": ["method","normalization","top_k","summary"],
+"properties": {
+"method": { "type": "string", "enum": ["weighted_sum"] },
+"normalization": {
+"type": "object",
+"required": ["kind","params"],
+"properties": {
+"kind": { "type": "string", "enum": ["min_max"] },
+"params": {
+"type": "object",
+"required": ["min","max"],
+"properties": {
+"min": { "type": "number" },
+"max": { "type": "number" }
+}
+}
+}
+},
+"top_k": { "type": "integer", "minimum": 1, "maximum": 10 },
+"summary": {
+"type": "object",
+"required": ["candidates"],
+"properties": {
+"candidates": {
+"type": "array",
+"minItems": 1,
+"items": {
+"type": "object",
+"required": ["gyeokguk_code","label_ko","score_raw","score_normalized","status"],
+"properties": {
+"gyeokguk_code": { "type": "string" },
+"label_ko": { "type": "string" },
+"score_raw": { "type": "number" },
+"score_normalized": { "type": "number", "minimum": 0.0, "maximum": 100.0 },
+"status": { "type": "string", "enum": ["成格","假格","破格"] },
+"notes_ko": { "type": "string" }
+},
+"additionalProperties": true
+}
+}
+},
+"additionalProperties": false
+}
+},
+"additionalProperties": false
+},
+"output": {
+"type": "object",
+"required": ["primary_gyeokguk","alternates","confidence"],
+"properties": {
+"primary_gyeokguk": {
+"type": "object",
+"required": ["code","label_ko","score","status"],
+"properties": {
+"code": { "type": "string" },
+"label_ko": { "type": "string" },
+"score": { "type": "number", "minimum": 0.0, "maximum": 100.0 },
+"status": { "type": "string", "enum": ["成格","假格","破格"] }
+},
+"additionalProperties": true
+},
+"alternates": {
+"type": "array",
+"items": {
+"type": "object",
+"required": ["code","label_ko","score","status"],
+"properties": {
+"code": { "type": "string" },
+"label_ko": { "type": "string" },
+"score": { "type": "number", "minimum": 0.0, "maximum": 100.0 },
+"status": { "type": "string", "enum": ["成格","假格","破格"] }
+},
+"additionalProperties": true
+}
+},
+"confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
+},
+"additionalProperties": false
+},
+"meta": {
+"type": "object",
+"required": ["hash_inputs","timestamp"],
+"properties": {
+"hash_inputs": { "type": "string" },
+"timestamp": { "type": "string", "format": "date-time" }
+},
+"additionalProperties": true
+}
+}
+}

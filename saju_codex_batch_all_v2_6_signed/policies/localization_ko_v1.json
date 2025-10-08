@@ -1,0 +1,106 @@
+{
+  "version": "1.1",
+  "generated_on": "2025-10-05T00:00:00+09:00",
+  "name": "localization_ko_v1",
+  "engine_scope": "universal",
+  "disclaimer": "한국어 서비스 기본 용어 표준화 정책 (전문가 검증 완료)",
+  "ten_gods_ko": {
+    "BI": "비견",
+    "GE": "겁재",
+    "SIK": "식신",
+    "SANG": "상관",
+    "PJ": "편재",
+    "JJ": "정재",
+    "PG": "편관",
+    "JG": "정관",
+    "PI": "편인",
+    "JI": "정인"
+  },
+  "role_ko": {
+    "primary": "본기",
+    "secondary": "중기",
+    "tertiary": "여기"
+  },
+  "relation_ko": {
+    "same_element": "동류(같은 오행)",
+    "wo_sheng": "내가 생함(我生)",
+    "wo_ke": "내가 극함(我克)",
+    "ke_wo": "나를 극함(克我)",
+    "sheng_wo": "나를 생함(生我)"
+  },
+  "strength_ko": {
+    "very_weak": "극신약",
+    "weak": "신약",
+    "balanced": "중화",
+    "strong": "신강",
+    "very_strong": "극신강",
+    "_aliases": {
+      "very_weak": ["극약", "과약"],
+      "very_strong": ["극강", "과강"]
+    },
+    "_note": "일간(日干) 세력 5단계. 중화(中和)는 전문 용어로 균형 상태를 의미"
+  },
+  "luck_direction_ko": {
+    "forward": "순행",
+    "reverse": "역행",
+    "_aliases": {
+      "forward": ["순운", "순"],
+      "reverse": ["역운", "역"]
+    },
+    "_note": "대운의 진행 방향. 순행(順行)/역행(逆行)이 표준 용어"
+  },
+  "confidence_ko": {
+    "high": "높음",
+    "mid": "보통",
+    "low": "낮음",
+    "none": "없음",
+    "_note": "UI 신뢰도 표현. 격국의 성립 판정(성격/가격/파격)과는 별개 개념"
+  },
+  "structure_validity_ko": {
+    "established": "성격",
+    "pseudo": "가격",
+    "broken": "파격",
+    "none": "불성립",
+    "_note": "격국의 성립 상태. confidence(신뢰도)와 분리하여 사용 권장"
+  },
+  "pillar_ko": {
+    "year": "연주",
+    "month": "월주",
+    "day": "일주",
+    "hour": "시주",
+    "_aliases": {
+      "year": ["년주"]
+    },
+    "_note": "사주 기둥(柱). 연주(年柱)가 표준 표기이나 관용으로 년주도 허용"
+  },
+  "month_state_ko": {
+    "旺": "왕",
+    "相": "상",
+    "休": "휴",
+    "囚": "수",
+    "死": "사",
+    "_note": "왕상휴수사(旺相休囚死). 월령 기준 일간의 세력 판단 5단계"
+  },
+  "relation_types_ko": {
+    "he6": "육합",
+    "sanhe": "삼합",
+    "banhe": "반합",
+    "fanghe": "방합",
+    "gonghe": "공합",
+    "chong": "충",
+    "xing": "형",
+    "po": "파",
+    "hai": "해",
+    "_note": "지지(地支) 12관계. 반합(半合)≠방합(方合) 주의"
+  },
+  "recommendation_action_ko": {
+    "allow": "표시",
+    "suppress": "숨김",
+    "_aliases": {
+      "allow": ["노출", "허용"],
+      "suppress": ["비노출"]
+    },
+    "_note": "UI 제어 용어. 사주 전문 용어 아님"
+  },
+  "signature": "<TO_BE_FILLED_BY_CI>"
+}

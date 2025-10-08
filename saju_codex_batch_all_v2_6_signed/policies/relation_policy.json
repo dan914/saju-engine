@@ -1,0 +1,276 @@
+{
+  "policy_name": "Saju Relation Transformer Policy",
+  "policy_version": "1.1.0",
+  "policy_signature": "PENDING",
+  "description_ko": "12지지 관계(三合·半合·方合·拱合·六合·沖·刑·破·害) 계산 및 Evidence 스키마 호환 로그 생성을 위한 결정적 정책. 총량 보존, 감쇠, 상호배제(승격), 결정적 confidence 산식을 포함한다.",
+  "locale": {
+    "default": "ko-KR",
+    "allowed": ["ko-KR", "en-US", "zh-CN", "zh-TW", "ja-JP"],
+    "ko_first_enforced": true,
+    "fallback_order": ["ko-KR", "en-US", "zh-CN"]
+  },
+  "schema": {
+    "id": "saju_codex:schema:relation:1.0.0",
+    "path": "schemas/relation.schema.json",
+    "draft": "2020-12"
+  },
+  "canonicalization": {
+    "json": "RFC8785",
+    "encoding": "UTF-8"
+  },
+  "hashing": {
+    "algo": "SHA256",
+    "input_hash": {
+      "field_set_name": "hash_inputs",
+      "fields_to_hash": [
+        "module",
+        "policy_version",
+        "locale_used",
+        "inputs.branches",
+        "inputs.mode",
+        "inputs.attenuation",
+        "dependencies.modules[].name",
+        "dependencies.modules[].version"
+      ],
+      "exclude": []
+    },
+    "evidence_signature": {
+      "field_set_name": "policy_signature",
+      "fields_to_sign": [
+        "module",
+        "policy_version",
+        "locale_used",
+        "dependencies",
+        "inputs",
+        "trace",
+        "aggregation",
+        "output",
+        "meta.hash_inputs"
+      ],
+      "exclude": [
+        "policy_signature",
+        "meta.timestamp"
+      ]
+    }
+  },
+  "engine": {
+    "module_name": "relation_v1.0",
+    "merge_position_in_evidence_builder": 4
+  },
+  "relation_kinds": ["三合", "半合", "方合", "拱合", "六合", "沖", "刑", "破", "害", "合"],
+  "score_bounds": {
+    "min": -20.0,
+    "max": 20.0
+  },
+  "component_base_scores": {
+    "三合": 18.0,
+    "半合": 6.0,
+    "方合": 5.0,
+    "拱合": 4.0,
+    "六合": 8.0,
+    "沖": -12.0,
+    "破": -6.0,
+    "害": -5.0,
+    "刑_三刑": -8.0,
+    "刑_偏刑": -6.0,
+    "刑_自刑": -4.0
+  },
+  "priority_order": [
+    "沖",
+    "刑_三刑",
+    "刑_偏刑",
+    "破",
+    "害",
+    "三合",
+    "六合",
+    "半合",
+    "方合",
+    "拱合"
+  ],
+  "attenuation": {
+    "rules": [
+      { "if_together": ["沖", "三合"], "apply_to": "三合", "factor": 0.7, "notes_ko": "충 존재 시 삼합 약화" },
+      { "if_together": ["沖", "六合"], "apply_to": "六合", "factor": 0.7, "notes_ko": "충 존재 시 합 약화" },
+      { "if_together": ["沖", "半合"], "apply_to": "半合", "factor": 0.6, "notes_ko": "충 존재 시 반합 추가 약화" }
+    ]
+  },
+  "aggregation_contract": {
+    "method": "weighted_sum",
+    "weights": { "default": 1.0 },
+    "deterministic": true,
+    "tie_breakers": ["higher_priority", "higher_score", "ko_label_presence", "earlier_timestamp"]
+  },
+  "confidence_rules": {
+    "method": "deterministic_linear_v1",
+    "params": {
+      "w_norm": 0.45,
+      "w_conservation": 0.30,
+      "w_priority": 0.15,
+      "w_conflict": -0.20
+    },
+    "formula": "conf = clamp01( round( w_norm*(score_normalized/100) + w_conservation*(conservation_ok?1:0) + w_priority*(priority_avg/100) + w_conflict*conflict_ratio, 2) )"
+  },
+  "conflict_metrics": {
+    "conflict_ratio_method": "neg_abs_over_sum_abs",
+    "epsilon": 1e-9
+  },
+  "mutual_exclusion_groups": [
+    {
+      "group": ["三合", "半合", "拱合"],
+      "promotion": "三合",
+      "suppression": { "lower_rank_weight": 0.0 }
+    }
+  ],
+  "rank_order": { "三合": 3, "六合": 2, "半合": 1, "拱合": 0 },
+  "xing_stack": {
+    "stack_mode": "per_set",
+    "factor": 0.85,
+    "apply_count_cap": 1
+  },
+  "gonghe_policy": {
+    "implied_missing_branch": true,
+    "conservation": { "consume_units": "present_count", "produce_units": "present_count" }
+  },
+  "conservation": {
+    "enabled": true,
+    "unit_per_branch": 1.0,
+    "budget_mode": "hidden_stems_v1",
+    "hidden_stems_dataset_version": "1.0.0",
+    "hidden_stems_weights": {
+      "子": { "水": 1.0 },
+      "丑": { "土": 0.6, "金": 0.2, "水": 0.2 },
+      "寅": { "木": 0.8, "火": 0.2 },
+      "卯": { "木": 1.0 },
+      "辰": { "土": 0.7, "木": 0.2, "水": 0.1 },
+      "巳": { "火": 0.6, "金": 0.3, "土": 0.1 },
+      "午": { "火": 1.0 },
+      "未": { "土": 0.6, "木": 0.2, "火": 0.2 },
+      "申": { "金": 0.7, "水": 0.3 },
+      "酉": { "金": 1.0 },
+      "戌": { "土": 0.7, "金": 0.2, "火": 0.1 },
+      "亥": { "水": 0.8, "木": 0.2 }
+    },
+    "elemental_mapping": {
+      "branch_element_map": {
+        "子": "水", "丑": "土", "寅": "木", "卯": "木",
+        "辰": "土", "巳": "火", "午": "火", "未": "土",
+        "申": "金", "酉": "金", "戌": "土", "亥": "水"
+      },
+      "triad_element_map": {
+        "亥卯未": "木",
+        "寅午戌": "火",
+        "申子辰": "水",
+        "巳酉丑": "金"
+      },
+      "liuhe_element_map": {
+        "子丑": "土",
+        "寅亥": "木",
+        "卯戌": "火",
+        "辰酉": "金",
+        "巳申": "水",
+        "午未": "火"
+      },
+      "banhe_element_map": {
+        "寅午": "火",
+        "亥卯": "木",
+        "申子": "水"
+      }
+    },
+    "fusion_rules": {
+      "三合": { "consume_units": 3.0, "produce_units": 3.0, "requires_all": true },
+      "半合": { "consume_units": 2.0, "produce_units": 2.0, "requires_all": false, "facilitator_needed": false },
+      "六合": { "consume_units": 2.0, "produce_units": 2.0 },
+      "方合": { "consume_units": 3.0, "produce_units": 3.0 },
+      "拱合": { "consume_units": 2.0, "produce_units": 2.0, "implied_missing": true }
+    },
+    "leakage_tolerance": 0.0,
+    "unstable_flag": "STRUCTURE_UNSTABLE",
+    "notes_ko": "변환 전후 오행 총량(단위 합계) 동일. 장간 가중치 기반 예산모드(hidden_stems_v1) 제공."
+  },
+  "normalization": {
+    "kind": "min_max",
+    "params": { "min": -20.0, "max": 20.0 },
+    "target_range": [0.0, 100.0],
+    "calibration": {
+      "mode": "fixed",
+      "dataset": "relation_corpus_stats_v1"
+    }
+  },
+  "tie_breakers": ["higher_priority", "higher_score", "ko_label_presence", "earlier_timestamp"],
+  "rules": [
+    { "id": "REL-LIUHE-01", "kind": "六合", "pattern": ["子", "丑"], "element_bias": "土", "directionality": "none", "score_delta": 8.0, "priority": 70, "notes_ko": "자축합(土)" },
+    { "id": "REL-LIUHE-02", "kind": "六合", "pattern": ["寅", "亥"], "element_bias": "木", "directionality": "none", "score_delta": 8.0, "priority": 70, "notes_ko": "인해합(木)" },
+    { "id": "REL-LIUHE-03", "kind": "六合", "pattern": ["卯", "戌"], "element_bias": "火", "directionality": "none", "score_delta": 8.0, "priority": 70, "notes_ko": "묘술합(火)" },
+    { "id": "REL-LIUHE-04", "kind": "六合", "pattern": ["辰", "酉"], "element_bias": "金", "directionality": "none", "score_delta": 8.0, "priority": 70, "notes_ko": "진유합(金)" },
+    { "id": "REL-LIUHE-05", "kind": "六合", "pattern": ["巳", "申"], "element_bias": "水", "directionality": "none", "score_delta": 8.0, "priority": 70, "notes_ko": "사신합(水)" },
+    { "id": "REL-LIUHE-06", "kind": "六合", "pattern": ["午", "未"], "element_bias": "火", "directionality": "none", "score_delta": 8.0, "priority": 70, "notes_ko": "오미합(火)" },
+
+    { "id": "REL-BANHE-01", "kind": "半合", "pattern": ["寅", "午"], "element_bias": "火", "directionality": "none", "score_delta": 6.0, "priority": 60, "notes_ko": "인오 반합(火)" },
+    { "id": "REL-BANHE-02", "kind": "半合", "pattern": ["亥", "卯"], "element_bias": "木", "directionality": "none", "score_delta": 6.0, "priority": 60, "notes_ko": "해묘 반합(木)" },
+    { "id": "REL-BANHE-03", "kind": "半合", "pattern": ["申", "子"], "element_bias": "水", "directionality": "none", "score_delta": 6.0, "priority": 60, "notes_ko": "신자 반합(水)" },
+
+    { "id": "REL-SANHE-01", "kind": "三合", "pattern": ["亥", "卯", "未"], "element_bias": "木", "directionality": "none", "score_delta": 18.0, "priority": 75, "notes_ko": "해묘미 삼합(木局)" },
+    { "id": "REL-SANHE-02", "kind": "三合", "pattern": ["寅", "午", "戌"], "element_bias": "火", "directionality": "none", "score_delta": 18.0, "priority": 75, "notes_ko": "인오술 삼합(火局)" },
+    { "id": "REL-SANHE-03", "kind": "三合", "pattern": ["申", "子", "辰"], "element_bias": "水", "directionality": "none", "score_delta": 18.0, "priority": 75, "notes_ko": "신자진 삼합(水局)" },
+    { "id": "REL-SANHE-04", "kind": "三合", "pattern": ["巳", "酉", "丑"], "element_bias": "金", "directionality": "none", "score_delta": 18.0, "priority": 75, "notes_ko": "사유축 삼합(金局)" },
+
+    { "id": "REL-FANGHE-01", "kind": "方合", "pattern": ["寅", "卯", "辰"], "element_bias": "木", "directionality": "none", "score_delta": 5.0, "priority": 55, "notes_ko": "동방(木) 방합" },
+    { "id": "REL-FANGHE-02", "kind": "方合", "pattern": ["巳", "午", "未"], "element_bias": "火", "directionality": "none", "score_delta": 5.0, "priority": 55, "notes_ko": "남방(火) 방합" },
+    { "id": "REL-FANGHE-03", "kind": "方合", "pattern": ["申", "酉", "戌"], "element_bias": "金", "directionality": "none", "score_delta": 5.0, "priority": 55, "notes_ko": "서방(金) 방합" },
+    { "id": "REL-FANGHE-04", "kind": "方合", "pattern": ["亥", "子", "丑"], "element_bias": "水", "directionality": "none", "score_delta": 5.0, "priority": 55, "notes_ko": "북방(水) 방합" },
+
+    { "id": "REL-GONGHE-01", "kind": "拱合", "pattern": ["亥", "未"], "element_bias": "木", "directionality": "to_missing", "score_delta": 4.0, "priority": 55, "notes_ko": "해·미가 묘를 공하여 목" },
+    { "id": "REL-GONGHE-02", "kind": "拱合", "pattern": ["寅", "戌"], "element_bias": "火", "directionality": "to_missing", "score_delta": 4.0, "priority": 55, "notes_ko": "인·술이 오를 공하여 화" },
+    { "id": "REL-GONGHE-03", "kind": "拱合", "pattern": ["巳", "丑"], "element_bias": "金", "directionality": "to_missing", "score_delta": 4.0, "priority": 55, "notes_ko": "사·축이 유를 공하여 금" },
+    { "id": "REL-GONGHE-04", "kind": "拱合", "pattern": ["子", "辰"], "element_bias": "水", "directionality": "to_missing", "score_delta": 4.0, "priority": 55, "notes_ko": "자·진이 신을 공하여 수" },
+
+    { "id": "REL-CHONG-01", "kind": "沖", "pattern": ["子", "午"], "element_bias": null, "directionality": "opposed", "score_delta": -12.0, "priority": 100, "notes_ko": "자오충" },
+    { "id": "REL-CHONG-02", "kind": "沖", "pattern": ["丑", "未"], "element_bias": null, "directionality": "opposed", "score_delta": -12.0, "priority": 100, "notes_ko": "축미충" },
+    { "id": "REL-CHONG-03", "kind": "沖", "pattern": ["寅", "申"], "element_bias": null, "directionality": "opposed", "score_delta": -12.0, "priority": 100, "notes_ko": "인신충" },
+    { "id": "REL-CHONG-04", "kind": "沖", "pattern": ["卯", "酉"], "element_bias": null, "directionality": "opposed", "score_delta": -12.0, "priority": 100, "notes_ko": "묘유충" },
+    { "id": "REL-CHONG-05", "kind": "沖", "pattern": ["辰", "戌"], "element_bias": null, "directionality": "opposed", "score_delta": -12.0, "priority": 100, "notes_ko": "진술충" },
+    { "id": "REL-CHONG-06", "kind": "沖", "pattern": ["巳", "亥"], "element_bias": null, "directionality": "opposed", "score_delta": -12.0, "priority": 100, "notes_ko": "사해충" },
+
+    { "id": "REL-PO-01", "kind": "破", "pattern": ["子", "酉"], "element_bias": null, "directionality": "opposed", "score_delta": -6.0, "priority": 85, "notes_ko": "자유파" },
+    { "id": "REL-PO-02", "kind": "破", "pattern": ["丑", "辰"], "element_bias": null, "directionality": "opposed", "score_delta": -6.0, "priority": 85, "notes_ko": "축진파" },
+    { "id": "REL-PO-03", "kind": "破", "pattern": ["寅", "亥"], "element_bias": null, "directionality": "opposed", "score_delta": -6.0, "priority": 85, "notes_ko": "인해파" },
+    { "id": "REL-PO-04", "kind": "破", "pattern": ["卯", "子"], "element_bias": null, "directionality": "opposed", "score_delta": -6.0, "priority": 85, "notes_ko": "묘자파" },
+    { "id": "REL-PO-05", "kind": "破", "pattern": ["午", "卯"], "element_bias": null, "directionality": "opposed", "score_delta": -6.0, "priority": 85, "notes_ko": "오묘파" },
+    { "id": "REL-PO-06", "kind": "破", "pattern": ["申", "巳"], "element_bias": null, "directionality": "opposed", "score_delta": -6.0, "priority": 85, "notes_ko": "신사파" },
+
+    { "id": "REL-HAI-01", "kind": "害", "pattern": ["子", "未"], "element_bias": null, "directionality": "opposed", "score_delta": -5.0, "priority": 80, "notes_ko": "자미해" },
+    { "id": "REL-HAI-02", "kind": "害", "pattern": ["丑", "午"], "element_bias": null, "directionality": "opposed", "score_delta": -5.0, "priority": 80, "notes_ko": "축오해" },
+    { "id": "REL-HAI-03", "kind": "害", "pattern": ["寅", "巳"], "element_bias": null, "directionality": "opposed", "score_delta": -5.0, "priority": 80, "notes_ko": "인사해" },
+    { "id": "REL-HAI-04", "kind": "害", "pattern": ["卯", "辰"], "element_bias": null, "directionality": "opposed", "score_delta": -5.0, "priority": 80, "notes_ko": "묘진해" },
+    { "id": "REL-HAI-05", "kind": "害", "pattern": ["申", "亥"], "element_bias": null, "directionality": "opposed", "score_delta": -5.0, "priority": 80, "notes_ko": "신해해" },
+    { "id": "REL-HAI-06", "kind": "害", "pattern": ["酉", "戌"], "element_bias": null, "directionality": "opposed", "score_delta": -5.0, "priority": 80, "notes_ko": "유술해" },
+
+    { "id": "REL-XING-TRI-01", "kind": "刑_三刑", "pattern": ["寅", "巳", "申"], "element_bias": null, "directionality": "cyclic", "score_delta": -8.0, "priority": 90, "notes_ko": "삼형(寅巳申)" },
+    { "id": "REL-XING-SELF-01", "kind": "刑_自刑", "pattern": ["寅", "寅"], "element_bias": null, "directionality": "self", "score_delta": -4.0, "priority": 88, "notes_ko": "자형(寅寅)" },
+    { "id": "REL-XING-SELF-02", "kind": "刑_自刑", "pattern": ["巳", "巳"], "element_bias": null, "directionality": "self", "score_delta": -4.0, "priority": 88, "notes_ko": "자형(巳巳)" },
+    { "id": "REL-XING-SELF-03", "kind": "刑_自刑", "pattern": ["申", "申"], "element_bias": null, "directionality": "self", "score_delta": -4.0, "priority": 88, "notes_ko": "자형(申申)" },
+    { "id": "REL-XING-BIAS-01", "kind": "刑_偏刑", "pattern": ["丑", "戌", "未"], "element_bias": null, "directionality": "mutual", "score_delta": -6.0, "priority": 82, "notes_ko": "편형(丑戌未)" },
+    { "id": "REL-XING-BIAS-02", "kind": "刑_偏刑", "pattern": ["子", "卯"], "element_bias": null, "directionality": "mutual", "score_delta": -6.0, "priority": 82, "notes_ko": "편형(子卯)" },
+    { "id": "REL-XING-BIAS-03", "kind": "刑_偏刑", "pattern": ["辰", "辰"], "element_bias": null, "directionality": "self", "score_delta": -6.0, "priority": 82, "notes_ko": "편형(辰辰)" },
+    { "id": "REL-XING-BIAS-04", "kind": "刑_偏刑", "pattern": ["午", "午"], "element_bias": null, "directionality": "self", "score_delta": -6.0, "priority": 82, "notes_ko": "편형(午午)" },
+    { "id": "REL-XING-BIAS-05", "kind": "刑_偏刑", "pattern": ["酉", "酉"], "element_bias": null, "directionality": "self", "score_delta": -6.0, "priority": 82, "notes_ko": "편형(酉酉)" },
+    { "id": "REL-XING-BIAS-06", "kind": "刑_偏刑", "pattern": ["亥", "亥"], "element_bias": null, "directionality": "self", "score_delta": -6.0, "priority": 82, "notes_ko": "편형(亥亥)" }
+  ],
+  "ci_checks": [
+    { "id": "SCHEMA_VALIDATION", "severity": "error", "description": "schemas/relation.schema.json 검증" },
+    { "id": "REQUIRED_FIELDS", "severity": "error", "description": "최상위 필수 키 및 trace 필수 키 확인" },
+    { "id": "LOCALE_DEFAULT_KO", "severity": "warning", "auto_fix": true, "description": "locale_used 미지정 시 ko-KR 강제" },
+    { "id": "KO_FIRST_LABEL_COVERAGE", "severity": "error", "description": "trace[*].label_ko 및 output.label_ko 필수" },
+    { "id": "NO_ADDITIONAL_PROPERTIES", "severity": "error", "description": "스키마 외 필드 불허" },
+    { "id": "SIGNATURE_AUTO_INJECT", "severity": "warning", "auto_fix": true, "description": "policy_signature 자동 주입" },
+    { "id": "DETERMINISTIC_INPUT_HASH", "severity": "error", "description": "RFC8785 → SHA256 입력 해시 재현" },
+    { "id": "CONSERVATION_CHECK", "severity": "error", "description": "오행 총량 보존 검증(변환 전후 합계 일치)" },
+    { "id": "MUTUAL_EXCLUSION_ENFORCED", "severity": "error", "description": "三合 존재 시 동군(半合/拱合) weight=0 적용" },
+    { "id": "CONFIDENCE_DETERMINISTIC", "severity": "error", "description": "confidence_rules 공식으로 confidence 재현" },
+    { "id": "GONGHE_2TO2", "severity": "error", "description": "拱合은 2→2 보존 규칙 준수" },
+    { "id": "HIDDEN_STEMS_CONSERVATION", "severity": "error", "description": "hidden_stems_v1 예산모드에서 분해/재분배 합계 일치" }
+  ],
+  "integration": {
+    "evidence_builder_merge_order": ["strength_v2", "branch_tengods_v1.1", "shensha_v2", "relation_v1.0", "yongshin_v1.0"]
+  }
+}

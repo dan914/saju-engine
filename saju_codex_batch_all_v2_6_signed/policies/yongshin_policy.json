@@ -1,0 +1,102 @@
+{
+  "policy_name": "Saju Yongshin Selector Policy",
+  "policy_version": "1.0.1",
+  "policy_signature": "PENDING",
+  "description_ko": "강약·오행·조후·신살·관계 Evidence를 오행벡터로 투영(별도 projection 정책) 후 가중 합산하여 용신/희신/기신 Top‑K를 결정. KO-first, 결정성, CI 검증 포함.",
+  "locale": {
+    "default": "ko-KR",
+    "allowed": ["ko-KR", "en-US", "zh-CN", "zh-TW", "ja-JP"],
+    "ko_first_enforced": true,
+    "fallback_order": ["ko-KR", "en-US", "zh-CN"]
+  },
+  "schema": {
+    "id": "saju_codex:schema:yongshin:1.0.0",
+    "path": "schemas/yongshin.schema.json",
+    "draft": "2020-12"
+  },
+  "canonicalization": { "json": "RFC8785", "encoding": "UTF-8" },
+  "hashing": {
+    "algo": "SHA256",
+    "input_hash": {
+      "field_set_name": "hash_inputs",
+      "fields_to_hash": [
+        "module","policy_version","locale_used",
+        "inputs.evidence_refs.*.id","inputs.evidence_refs.*.hash","inputs.evidence_refs.*.score_normalized",
+        "inputs.context.day_master","inputs.context.season","inputs.context.strength_state",
+        "inputs.context.climate.temperature","inputs.context.climate.humidity",
+        "inputs.weights","dependencies.modules[].name","dependencies.modules[].version"
+      ]
+    },
+    "evidence_signature": {
+      "field_set_name": "policy_signature",
+      "fields_to_sign": ["module","policy_version","locale_used","dependencies","inputs","trace","aggregation","output","meta.hash_inputs"],
+      "exclude": ["policy_signature","meta.timestamp"]
+    }
+  },
+  "engine": { "module_name": "yongshin_v1.0", "merge_position_in_evidence_builder": 5 },
+  "dependencies_required": [
+    { "name": "strength_v2", "min_version": "2.0.1" },
+    { "name": "branch_tengods_v1.1", "min_version": "1.1.0" },
+    { "name": "shensha_v2", "min_version": "2.0.0" },
+    { "name": "relation_v1.0", "min_version": "1.0.0" }
+  ],
+  "dependencies_optional": [
+    { "name": "climate_balancer_v1.0", "min_version": "1.0.0" }
+  ],
+  "weighting_policy": {
+    "weights": { "strength_v2": 0.40, "branch_tengods_v1.1": 0.20, "shensha_v2": 0.15, "relation_v1.0": 0.15, "climate_balancer_v1.0": 0.10 },
+    "missing_module": "ignore_and_renormalize"
+  },
+  "projection_contracts": {
+    "policy_ref": "saju_codex_batch_all_v2_6_signed/policies/elemental_projection_policy.json#projectors",
+    "guards_ref": "saju_codex_batch_all_v2_6_signed/policies/elemental_projection_policy.json#overlap_guards",
+    "composition": "scores[e] = Σ_i weight[i] * projector_i(e) + bias_i(e)"
+  },
+  "five_elements": ["木","火","土","金","水"],
+  "climate_adjustments": {
+    "enabled": true,
+    "temperature": { "cold_bias_to": "火", "hot_bias_to": "水", "bias_amount": 3.0 },
+    "humidity": { "dry_bias_to": "水", "humid_bias_to": "火", "bias_amount": 2.0 },
+    "notes_ko": "조후는 가산/감산 보정으로만 적용"
+  },
+  "aggregation_contract": {
+    "method": "weighted_sum",
+    "deterministic": true,
+    "clamp_by_element": [0.0, 100.0]
+  },
+  "normalization": { "kind": "min_max", "params": { "min": 0.0, "max": 100.0 }, "target_range": [0.0, 100.0] },
+  "role_assignment": {
+    "labels": { "useful": "용신", "favorable": "희신", "unfavorable": "기신", "neutral": "중용" },
+    "useful_threshold": 65.0,
+    "favorable_threshold": 55.0,
+    "unfavorable_threshold": 35.0,
+    "tie_breakers": ["higher_component_score","strength_need_match","climate_alignment","earlier_timestamp"]
+  },
+  "confidence_rules": {
+    "method": "deterministic_linear_v1",
+    "components_def": {
+      "strength_context": "elemental_projection_policy.json#metrics.strength_context",
+      "consistency": "elemental_projection_policy.json#metrics.consistency",
+      "relation_polarity": "elemental_projection_policy.json#metrics.relation_polarity",
+      "shensha_support": "elemental_projection_policy.json#metrics.shensha_support"
+    },
+    "params": { "w_strength_context": 0.35, "w_consistency": 0.30, "w_relation_polarity": 0.20, "w_shensha_support": 0.15 },
+    "formula": "conf = clamp01( round( 0.35*strength_context + 0.30*consistency + 0.20*relation_polarity + 0.15*shensha_support, 2) )"
+  },
+  "topk": { "k": 3 },
+  "ci_checks": [
+    { "id": "SCHEMA_VALIDATION", "severity": "error", "description": "schemas/yongshin.schema.json 검증" },
+    { "id": "REQUIRED_FIELDS", "severity": "error", "description": "최상위 필드 및 trace 필수 키 확인" },
+    { "id": "KO_FIRST_LABEL_COVERAGE", "severity": "error", "description": "trace[*].label_ko 및 output.label_ko 필수" },
+    { "id": "DETERMINISTIC_INPUT_HASH", "severity": "error", "description": "RFC8785 → SHA256 입력 해시 재현" },
+    { "id": "SIGNATURE_AUTO_INJECT", "severity": "warning", "auto_fix": true, "description": "policy_signature 자동 주입" },
+    { "id": "DEPENDENCY_MIN_VERSIONS", "severity": "error", "description": "필수 엔진 최소 버전 충족" },
+    { "id": "TOPK_LIMIT", "severity": "error", "description": "Top‑K 길이 제약 준수" },
+    { "id": "PROJECTION_POLICY_REF", "severity": "error", "description": "elemental_projection_policy.json 참조 유효" },
+    { "id": "PROJECTOR_OUTPUT_BOUNDS", "severity": "error", "description": "projector 벡터 및 합산 후 per_element ≤ 100" },
+    { "id": "RESIDUAL_OVERLAP_GUARD", "severity": "error", "description": "strength↔tengods 중복 보정(residual) 적용" }
+  ],
+  "integration": {
+    "evidence_builder_merge_order": ["strength_v2","branch_tengods_v1.1","shensha_v2","relation_v1.0","yongshin_v1.0"]
+  }
+}

@@ -17,19 +17,37 @@ from zoneinfo import ZoneInfo
 class LuckCalculator:
     """Temporary placeholder for LuckCalculator to fix CI."""
 
-    pass
+    def compute_start_age(self, context: "LuckContext") -> dict:
+        """Stub method returning placeholder values."""
+        return {
+            "prev_term": "unknown",
+            "next_term": "unknown",
+            "interval_days": 0,
+            "days_from_prev": 0,
+            "start_age": 0,
+        }
+
+    def luck_direction(self, context: "LuckContext") -> dict:
+        """Stub method returning placeholder values."""
+        return {"direction": "forward", "method": "unknown", "sex_at_birth": "unknown"}
 
 
+@dataclass
 class LuckContext:
     """Temporary placeholder for LuckContext to fix CI."""
 
-    pass
+    local_dt: datetime
+    timezone: str
+    day_master: str | None = None
+    gender: str | None = None
 
 
 class ShenshaCatalog:
     """Temporary placeholder for ShenshaCatalog to fix CI."""
 
-    pass
+    def list_enabled(self) -> list:
+        """Stub method."""
+        return []
 
 
 class SchoolProfileManager:
@@ -48,7 +66,7 @@ CLIMATE_POLICY_PATH = (
     / "policies"
     / "climate_map_v1.json"
 )
-TERM_DATA_PATH = Path(__file__).resolve().parents[4] / "data" / "sample"
+TERM_DATA_PATH = Path(__file__).resolve().parents[4] / "data"
 SCHOOL_POLICY_PATH = Path(__file__).resolve().parents[4] / "policies" / "school_profiles_v1.json"
 
 
