@@ -30,3 +30,8 @@ logs/
 
 # OS
 .DS_Store
+
+# Large generated data (can be regenerated from scripts)
+data/canonical/
+data/*_backup/
+data/*_backup_*/
