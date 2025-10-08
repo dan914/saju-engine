@@ -3,20 +3,22 @@
 **Date:** 2025-10-08 KST
 **Session:** Engine Integration Batch #1
 **Branch:** docs/prompts-freeze-v1
-**Status:** ✅ Complete - 3 engines integrated
+**Status:** ✅ Complete - 3 engines + 1 meta-engine integrated
 
 ---
 
 ## Executive Summary
 
-Successfully integrated 3 new policy engines into `services/analysis-service` following the established pattern:
+Successfully integrated 3 new policy engines + 1 meta-engine into `services/analysis-service` following the established pattern:
 - Inline RFC-8785 signature utility (replacing missing `infra.signatures`)
 - Policy override support via JSON files
 - JSON Schema draft-2020-12 validation
 - Comprehensive Korean documentation
 - All tests passing
 
-**Total additions:** 1,839 lines of code, 32 tests passing
+**Stage-1 Engines:** void, yuanjin, combination_element (3)
+**Meta-Engine:** evidence_builder (1)
+**Total additions:** 3,488 lines of code, 40 tests passing
 
 ---
 
@@ -148,9 +150,70 @@ normalize_distribution(dist: dict) -> dict
 
 ---
 
+### 4. Evidence Builder (증거 수집기) v1.0.0
+
+**Commit:** `947a580`
+**Status:** ✅ Integrated and tested
+
+**Files created:**
+- `services/analysis-service/app/core/evidence_builder.py` (262 lines)
+- `services/analysis-service/schemas/evidence.schema.json` (72 lines)
+- `services/analysis-service/tests/test_evidence_builder.py` (174 lines, 7 tests)
+- `docs/engines/evidence_builder.md`
+- `EVIDENCE_BUILDER_INTEGRATION_PLAN.md`
+
+**Purpose:** Meta-engine that collects Stage-1 engine outputs (void, yuanjin, wuxing_adjust) into unified Evidence object
+
+**API:**
+```python
+build_evidence(inputs: dict) -> dict
+add_section(ev: dict, section: dict) -> dict
+finalize_evidence(ev: dict) -> dict
+```
+
+**Algorithm:** O(n) collection + O(n log n) sorting where n = number of sections
+
+**Key Features:**
+- **Two-level signatures:** Section-level (each engine) + Evidence-level (entire collection)
+- **Deterministic sorting:** Sections sorted by type (void → wuxing_adjust → yuanjin)
+- **Shared timestamp:** All sections use same `created_at` for idempotency
+- **Optional sections:** Can include subset of engines
+- **Type uniqueness:** No duplicate section types allowed
+- **Extensible:** 6 allowed types (3 implemented, 3 future)
+
+**Evidence Object Structure:**
+```json
+{
+  "evidence_version": "evidence_v1.0.0",
+  "evidence_signature": "<64-hex>",
+  "sections": [
+    {
+      "type": "void|yuanjin|wuxing_adjust",
+      "engine_version": "<engine_version>",
+      "engine_signature": "<64-hex>",
+      "source": "<file_path>",
+      "payload": {...},
+      "created_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "section_signature": "<64-hex>"
+    }
+  ]
+}
+```
+
+**Tests:** 7/7 passing ✅
+- Full integration (3 sections + sorting)
+- Optional single section
+- Duplicate type validation
+- Schema presence and patterns
+- Deterministic signatures (idempotency)
+- Empty sections error
+- Invalid timestamp error
+
+---
+
 ## Integration Pattern Used
 
-All 3 engines followed the same integration pattern:
+All 3 Stage-1 engines followed the same integration pattern:
 
 ### 1. Replace Missing Dependency
 **Original:**
@@ -660,13 +723,47 @@ dist, trace = transform_wuxing(relations, dist0)
 
 ---
 
+### Evidence Builder
+```python
+from app.core import void as vc
+from app.core import yuanjin as yj
+from app.core import combination_element as ce
+from app.core import evidence_builder as eb
+
+# Collect engine outputs
+void_result = vc.explain_void("乙丑")
+yuanjin_result = yj.explain_yuanjin(["子", "丑", "寅", "未"])
+
+relations = {"earth": {"sanhe": [{"formed": True, "element": "water"}]}}
+dist0 = {"wood": 0.2, "fire": 0.2, "earth": 0.2, "metal": 0.2, "water": 0.2}
+dist, trace = ce.transform_wuxing(relations, dist0)
+wuxing_result = {
+    "engine_version": ce.POLICY_VERSION,
+    "engine_signature": ce.POLICY_SIGNATURE,
+    "dist": dist,
+    "trace": trace
+}
+
+# Build evidence
+evidence = eb.build_evidence({
+    "void": void_result,
+    "yuanjin": yuanjin_result,
+    "wuxing_adjust": wuxing_result
+})
+
+# Result: Evidence object with 3 sections, sorted, double-signed
+```
+
+---
+
 ## Notes for Future Sessions
 
 1. **Engines are standalone** - They work independently but aren't yet called by AnalysisEngine
-2. **All tests pass** - 32 new tests, 79 total in analysis-service
+2. **All tests pass** - 40 new tests (33 Stage-1 + 7 meta-engine), 86+ total in analysis-service
 3. **Pattern established** - Use same pattern for future engines (inline signatures, policy paths, etc.)
 4. **Next critical step** - Integrate into AnalysisEngine.analyze() to make them actually used
 5. **No breaking changes** - All additions are new, no existing code modified
+6. **Evidence Builder** - Meta-engine ready for orchestrating Stage-1 outputs
 
 ---
 
@@ -689,9 +786,21 @@ After conversation resumption, verified all 3 engines:
 - ✅ 8/8 tests passing
 - ✅ No formatting issues
 
-**Total:** 32/32 tests passing ✅
+**Stage-1 Engines:** 33/33 tests passing ✅
 
-All engines are production-ready and committed to branch `docs/prompts-freeze-v1`.
+All Stage-1 engines are production-ready and committed to branch `docs/prompts-freeze-v1`.
+
+### Evidence Builder Verification (2025-10-08)
+
+**Evidence Builder:**
+- ✅ Code review passed
+- ✅ 7/7 tests passing
+- ✅ No formatting issues
+- ✅ Integration with 3 Stage-1 engines verified
+
+**Total:** 40/40 tests passing ✅ (33 Stage-1 + 7 meta-engine)
+
+All engines production-ready and committed to branch `docs/prompts-freeze-v1`.
 
 ### Patch Verification (2025-10-08)
 
@@ -714,13 +823,14 @@ User provided unified diff patch addressing 3 issues:
 
 ## Session Statistics
 
-**Duration:** ~2 hours
-**Engines integrated:** 3
-**Lines of code added:** 1,839
-**Tests added:** 33 (32 initial + 1 validation enhancement)
+**Duration:** ~3 hours
+**Stage-1 Engines integrated:** 3 (void, yuanjin, combination_element)
+**Meta-Engines integrated:** 1 (evidence_builder)
+**Lines of code added:** 3,488 (1,839 Stage-1 + 1,649 meta-engine)
+**Tests added:** 40 (33 Stage-1 + 7 meta-engine)
 **Bugs fixed:** 3
-**Commits:** 3
-**Files created:** 15
+**Commits:** 8
+**Files created:** 20
 
 **Success rate:** 100% ✅
 
