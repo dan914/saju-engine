@@ -5,8 +5,14 @@ from .analysis import (
     AnalysisRequest,
     AnalysisResponse,
     LuckDirectionResult,
+    LuckResult,
+    RecommendationResult,
+    RelationsExtras,
     RelationsResult,
+    ShenshaResult,
+    StrengthDetails,
     StrengthResult,
+    StructureResultModel,
     TenGodsResult,
 )
 
@@ -18,4 +24,10 @@ __all__ = [
     "RelationsResult",
     "StrengthResult",
     "LuckDirectionResult",
+    "LuckResult",
+    "RecommendationResult",
+    "RelationsExtras",
+    "ShenshaResult",
+    "StrengthDetails",
+    "StructureResultModel",
 ]
