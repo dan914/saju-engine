@@ -84,3 +84,16 @@ def test_explain_void_and_schema_shape():
     # enum에 12지지가 들어있는지
     kong_enum = schema["properties"]["kong"]["items"]["enum"]
     assert set(kong_enum) == set(vc.BRANCHES)
+
+
+def test_apply_void_flags_invalid_kong_raises():
+    """Test that apply_void_flags raises ValueError for invalid kong input"""
+    # 잘못된 kong 길이
+    with pytest.raises(ValueError):
+        vc.apply_void_flags(["子", "丑", "寅", "卯"], ["子"])
+    # kong에 12지지가 아닌 값 포함
+    with pytest.raises(ValueError):
+        vc.apply_void_flags(["子", "丑", "寅", "卯"], ["子", "A"])
+    # branches 길이가 4가 아니어도 에러
+    with pytest.raises(ValueError):
+        vc.apply_void_flags(["子", "丑", "寅"], ["子", "丑"])
