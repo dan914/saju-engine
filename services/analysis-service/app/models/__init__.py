@@ -4,6 +4,7 @@ from .analysis import (
     AnalysisOptions,
     AnalysisRequest,
     AnalysisResponse,
+    LuckDirectionResult,
     RelationsResult,
     StrengthResult,
     TenGodsResult,
@@ -16,4 +17,5 @@ __all__ = [
     "TenGodsResult",
     "RelationsResult",
     "StrengthResult",
+    "LuckDirectionResult",
 ]
