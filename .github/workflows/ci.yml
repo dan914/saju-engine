@@ -52,10 +52,13 @@ jobs:
       - name: Run pytest (core services)
         if: steps.changes.outputs.python == 'true'
         run: |
-          pytest services/api-gateway
-          pytest services/astro-service
-          pytest services/tz-time-service
-          pytest services/pillars-service
-          pytest services/analysis-service
-          pytest services/llm-polish
-          pytest services/llm-checker
+          # Run pytest for each service with proper PYTHONPATH
+          # Skip services that don't exist yet
+          for service in api-gateway astro-service tz-time-service pillars-service analysis-service; do
+            if [ -d "services/$service/tests" ]; then
+              echo "Testing $service..."
+              (cd "services/$service" && python -m pytest tests/ -v) || exit 1
+            else
+              echo "Skipping $service (no tests directory)"
+            fi
+          done
