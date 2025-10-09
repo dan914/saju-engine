@@ -45,6 +45,7 @@
 | TextGuard | `app/core/text_guard.py` | 50+ | ✅ Complete |
 | TimeResolver | `tz-time-service/` | Service | ✅ Complete |
 | **LLM Guard v1.0** | `policy/llm_guard_policy_v1.json` | **Policy** | ✅ Complete |
+| **RelationWeightEvaluator** | `app/core/relation_weight.py` | **600+** | ✅ Complete |
 | EvidenceBuilder | `app/core/evidence_builder.py` | 262 | ✅ Complete |
 | VoidCalculator | `app/core/void.py` | 89 | ✅ Complete |
 | YuanjinDetector | `app/core/yuanjin.py` | 71 | ✅ Complete |
@@ -129,6 +130,26 @@
 - PII Patterns: 4 types (phone_kr, email, address_detailed, ssn_like)
 - Test Cases: 18 (allow: 6, revise: 6, deny: 6)
 - Risk Score: 0~100 (weighted by severity)
+
+### Relation Weight Policy v1.0 (4 files ✅)
+**Location**: Root directory
+**Release Date**: 2025-10-09
+
+**Policy & Schema:**
+- `policy/relation_weight_policy_v1.0.json` - 7 relation types, 27 condition definitions
+- `schema/relation_weight.schema.json` - Output validation (Draft 2020-12)
+
+**Engine:**
+- `services/analysis-service/app/core/relation_weight.py` - 600+ lines, RelationWeightEvaluator
+- `services/analysis-service/tests/test_relation_weight.py` - 18/18 tests passing
+
+**Coverage:**
+- Relations: 7 types (sanhe 삼합, liuhe 육합, ganhe 간합, chong 충, xing 형, hai 해, yuanjin 원진)
+- Base Weights: 0.20~0.70 (yuanjin lowest, sanhe highest)
+- Modifiers: 27 conditions (pivot_month, adjacent, tonggen, season_support, blocked, etc.)
+- Strict Mode: sanhe requires formed=true (pivot + adjacent + no blocker)
+- Hua Field: ganhe emits hua=true when season supports result element
+- LLM Guidance: low_confidence < 0.5, low_impact < 0.35
 
 ### Evidence Log Schemas (6 files ✅)
 **Location**: `saju_codex_batch_all_v2_6_signed/schemas/`
@@ -246,6 +267,28 @@
 
 **Coverage**: 9 rules, 3 modality ranges, 4 PII patterns, 18 test cases
 
+### Relation Weight Evaluator v1.0 Release (2025-10-09)
+- ✅ **Policy File**: relation_weight_policy_v1.0.json (7 relation types, UNSIGNED signature)
+- ✅ **Schema**: relation_weight.schema.json (Draft 2020-12)
+- ✅ **Engine**: relation_weight.py (600+ lines, full implementation)
+- ✅ **Tests**: test_relation_weight.py (18/18 passing)
+
+**Features**:
+- Impact weight quantification (0.0~1.0) with condition-based modifiers
+- Confidence calculation with met/missing conditions tracking
+- Strict mode for sanhe (formed=true required)
+- Hua (化) field for ganhe based on season support
+- Audit trail: conditions_met / missing_conditions
+- LLM guidance thresholds (low_confidence: 0.5, low_impact: 0.35)
+
+**Addresses Criticisms**:
+- 삼형 과잉탐지 → full_triplet_strict (월지 포함 + 인접)
+- 삼합 단순판정 → pivot + adjacent + blocker 3요건
+- 간합 존재만 인정 → adjacent + season 필수, hua 구분
+- 육합 극단평가 → 중간강도 유지, 맥락적 감쇄
+
+**Total Additions**: 1,335 lines (policy + schema + engine + tests)
+
 ### Service Fixes (43% → 100% passing)
 - Fixed `from __future__` placement in tz-time-service
 - Fixed pillars-service data path (sample → full dataset)
@@ -300,13 +343,21 @@
 
 ## 📊 Code Quality Metrics
 
-- **Test Coverage**: 100% (47/47 service tests passing)
-- **Policy Coverage**: 18/18 v2.6 policies loaded + LLM Guard v1.0 policy
+- **Test Coverage**: 100% (65/65 service tests passing)
+  - analysis-service: 39/39 (was 21/21)
+  - pillars-service: 17/17
+  - astro-service: 5/5
+  - tz-time-service: 4/4
+- **Policy Coverage**: 18/18 v2.6 policies + LLM Guard v1.0 + Relation Weight v1.0
 - **Data Authenticity**: SKY_LIZARD production app extraction
 - **Service Architecture**: 4 microservices (7 total, 3 skeleton)
-- **Lines of Code**: ~2500+ production code in calculators
-- **Stage-1 Engines**: 3 engines + 1 meta-engine (void, yuanjin, combination_element, evidence_builder)
+- **Lines of Code**: ~3800+ production code
+  - Calculators: ~2500
+  - Stage-1 Engines: ~516 (void, yuanjin, combination_element, evidence_builder)
+  - Relation Weight: ~600
+  - LLM Guard: ~140 (policy-based, runtime pending)
 - **LLM Guard Coverage**: 9 rules, 18 test cases, 4 PII patterns
+- **Relation Weight Coverage**: 7 relation types, 27 conditions, 18 test cases
 
 ---
 
