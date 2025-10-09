@@ -1,0 +1,155 @@
+{
+  "engine": "relation_weight_evaluator",
+  "policy_version": "1.0.0",
+  "policy_signature": "UNSIGNED",
+  "description": "Relation impact weight and confidence quantification policy - separates detection from validation/weighting",
+  "relations": [
+    {
+      "relation": "sanhe",
+      "label_ko": "삼합",
+      "base_weight": 0.70,
+      "confidence": 0.90,
+      "strict_mode_required": true,
+      "modifiers": {
+        "pivot_month": 0.15,
+        "month_adjacent": 0.20,
+        "tonggen_or_season_support": 0.10,
+        "blocked_by_chong_hai": -0.25,
+        "incomplete_half_combo": -0.50
+      },
+      "notes": "삼합은 국(局) 완전체일 때 강력. formed 판정은 pivot+adjacent(+무블로커)로 강화."
+    },
+    {
+      "relation": "liuhe",
+      "label_ko": "육합",
+      "base_weight": 0.45,
+      "confidence": 0.65,
+      "strict_mode_required": false,
+      "modifiers": {
+        "on_day_branch": 0.05,
+        "double_liuhe": 0.05,
+        "broken_by_chong": -0.20,
+        "inside_strong_combo": -0.05
+      },
+      "notes": "결속과 완화의 신호. 합화로의 전환은 일반적으로 제한적(관계의 끈으로 해석)."
+    },
+    {
+      "relation": "ganhe",
+      "label_ko": "간합(오합)",
+      "base_weight": 0.50,
+      "confidence": 0.70,
+      "strict_mode_required": false,
+      "modifiers": {
+        "adjacent_stems": 0.10,
+        "season_supports_result": 0.15,
+        "non_adjacent": -0.30,
+        "season_conflict": -0.20,
+        "multi_competing_he": -0.10
+      },
+      "flags": {
+        "emit_hua_field": true
+      },
+      "notes": "'합'과 '화(化)'를 구분. 화는 계절·인접성·환경 충족 시에만 가중."
+    },
+    {
+      "relation": "chong",
+      "label_ko": "충",
+      "base_weight": 0.55,
+      "confidence": 0.90,
+      "strict_mode_required": false,
+      "modifiers": {
+        "pivot_month": 0.10,
+        "stacked_chong": 0.15,
+        "two_pairs_in_chart": 0.10,
+        "buffered_by_strong_combo": -0.25,
+        "neutralized_by_he": -0.10
+      },
+      "notes": "사건·변동의 1급 신호. 다만 강결속(삼합국)은 쉽게 못 깸."
+    },
+    {
+      "relation": "xing",
+      "label_ko": "형",
+      "base_weight": 0.40,
+      "confidence": 0.80,
+      "strict_mode_required": false,
+      "modifiers": {
+        "full_triplet_strict": 0.10,
+        "pair_xing": 0.05,
+        "self_xing": 0.05,
+        "inside_combo": -0.05,
+        "coexists_with_chong": -0.10
+      },
+      "notes": "은밀·지속적 긴장. 삼형은 엄격 조건 충족 시에만 강도 상승."
+    },
+    {
+      "relation": "hai",
+      "label_ko": "해(害)",
+      "base_weight": 0.30,
+      "confidence": 0.70,
+      "strict_mode_required": false,
+      "modifiers": {
+        "intense_pairs": 0.05,
+        "overlaps_yuanjin": 0.05,
+        "inside_combo": -0.05,
+        "with_strong_chong": -0.05
+      },
+      "notes": "은근한 방해·손실. 강결속/강충과 함께면 영향 축소."
+    },
+    {
+      "relation": "yuanjin",
+      "label_ko": "원진",
+      "base_weight": 0.20,
+      "confidence": 0.55,
+      "strict_mode_required": false,
+      "modifiers": {
+        "on_spouse_palace": 0.05,
+        "conflicts_with_liuhe": 0.05,
+        "resolved_by_he": -0.10
+      },
+      "notes": "감정적 틀어짐 신호(輕). 독립 작용보다 보조적 신호로 사용."
+    }
+  ],
+  "condition_definitions": {
+    "pivot_month": "월지가 삼합/충 구성원에 포함",
+    "month_adjacent": "월지와 동일 관계의 다른 한 글자가 인접(연-월 또는 월-일)",
+    "tonggen_or_season_support": "생성·강화될 오행이 통근하거나 계절 생(生)을 받음",
+    "blocked_by_chong_hai": "동일 이벤트 구성원 중 한 글자에 충/해 이벤트가 직접 타격",
+    "incomplete_half_combo": "삼합/방합이 2지뿐(Strict이면 사실상 불성립)",
+    "adjacent_stems": "간합이 인접 기둥 간 발생(연-월/월-일/일-시)",
+    "season_supports_result": "월지 오행이 간합 결과 오행과 동일/상생",
+    "non_adjacent": "비인접 간합(의향만 존재)",
+    "season_conflict": "계절 상극 → 불화 경향",
+    "multi_competing_he": "쟁합(두 합 경합) 상황",
+    "full_triplet_strict": "(寅巳申 또는 丑戌未) 월지 포함 + 월지 인접 충족 시",
+    "pair_xing": "子卯 상호형",
+    "self_xing": "辰/午/酉/亥 자형(중복 존재)",
+    "inside_combo": "강결속(삼합 완성 등) 내부에서 발생한 보조 관계(감쇠)",
+    "on_day_branch": "일지에서 성립",
+    "double_liuhe": "동일 명조 내 다른 육합이 추가 존재(희귀)",
+    "broken_by_chong": "당사자 중 한 지지가 충으로 깨짐",
+    "inside_strong_combo": "삼합 등 강결속 내에서는 영향 축소",
+    "stacked_chong": "원국+운 중첩 충",
+    "two_pairs_in_chart": "동시 다발 충",
+    "buffered_by_strong_combo": "상대가 삼합/방합 완전체인 경우",
+    "neutralized_by_he": "합으로 충 완화(부분)",
+    "coexists_with_chong": "충과 동시 발생 시 상대적 약화",
+    "intense_pairs": "인-사, 사-술 등 강해로 알려진 조합",
+    "overlaps_yuanjin": "원진 겸함",
+    "with_strong_chong": "강한 충 동반 시 희석",
+    "on_spouse_palace": "일지(배우자궁)에서 발생",
+    "conflicts_with_liuhe": "원래 될 합이 어그러진 맥락",
+    "resolved_by_he": "합으로 해소 신호"
+  },
+  "evaluation_algorithm": {
+    "impact_weight_formula": "clamp(base_weight + Σ(applicable_modifiers), 0, 1)",
+    "confidence_formula": "clamp(base_confidence + 0.05 * |conditions_met| - 0.05 * |missing_conditions|, 0, 1)",
+    "strict_mode_behavior": "If strict_mode_required=true and formed=false, set impact_weight=0"
+  },
+  "llm_guidance": {
+    "low_confidence_threshold": 0.5,
+    "low_confidence_tone": "가능성/단서 톤으로 서술",
+    "low_impact_threshold": 0.35,
+    "low_impact_handling": "본문 언급 최소화(부록/메모 처리)",
+    "offsetting_rule": "동일 지지 얽힘에서 최대 weight 1~2개만 전면 서술, 나머지는 보조"
+  }
+}
