@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "/schemas/llm_guard_output_v1.schema.json",
+  "title": "llm_guard_output",
+  "type": "object",
+  "required": [
+    "decision",
+    "reasons",
+    "risk_score",
+    "policy_snapshot_sha256",
+    "logs"
+  ],
+  "properties": {
+    "decision": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "revise",
+        "deny"
+      ]
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "message_ko"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "INPUT-INVALID",
+              "LLM-CLAIM-NOEVID",
+              "OUT-OF-SCOPE",
+              "MODALITY-OVERCLAIM",
+              "REL-MISMATCH",
+              "POLICY-SIG-MISMATCH",
+              "PII-DETECTED",
+              "LABEL-NONCOMPLIANT",
+              "AMBIG-SOURCE"
+            ]
+          },
+          "message_ko": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "remediations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "citations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "redactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "type",
+          "value",
+          "rule_id"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "rule_id": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "risk_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "policy_snapshot_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "logs": {
+      "type": "object",
+      "required": [
+        "trace"
+      ],
+      "properties": {
+        "trace": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "rule_id",
+              "result"
+            ],
+            "properties": {
+              "rule_id": {
+                "type": "string"
+              },
+              "result": {
+                "type": "string",
+                "enum": [
+                  "pass",
+                  "fail"
+                ]
+              },
+              "evidence_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "note_ko": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

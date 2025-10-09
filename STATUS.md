@@ -1,7 +1,7 @@
 # Saju Engine - Project Status Report
 
-**Last Updated**: 2025-10-04
-**Version**: v2.6 Compliance Phase
+**Last Updated**: 2025-10-09
+**Version**: v2.6 Compliance Phase + LLM Guard v1.0
 
 ---
 
@@ -44,6 +44,11 @@
 | LLMGuard | `app/core/llm_guard.py` | 140+ | ✅ Complete |
 | TextGuard | `app/core/text_guard.py` | 50+ | ✅ Complete |
 | TimeResolver | `tz-time-service/` | Service | ✅ Complete |
+| **LLM Guard v1.0** | `policy/llm_guard_policy_v1.json` | **Policy** | ✅ Complete |
+| EvidenceBuilder | `app/core/evidence_builder.py` | 262 | ✅ Complete |
+| VoidCalculator | `app/core/void.py` | 89 | ✅ Complete |
+| YuanjinDetector | `app/core/yuanjin.py` | 71 | ✅ Complete |
+| CombinationElement | `app/core/combination_element.py` | 94 | ✅ Complete |
 
 ### 🔴 Critical Gaps
 
@@ -103,6 +108,27 @@
 - seasons_wang_map_v2.json
 - relation_transform_rules_v1_1.json
 - root_seal_policy_v2_3.json
+
+### LLM Guard v1.0 Policy Files (6 files ✅)
+**Location**: Root directory
+**Release Date**: 2025-10-09
+
+**Policy & Schemas:**
+- `policy/llm_guard_policy_v1.json` - 9 rules (STRUCT-000 → AMBIG-800)
+- `schema/llm_guard_input_schema_v1.json` - Input validation (Draft 2020-12)
+- `schema/llm_guard_output_schema_v1.json` - Output structure (allow/revise/deny)
+
+**Test & Documentation:**
+- `tests/llm_guard_cases_v1.jsonl` - 18 test cases (6 allow + 6 revise + 6 deny)
+- `samples/llm_guard_io_examples_v1.md` - Good/bad examples + UI modes
+- `CHANGELOG_llm_guard_v1.md` - Version history + roadmap
+
+**Coverage:**
+- Rules: 9 (STRUCT-000, EVID-BIND-100, SCOPE-200, MODAL-300, REL-400, SIG-500, PII-600, KO-700, AMBIG-800)
+- Modality Mapping: 3 confidence ranges (0.80~1.00 / 0.50~0.79 / 0.00~0.49)
+- PII Patterns: 4 types (phone_kr, email, address_detailed, ssn_like)
+- Test Cases: 18 (allow: 6, revise: 6, deny: 6)
+- Risk Score: 0~100 (weighted by severity)
 
 ### Evidence Log Schemas (6 files ✅)
 **Location**: `saju_codex_batch_all_v2_6_signed/schemas/`
@@ -196,6 +222,30 @@
 
 ## 📈 Recent Achievements (Last Session)
 
+### Stage-1 Engines Integration (2025-10-09)
+- ✅ **VoidCalculator** (공망): 89 lines, 15/15 tests passing
+  - Day/Hour-based void detection with validation
+- ✅ **YuanjinDetector** (원진): 71 lines, 13/13 tests passing
+  - 6-pair yuanjin detection (子未, 丑午, 寅巳, 卯辰, 申亥, 酉戌)
+- ✅ **CombinationElement** (합화): 94 lines, 12/12 tests passing
+  - Wuxing adjustment from combinations (합/형/충)
+- ✅ **EvidenceBuilder** (meta-engine): 262 lines, 7/7 tests passing
+  - Two-level signatures (section + evidence)
+  - Deterministic sorting (void → wuxing_adjust → yuanjin)
+  - Shared timestamps for idempotency
+
+**Total Additions**: 516 lines code, 47 tests passing (100%)
+
+### LLM Guard v1.0 Release (2025-10-09)
+- ✅ **Policy File**: llm_guard_policy_v1.json (9 rules, UNSIGNED signature)
+- ✅ **Input Schema**: llm_guard_input_schema_v1.json (Draft 2020-12)
+- ✅ **Output Schema**: llm_guard_output_schema_v1.json (decision/reasons/remediations)
+- ✅ **Test Cases**: llm_guard_cases_v1.jsonl (18 cases JSONL format)
+- ✅ **Examples**: llm_guard_io_examples_v1.md (good/bad + UI modes)
+- ✅ **Changelog**: CHANGELOG_llm_guard_v1.md (v1.0.0 + roadmap)
+
+**Coverage**: 9 rules, 3 modality ranges, 4 PII patterns, 18 test cases
+
 ### Service Fixes (43% → 100% passing)
 - Fixed `from __future__` placement in tz-time-service
 - Fixed pillars-service data path (sample → full dataset)
@@ -230,6 +280,8 @@
 - `README.md` - Project overview
 - `task list.md` - Development roadmap
 - `DATA_SOURCES.md` - Data provenance
+- `CHANGELOG_llm_guard_v1.md` - LLM Guard v1.0 version history
+- `ENGINE_INTEGRATION_SESSION_REPORT.md` - Stage-1 engines integration report
 
 ---
 
@@ -242,16 +294,19 @@
 5. **Explain Layer** - Not implemented
 6. **ΔT/tzdb CI Pipeline** - Not automated
 7. **1600-2200 Solar Terms** - Not validated
+8. **LLM Guard v1.0 Implementation** - Policy/schemas ready, runtime engine not implemented
 
 ---
 
 ## 📊 Code Quality Metrics
 
 - **Test Coverage**: 100% (47/47 service tests passing)
-- **Policy Coverage**: 18/18 v2.6 policies loaded
+- **Policy Coverage**: 18/18 v2.6 policies loaded + LLM Guard v1.0 policy
 - **Data Authenticity**: SKY_LIZARD production app extraction
 - **Service Architecture**: 4 microservices (7 total, 3 skeleton)
-- **Lines of Code**: ~2000+ production code in calculators
+- **Lines of Code**: ~2500+ production code in calculators
+- **Stage-1 Engines**: 3 engines + 1 meta-engine (void, yuanjin, combination_element, evidence_builder)
+- **LLM Guard Coverage**: 9 rules, 18 test cases, 4 PII patterns
 
 ---
 
