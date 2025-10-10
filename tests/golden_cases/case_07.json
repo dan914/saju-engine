@@ -1,0 +1,41 @@
+{
+  "id": "LUCK_RISING_STRONG_SIGNALS",
+  "context": {
+    "season": "여름",
+    "year": 2028
+  },
+  "strength": {
+    "phase": "상",
+    "elements": {
+      "wood": "normal",
+      "fire": "high",
+      "earth": "normal",
+      "metal": "low",
+      "water": "low"
+    }
+  },
+  "relation": {
+    "flags": [
+      "combine"
+    ]
+  },
+  "climate": {
+    "flags": [],
+    "balance_index": 2
+  },
+  "yongshin": {
+    "primary": "화"
+  },
+  "daewoon": {
+    "current": "丙午",
+    "next": "丁未",
+    "turning_to_support_primary": true
+  },
+  "sewoon": {
+    "current": "丙辰",
+    "supports_primary": true
+  },
+  "expect": {
+    "luck_flow_trend": "rising"
+  }
+}

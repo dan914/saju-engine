@@ -1,0 +1,41 @@
+{
+  "id": "PATTERN_WEAK_DECLINING",
+  "context": {
+    "season": "가을",
+    "year": 2027
+  },
+  "strength": {
+    "phase": "수",
+    "elements": {
+      "wood": "high",
+      "fire": "low",
+      "earth": "low",
+      "metal": "normal",
+      "water": "high"
+    }
+  },
+  "relation": {
+    "flags": [
+      "chong"
+    ]
+  },
+  "climate": {
+    "flags": [],
+    "balance_index": -1
+  },
+  "yongshin": {
+    "primary": "토"
+  },
+  "sewoon": {
+    "current": "壬寅",
+    "counters_primary": true
+  },
+  "expect": {
+    "patterns_include": [
+      "weak_daymaster",
+      "luck_declining",
+      "climate_misaligned",
+      "relation_conflict"
+    ]
+  }
+}

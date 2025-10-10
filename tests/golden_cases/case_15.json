@@ -1,0 +1,46 @@
+{
+  "id": "PATTERN_STRONG_RISING",
+  "context": {
+    "season": "여름",
+    "year": 2028
+  },
+  "strength": {
+    "phase": "왕",
+    "elements": {
+      "wood": "normal",
+      "fire": "high",
+      "earth": "normal",
+      "metal": "low",
+      "water": "low"
+    }
+  },
+  "relation": {
+    "flags": [
+      "combine"
+    ]
+  },
+  "climate": {
+    "flags": [],
+    "balance_index": 1
+  },
+  "yongshin": {
+    "primary": "화"
+  },
+  "daewoon": {
+    "current": "丙午",
+    "next": "丁未",
+    "turning_to_support_primary": true
+  },
+  "sewoon": {
+    "current": "丙辰",
+    "supports_primary": true
+  },
+  "expect": {
+    "patterns_include": [
+      "strong_daymaster",
+      "luck_rising",
+      "climate_aligned",
+      "relation_harmony"
+    ]
+  }
+}

@@ -7,12 +7,14 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict
 
-POLICY_PATH = (
-    Path(__file__).resolve().parents[5]
-    / "saju_codex_addendum_v2_1"
-    / "policies"
-    / "recommendation_policy_v1.json"
-)
+# Import from common package (replaces cross-service imports)
+import sys
+from pathlib import Path as _Path
+sys.path.insert(0, str(_Path(__file__).resolve().parents[6] / "services" / "common"))
+from policy_loader import resolve_policy_path
+
+# Use policy loader for flexible path resolution
+POLICY_PATH = resolve_policy_path("recommendation_policy_v1.json")
 
 
 @dataclass(slots=True)

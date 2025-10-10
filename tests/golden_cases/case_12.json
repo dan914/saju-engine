@@ -1,0 +1,32 @@
+{
+  "id": "GK_JONGGEOK",
+  "context": {
+    "season": "가을",
+    "year": 2027
+  },
+  "strength": {
+    "phase": "수",
+    "elements": {
+      "wood": "high",
+      "fire": "low",
+      "earth": "low",
+      "metal": "normal",
+      "water": "high"
+    }
+  },
+  "relation": {
+    "flags": [
+      "chong"
+    ]
+  },
+  "climate": {
+    "flags": [],
+    "balance_index": -1
+  },
+  "yongshin": {
+    "primary": "토"
+  },
+  "expect": {
+    "gyeokguk_type": "종격"
+  }
+}

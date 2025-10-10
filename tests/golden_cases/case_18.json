@@ -1,0 +1,35 @@
+{
+  "id": "GUARD_ONELINER_LEN",
+  "context": {
+    "season": "가을",
+    "year": 2026
+  },
+  "strength": {
+    "phase": "상",
+    "elements": {
+      "wood": "normal",
+      "fire": "high",
+      "earth": "normal",
+      "metal": "low",
+      "water": "low"
+    }
+  },
+  "relation": {
+    "flags": [
+      "combine"
+    ]
+  },
+  "climate": {
+    "flags": [],
+    "balance_index": 1
+  },
+  "yongshin": {
+    "primary": "화"
+  },
+  "expect": {
+    "patterns_include": [
+      "relation_harmony",
+      "climate_aligned"
+    ]
+  }
+}

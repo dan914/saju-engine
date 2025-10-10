@@ -7,23 +7,47 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple
 
-POLICY_BASE = Path(__file__).resolve().parents[5]
-RELATION_POLICY_V25 = (
-    POLICY_BASE / "saju_codex_v2_5_bundle" / "policies" / "relation_structure_adjust_v2_5.json"
+# Import from common package (replaces cross-service imports)
+import sys
+from pathlib import Path as _Path
+sys.path.insert(0, str(_Path(__file__).resolve().parents[6] / "services" / "common"))
+from policy_loader import resolve_policy_path
+
+
+# Use policy loader for flexible path resolution with version fallback
+def _resolve_with_fallback(primary: str, *fallbacks: str) -> Path:
+    """Try primary policy file, fall back to older versions if not found."""
+    try:
+        return resolve_policy_path(primary)
+    except FileNotFoundError:
+        for fb in fallbacks:
+            try:
+                return resolve_policy_path(fb)
+            except FileNotFoundError:
+                continue
+        # If all fail, raise with primary filename
+        raise FileNotFoundError(f"Policy file not found: {primary} (tried fallbacks: {fallbacks})")
+
+
+RELATION_POLICY_PATH = _resolve_with_fallback(
+    "relation_structure_adjust_v2_5.json",
+    "relation_transform_rules_v1_1.json",
+    "relation_transform_rules.json"
 )
-RELATION_POLICY_V21 = (
-    POLICY_BASE / "saju_codex_addendum_v2_1" / "policies" / "relation_transform_rules_v1_1.json"
-)
-RELATION_POLICY_V2 = (
-    POLICY_BASE / "saju_codex_addendum_v2" / "policies" / "relation_transform_rules.json"
-)
-FIVE_HE_POLICY_V12 = (
-    POLICY_BASE / "saju_codex_blueprint_v2_6_SIGNED" / "policies" / "five_he_policy_v1_2.json"
-)
-FIVE_HE_POLICY_V10 = POLICY_BASE / "policies" / "five_he_policy_v1.json"
-# Fallback to v1.0 if v1.2 doesn't exist
-FIVE_HE_POLICY_PATH = FIVE_HE_POLICY_V12 if FIVE_HE_POLICY_V12.exists() else FIVE_HE_POLICY_V10
-ZIXING_POLICY_PATH = POLICY_BASE / "saju_codex_addendum_v2_1" / "policies" / "zixing_rules_v1.json"
+
+# Optional policy files - may not exist
+try:
+    FIVE_HE_POLICY_PATH = _resolve_with_fallback(
+        "five_he_policy_v1_2.json",
+        "five_he_policy_v1.json"
+    )
+except FileNotFoundError:
+    FIVE_HE_POLICY_PATH = None
+
+try:
+    ZIXING_POLICY_PATH = resolve_policy_path("zixing_rules_v1.json")
+except FileNotFoundError:
+    ZIXING_POLICY_PATH = None
 
 
 @dataclass(slots=True)
@@ -53,21 +77,17 @@ class RelationTransformer:
         self._definitions = policy.get("definitions", {})
         self._priority = policy.get("priority", [])
         self._five_he_policy: Dict[str, object] = {}
-        if FIVE_HE_POLICY_PATH.exists():
+        if FIVE_HE_POLICY_PATH is not None:
             with FIVE_HE_POLICY_PATH.open("r", encoding="utf-8") as f:
                 self._five_he_policy = json.load(f)
         self._zixing_policy: Dict[str, object] = {}
-        if ZIXING_POLICY_PATH.exists():
+        if ZIXING_POLICY_PATH is not None:
             with ZIXING_POLICY_PATH.open("r", encoding="utf-8") as f:
                 self._zixing_policy = json.load(f)
 
     @classmethod
     def from_file(cls, path: Optional[Path] = None) -> "RelationTransformer":
-        policy_path = path or (
-            RELATION_POLICY_V25
-            if RELATION_POLICY_V25.exists()
-            else (RELATION_POLICY_V21 if RELATION_POLICY_V21.exists() else RELATION_POLICY_V2)
-        )
+        policy_path = path or RELATION_POLICY_PATH
         with policy_path.open("r", encoding="utf-8") as f:
             data = json.load(f)
         return cls(data)

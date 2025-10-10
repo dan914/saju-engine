@@ -9,26 +9,18 @@ from pathlib import Path
 from typing import Dict, Optional
 from zoneinfo import ZoneInfo
 
-# TODO: Fix cross-service imports - hyphens in module names not supported
-# from services.pillars-service.app.core.month import SimpleSolarTermLoader
-# from services.pillars-service.app.core.resolve import TimeResolver
+# Import from common package (replaces cross-service imports)
+import sys
+from pathlib import Path as _Path
+sys.path.insert(0, str(_Path(__file__).resolve().parents[6] / "services" / "common"))
+from saju_common import TableSolarTermLoader as SimpleSolarTermLoader
+from saju_common import BasicTimeResolver as TimeResolver
+from policy_loader import resolve_policy_path
 
 
-class SimpleSolarTermLoader:
-    """Temporary placeholder for SimpleSolarTermLoader to fix CI."""
-
-    pass
-
-
-class TimeResolver:
-    """Temporary placeholder for TimeResolver to fix CI."""
-
-    pass
-
-
-POLICY_DIR = Path(__file__).resolve().parents[5] / "saju_codex_addendum_v2"
-LUCK_POLICY_PATH = POLICY_DIR / "policies" / "luck_policy_v1.json"
-SHENSHA_CATALOG_PATH = POLICY_DIR / "policies" / "shensha_catalog_v1.json"
+# Use policy loader for flexible path resolution
+LUCK_POLICY_PATH = resolve_policy_path("luck_policy_v1.json")
+SHENSHA_CATALOG_PATH = resolve_policy_path("shensha_catalog_v1.json")
 TERM_DATA_PATH = Path(__file__).resolve().parents[5] / "data"
 
 
