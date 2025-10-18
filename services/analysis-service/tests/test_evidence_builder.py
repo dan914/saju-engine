@@ -24,12 +24,8 @@ def _sample_inputs_all():
     void_sig = sha256_signature({"void": "sig"})
     yuanjin_sig = sha256_signature({"yuanjin": "sig"})
     try:
-        from app.core.combination_element import (
-            POLICY_SIGNATURE as WUX_SIG,
-        )
-        from app.core.combination_element import (
-            POLICY_VERSION as WUX_VER,
-        )
+        from app.core.combination_element import POLICY_SIGNATURE as WUX_SIG
+        from app.core.combination_element import POLICY_VERSION as WUX_VER
     except Exception:
         WUX_SIG = sha256_signature({"wuxing": "sig"})
         WUX_VER = "combination_element_v1.2.0"

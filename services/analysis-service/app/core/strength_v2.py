@@ -10,11 +10,7 @@ from typing import Any, Dict, Iterable, Tuple
 sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "services" / "common"))
 from policy_loader import load_policy_json
 
-from .utils_strength_yongshin import (
-    elem_of_stem,
-    parse_pillar,
-    ten_god_bucket,
-)
+from .utils_strength_yongshin import elem_of_stem, parse_pillar, ten_god_bucket
 
 
 class StrengthEvaluator:

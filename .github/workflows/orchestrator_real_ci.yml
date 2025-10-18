@@ -13,5 +13,6 @@ jobs:
       - name: Build policy index
         run: python tools/build_policy_index.py
       - name: Run orchestrator tests (with DI doubles)
-        env: { POLICY_DIR: ${{ github.workspace }}/policy }
+        env:
+          POLICY_DIR: ${{ github.workspace }}/policy
         run: pytest -q

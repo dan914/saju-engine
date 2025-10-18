@@ -37,15 +37,8 @@ from .builtins import (
 )
 
 # File-based implementations
-from .file_solar_term_loader import (
-    FileSolarTermLoader,
-    SolarTermEntry,
-)
-from .interfaces import (
-    DeltaTPolicy,
-    SolarTermLoader,
-    TimeResolver,
-)
+from .file_solar_term_loader import FileSolarTermLoader, SolarTermEntry
+from .interfaces import DeltaTPolicy, SolarTermLoader, TimeResolver
 
 # Mapping tables
 from .seasons import (

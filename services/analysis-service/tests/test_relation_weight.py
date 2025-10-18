@@ -42,7 +42,7 @@ def basic_context():
 def test_evaluator_loads_policy(evaluator):
     """Test that evaluator loads policy correctly"""
     assert evaluator.policy is not None
-    assert evaluator.policy["policy_version"] == "1.0.0"
+    assert evaluator.policy["policy_version"] == "relation_weight_v1.0.0"
     assert len(evaluator.policy["relations"]) == 7
     assert "sanhe" in evaluator.policy_map
     assert "liuhe" in evaluator.policy_map
@@ -53,7 +53,7 @@ def test_evaluate_empty_input(evaluator, basic_context):
     """Test evaluation with no detected pairs"""
     result = evaluator.evaluate([], basic_context)
 
-    assert result["policy_version"] == "1.0.0"
+    assert result["policy_version"] == "relation_weight_v1.0.0"
     assert result["items"] == []
     assert result["summary"]["total"] == 0
     assert all(stats["count"] == 0 for stats in result["summary"]["by_type"].values())
@@ -181,7 +181,7 @@ def test_evaluate_spec_sample(evaluator):
     """Test the specification sample case"""
     result = evaluator.evaluate(SPEC_SAMPLE_INPUT["pairs_detected"], SPEC_SAMPLE_INPUT["context"])
 
-    assert result["policy_version"] == "1.0.0"
+    assert result["policy_version"] == "relation_weight_v1.0.0"
     assert len(result["items"]) == 4
 
     # Check sanhe (申子辰)
@@ -333,7 +333,7 @@ def test_convenience_function():
         SPEC_SAMPLE_INPUT["pairs_detected"], SPEC_SAMPLE_INPUT["context"]
     )
 
-    assert result["policy_version"] == "1.0.0"
+    assert result["policy_version"] == "relation_weight_v1.0.0"
     assert len(result["items"]) == 4
 
 

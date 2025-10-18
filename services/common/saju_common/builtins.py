@@ -23,10 +23,7 @@ from datetime import date, datetime, timezone
 from zoneinfo import ZoneInfo
 
 from .interfaces import DeltaTPolicy, SolarTermLoader, TimeResolver
-from .seasons import (
-    BRANCH_TO_SEASON,
-    GREGORIAN_MONTH_TO_BRANCH,
-)
+from .seasons import BRANCH_TO_SEASON, GREGORIAN_MONTH_TO_BRANCH
 
 
 class BasicTimeResolver(TimeResolver):

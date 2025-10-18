@@ -182,12 +182,8 @@ def _normalize_inputs(inputs: Dict[str, Any], created_at: str) -> List[Dict[str,
                 engine_version = str(w["engine_version"])
                 engine_signature = str(w["engine_signature"])
             else:
-                from app.core.combination_element import (
-                    POLICY_SIGNATURE as _WS,
-                )
-                from app.core.combination_element import (
-                    POLICY_VERSION as _WV,
-                )
+                from app.core.combination_element import POLICY_SIGNATURE as _WS
+                from app.core.combination_element import POLICY_VERSION as _WV
 
                 engine_version, engine_signature = _WV, _WS
         except Exception:

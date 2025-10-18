@@ -13,9 +13,9 @@ from typing import Dict, Optional
 from zoneinfo import ZoneInfo
 
 from policy_loader import resolve_policy_path
-from saju_common import BasicTimeResolver as TimeResolver
 
 # Import from parent saju_common package
+from saju_common import BasicTimeResolver as TimeResolver
 from saju_common import FileSolarTermLoader
 
 # Use policy loader for flexible path resolution
