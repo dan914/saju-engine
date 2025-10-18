@@ -38,7 +38,8 @@
   "expect": {
     "patterns_include": [
       "strong_daymaster",
-      "luck_rising",
+      "primary_high",
+      "yongshin_supported",
       "climate_aligned",
       "relation_harmony"
     ]

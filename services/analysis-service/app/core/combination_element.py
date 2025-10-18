@@ -17,7 +17,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
-from typing import Dict, Iterable, List, Tuple
+from typing import Dict, List, Tuple
 
 
 # --- 인라인 시그니처 유틸리티 (infra.signatures 대체) ----------------------

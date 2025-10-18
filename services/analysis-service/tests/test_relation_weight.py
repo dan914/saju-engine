@@ -4,10 +4,9 @@ Tests for Relation Weight Evaluator v1.0
 Tests impact_weight and confidence calculation based on contextual conditions.
 """
 
-import pytest
-from pathlib import Path
-from app.core.relation_weight import RelationWeightEvaluator, evaluate_relation_weights
 
+import pytest
+from app.core.relation_weight import RelationWeightEvaluator, evaluate_relation_weights
 
 # Sample input from specification
 SPEC_SAMPLE_INPUT = {

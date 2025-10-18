@@ -1,0 +1,114 @@
+{
+  "policy_version": "luck_flow_policy_v1",
+  "policy_signature": "d5148407dde36659c492eb515bdefe800c407b339b9fe99f401b97bd0ebe948c",
+  "scoring": {
+    "weights": {
+      "yongshin_match": 0.1,
+      "climate_alignment": 0.3,
+      "climate_misalignment": -0.3,
+      "element_gain_primary": 0.35,
+      "element_loss_primary": -0.35,
+      "relation_support": 0.25,
+      "relation_clash": -0.25,
+      "transition_daewoon_positive": 0.2,
+      "transition_daewoon_negative": -0.2,
+      "sewoon_alignment": 0.25,
+      "sewoon_opposition": -0.25
+    },
+    "clamp_range": [
+      -1.0,
+      1.0
+    ],
+    "trend_thresholds": {
+      "rising": 0.15,
+      "declining": -0.15
+    }
+  },
+  "signals": {
+    "yongshin_match": {
+      "when": {
+        "yongshin.primary_in": [
+          "목",
+          "화",
+          "토",
+          "금",
+          "수"
+        ],
+        "strength.elements_any": [
+          "high:primary"
+        ]
+      },
+      "eval": "yongshin_match"
+    },
+    "climate_alignment": {
+      "when": {
+        "climate.balance_index_gte": 1
+      },
+      "eval": "climate_alignment"
+    },
+    "climate_misalignment": {
+      "when": {
+        "climate.balance_index_lte": -1
+      },
+      "eval": "climate_misalignment"
+    },
+    "element_gain_primary": {
+      "when": {
+        "strength.elements_any": [
+          "high:primary"
+        ]
+      },
+      "eval": "element_gain_primary"
+    },
+    "element_loss_primary": {
+      "when": {
+        "strength.elements_any": [
+          "low:primary"
+        ]
+      },
+      "eval": "element_loss_primary"
+    },
+    "relation_support": {
+      "when": {
+        "relation.flags_any": [
+          "combine",
+          "sanhe"
+        ]
+      },
+      "eval": "relation_support"
+    },
+    "relation_clash": {
+      "when": {
+        "relation.flags_any": [
+          "chong",
+          "harm"
+        ]
+      },
+      "eval": "relation_clash"
+    },
+    "transition_daewoon_positive": {
+      "when": {
+        "daewoon.turning_to_support_primary": true
+      },
+      "eval": "transition_daewoon_positive"
+    },
+    "transition_daewoon_negative": {
+      "when": {
+        "daewoon.turning_to_counter_primary": true
+      },
+      "eval": "transition_daewoon_negative"
+    },
+    "sewoon_alignment": {
+      "when": {
+        "sewoon.supports_primary": true
+      },
+      "eval": "sewoon_alignment"
+    },
+    "sewoon_opposition": {
+      "when": {
+        "sewoon.counters_primary": true
+      },
+      "eval": "sewoon_opposition"
+    }
+  }
+}

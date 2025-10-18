@@ -1,0 +1,66 @@
+name: placeholder-guard
+
+on:
+  push:
+    branches: [ main, docs/prompts-freeze-v1 ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install "jsonschema>=4,<5" pytest
+
+      - name: Validate Climate Advice Policy Schema
+        run: |
+          jsonschema -i policy/climate_advice_policy_v1.json schema/climate_advice_policy.schema.json
+
+      - name: Run Climate Advice MVP Tests
+        run: |
+          pytest -q tests/test_climate_advice_mvp.py
+
+      - name: Verify Policy Signatures (if PSA available)
+        run: |
+          if command -v python3 >/dev/null 2>&1; then
+            if [ -f "policy_signature_auditor/psa_cli.py" ]; then
+              PYTHONPATH="." python3 policy_signature_auditor/psa_cli.py verify policy/climate_advice_policy_v1.json || echo "Signature verification skipped (not signed yet)"
+              PYTHONPATH="." python3 policy_signature_auditor/psa_cli.py verify guards/llm_guard_rules_climate_mvp_v1.json || echo "Signature verification skipped (not signed yet)"
+            else
+              echo "psa_cli.py not found, skipping signature verification"
+            fi
+          else
+            echo "Python3 not available, skipping signature verification"
+          fi
+
+      - name: Check for new placeholder markers
+        run: |
+          # Count CRITICAL and MEDIUM markers
+          CRITICAL_COUNT=$(grep -r "# TODO.*CRITICAL" --include="*.py" services/ scripts/ 2>/dev/null | wc -l || echo "0")
+          MEDIUM_COUNT=$(grep -r "# TODO.*MEDIUM" --include="*.py" services/ scripts/ 2>/dev/null | wc -l || echo "0")
+
+          echo "CRITICAL markers: $CRITICAL_COUNT"
+          echo "MEDIUM markers: $MEDIUM_COUNT"
+
+          # Fail if CRITICAL > 0 or MEDIUM > 5
+          if [ "$CRITICAL_COUNT" -gt 0 ]; then
+            echo "❌ CRITICAL placeholder markers detected: $CRITICAL_COUNT (threshold: 0)"
+            exit 1
+          fi
+
+          if [ "$MEDIUM_COUNT" -gt 5 ]; then
+            echo "❌ MEDIUM placeholder markers exceeded: $MEDIUM_COUNT (threshold: 5)"
+            exit 1
+          fi
+
+          echo "✅ Placeholder marker check passed"

@@ -4,6 +4,14 @@
     "impact_on_calculation": false,
     "ui_mode": "pro_only"
   },
+  "default": {
+    "enabled": true,
+    "list": ["taohua", "wenchang", "tianyiguiren", "yima"]
+  },
+  "pro_mode": {
+    "enabled": true,
+    "list": ["taohua", "wenchang", "tianyiguiren", "yima"]
+  },
   "items": [
     {
       "name": "桃花(도화)",

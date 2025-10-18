@@ -1,0 +1,266 @@
+{
+  "engine": "llm_guard",
+  "policy_version": "1.1.0",
+  "policy_date": "2025-10-09",
+  "policy_signature": "c6eec1df77c04525ec827cd83da8b9aa13e1f9e7d6d7d9518f8808972f925803",
+  "ko_labels": true,
+  "dependencies": [
+    "strength_policy_v2.json",
+    "relation_weight_v1.0.0.json",
+    "yongshin_selector_policy_v1.json",
+    "evidence_builder_v2.json"
+  ],
+  "evaluation_order": [
+    "STRUCT-000",
+    "EVID-BIND-100",
+    "SCOPE-200",
+    "MODAL-300",
+    "CONF-LOW-310",
+    "REL-400",
+    "REL-OVERWEIGHT-410",
+    "CONSIST-450",
+    "YONGSHIN-UNSUPPORTED-460",
+    "SIG-500",
+    "PII-600",
+    "KO-700",
+    "AMBIG-800"
+  ],
+  "rules": [
+    {
+      "rule_id": "STRUCT-000",
+      "severity": "error",
+      "when": "입력 스키마 위반 또는 필수 필드 누락",
+      "check_type": "schema",
+      "action": "deny",
+      "reason_code": "INPUT-INVALID",
+      "message_ko": "입력 구조가 스키마를 위반했습니다",
+      "remediation_hint_ko": "입력 스키마를 준수하여 재요청하세요",
+      "evidence_refs": []
+    },
+    {
+      "rule_id": "EVID-BIND-100",
+      "severity": "error",
+      "when": "사실 주장에 대응하는 evidence_id 바인딩이 누락됨",
+      "check_type": "match",
+      "action": "revise",
+      "reason_code": "LLM-CLAIM-NOEVID",
+      "message_ko": "근거 없는 사실 주장이 포함되어 있습니다",
+      "remediation_hint_ko": "모든 사실 주장은 evidence.sources[].evidence_id를 인용하세요",
+      "evidence_refs": [
+        "evidence.sources[].evidence_id"
+      ]
+    },
+    {
+      "rule_id": "SCOPE-200",
+      "severity": "error",
+      "when": "의료/법률/투자 단정, 출생시각 추정, 사망일 예측 등 범위 외 요청",
+      "check_type": "match",
+      "action": "deny",
+      "reason_code": "OUT-OF-SCOPE",
+      "message_ko": "허용되지 않는 범위의 요청입니다",
+      "remediation_hint_ko": "의료/법률/투자 단정, 출생시각 추정, 사망일 예측은 제공할 수 없습니다",
+      "evidence_refs": []
+    },
+    {
+      "rule_id": "MODAL-300",
+      "severity": "warn",
+      "when": "근거 confidence < 0.5인데 단정 표현 사용",
+      "check_type": "calc",
+      "action": "revise",
+      "reason_code": "MODALITY-OVERCLAIM",
+      "message_ko": "근거 신뢰도에 비해 과도한 단정 표현이 사용되었습니다",
+      "remediation_hint_ko": "confidence 구간에 맞는 완화 표현을 사용하세요",
+      "evidence_refs": [
+        "evidence.sources[].confidence"
+      ]
+    },
+    {
+      "rule_id": "CONF-LOW-310",
+      "severity": "warn",
+      "when": "핵심 결과(Strength/Relation/Yongshin)의 평균 confidence < 0.40",
+      "check_type": "calc",
+      "action": "revise",
+      "reason_code": "CONFIDENCE-LOW",
+      "message_ko": "핵심 근거의 전반적 신뢰도가 낮습니다",
+      "remediation_hint_ko": "저신뢰 결과는 가설 수준 표현으로 완화하고 추가 근거를 제시하세요",
+      "evidence_refs": [
+        "engine_summaries.*.confidence"
+      ]
+    },
+    {
+      "rule_id": "REL-400",
+      "severity": "error",
+      "when": "Relation 탐지/효력 결과와 모순되는 단정",
+      "check_type": "match",
+      "action": "revise",
+      "reason_code": "REL-MISMATCH",
+      "message_ko": "관계 분석 결과와 모순되는 주장이 포함되어 있습니다",
+      "remediation_hint_ko": "evidence.derived.relations / relation_summary와 일치하도록 수정하세요",
+      "evidence_refs": [
+        "evidence.derived.relations",
+        "engine_summaries.relation_summary"
+      ]
+    },
+    {
+      "rule_id": "REL-OVERWEIGHT-410",
+      "severity": "warn",
+      "when": "impact_weight ≥ 0.90처럼 강조하나 조건 충족 수가 부족하거나(strict 필요 미충족) 절대화 표현 사용",
+      "check_type": "calc",
+      "action": "revise",
+      "reason_code": "RELATION-OVERWEIGHT",
+      "message_ko": "관계 효과를 과도하게 강조했습니다(조건 미충족/절대화 표현)",
+      "remediation_hint_ko": "conditions_met를 인용하고 가설/가능성 어휘로 완화하세요",
+      "evidence_refs": [
+        "engine_summaries.relation_items[].conditions_met",
+        "engine_summaries.relation_items[].strict_mode_required"
+      ]
+    },
+    {
+      "rule_id": "CONSIST-450",
+      "severity": "error",
+      "when": "Strength ↔ Yongshin ↔ Relation 간 핵심 방향성이 상충(예: 신약인데 억제 위주 용신을 단정)",
+      "check_type": "calc",
+      "action": "revise",
+      "reason_code": "CONSIST-MISMATCH",
+      "message_ko": "교차 엔진 일관성이 부족합니다",
+      "remediation_hint_ko": "strength.score 구간과 relation_summary를 반영해 용신/해석을 조정하세요",
+      "evidence_refs": [
+        "engine_summaries.strength",
+        "engine_summaries.yongshin_result",
+        "engine_summaries.relation_summary"
+      ]
+    },
+    {
+      "rule_id": "YONGSHIN-UNSUPPORTED-460",
+      "severity": "warn",
+      "when": "용신 후보가 계절/관계 흐름에 의해 일관되게 불리(계절 상극+관계 감점 누적)",
+      "check_type": "calc",
+      "action": "revise",
+      "reason_code": "YONGSHIN-UNSUPPORTED",
+      "message_ko": "선정된 용신이 환경적 지지를 받지 못합니다",
+      "remediation_hint_ko": "climate.support 및 relation bias를 반영해 용신/보조신 재배치",
+      "evidence_refs": [
+        "engine_summaries.climate",
+        "engine_summaries.relation_summary",
+        "engine_summaries.yongshin_result"
+      ]
+    },
+    {
+      "rule_id": "SIG-500",
+      "severity": "error",
+      "when": "입력 signatures.policy_refs[] 검증 실패",
+      "check_type": "calc",
+      "action": "deny",
+      "reason_code": "POLICY-SIG-MISMATCH",
+      "message_ko": "정책 서명 검증에 실패했습니다",
+      "remediation_hint_ko": "정책 파일의 무결성을 확인하고 재요청하세요",
+      "evidence_refs": [
+        "evidence.signatures.policy_refs"
+      ]
+    },
+    {
+      "rule_id": "PII-600",
+      "severity": "warn",
+      "when": "PII(전화/이메일/상세주소/주민번호 유사) 포함",
+      "check_type": "match",
+      "action": "revise",
+      "reason_code": "PII-DETECTED",
+      "message_ko": "개인 식별 정보가 포함되어 있습니다",
+      "remediation_hint_ko": "PII는 마스킹 또는 제거 후 응답하세요",
+      "evidence_refs": []
+    },
+    {
+      "rule_id": "KO-700",
+      "severity": "warn",
+      "when": "KO-first 라벨 미사용 또는 영문 전용 응답",
+      "check_type": "match",
+      "action": "revise",
+      "reason_code": "LABEL-NONCOMPLIANT",
+      "message_ko": "한국어 우선(KO-first) 라벨이 누락되었습니다",
+      "remediation_hint_ko": "필수 라벨을 한국어로 병기하세요",
+      "evidence_refs": []
+    },
+    {
+      "rule_id": "AMBIG-800",
+      "severity": "warn",
+      "when": "고전/정책 출처 라벨 또는 근거 누락",
+      "check_type": "match",
+      "action": "revise",
+      "reason_code": "AMBIG-SOURCE",
+      "message_ko": "고전 또는 정책 출처 근거가 모호합니다",
+      "remediation_hint_ko": "고전/정책 명칭과 버전을 명시하세요",
+      "evidence_refs": []
+    }
+  ],
+  "modality_mapping": [
+    {
+      "confidence_min": 0.8,
+      "confidence_max": 1.0,
+      "label_ko": "개연성이 매우 높음",
+      "allowed_expressions": [
+        "~일 가능성이 매우 높습니다",
+        "~로 해석됩니다"
+      ]
+    },
+    {
+      "confidence_min": 0.5,
+      "confidence_max": 0.79,
+      "label_ko": "개연성이 높음",
+      "allowed_expressions": [
+        "~일 가능성이 있습니다",
+        "~로 볼 수 있습니다"
+      ]
+    },
+    {
+      "confidence_min": 0.0,
+      "confidence_max": 0.49,
+      "label_ko": "가설 수준",
+      "allowed_expressions": [
+        "~일 수도 있습니다",
+        "~로 추정됩니다 (확정 아님)"
+      ]
+    }
+  ],
+  "pii_patterns": [
+    {
+      "type": "phone_kr",
+      "pattern": "01[0-9]-?[0-9]{3,4}-?[0-9]{4}"
+    },
+    {
+      "type": "email",
+      "pattern": "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
+    },
+    {
+      "type": "address_detailed",
+      "pattern": "(시|구|동|로|길)\\s*[0-9-]+.*호"
+    },
+    {
+      "type": "ssn_like",
+      "pattern": "[0-9]{6}-?[1-4][0-9]{6}"
+    }
+  ],
+  "risk_model": {
+    "score_formula": "base = Σ(violation_weight) + severity_weight; clamp 0..100",
+    "violation_weight": {
+      "warn": 8,
+      "error": 22,
+      "special": {
+        "CONSIST-450": 28,
+        "REL-OVERWEIGHT-410": 12,
+        "CONF-LOW-310": 10
+      }
+    },
+    "risk_level_thresholds": {
+      "low_max": 29,
+      "medium_max": 69,
+      "high_min": 70
+    }
+  },
+  "output_labels": {
+    "risk_level": {
+      "low": "낮음",
+      "medium": "보통",
+      "high": "높음"
+    }
+  }
+}

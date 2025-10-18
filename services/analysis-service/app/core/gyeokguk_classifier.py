@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
-import json
-from pathlib import Path
-from typing import Any, Dict, Tuple
-from services.common.policy_loader import resolve_policy_path
+try:
+    from services.common.policy_loader import load_policy_json, resolve_policy_path  # noqa: F401
+except ImportError:
+    from policy_loader import load_policy_json, resolve_policy_path  # noqa: F401
 
 def _get(d, path, default=None):
     cur = d
     for p in path.split("."):
-        if not isinstance(cur, dict):
-            return default
-        if p not in cur:
-            return default
+        if not isinstance(cur, dict): return default
+        if p not in cur: return default
         cur = cur[p]
     return cur
 
@@ -19,50 +17,35 @@ def _map_elem(x):
          "wood":"wood","fire":"fire","earth":"earth","metal":"metal","water":"water"}
     return m.get(x, x)
 
-def _any_flag(flags_need, flags_have):
-    return bool(set(flags_need).intersection(set(flags_have or [])))
+def _any_flag(need, have):
+    return bool(set(need).intersection(set(have or [])))
 class GyeokgukClassifier:
     def __init__(self, policy_file: str = "gyeokguk_policy_v1.json"):
-        self.policy = json.loads(resolve_policy_path(policy_file).read_text(encoding="utf-8"))
+        self.policy = load_policy_json(policy_file)
 
     def _match(self, ctx: dict):
         for rule in self.policy["rules"]:
             w = rule["when"]
-            # phase
-            if "strength.phase_in" in w and _get(ctx,"strength.phase") not in set(w["strength.phase_in"]):
-                continue
-            # elements_any
+            if "strength.phase_in" in w and _get(ctx,"strength.phase") not in set(w["strength.phase_in"]): continue
             if "strength.elements_any" in w:
                 ok=False
                 for token in w["strength.elements_any"]:
                     lv, el = token.split(":")
-                    if el == "primary":
-                        el = _get(ctx,"yongshin.primary")
+                    if el == "primary": el = _get(ctx,"yongshin.primary")
                     el = _map_elem(el)
-                    if _get(ctx,f"strength.elements.{el}") == lv:
-                        ok=True; break
-                if not ok: 
-                    continue
-            # relation
+                    if _get(ctx,f"strength.elements.{el}") == lv: ok=True; break
+                if not ok: continue
             if "relation.flags_any" in w:
-                if not set(w["relation.flags_any"]).intersection(set(_get(ctx,"relation.flags",[]) or [])):
-                    continue
-            # yongshin
-            if "yongshin.primary_in" in w and _get(ctx,"yongshin.primary") not in set(w["yongshin.primary_in"]):
-                continue
-            # climate
+                if not set(w["relation.flags_any"]).intersection(set(_get(ctx,"relation.flags",[]) or [])): continue
+            if "yongshin.primary_in" in w and _get(ctx,"yongshin.primary") not in set(w["yongshin.primary_in"]): continue
             bi = _get(ctx,"climate.balance_index",0)
-            if "climate.balance_index_gte" in w and not (bi >= w["climate.balance_index_gte"]):
-                continue
-            if "climate.balance_index_lte" in w and not (bi <= w["climate.balance_index_lte"]):
-                continue
+            if "climate.balance_index_gte" in w and not (bi >= w["climate.balance_index_gte"]): continue
+            if "climate.balance_index_lte" in w and not (bi <= w["climate.balance_index_lte"]): continue
             return rule["emit"]
         return None
 
     def run(self, ctx: dict) -> dict:
-        emit = self._match(ctx)
-        if not emit:
-            emit = {"type":"정격","basis":["월령득기"],"confidence":0.6,"notes":"기본 규칙 적용(디폴트)."}
+        emit = self._match(ctx) or {"type":"정격","basis":["월령득기"],"confidence":0.6,"notes":"기본 규칙 적용(디폴트)."}
         return {
             "engine": "gyeokguk_classifier",
             "policy_version": self.policy["policy_version"],

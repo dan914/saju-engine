@@ -1,0 +1,17 @@
+name: orchestrator-real-ci
+on:
+  push: { branches: [ main ] }
+  pull_request: {}
+jobs:
+  validate-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install pytest jsonschema pydantic fastapi
+      - name: Build policy index
+        run: python tools/build_policy_index.py
+      - name: Run orchestrator tests (with DI doubles)
+        env: { POLICY_DIR: ${{ github.workspace }}/policy }
+        run: pytest -q

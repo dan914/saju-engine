@@ -1,0 +1,72 @@
+name: Stage 2 Audit
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'policy/**'
+      - 'schema/**'
+      - 'core/policy_engines/**'
+      - 'tools/**'
+      - 'tests/**'
+  push:
+    branches:
+      - main
+      - 'release/**'
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install jsonschema
+
+      - name: Make audit script executable
+        run: chmod +x tools/stage2_audit.sh || true
+
+      - name: Run Stage 2 Audit
+        run: ./tools/stage2_audit.sh
+
+      - name: Upload audit reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: stage2-audit-reports
+          path: reports/**
+          retention-days: 30
+
+      - name: Check for HIGH priority gaps
+        run: |
+          if grep -q "HIGH Priority" reports/stage2_gap_list.md; then
+            echo "⚠️  HIGH priority gaps found - review reports/stage2_gap_list.md"
+            exit 0  # Don't fail build, just warn
+          fi
+
+      - name: Comment PR with summary
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('reports/stage2_audit_summary.md', 'utf8');
+            const gapList = fs.readFileSync('reports/stage2_gap_list.md', 'utf8');
+
+            const body = `## Stage 2 Audit Results\n\n${summary}\n\n---\n\n${gapList}`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body.slice(0, 65000)  // GitHub comment limit
+            });

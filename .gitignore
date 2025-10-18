@@ -9,6 +9,9 @@ __pycache__/
 .env.local
 mcp-config.json
 
+# Generated artifacts
+*.sha256
+
 # Node/Flutter
 node_modules/
 .dist/

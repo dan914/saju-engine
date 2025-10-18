@@ -1,0 +1,47 @@
+{
+  "policy_version": "relation_policy_v1",
+  "policy_signature": "5d8ad830bf114357c3ff089c44b7f48e94cea17be3aa08c480260d3ccab2af6b",
+  "five_he_policy": {
+    "require_month_support": true,
+    "require_huashen_stem": false,
+    "deny_if_conflict": true
+  },
+  "sanhe_groups": {
+    "wood": [
+      "亥",
+      "卯",
+      "未"
+    ],
+    "fire": [
+      "寅",
+      "午",
+      "戌"
+    ],
+    "metal": [
+      "巳",
+      "酉",
+      "丑"
+    ],
+    "water": [
+      "申",
+      "子",
+      "辰"
+    ]
+  },
+  "banhe_groups": {
+    "wood": [
+      "亥",
+      "卯",
+      "未"
+    ],
+    "fire": [
+      "寅",
+      "午",
+      "戌"
+    ]
+  },
+  "zixing": {
+    "min_count_medium": 2,
+    "min_count_high": 3
+  }
+}

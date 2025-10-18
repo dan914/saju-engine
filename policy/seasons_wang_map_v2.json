@@ -1,0 +1,104 @@
+{
+  "policy_version": "seasons_wang_map_v2",
+  "stages": [
+    "旺",
+    "相",
+    "休",
+    "囚",
+    "死"
+  ],
+  "score_map": {
+    "旺": 30,
+    "相": 15,
+    "休": 0,
+    "囚": -15,
+    "死": -30
+  },
+  "by_branch": {
+    "寅": {
+      "wood": "旺",
+      "fire": "相",
+      "earth": "休",
+      "metal": "死",
+      "water": "囚"
+    },
+    "卯": {
+      "wood": "旺",
+      "fire": "相",
+      "earth": "休",
+      "metal": "死",
+      "water": "囚"
+    },
+    "辰": {
+      "wood": "相",
+      "fire": "休",
+      "earth": "旺",
+      "metal": "囚",
+      "water": "死"
+    },
+    "巳": {
+      "wood": "休",
+      "fire": "旺",
+      "earth": "相",
+      "metal": "死",
+      "water": "囚"
+    },
+    "午": {
+      "wood": "囚",
+      "fire": "旺",
+      "earth": "相",
+      "metal": "死",
+      "water": "休"
+    },
+    "未": {
+      "wood": "休",
+      "fire": "相",
+      "earth": "旺",
+      "metal": "囚",
+      "water": "死"
+    },
+    "申": {
+      "wood": "死",
+      "fire": "囚",
+      "earth": "休",
+      "metal": "旺",
+      "water": "相"
+    },
+    "酉": {
+      "wood": "死",
+      "fire": "囚",
+      "earth": "休",
+      "metal": "旺",
+      "water": "相"
+    },
+    "戌": {
+      "wood": "囚",
+      "fire": "休",
+      "earth": "旺",
+      "metal": "相",
+      "water": "死"
+    },
+    "亥": {
+      "wood": "相",
+      "fire": "死",
+      "earth": "休",
+      "metal": "囚",
+      "water": "旺"
+    },
+    "子": {
+      "wood": "囚",
+      "fire": "死",
+      "earth": "休",
+      "metal": "囚",
+      "water": "旺"
+    },
+    "丑": {
+      "wood": "休",
+      "fire": "囚",
+      "earth": "旺",
+      "metal": "相",
+      "water": "死"
+    }
+  },
+  "policy_signature": "03e163b07346b44ef1fe157f51ce779459a2ec15c752868ef900ef2a03fd9e5e"
+}

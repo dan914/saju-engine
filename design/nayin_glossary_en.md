@@ -16,38 +16,38 @@
 
 ## 2) NaYin 영문 표준(발췌)
 
-| 納音 (中文) | English Translation |
-|-----------|---------------------|
-| 海中金 | Metal in the Sea |
-| 炉中火 | Fire in the Furnace |
-| 大林木 | Great Forest Wood |
-| 路旁土 | Roadside Earth |
-| 剑锋金 | Sword Edge Metal |
-| 山头火 | Mountain Peak Fire |
-| 涧下水 | Stream Water in the Gorge |
-| 城头土 | City Wall Earth |
-| 白蜡金 | Wax Metal |
-| 杨柳木 | Willow Wood |
-| 泉中水 | Spring Water |
-| 屋上土 | Rooftop Earth |
-| 霹雳火 | Thunderbolt Fire |
-| 松柏木 | Pine & Cypress Wood |
-| 长流水 | Long Flowing Water |
-| 砂中金 | Metal in Sand |
-| 山下火 | Fire at Mountain's Foot |
-| 平地木 | Flatland Wood |
-| 壁上土 | Wall-Top Earth |
-| 金箔金 | Gold Foil Metal |
-| 覆灯火 | Covered Lamp Fire |
-| 天河水 | Milky Way Water |
-| 大驿土 | Post-Station Earth |
-| 钗钏金 | Ornamental Gold |
-| 桑柘木 | Mulberry Wood |
-| 大溪水 | Great Stream Water |
-| 沙中土 | Sandy Soil |
-| 天上火 | Heavenly Fire |
-| 石榴木 | Pomegranate Wood |
-| 大海水 | Great Sea Water |
+| 納音 (中文) | Korean | English Translation |
+|-----------|--------|---------------------|
+| 海中金 | 해중금 | Metal in the Sea |
+| 炉中火 | 노중화 | Fire in the Furnace |
+| 大林木 | 대림목 | Great Forest Wood |
+| 路旁土 | 노방토 | Roadside Earth |
+| 剑锋金 | 검봉금 | Sword Edge Metal |
+| 山头火 | 산두화 | Mountain Peak Fire |
+| 涧下水 | 간하수 | Stream Water in the Gorge |
+| 城头土 | 성두토 | City Wall Earth |
+| 白蜡金 | 백랍금 | Wax Metal |
+| 杨柳木 | 양류목 | Willow Wood |
+| 泉中水 | 천중수 | Spring Water |
+| 屋上土 | 옥상토 | Rooftop Earth |
+| 霹雳火 | 벽력화 | Thunderbolt Fire |
+| 松柏木 | 송백목 | Pine & Cypress Wood |
+| 长流水 | 장류수 | Long Flowing Water |
+| 砂中金 | 사중금 | Metal in Sand |
+| 山下火 | 산하화 | Fire at Mountain's Foot |
+| 平地木 | 평지목 | Flatland Wood |
+| 壁上土 | 벽상토 | Wall-Top Earth |
+| 金箔金 | 금박금 | Gold Foil Metal |
+| 覆灯火 | 복등화 | Covered Lamp Fire |
+| 天河水 | 천하수 | Milky Way Water |
+| 大驿土 | 대역토 | Post-Station Earth |
+| 钗钏金 | 차천금 | Ornamental Gold |
+| 桑柘木 | 상자목 | Mulberry Wood |
+| 大溪水 | 대계수 | Great Stream Water |
+| 沙中土 | 사중토 | Sandy Soil |
+| 天上火 | 천상화 | Heavenly Fire |
+| 石榴木 | 석류목 | Pomegranate Wood |
+| 大海水 | 대해수 | Great Sea Water |
 
 ## 3) CI 체크 연동
 

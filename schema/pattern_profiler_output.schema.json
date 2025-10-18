@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schema/pattern_profiler_output.schema.json",
+  "type": "object",
+  "required": [
+    "policy_version",
+    "patterns",
+    "briefs",
+    "evidence_ref"
+  ],
+  "properties": {
+    "policy_version": {
+      "type": "string"
+    },
+    "patterns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10
+    },
+    "briefs": {
+      "type": "object",
+      "required": [
+        "one_liner",
+        "key_points"
+      ],
+      "properties": {
+        "one_liner": {
+          "type": "string",
+          "maxLength": 120,
+          "pattern": "^[^\\n]*$"
+        },
+        "key_points": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "maxItems": 5
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidence_ref": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "additionalProperties": false
+}

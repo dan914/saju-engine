@@ -15,7 +15,8 @@
     "relationships",
     "aggregation",
     "evidence_template",
-    "ci_checks"
+    "ci_checks",
+    "policy_signature"
   ],
   "properties": {
     "version": {
@@ -37,9 +38,17 @@
         "enabled": {
           "type": "boolean"
         },
+        "unit_per_branch": {
+          "type": "number",
+          "description": "Energy units per branch for conservation calculations"
+        },
         "budget_mode": {
           "type": "string",
           "enum": ["hidden_stems_v1"]
+        },
+        "hidden_stems_dataset_version": {
+          "type": "string",
+          "description": "Version of hidden stems dataset"
         },
         "hidden_stems_weights": {
           "type": "object",
@@ -63,7 +72,7 @@
           "type": "object",
           "description": "Energy consumption and production rules for each relationship type",
           "patternProperties": {
-            "^(三合|半合|方合|拱合|六合|沖|刑|破|害)$": {
+            "^(三合|半合|方合|拱合|六合|沖|刑(_[^|]+)?|破|害)$": {
               "type": "object",
               "required": ["consume_units", "produce_units"],
               "properties": {
@@ -83,12 +92,36 @@
                   "type": "string",
                   "pattern": "^[木火土金水]$",
                   "description": "Override element for production (e.g., 三合 produces specific element)"
+                },
+                "requires_all": {
+                  "type": "boolean",
+                  "description": "Whether all branches in the relationship pattern must be present"
+                },
+                "facilitator_needed": {
+                  "type": "boolean",
+                  "description": "Whether a facilitator branch is needed for the relationship"
                 }
               },
               "additionalProperties": false
             }
           },
           "additionalProperties": false
+        },
+        "elemental_mapping": {
+          "type": "object",
+          "description": "Element mappings for branches and relationships"
+        },
+        "leakage_tolerance": {
+          "type": "number",
+          "description": "Tolerance for energy conservation leakage"
+        },
+        "unstable_flag": {
+          "type": "string",
+          "description": "Flag for unstable conservation structures"
+        },
+        "notes_ko": {
+          "type": "string",
+          "description": "Korean notes about conservation"
         }
       },
       "additionalProperties": false
@@ -108,7 +141,7 @@
             "w_norm": {"type": "number", "minimum": 0, "maximum": 1},
             "w_conservation": {"type": "number", "minimum": 0, "maximum": 1},
             "w_priority": {"type": "number", "minimum": 0, "maximum": 1},
-            "w_conflict": {"type": "number", "minimum": 0, "maximum": 1}
+            "w_conflict": {"type": "number", "minimum": -1, "maximum": 1}
           },
           "additionalProperties": false
         },
@@ -149,7 +182,7 @@
             "type": "array",
             "items": {
               "type": "string",
-              "pattern": "^(三合|半合|方合|拱合|六合|沖|刑|破|害)$"
+              "pattern": "^(三合|半合|方合|拱合|六合|沖|刑(_[^|]+)?|破|害)$"
             },
             "minItems": 2
           },
@@ -188,7 +221,7 @@
             "type": "array",
             "items": {
               "type": "string",
-              "pattern": "^(三合|半合|方合|拱合|六合|沖|刑|破|害)$"
+              "pattern": "^(三合|半合|方合|拱合|六合|沖|刑(_[^|]+)?|破|害)$"
             },
             "minItems": 1
           },
@@ -206,7 +239,7 @@
       "type": "object",
       "description": "Definition of all 12 relationship types",
       "patternProperties": {
-        "^(六合|三合|半合|方合|拱合|沖|刑|破|害)$": {
+        "^(六合|三合|半合|方合|拱合|沖|刑(_[^|]+)?|破|害)$": {
           "type": "object",
           "required": ["label_ko", "label_zh", "label_en", "nature", "score_range", "rules"],
           "properties": {
@@ -321,6 +354,11 @@
         },
         "additionalProperties": false
       }
+    },
+    "policy_signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "RFC-8785 canonical JSON SHA-256 signature"
     }
   },
   "additionalProperties": false

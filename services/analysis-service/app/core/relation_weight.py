@@ -9,12 +9,11 @@ Policy: policy/relation_weight_policy_v1.0.json
 
 from __future__ import annotations
 
-import json
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
-
 # Inline signature utilities (until infra/signatures.py is created)
 import hashlib
+import json
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 try:
     from canonicaljson import encode_canonical_json
@@ -25,7 +24,7 @@ except ImportError:
         return json_fallback.dumps(obj, sort_keys=True, separators=(",", ":")).encode("utf-8")
 
 
-POLICY_VERSION = "1.0.0"
+POLICY_VERSION = "relation_weight_v1.0.0"
 TWELVE_BRANCHES = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
 TEN_STEMS = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
 

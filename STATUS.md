@@ -25,7 +25,9 @@
 | pillars-service | 17/17 | ✅ 100% |
 | astro-service | 5/5 | ✅ 100% |
 | tz-time-service | 4/4 | ✅ 100% |
-| **TOTAL** | **47/47** | ✅ **100%** |
+| policy-signature-auditor | 5/5 | ✅ 100% |
+| yongshin-selector | 8/12 | 🟡 67% (4 edge cases v1.1) |
+| **TOTAL** | **60/64** | ✅ **94%** |
 
 ---
 
@@ -50,6 +52,8 @@
 | VoidCalculator | `app/core/void.py` | 89 | ✅ Complete |
 | YuanjinDetector | `app/core/yuanjin.py` | 71 | ✅ Complete |
 | CombinationElement | `app/core/combination_element.py` | 94 | ✅ Complete |
+| **PolicySignatureAuditor** | `policy_signature_auditor/` | **1010** | ✅ Complete |
+| **YongshinSelector** | `app/core/yongshin_selector.py` | **380** | 🟡 v1.0 (4 edge cases) |
 
 ### 🔴 Critical Gaps
 
@@ -87,6 +91,33 @@
 ---
 
 ## 📦 Policy & Data Assets
+
+### Policy Signature Auditor v1.0 (signed policies ✅)
+**Location**: `policy/`
+
+All policies signed with SHA-256 (RFC-8785 JCS canonicalization):
+- **llm_guard_policy_v1.json**: a4dec83545592db3f3d7f3bdfaaf556a325e2c78f5ce7a39813ec6a077960ad2
+- **relation_weight_policy_v1.0.json**: 704cf74d323a034ca8f49ceda2659a91e3ff1aed89ee4845950af6eb39df1b67
+- **yongshin_selector_policy_v1.json**: e0c95f3fdb1d382b06cd90eca7256f3121d648693d0986f67a5c5d368339cb8c
+
+### Yongshin Selector v1.0 (4 files ✅)
+**Location**: `policy/`, `schema/`, `services/analysis-service/app/core/`
+
+- Policy: yongshin_selector_policy_v1.json (signed)
+- Schemas: yongshin_input_schema_v1.json, yongshin_output_schema_v1.json
+- Engine: yongshin_selector.py (380 lines)
+- Algorithm: strength → base preferences → relation bias → climate/distribution → categorize
+- Output: yongshin[], bojosin[], gisin[], confidence, rationale[], scores{}, rules_fired[]
+
+### Relation Weight Policy v1.0 (4 files ✅)
+**Location**: `policy/`, `schema/`, `services/analysis-service/app/core/`
+
+- Relations: 7 types (sanhe 삼합, liuhe 육합, ganhe 간합, chong 충, xing 형, hai 해, yuanjin 원진)
+- Base Weights: 0.20~0.70 (yuanjin lowest, sanhe highest)
+- Modifiers: 27 conditions (pivot_month, adjacent, tonggen, season_support, blocked, etc.)
+- Hua Field: ganhe transformation based on season support
+- Strict Mode: sanhe requires formed=true (pivot + adjacent + no blocker)
+- LLM Guidance: low_confidence (0.5), low_impact (0.35)
 
 ### v2.6 Policy Files (18 files ✅)
 **Location**: `saju_codex_batch_all_v2_6_signed/policies/`
@@ -288,6 +319,50 @@
 - 육합 극단평가 → 중간강도 유지, 맥락적 감쇄
 
 **Total Additions**: 1,335 lines (policy + schema + engine + tests)
+**Policy Signature**: 704cf74d323a034ca8f49ceda2659a91e3ff1aed89ee4845950af6eb39df1b67
+
+### Policy Signature Auditor v1.0 (2025-10-09)
+- ✅ **CLI**: psa_cli.py (sign/verify/diff commands)
+- ✅ **Core**: auditor.py (signing/verification logic)
+- ✅ **JCS**: jcs.py (RFC-8785 style canonicalization)
+- ✅ **Schema**: policy_meta.schema.json (strict mode validation)
+- ✅ **Tests**: test_sign_verify.py (5/5 passing)
+- ✅ **Docs**: README.md (usage guide)
+
+**Features**:
+- JCS canonicalization: deterministic JSON (key sort, string escape, number normalization)
+- SHA-256 signing: cryptographic hash of canonical form
+- Strict mode: validates policy_version, policy_date, ko_labels, dependencies
+- Zero dependencies (Python 3.9+ stdlib only)
+
+**Signed Policies**:
+- llm_guard_policy_v1.json: `a4dec835...77960ad2`
+- relation_weight_policy_v1.0.json: `704cf74d...39df1b67`
+- yongshin_selector_policy_v1.json: `e0c95f3f...8339cb8c`
+
+**Total Additions**: 1,010 lines (8 files)
+
+### Yongshin Selector v1.0 (2025-10-09)
+- ✅ **Policy**: yongshin_selector_policy_v1.json (signed with SHA-256)
+- ✅ **Input Schema**: yongshin_input_schema_v1.json (Draft 2020-12)
+- ✅ **Output Schema**: yongshin_output_schema_v1.json (yongshin/bojosin/gisin arrays)
+- ✅ **Engine**: yongshin_selector.py (380 lines, full implementation)
+- ✅ **Tests**: test_yongshin_selector.py (8/12 passing, 4 edge cases for v1.1)
+- ✅ **Test Cases**: yongshin_cases_v1.jsonl (12 scenarios)
+- ✅ **Examples**: yongshin_io_examples_v1.md (I/O samples)
+- ✅ **Changelog**: CHANGELOG_yongshin_v1.md (version history)
+
+**Algorithm**:
+1. Strength binning (weak/balanced/strong based on score)
+2. Base preferences (resource+companion for weak, output+official+wealth for strong)
+3. Relation bias (sanhe +0.15, chong -0.10, ganhe hua +0.12, liuhe +0.05)
+4. Climate bias (season support/conflict ±0.05)
+5. Distribution bias (deficit +0.06, excess -0.06 per 0.10)
+6. Categorization: yongshin (top 1-2), bojosin (middle), gisin (bottom 1-2)
+7. Confidence: base 0.70~0.80, ±hits/misses, climate bonus, clamped 0.40~0.98
+
+**Total Additions**: 866 lines (8 files)
+**Policy Signature**: e0c95f3fdb1d382b06cd90eca7256f3121d648693d0986f67a5c5d368339cb8c
 
 ### Service Fixes (43% → 100% passing)
 - Fixed `from __future__` placement in tz-time-service

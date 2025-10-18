@@ -1,0 +1,247 @@
+{
+  "policy_version": "pattern_profiler_policy_v1",
+  "policy_signature": "0d6771c1bedbbfd4b322b6ed4fe032a78b4c9a0e0b87c177bc076c1d7720d484",
+  "tags_catalog": [
+    "strong_daymaster",
+    "weak_daymaster",
+    "balanced_context",
+    "yongshin_supported",
+    "yongshin_opposed",
+    "primary_high",
+    "primary_low",
+    "relation_conflict",
+    "relation_harmony",
+    "climate_aligned",
+    "climate_misaligned",
+    "balance_dry",
+    "balance_humid",
+    "luck_rising",
+    "luck_stable",
+    "luck_declining",
+    "gyeokguk_pure",
+    "gyeokguk_mixed",
+    "wood_emphasis",
+    "fire_emphasis",
+    "earth_emphasis",
+    "metal_emphasis",
+    "water_emphasis"
+  ],
+  "rules": [
+    {
+      "id": "R_STRONG",
+      "when": {
+        "strength.phase_in": [
+          "왕",
+          "상"
+        ]
+      },
+      "emit": {
+        "tags": [
+          "strong_daymaster"
+        ]
+      }
+    },
+    {
+      "id": "R_WEAK",
+      "when": {
+        "strength.phase_in": [
+          "휴",
+          "수",
+          "사"
+        ]
+      },
+      "emit": {
+        "tags": [
+          "weak_daymaster"
+        ]
+      }
+    },
+    {
+      "id": "R_PRIMARY_HIGH",
+      "when": {
+        "yongshin.primary_in": [
+          "목",
+          "화",
+          "토",
+          "금",
+          "수"
+        ],
+        "strength.elements_any": [
+          "high:primary"
+        ]
+      },
+      "emit": {
+        "tags": [
+          "primary_high",
+          "yongshin_supported"
+        ]
+      }
+    },
+    {
+      "id": "R_PRIMARY_LOW",
+      "when": {
+        "yongshin.primary_in": [
+          "목",
+          "화",
+          "토",
+          "금",
+          "수"
+        ],
+        "strength.elements_any": [
+          "low:primary"
+        ]
+      },
+      "emit": {
+        "tags": [
+          "primary_low",
+          "yongshin_opposed"
+        ]
+      }
+    },
+    {
+      "id": "R_REL_HARM",
+      "when": {
+        "relation.flags_any": [
+          "chong",
+          "harm"
+        ]
+      },
+      "emit": {
+        "tags": [
+          "relation_conflict"
+        ],
+        "brief_templates": {
+          "one_liner": "관계 충돌 신호 주의.",
+          "key_points": [
+            "relation: conflict"
+          ]
+        }
+      }
+    },
+    {
+      "id": "R_REL_HARMONY",
+      "when": {
+        "relation.flags_any": [
+          "combine",
+          "sanhe"
+        ]
+      },
+      "emit": {
+        "tags": [
+          "relation_harmony"
+        ],
+        "brief_templates": {
+          "one_liner": "관계 조화 신호.",
+          "key_points": [
+            "relation: harmony"
+          ]
+        }
+      }
+    },
+    {
+      "id": "R_CLIMATE_POS",
+      "when": {
+        "climate.balance_index_gte": 1
+      },
+      "emit": {
+        "tags": [
+          "climate_aligned"
+        ]
+      }
+    },
+    {
+      "id": "R_CLIMATE_NEG",
+      "when": {
+        "climate.balance_index_lte": -1
+      },
+      "emit": {
+        "tags": [
+          "climate_misaligned"
+        ]
+      }
+    },
+    {
+      "id": "R_LUCK_R",
+      "when": {
+        "luck_flow.trend_in": [
+          "rising"
+        ]
+      },
+      "emit": {
+        "tags": [
+          "luck_rising"
+        ]
+      }
+    },
+    {
+      "id": "R_LUCK_S",
+      "when": {
+        "luck_flow.trend_in": [
+          "stable"
+        ]
+      },
+      "emit": {
+        "tags": [
+          "luck_stable"
+        ]
+      }
+    },
+    {
+      "id": "R_LUCK_D",
+      "when": {
+        "luck_flow.trend_in": [
+          "declining"
+        ]
+      },
+      "emit": {
+        "tags": [
+          "luck_declining"
+        ]
+      }
+    },
+    {
+      "id": "R_GK_P",
+      "when": {
+        "gyeokguk.type_in": [
+          "정격",
+          "화격"
+        ]
+      },
+      "emit": {
+        "tags": [
+          "gyeokguk_pure"
+        ]
+      }
+    },
+    {
+      "id": "R_GK_M",
+      "when": {
+        "gyeokguk.type_in": [
+          "종격",
+          "특수격",
+          "특수"
+        ]
+      },
+      "emit": {
+        "tags": [
+          "gyeokguk_mixed"
+        ]
+      }
+    },
+    {
+      "id": "R_BAL_CTX",
+      "when": {
+        "climate.balance_index_gte": 0,
+        "climate.balance_index_lte": 0,
+        "luck_flow.trend_in": [
+          "stable"
+        ]
+      },
+      "emit": {
+        "tags": [
+          "balanced_context"
+        ]
+      }
+    }
+  ]
+}

@@ -3,14 +3,15 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
-from pathlib import Path
-from typing import Dict, List, Optional
 
 # Import from common package (replaces cross-service imports)
 import sys
+from dataclasses import dataclass
+from pathlib import Path
 from pathlib import Path as _Path
-sys.path.insert(0, str(_Path(__file__).resolve().parents[6] / "services" / "common"))
+from typing import Dict, List, Optional
+
+sys.path.insert(0, str(_Path(__file__).resolve().parents[4] / "services" / "common"))
 from policy_loader import resolve_policy_path
 
 

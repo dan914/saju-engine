@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "/schemas/luck_pillars.schema.json",
+  "title": "Luck Pillars Engine Output",
+  "description": "Decade luck (大運) sequence derived from month pillar, policy-driven direction and start age.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["policy_version","direction","start_age","method","pillars","current_luck","policy_signature"],
+  "properties": {
+    "policy_version": { "type": "string", "pattern": "^luck_pillars_v\\d+(\\.\\d+)?$" },
+    "direction": { "type": "string", "enum": ["forward", "reverse"] },
+    "start_age": { "type": "number" },
+    "method": { "type": "string" },
+    "pillars": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10,
+      "items": { "$ref": "#/$defs/pillarEntry" }
+    },
+    "current_luck": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["pillar","decade","years_into_decade"],
+          "properties": {
+            "pillar": { "$ref": "#/$defs/jiazi" },
+            "decade": { "type": "integer", "minimum": 1, "maximum": 10 },
+            "years_into_decade": { "type": "number" }
+          }
+        }
+      ]
+    },
+    "policy_signature": { "type": "string", "pattern": "^[0-9a-fA-F]{64}$" }
+  },
+  "$defs": {
+    "jiazi": {
+      "type": "string",
+      "enum": [
+        "甲子","乙丑","丙寅","丁卯","戊辰","己巳","庚午","辛未","壬申","癸酉",
+        "甲戌","乙亥","丙子","丁丑","戊寅","己卯","庚辰","辛巳","壬午","癸未",
+        "甲申","乙酉","丙戌","丁亥","戊子","己丑","庚寅","辛卯","壬辰","癸巳",
+        "甲午","乙未","丙申","丁酉","戊戌","己亥","庚子","辛丑","壬寅","癸卯",
+        "甲辰","乙巳","丙午","丁未","戊申","己酉","庚戌","辛亥","壬子","癸丑",
+        "甲寅","乙卯","丙辰","丁巳","戊午","己未","庚申","辛酉","壬戌","癸亥"
+      ]
+    },
+    "pillarEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pillar","start_age","end_age","decade"],
+      "properties": {
+        "pillar": { "$ref": "#/$defs/jiazi" },
+        "start_age": { "type": "number" },
+        "end_age": { "type": "number" },
+        "decade": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "ten_god": { "type": "string" },
+        "lifecycle": { "type": "object" }
+      }
+    }
+  }
+}

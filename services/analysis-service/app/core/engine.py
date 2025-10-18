@@ -1,137 +1,260 @@
-"""Analysis engine integrating relations, strength, structure, and luck."""
+# -*- coding: utf-8 -*-
+"""AnalysisEngine - Bridge between API layer and SajuOrchestrator.
+
+This engine:
+1. Receives AnalysisRequest from the API
+2. Extracts pillars and birth_context
+3. Calls SajuOrchestrator for complete analysis
+4. Maps orchestrator output to AnalysisResponse
+"""
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from datetime import datetime
+from typing import Any, Dict
 
-from ..models import (
-    AnalysisRequest,
-    AnalysisResponse,
-    LuckDirectionResult,
-    LuckResult,
-    RecommendationResult,
-    RelationsExtras,
-    RelationsResult,
-    ShenshaResult,
-    StrengthDetails,
-    StrengthResult,
-    StructureResultModel,
-    TenGodsResult,
-)
-from .luck import LuckCalculator, LuckContext, ShenshaCatalog
-from .recommendation import RecommendationGuard
-from .relations import RelationContext, RelationTransformer
-from .school import SchoolProfileManager
-from .strength import StrengthEvaluator
-from .structure import StructureContext, StructureDetector
+try:
+    from ..models.analysis import (
+        AnalysisRequest,
+        AnalysisResponse,
+        LuckDirectionResult,
+        LuckResult,
+        RecommendationResult,
+        RelationsExtras,
+        RelationsResult,
+        SchoolProfileResult,
+        ShenshaResult,
+        StrengthDetails,
+        StrengthResult,
+        StructureResultModel,
+        TenGodsResult,
+    )
+    from .saju_orchestrator import SajuOrchestrator
+except ImportError:
+    # Fallback for sys.path-based imports
+    from models.analysis import (
+        AnalysisRequest,
+        AnalysisResponse,
+        LuckDirectionResult,
+        LuckResult,
+        RecommendationResult,
+        RelationsExtras,
+        RelationsResult,
+        SchoolProfileResult,
+        ShenshaResult,
+        StrengthDetails,
+        StrengthResult,
+        StructureResultModel,
+        TenGodsResult,
+    )
+    from saju_orchestrator import SajuOrchestrator
 
 
-@dataclass(slots=True)
 class AnalysisEngine:
-    """Applies KR_classic v1.4 ten gods/relations/strength rules."""
+    """Main analysis engine that orchestrates all Saju analysis components."""
 
-    relation_transformer: RelationTransformer = field(default_factory=RelationTransformer.from_file)
-    strength_evaluator: StrengthEvaluator = field(default_factory=StrengthEvaluator.from_files)
-    structure_detector: StructureDetector = field(default_factory=StructureDetector.from_file)
-    luck_calculator: LuckCalculator = field(default_factory=LuckCalculator)
-    shensha_catalog: ShenshaCatalog = field(default_factory=ShenshaCatalog)
-    recommendation_guard: RecommendationGuard = field(default_factory=RecommendationGuard.from_file)
-    school_profiles: SchoolProfileManager = field(default_factory=SchoolProfileManager.load)
+    def __init__(self):
+        """Initialize the engine with a SajuOrchestrator instance."""
+        self.orchestrator = SajuOrchestrator()
 
     def analyze(self, request: AnalysisRequest) -> AnalysisResponse:
-        """Return enriched analysis output."""
-        # Placeholder ten gods mapping; real implementation will consume pillars.
-        ten_gods = TenGodsResult(
-            summary={
-                "year": "偏印",
-                "month": "正財",
-                "day": "日主",
-                "hour": "食神",
-            }
-        )
+        """Run complete Saju analysis.
 
-        branches = ["亥", "卯", "未"]
-        month_branch = "未"
-        relation_ctx = RelationContext(branches=branches, month_branch=month_branch)
-        relation_result = self.relation_transformer.evaluate(relation_ctx)
-        relations = RelationsResult(
-            he6=[["子", "丑"]],
-            sanhe=[["申", "子", "辰"]],
-            chong=[["子", "午"]],
-            hai=[["子", "未"]],
-            po=[["子", "卯"]],
-            xing=[["寅", "巳", "申"]],
-        )
-        relation_extras = RelationsExtras(
-            priority_hit=relation_result.priority_hit,
-            transform_to=relation_result.transform_to,
-            boosts=relation_result.boosts,
-            extras=relation_result.extras,
-        )
+        Args:
+            request: AnalysisRequest with pillars and options
 
-        # Strength scoring placeholder.
-        branch_roots = ["丑", "未"]
-        visible_counts = {"bi_jie": 1}
-        combos = {"sanhe": 1}
-        strength_details = self.strength_evaluator.evaluate(
-            month_branch=month_branch,
-            day_pillar="丁丑",
-            branch_roots=branch_roots,
-            visible_counts=visible_counts,
-            combos=combos,
-            wealth_hits=[{"slot": "month", "level": "sub"}, {"slot": "day", "level": "sub"}],
-            month_stem_exposed=True,
-            wealth_root_score=5,
-            seal_root_score=3,
-            wealth_month_state="旺",
-            wealth_seal_branch_conflict=False,
-        )
-        strength = StrengthResult(
-            level=strength_details["grade"],
-            basis={
-                "season": "得令",
-                "roots": "有本氣",
-                "seal": "天干1見",
-                "peer": "同氣",
-            },
-        )
+        Returns:
+            AnalysisResponse with all analysis results
+        """
+        # 1. Extract pillars dictionary (60甲子 format)
+        pillars = self._extract_pillars(request)
 
-        structure_scores = {"정관": 15, "정재": 8, "편재": 5}
-        structure_result = self.structure_detector.evaluate(
-            StructureContext(scores=structure_scores)
-        )
-        structure_model = StructureResultModel(
-            primary=structure_result.primary,
-            confidence=structure_result.confidence,
-            candidates=structure_result.candidates,
-        )
+        # 2. Extract birth context from options
+        birth_context = self._extract_birth_context(request.options)
 
-        luck_ctx = LuckContext(local_dt=datetime(1992, 7, 15, 23, 40), timezone="Asia/Seoul")
-        luck_calc = self.luck_calculator.compute_start_age(luck_ctx)
-        luck_direction = self.luck_calculator.luck_direction(luck_ctx)
-        shensha = self.shensha_catalog.list_enabled()
+        # 3. Call orchestrator for complete analysis
+        orchestrator_result = self.orchestrator.analyze(pillars, birth_context)
 
-        trace = {
-            "rule_id": "KR_classic_v1.4",
-            "notes": "generated by placeholder engine",
+        # 4. Map orchestrator output to AnalysisResponse
+        response = self._map_to_response(orchestrator_result, pillars)
+
+        return response
+
+    def _extract_pillars(self, request: AnalysisRequest) -> Dict[str, str]:
+        """Extract pillars dictionary from AnalysisRequest.
+
+        Args:
+            request: AnalysisRequest with pillars field
+
+        Returns:
+            Dict with keys: year, month, day, hour (60甲子 format)
+        """
+        pillars = {}
+        for pos in ["year", "month", "day", "hour"]:
+            pillar_input = request.pillars.get(pos)
+            if pillar_input:
+                pillars[pos] = pillar_input.pillar
+        return pillars
+
+    def _extract_birth_context(self, options: Any) -> Dict[str, Any]:
+        """Extract birth context from AnalysisOptions.
+
+        Args:
+            options: AnalysisOptions with birth_dt, gender, timezone
+
+        Returns:
+            Dict with birth_dt, gender, timezone
+        """
+        return {
+            "birth_dt": options.birth_dt,
+            "gender": options.gender,
+            "timezone": getattr(options, "timezone", "Asia/Seoul"),
         }
 
-        recommendation = self.recommendation_guard.decide(
-            structure_primary=structure_result.primary
-        )
-        school_profile = self.school_profiles.get_profile()
+    def _map_to_response(
+        self, result: Dict[str, Any], pillars: Dict[str, str]
+    ) -> AnalysisResponse:
+        """Map orchestrator output to AnalysisResponse.
+
+        Args:
+            result: Orchestrator output dict
+            pillars: Original pillars dict
+
+        Returns:
+            AnalysisResponse with all fields populated
+        """
+        # Extract ten_gods (from pillars stem analysis - generate from pillars if not present)
+        ten_gods_data = result.get("ten_gods", {})
+        if not ten_gods_data or "summary" not in ten_gods_data:
+            # Generate basic ten_gods mapping from pillars
+            ten_gods_data = {"summary": self._generate_ten_gods_summary(pillars)}
+
+        # Extract relations
+        relations_data = result.get("relations", {})
+
+        # Extract relations_extras
+        relations_extras_data = result.get("relations_extras", {})
+
+        # Extract strength
+        strength_data = result.get("strength", {})
+
+        # Extract strength_details
+        strength_details_data = result.get("strength_details", {})
+
+        # Extract structure
+        structure_data = result.get("structure", {})
+
+        # Extract luck
+        luck_data = result.get("luck", {})
+
+        # Extract luck_direction
+        luck_direction_data = result.get("luck_direction", {})
+
+        # Extract shensha
+        shensha_data = result.get("shensha", {})
+
+        # Extract school_profile
+        school_profile_data = result.get("school_profile", {})
+
+        # Extract recommendation
+        recommendation_data = result.get("recommendation", {})
+
+        # Build trace
+        trace = result.get("trace", {})
+        if not trace:
+            trace = {
+                "orchestrator_keys": list(result.keys()),
+                "pillars": pillars,
+            }
+
+        # Construct AnalysisResponse
         return AnalysisResponse(
-            ten_gods=ten_gods,
-            relations=relations,
-            relation_extras=relation_extras,
-            strength=strength,
-            strength_details=StrengthDetails(**strength_details),
-            structure=structure_model,
-            luck=LuckResult(**luck_calc),
-            luck_direction=LuckDirectionResult(**luck_direction),
-            shensha=ShenshaResult(**shensha),
-            school_profile=school_profile,
-            recommendation=RecommendationResult(**recommendation),
+            ten_gods=TenGodsResult(
+                summary=ten_gods_data.get("summary", {})
+            ),
+            relations=RelationsResult(
+                he6=relations_data.get("he6", []),
+                sanhe=relations_data.get("sanhe", []),
+                chong=relations_data.get("chong", []),
+                hai=relations_data.get("hai", []),
+                po=relations_data.get("po", []),
+                xing=relations_data.get("xing", []),
+            ),
+            relation_extras=RelationsExtras(
+                priority_hit=relations_extras_data.get("priority_hit"),
+                transform_to=relations_extras_data.get("transform_to"),
+                boosts=relations_extras_data.get("boosts", []),
+                extras=relations_extras_data.get("extras", {}),
+            ),
+            strength=StrengthResult(
+                level=strength_data.get("level", "unknown"),
+                basis=strength_data.get("basis", {}),
+            ),
+            strength_details=StrengthDetails(
+                month_state=strength_details_data.get("month_state", 0),
+                branch_root=strength_details_data.get("branch_root", 0),
+                stem_visible=strength_details_data.get("stem_visible", 0),
+                combo_clash=strength_details_data.get("combo_clash", 0),
+                season_adjust=strength_details_data.get("season_adjust", 0),
+                month_stem_effect=strength_details_data.get("month_stem_effect", 0),
+                wealth_location_bonus_total=strength_details_data.get("wealth_location_bonus_total", 0.0),
+                wealth_location_hits=strength_details_data.get("wealth_location_hits", []),
+                total=strength_details_data.get("total", 0.0),
+                grade_code=strength_details_data.get("grade_code", "unknown"),
+                grade=strength_details_data.get("grade", "unknown"),
+                seal_validity=strength_details_data.get("seal_validity", {}),
+            ),
+            structure=StructureResultModel(
+                primary=structure_data.get("primary"),
+                confidence=structure_data.get("confidence", "low"),
+                candidates=structure_data.get("candidates", []),
+            ),
+            luck=LuckResult(
+                prev_term=luck_data.get("prev_term"),
+                next_term=luck_data.get("next_term"),
+                interval_days=luck_data.get("interval_days"),
+                days_from_prev=luck_data.get("days_from_prev"),
+                start_age=luck_data.get("start_age"),
+            ),
+            luck_direction=LuckDirectionResult(
+                direction=luck_direction_data.get("direction"),
+                method=luck_direction_data.get("method"),
+                sex_at_birth=luck_direction_data.get("sex_at_birth"),
+            ),
+            shensha=ShenshaResult(
+                enabled=shensha_data.get("enabled", False),
+                list=shensha_data.get("list", []),
+            ),
+            school_profile=SchoolProfileResult(
+                id=school_profile_data.get("id", "unknown"),
+                notes=school_profile_data.get("notes"),
+            ),
+            recommendation=RecommendationResult(
+                enabled=recommendation_data.get("enabled", False),
+                action=recommendation_data.get("action", "none"),
+                copy=recommendation_data.get("copy"),
+            ),
             trace=trace,
         )
+
+    def _generate_ten_gods_summary(self, pillars: Dict[str, str]) -> Dict[str, str]:
+        """Generate a basic ten_gods summary from pillars.
+
+        This is a fallback in case orchestrator doesn't provide ten_gods.
+        In production, the orchestrator should always provide this.
+
+        Args:
+            pillars: Dict with year/month/day/hour pillars
+
+        Returns:
+            Dict mapping pillar positions to placeholder values
+        """
+        return {
+            "year_stem": "placeholder",
+            "year_branch": "placeholder",
+            "month_stem": "placeholder",
+            "month_branch": "placeholder",
+            "day_stem": "日主",  # Day stem is always 日主 (self)
+            "day_branch": "placeholder",
+            "hour_stem": "placeholder",
+            "hour_branch": "placeholder",
+        }

@@ -395,10 +395,10 @@ def calculate_day_pillar(day_for_pillar: datetime.date) -> str:
     Args:
         day_for_pillar: Date after LMT and 子時 adjustments
     """
-    # NOTE: 이전 앵커(1900-01-01=甲戌)는 검증 결과 오기였고 +2일 오프셋을 유발했다.
-    # 프로덕션과 동일한 기준 사용: 1984-02-02 = 甲子 (index 0)
-    anchor_date = datetime(1984, 2, 2).date()
-    anchor_index = SEXAGENARY_CYCLE.index("甲子")
+    # CORRECT ANCHOR: 1900-01-01 = 甲戌 (verified against pillars-service)
+    # This anchor is standard and matches all reference implementations
+    anchor_date = datetime(1900, 1, 1).date()
+    anchor_index = SEXAGENARY_CYCLE.index("甲戌")  # index 10
 
     delta_days = (day_for_pillar - anchor_date).days
     day_index = (anchor_index + delta_days) % 60

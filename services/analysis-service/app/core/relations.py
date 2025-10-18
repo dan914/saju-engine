@@ -3,14 +3,15 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
-from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Tuple
 
 # Import from common package (replaces cross-service imports)
 import sys
+from dataclasses import dataclass
+from pathlib import Path
 from pathlib import Path as _Path
-sys.path.insert(0, str(_Path(__file__).resolve().parents[6] / "services" / "common"))
+from typing import Dict, Iterable, List, Optional, Tuple
+
+sys.path.insert(0, str(_Path(__file__).resolve().parents[4] / "services" / "common"))
 from policy_loader import resolve_policy_path
 
 
@@ -29,8 +30,8 @@ def _resolve_with_fallback(primary: str, *fallbacks: str) -> Path:
         raise FileNotFoundError(f"Policy file not found: {primary} (tried fallbacks: {fallbacks})")
 
 
+# Note: v2_5 has incompatible schema (matrix-based), skip to v1_1
 RELATION_POLICY_PATH = _resolve_with_fallback(
-    "relation_structure_adjust_v2_5.json",
     "relation_transform_rules_v1_1.json",
     "relation_transform_rules.json"
 )
@@ -174,3 +175,111 @@ class RelationTransformer:
             return True
         chong_pair = self._check_pairs(ctx.branches, self._definitions.get("chong_pairs", []))
         return chong_pair is not None
+
+    def _check_five_he(self, ctx: RelationContext) -> Dict[str, object]:
+        """
+        Check five-he (五合) transformation conditions.
+
+        Returns dict with transformation info based on five_he_policy.
+        If ctx.five_he_pairs is provided, validates against policy conditions.
+        """
+        if not self._five_he_policy:
+            return {}
+
+        five_he_pairs = ctx.five_he_pairs or []
+        if not five_he_pairs:
+            return {}
+
+        conditions = self._five_he_policy.get("conditions", {})
+        results = []
+
+        for pair_info in five_he_pairs:
+            pair = pair_info.get("pair", "")
+            month_support = pair_info.get("month_support", False)
+            huashen_present = pair_info.get("huashen_present", False)
+            has_conflict = pair_info.get("has_conflict", False)
+
+            # Check policy conditions
+            valid = True
+            if conditions.get("require_month_support") and not month_support:
+                valid = False
+            if conditions.get("require_huashen_stem") and not huashen_present:
+                valid = False
+            if conditions.get("deny_if_conflict") and has_conflict:
+                valid = False
+
+            results.append({
+                "pair": pair,
+                "valid": valid,
+                "month_support": month_support,
+                "huashen_present": huashen_present
+            })
+
+        return {
+            "pairs": results,
+            "scope": self._five_he_policy.get("transform_scope", "none")
+        }
+
+    def _check_zixing(self, ctx: RelationContext) -> Dict[str, object]:
+        """
+        Check zixing (自刑, self-punishment) conditions.
+
+        Returns dict with zixing counts and severity based on zixing_policy.
+        If ctx.zixing_counts is provided, validates against policy rules.
+        """
+        if not self._zixing_policy:
+            return {}
+
+        zixing_counts = ctx.zixing_counts or {}
+        if not zixing_counts:
+            return {}
+
+        results = []
+
+        for branch, count in zixing_counts.items():
+            # Zixing typically requires 2+ of same branch
+            if count >= 2:
+                severity = "high" if count >= 3 else "medium"
+                results.append({
+                    "branch": branch,
+                    "count": count,
+                    "severity": severity
+                })
+
+        return {
+            "zixing_detected": results,
+            "total_branches": len(results)
+        }
+
+    def _check_banhe_boost(self, ctx: RelationContext) -> List[Dict[str, str]]:
+        """
+        Check banhe (半合, directional combination) boost conditions.
+
+        Banhe requires 2 of 3 branches from a directional group.
+        E.g., 申子 (2 of 申子辰 water trio) boosts water element.
+
+        Falls back to sanhe_groups if banhe_groups not defined.
+        Blocked if chong (conflict) exists.
+        """
+        # If there's a chong, don't apply banhe
+        if self._has_conflict(ctx, []):
+            return []
+
+        boosts: List[Dict[str, str]] = []
+
+        # Try banhe_groups first, fall back to sanhe_groups
+        banhe_groups = self._definitions.get("banhe_groups")
+        if not banhe_groups:
+            banhe_groups = self._definitions.get("sanhe_groups", {})
+
+        for element, group in banhe_groups.items():
+            # Check if exactly 2 branches present (not all 3 = that's sanhe)
+            present = [b for b in group if b in ctx.branches]
+            if len(present) == 2:
+                boosts.append({
+                    "element": element,
+                    "branches": "/".join(present),
+                    "type": "banhe"
+                })
+
+        return boosts

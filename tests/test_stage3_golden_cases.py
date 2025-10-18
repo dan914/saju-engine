@@ -10,20 +10,20 @@ Usage:
     pytest tests/test_stage3_golden_cases.py -v
 """
 import json
-import pytest
-from pathlib import Path
 
 # Import Stage-3 engines
 # Note: analysis-service directory has hyphen, so we need to import from app.core directly
 import sys
 from pathlib import Path
+
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parent.parent / "services" / "analysis-service" / "app" / "core"))
 
 from climate_advice import ClimateAdvice
-from luck_flow import LuckFlow
 from gyeokguk_classifier import GyeokgukClassifier
+from luck_flow import LuckFlow
 from pattern_profiler import PatternProfiler
-
 
 # Load all golden cases
 GOLDEN_CASES_DIR = Path(__file__).parent / "golden_cases"
@@ -90,7 +90,7 @@ def test_gyeokguk_type(case, engines):
 
     assert result["type"] == expected_type, \
         f"Expected type={expected_type}, got {result['type']}"
-    assert result["engine"] == "gyeokguk"
+    assert result["engine"] == "gyeokguk_classifier"
     assert "evidence_ref" in result
     assert "basis" in result
 

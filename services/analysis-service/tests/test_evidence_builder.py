@@ -10,7 +10,6 @@ from pathlib import Path
 import pytest
 from app.core import evidence_builder as eb
 
-
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
 ISOZ = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
 
@@ -29,6 +28,8 @@ def _sample_inputs_all():
     try:
         from app.core.combination_element import (
             POLICY_SIGNATURE as WUX_SIG,
+        )
+        from app.core.combination_element import (
             POLICY_VERSION as WUX_VER,
         )
     except Exception:

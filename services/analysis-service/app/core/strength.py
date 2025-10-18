@@ -374,11 +374,12 @@ class StrengthEvaluator:
         stem_visible = self.score_stem_visible(visible_counts)
         combo_clash = self.score_combo_clash(combos)
 
-        # Season adjust - placeholder for now (土月 인성일간 보정)
-        season_adjust = 0
+        # Season adjust based on day stem element and month branch season
+        season_adjust = self._compute_season_adjust(day_stem, month_branch)
 
-        # Month stem effect - placeholder, needs month stem relation analysis
-        month_stem_effect = 0
+        # Month stem effect based on ten gods relation (if month_stem provided)
+        month_stem = locals().get("month_stem")  # Get from parameters if added
+        month_stem_effect = self._compute_month_stem_effect(day_stem, month_stem) if month_stem else 0
 
         # Wealth location bonus
         wealth_bonus, wealth_hits_log = self.compute_wealth_location_bonus(
@@ -426,3 +427,125 @@ class StrengthEvaluator:
             "grade": grade,
             "seal_validity": seal_validity,
         }
+
+    def _compute_season_adjust(self, day_stem: str, month_branch: str) -> int:
+        """
+        Compute season adjustment based on day stem element and month branch season.
+
+        Uses common package's SEASON_ELEMENT_BOOST mapping.
+        """
+        import sys
+        from pathlib import Path
+        sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "services" / "common"))
+        from saju_common import BRANCH_TO_SEASON, SEASON_ELEMENT_BOOST, STEM_TO_ELEMENT
+
+        # Get season from month branch
+        season = BRANCH_TO_SEASON.get(month_branch)
+        if not season:
+            return 0
+
+        # Get element from day stem
+        element = STEM_TO_ELEMENT.get(day_stem)
+        if not element:
+            return 0
+
+        # Get boost value
+        boost = SEASON_ELEMENT_BOOST.get(season, {}).get(element, 0)
+        return int(boost)
+
+    def _compute_month_stem_effect(self, day_stem: str, month_stem: str | None) -> int:
+        """
+        Compute month stem effect based on ten gods relation.
+
+        Month stem 透出 (visible) bonus/penalty based on relation type:
+        - 比劫 (peer/rob): +6/+4 (strengthens)
+        - 印 (seal): +5/+3 (strengthens)
+        - 官殺 (officer/killer): -4/-6 (weakens)
+        - 財 (wealth): -2/-3 (mild weaken)
+        - 食傷 (food/harm): -1/-2 (mild weaken)
+        """
+        if not month_stem:
+            return 0
+
+        # Calculate ten gods relation
+        relation = self._get_ten_gods_relation(day_stem, month_stem)
+
+        # Apply bonus/penalty based on relation
+        STEM_EFFECT_MAP = {
+            "비견": +6,
+            "겁재": +4,
+            "정인": +5,
+            "편인": +3,
+            "정관": -4,
+            "편관": -6,
+            "정재": -2,
+            "편재": -3,
+            "식신": -1,
+            "상관": -2,
+        }
+
+        return STEM_EFFECT_MAP.get(relation, 0)
+
+    def _get_ten_gods_relation(self, day_stem: str, other_stem: str) -> str:
+        """
+        Calculate ten gods relation between day stem and another stem.
+
+        Returns Korean label (비견, 겁재, 정인, etc.)
+        """
+        import sys
+        from pathlib import Path
+        sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "services" / "common"))
+        from saju_common import ELEMENT_CONTROLS, ELEMENT_GENERATES, STEM_TO_ELEMENT
+
+        day_elem = STEM_TO_ELEMENT.get(day_stem)
+        other_elem = STEM_TO_ELEMENT.get(other_stem)
+
+        if not day_elem or not other_elem:
+            return "unknown"
+
+        # Same element
+        if day_elem == other_elem:
+            # Check yin/yang
+            if self._same_yinyang(day_stem, other_stem):
+                return "비견"  # 比肩 (same polarity)
+            else:
+                return "겁재"  # 劫財 (opposite polarity)
+
+        # Generates day master (seal)
+        if ELEMENT_GENERATES.get(other_elem) == day_elem:
+            if self._same_yinyang(day_stem, other_stem):
+                return "정인"  # 正印
+            else:
+                return "편인"  # 偏印
+
+        # Day master generates (food/harm)
+        if ELEMENT_GENERATES.get(day_elem) == other_elem:
+            if self._same_yinyang(day_stem, other_stem):
+                return "식신"  # 食神
+            else:
+                return "상관"  # 傷官
+
+        # Day master controls (wealth)
+        if ELEMENT_CONTROLS.get(day_elem) == other_elem:
+            if self._same_yinyang(day_stem, other_stem):
+                return "편재"  # 偏財
+            else:
+                return "정재"  # 正財
+
+        # Controls day master (officer/killer)
+        if ELEMENT_CONTROLS.get(other_elem) == day_elem:
+            if self._same_yinyang(day_stem, other_stem):
+                return "편관"  # 偏官 (七殺)
+            else:
+                return "정관"  # 正官
+
+        return "unknown"
+
+    def _same_yinyang(self, stem1: str, stem2: str) -> bool:
+        """Check if two stems have same yin/yang polarity"""
+        YANG_STEMS = {"甲", "丙", "戊", "庚", "壬"}
+        YIN_STEMS = {"乙", "丁", "己", "辛", "癸"}
+
+        return (stem1 in YANG_STEMS and stem2 in YANG_STEMS) or (
+            stem1 in YIN_STEMS and stem2 in YIN_STEMS
+        )

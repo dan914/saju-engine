@@ -2,7 +2,7 @@
   "engine": "llm_guard",
   "policy_version": "1.0.0",
   "policy_date": "2025-10-09",
-  "policy_signature": "UNSIGNED",
+  "policy_signature": "b0320a6a90c2e926e6b47cae3d33e5b95d126810c77d2752a6a3233f8bc3421f",
   "ko_labels": true,
   "dependencies": [
     "strength_policy_v2.json",
@@ -131,8 +131,8 @@
   ],
   "modality_mapping": [
     {
-      "confidence_min": 0.80,
-      "confidence_max": 1.00,
+      "confidence_min": 0.8,
+      "confidence_max": 1.0,
       "label_ko": "개연성이 매우 높음",
       "allowed_expressions": [
         "~일 가능성이 매우 높습니다",
@@ -140,7 +140,7 @@
       ]
     },
     {
-      "confidence_min": 0.50,
+      "confidence_min": 0.5,
       "confidence_max": 0.79,
       "label_ko": "개연성이 높음",
       "allowed_expressions": [
@@ -149,7 +149,7 @@
       ]
     },
     {
-      "confidence_min": 0.00,
+      "confidence_min": 0.0,
       "confidence_max": 0.49,
       "label_ko": "가설 수준",
       "allowed_expressions": [

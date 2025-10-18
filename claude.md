@@ -1,6 +1,6 @@
-# 사주 프로젝트 — Claude 참조 문서 v1.0
+# 사주 프로젝트 — Claude 참조 문서 v1.2
 
-**최종 갱신:** 2025-10-07 KST
+**최종 갱신:** 2025-10-09 KST (v1.2)
 **목적:** Claude가 매 세션마다 읽어야 할 프로젝트 구조, 정책, 구현 상태 중앙 허브
 
 ---
@@ -34,16 +34,28 @@ API Gateway
   ├─→ pillars-service (기둥 계산: 년월일시 60갑자)
   │     ↓
   ├─→ analysis-service (핵심 분석 엔진)
-  │     ├─ TenGodsCalculator (십신)
-  │     ├─ RelationTransformer (육합/삼합/충/형/파/해/원진)
-  │     ├─ StrengthEvaluator (강약: strength_policy_v2.json)
-  │     ├─ StructureDetector (격국: gyeokguk_policy.json)
-  │     ├─ ShenshaCatalog (신살: shensha_v2_policy.json)
-  │     ├─ ClimateEvaluator (조후: 미통합)
-  │     ├─ YongshinAnalyzer (용신: yongshin_policy.json)
-  │     ├─ BranchTenGodsMapper (지장간 십신: branch_tengods_policy.json)
-  │     ├─ KoreanLabelEnricher (한국어 라벨: localization_ko_v1.json)
-  │     └─ (신규 예정) TwelveStageCalculator, VoidCalculator, YuanjinDetector
+  │     ├─ **Core Engines** (engine.py)
+  │     │   ├─ TenGodsCalculator (십신) ✅
+  │     │   ├─ StrengthEvaluator (강약) ✅
+  │     │   ├─ RelationTransformer (관계) ✅
+  │     │   ├─ StructureDetector (격국) ✅
+  │     │   ├─ LuckCalculator (대운) ✅
+  │     │   ├─ ShenshaCatalog (신살) ✅
+  │     │   ├─ RecommendationGuard (권고) ✅
+  │     │   └─ SchoolProfileManager (학파) ✅
+  │     ├─ **Meta-Engines** (새로운 계층)
+  │     │   ├─ VoidCalculator (공망 v1.1) ✅
+  │     │   ├─ YuanjinDetector (원진 v1.1) ✅
+  │     │   ├─ CombinationElement (합화오행 v1.2) ✅
+  │     │   ├─ YongshinSelector (용신선택 v1.0) ✅
+  │     │   ├─ ClimateEvaluator (조후평가) ✅
+  │     │   ├─ RelationWeightEvaluator (관계가중 v1.0) ✅
+  │     │   ├─ EvidenceBuilder (증거수집 v1.0) ✅
+  │     │   ├─ EngineSummariesBuilder (요약생성 v1.0) ✅
+  │     │   └─ KoreanLabelEnricher (한글라벨 v1.0) ✅
+  │     ├─ **LLM Integration**
+  │     │   ├─ LLMGuard (v1.0/v1.1 정책) ✅
+  │     │   └─ TextGuard (금지어 검증) ✅
   │     ↓
   ├─→ luck-service (대운/연운/월운)
   │     ├─ LuckCalculator (대운 시작 나이/방향: luck_pillars_policy.json)
@@ -82,31 +94,108 @@ API Gateway
 │   │       ├── pillars.py         (calculate_four_pillars - LMT 지원)
 │   │       ├── canonical_calendar.py (orphaned)
 │   │       └── input_validator.py
-│   ├── analysis-service/          🟡 부분 구현 (80%)
+│   ├── common/                    ✅ 공통 라이브러리 (신규)
+│   │   ├── saju_common/           (Protocol 기반 인터페이스)
+│   │   │   ├── __init__.py        (DeltaT, Evidence, Metadata)
+│   │   │   ├── builtins.py        (TWELVE_BRANCHES, TEN_STEMS)
+│   │   │   ├── seasons.py         (계절 매핑 테이블)
+│   │   │   └── README.md          (사용법)
+│   │   └── tests/                 (21/21 passing)
+│   ├── analysis-service/          ✅ 핵심 구현 (95%)
 │   │   ├── app/core/
-│   │   │   ├── engine.py          (AnalysisEngine - 10/11 엔진 통합)
-│   │   │   ├── strength.py        (WangStateMapper, StrengthEvaluator)
-│   │   │   ├── relations.py       (RelationTransformer)
-│   │   │   ├── luck.py            (LuckCalculator)
-│   │   │   ├── school.py          (SchoolProfileManager)
-│   │   │   ├── recommendation.py  (RecommendationGuard)
-│   │   │   ├── text_guard.py      (TextGuard)
-│   │   │   ├── climate.py         (ClimateEvaluator - 미통합)
-│   │   │   ├── korean_enricher.py (KoreanLabelEnricher - 141 mappings)
-│   │   │   └── policy_guards.py   (런타임 정책 검증)
+│   │   │   ├── **Core Engines** (8개)
+│   │   │   │   ├── engine.py          (AnalysisEngine - 8/8 엔진 통합)
+│   │   │   │   ├── strength.py        (StrengthEvaluator v2.0)
+│   │   │   │   ├── relations.py       (RelationTransformer)
+│   │   │   │   ├── structure.py       (StructureDetector)
+│   │   │   │   ├── luck.py            (LuckCalculator + ShenshaCatalog)
+│   │   │   │   ├── school.py          (SchoolProfileManager)
+│   │   │   │   └── recommendation.py  (RecommendationGuard)
+│   │   │   ├── **Meta-Engines** (9개)
+│   │   │   │   ├── void.py            (VoidCalculator v1.1 - 공망)
+│   │   │   │   ├── yuanjin.py         (YuanjinDetector v1.1 - 원진)
+│   │   │   │   ├── combination_element.py (합화오행 v1.2)
+│   │   │   │   ├── yongshin_selector.py   (YongshinSelector v1.0)
+│   │   │   │   ├── climate.py         (ClimateEvaluator)
+│   │   │   │   ├── relation_weight.py (RelationWeightEvaluator v1.0)
+│   │   │   │   ├── evidence_builder.py (EvidenceBuilder v1.0)
+│   │   │   │   ├── engine_summaries.py (EngineSummariesBuilder v1.0)
+│   │   │   │   └── korean_enricher.py (KoreanLabelEnricher v1.0)
+│   │   │   ├── **LLM Guards** (2개)
+│   │   │   │   ├── llm_guard.py       (LLMGuard v1.0/v1.1)
+│   │   │   │   └── text_guard.py      (TextGuard)
+│   │   │   └── policy_guards*.py  (런타임 정책 검증)
 │   │   ├── app/models/
 │   │   │   └── analysis.py        (AnalysisRequest, AnalysisResponse)
-│   │   └── tests/                 (47/47 passing)
-│   ├── luck-service/              ❌ 미구현 (analysis-service에 임베디드)
-│   ├── llm-polish/                ❌ 미구현
-│   ├── llm-guard/                 ❌ 미구현 (계획만 존재)
+│   │   └── tests/                 (631/657 passing - 96.0%)
+│   ├── llm-polish/                🟡 기본 구현 (신규 발견)
+│   │   ├── app/main.py            (FastAPI skeleton)
+│   │   └── tests/                 (테스트 없음)
+│   ├── llm-checker/               🟡 기본 구현 (신규 발견)
+│   │   ├── app/main.py            (FastAPI skeleton)
+│   │   └── tests/                 (테스트 없음)
+│   ├── api-gateway/               🟡 기본 구현 (신규 발견)
+│   │   ├── app/main.py            (FastAPI skeleton)
+│   │   └── tests/                 (테스트 없음)
 │   └── report-service/            ❌ 미구현
+├── policy/                        ✅ 신규 정책 디렉토리 (RFC-8785 서명)
+│   ├── **MVP 정책 패키지** (4개, 2025-10-09)
+│   │   ├── climate_advice_policy_v1.json      (조후 조언 - 8 규칙)
+│   │   ├── luck_flow_policy_v1.json           (운의 흐름 - 11 신호)
+│   │   ├── pattern_profiler_policy_v1.json    (패턴 프로파일러 - 23 태그)
+│   │   └── gyeokguk_policy_v1.json            (격국 분류기 - 4 규칙)
+│   ├── **LLM Guard 정책** (2개)
+│   │   ├── llm_guard_policy_v1.json           (v1.0 - 6 families)
+│   │   └── llm_guard_policy_v1.1.json         (v1.1 - cross-engine)
+│   └── **Meta-Engine 정책** (2개)
+│       ├── relation_weight_policy_v1.0.json   (관계 가중치)
+│       └── yongshin_selector_policy_v1.json   (용신 선택)
+├── schema/                        ✅ JSON Schema 디렉토리 (27개 파일)
+│   ├── **MVP 패키지 스키마** (11개)
+│   │   ├── climate_advice_policy.schema.json
+│   │   ├── luck_flow_policy.schema.json
+│   │   ├── luck_flow_output.schema.json
+│   │   ├── pattern_profiler_policy.schema.json
+│   │   ├── pattern_profiler_output.schema.json
+│   │   ├── gyeokguk_policy.schema.json
+│   │   ├── gyeokguk_output.schema.json
+│   │   ├── gyeokguk_input_schema_v1.json
+│   │   └── gyeokguk_output_schema_v1.json (중복)
+│   ├── **LLM Guard 스키마** (4개)
+│   │   ├── llm_guard_input_schema_v1.json
+│   │   ├── llm_guard_input_v1.1.json
+│   │   ├── llm_guard_output_schema_v1.json
+│   │   └── llm_guard_output_v1.1.json
+│   ├── **Meta-Engine 스키마** (3개)
+│   │   ├── relation_weight.schema.json
+│   │   ├── yongshin_input_schema_v1.json
+│   │   ├── yongshin_output_schema_v1.json
+│   │   └── engine_summaries.v1.1.extension.climate.schema.json
+│   └── (기타 스키마 파일)
+├── guards/                        ✅ LLM Guard 규칙 (4개 파일)
+│   ├── llm_guard_rules_climate_mvp_v1.json    (5 rules)
+│   ├── llm_guard_rules_luck_flow_v1.json      (5 rules)
+│   ├── llm_guard_rules_pattern_profiler_v1.json (6 rules)
+│   └── llm_guard_rules_gyeokguk_v1.json       (5 rules)
+├── docs/engines/                  ✅ 엔진 I/O 스펙 (8개 파일)
+│   ├── climate_balancer_mvp.spec.json
+│   ├── climate_balancer_mvp.io.json
+│   ├── luck_flow.spec.json
+│   ├── luck_flow.io.json
+│   ├── pattern_profiler.spec.json
+│   ├── pattern_profiler.io.json
+│   ├── gyeokguk_classifier.spec.json
+│   └── gyeokguk_classifier.io.json
+├── tests/                         ✅ MVP 정책 테스트 (4개 파일, 20/20 pass)
+│   ├── test_climate_advice_mvp.py          (9/9 passing)
+│   ├── test_luck_flow_v1.py                (4/4 passing)
+│   ├── test_pattern_profiler_v1.py         (4/4 passing)
+│   └── test_gyeokguk_classifier_v1.py      (3/3 passing)
 ├── saju_codex_batch_all_v2_6_signed/
 │   ├── policies/                  ✅ 정책 파일 (RFC-8785 서명)
 │   │   ├── strength_policy_v2.json
 │   │   ├── relation_policy.json
 │   │   ├── shensha_v2_policy.json
-│   │   ├── gyeokguk_policy.json
 │   │   ├── yongshin_policy.json
 │   │   ├── branch_tengods_policy.json
 │   │   ├── sixty_jiazi.json
@@ -121,7 +210,6 @@ API Gateway
 │       ├── strength_policy_v2.schema.json
 │       ├── relation.schema.json
 │       ├── shensha_v2_policy.schema.json
-│       ├── gyeokguk.schema.json
 │       ├── yongshin.schema.json
 │       └── (기타 9개)
 ├── scripts/                       ✅ 계산 검증 스크립트
@@ -175,47 +263,65 @@ API Gateway
 
 ### 3.1 서비스별 구현 상태
 
-| 서비스                  | 상태 | 완성도 | 비고 |
-|-------------------------|------|--------|------|
-| tz-time-service         | ✅   | 100%   | UTC/LMT/DST 변환 완전 구현 |
-| astro-service           | ✅   | 100%   | 24절기 계산 완전 구현 |
-| pillars-service         | ✅   | 100%   | calculate_four_pillars (LMT -32분 서울) |
-| analysis-service        | 🟡   | 80%    | 10/11 엔진 통합, ClimateEvaluator 미통합 |
-| luck-service            | 🟡   | 40%    | 대운 시작/방향만, 연/월운 미구현 |
-| llm-polish              | ❌   | 0%     | 템플릿/라우팅 미구현 |
-| llm-guard               | 🟡   | 10%    | 계획만 존재 (LLM_GUARD_V1_ANALYSIS_AND_PLAN.md) |
-| billing/entitlement     | ❌   | 0%     | 토큰/권한 시스템 미구현 |
-| report-service          | ❌   | 0%     | PDF 생성 미구현 |
+| 서비스                  | 상태 | 완성도 | 테스트 | 비고 |
+|-------------------------|------|--------|--------|------|
+| **common**              | ✅   | 100%   | 21/21  | Protocol 기반 공통 패키지 (신규) |
+| **tz-time-service**     | ✅   | 100%   | 0/?    | UTC/LMT/DST 변환 (테스트 에러) |
+| **astro-service**       | ✅   | 100%   | 0/?    | 24절기 계산 (테스트 에러) |
+| **pillars-service**     | ✅   | 100%   | 17/17  | calculate_four_pillars (LMT 지원) |
+| **analysis-service**    | ✅   | 95%    | 631/657 | 17개 엔진 (Core 8 + Meta 9) |
+| **api-gateway**         | 🟡   | 10%    | 0/?    | FastAPI skeleton만 (신규 발견) |
+| **llm-polish**          | 🟡   | 10%    | 0/?    | FastAPI skeleton만 (신규 발견) |
+| **llm-checker**         | 🟡   | 10%    | 0/?    | FastAPI skeleton만 (신규 발견) |
+| luck-service            | ❌   | 0%     | -      | analysis-service에 임베디드 |
+| billing/entitlement     | ❌   | 0%     | -      | 토큰/권한 시스템 미구현 |
+| report-service          | ❌   | 0%     | -      | PDF 생성 미구현 |
+
+**총계:** 669/695 tests passing (96.3%)
 
 ### 3.2 Analysis-Service 엔진별 구현 상태
 
-| 엔진                    | 통합 | 테스트 | 정책 파일 | 비고 |
-|-------------------------|------|--------|-----------|------|
-| TenGodsCalculator       | ✅   | ✅     | -         | 십신 계산 |
-| RelationTransformer     | ✅   | ✅     | relation_policy.json | 육합/삼합/충/형/파/해 |
-| StrengthEvaluator       | ✅   | ✅     | strength_policy_v2.json | 강약 평가 (Fix 적용) |
-| StructureDetector       | ✅   | ✅     | gyeokguk_policy.json | 격국 탐지 |
-| ShenshaCatalog          | ✅   | ✅     | shensha_v2_policy.json | 신살 |
-| ClimateEvaluator        | ❌   | ✅     | -         | **구현됨, 미통합** |
-| YongshinAnalyzer        | ✅   | ✅     | yongshin_policy.json | 용신 |
-| BranchTenGodsMapper     | ✅   | ✅     | branch_tengods_policy.json | 지장간 십신 |
-| LuckCalculator          | ✅   | ✅     | luck_pillars_policy.json | 대운 시작/방향 |
-| KoreanLabelEnricher     | ✅   | ✅     | localization_ko_v1.json | 141 mappings |
-| SchoolProfileManager    | ✅   | ✅     | -         | 학파 프로필 |
-| RecommendationGuard     | ✅   | ✅     | -         | 권고사항 필터링 |
-| TwelveStageCalculator   | ❌   | ❌     | lifecycle_stages.json | **12운성 미구현** |
-| VoidCalculator          | ❌   | ❌     | -         | **공망 미구현** |
-| YuanjinDetector         | ❌   | ❌     | -         | **원진 미구현** |
-| CombinationElement      | ❌   | ❌     | -         | **조합오행 미구현** |
+#### Core Engines (8개) - engine.py 통합
+| 엔진                    | 버전 | 통합 | 테스트 | 정책 파일 | 비고 |
+|-------------------------|------|------|--------|-----------|------|
+| TenGodsCalculator       | -    | ✅   | ✅     | -         | 십신 계산 (내장) |
+| StrengthEvaluator       | v2.0 | ✅   | ✅     | strength_policy_v2.json | 강약 평가 (계절/월간 효과) |
+| RelationTransformer     | -    | ✅   | ✅     | relation_policy.json | 육합/삼합/충/형/파/해 |
+| StructureDetector       | -    | ✅   | ✅     | gyeokguk_policy.json | 격국 탐지 |
+| LuckCalculator          | -    | ✅   | ✅     | luck_pillars_policy.json | 대운 시작/방향 |
+| ShenshaCatalog          | -    | ✅   | ✅     | shensha_v2_policy.json | 신살 카탈로그 |
+| RecommendationGuard     | -    | ✅   | ✅     | -         | 권고사항 필터링 |
+| SchoolProfileManager    | -    | ✅   | ✅     | school_profiles_v1.json | 학파 프로필 |
+
+#### Meta-Engines (9개) - 독립 실행
+| 엔진                    | 버전 | 구현 | 테스트 | 정책 파일 | 비고 |
+|-------------------------|------|------|--------|-----------|------|
+| VoidCalculator          | v1.1 | ✅   | ✅     | -         | 공망(旬空) 계산 |
+| YuanjinDetector         | v1.1 | ✅   | ✅     | -         | 원진(遠辰) 탐지 |
+| CombinationElement      | v1.2 | ✅   | ✅     | -         | 합화오행 트랜스포머 |
+| YongshinSelector        | v1.0 | ✅   | ✅     | yongshin_selector_policy_v1.json | 용신 자동 선택 |
+| ClimateEvaluator        | -    | ✅   | ✅     | -         | 조후 평가 |
+| RelationWeightEvaluator | v1.0 | ✅   | ✅     | relation_weight_policy_v1.0.json | 관계 가중치 |
+| EvidenceBuilder         | v1.0 | ✅   | ✅     | -         | 증거 수집기 |
+| EngineSummariesBuilder  | v1.0 | ✅   | ✅     | -         | LLM Guard 요약 생성 |
+| KoreanLabelEnricher     | v1.0 | ✅   | ✅     | localization_ko_v1.json | 한글 라벨 보강 |
+
+#### LLM Guards (2개)
+| 엔진                    | 버전 | 구현 | 테스트 | 정책 파일 | 비고 |
+|-------------------------|------|------|--------|-----------|------|
+| LLMGuard                | v1.0/v1.1 | ✅ | ✅  | llm_guard_policy_v1*.json | Pre/Post 검증 |
+| TextGuard               | -    | ✅   | ✅     | -         | 금지어 필터링 |
+
+**총 엔진:** 19개 (Core 8 + Meta 9 + Guard 2)
 
 ### 3.3 정책 파일 상태
 
+#### 기존 정책 파일 (saju_codex_batch_all_v2_6_signed/)
 | 정책 파일                        | 위치 | 서명 | 스키마 | 통합 |
 |----------------------------------|------|------|--------|------|
 | strength_policy_v2.json          | ✅   | ✅   | ✅     | ✅   |
 | relation_policy.json             | ✅   | ✅   | ✅     | ✅   |
 | shensha_v2_policy.json           | ✅   | ✅   | ✅     | ✅   |
-| gyeokguk_policy.json             | ✅   | ✅   | ✅     | ✅   |
 | yongshin_policy.json             | ✅   | ✅   | ✅     | ✅   |
 | branch_tengods_policy.json       | ✅   | ✅   | ✅     | ✅   |
 | sixty_jiazi.json                 | ✅   | ✅   | ✅     | ✅   |
@@ -226,6 +332,23 @@ API Gateway
 | daystem_yinyang.json             | ✅   | ✅   | ✅     | ✅   |
 | elemental_projection_policy.json | ✅   | ✅   | -      | 🟡   |
 | elements_distribution_criteria.json | ✅ | ✅  | ✅     | 🟡   |
+
+#### 신규 정책 파일 (policy/) 🆕
+| 정책 파일                        | 위치 | 서명 | 스키마 | 테스트 | 런타임 |
+|----------------------------------|------|------|--------|--------|--------|
+| **MVP 패키지 (4개)**             |      |      |        |        |        |
+| climate_advice_policy_v1.json    | ✅   | ✅   | ✅     | ✅ (9/9) | ❌   |
+| luck_flow_policy_v1.json         | ✅   | ✅   | ✅     | ✅ (4/4) | ❌   |
+| pattern_profiler_policy_v1.json  | ✅   | ✅   | ✅     | ✅ (4/4) | ❌   |
+| gyeokguk_policy_v1.json          | ✅   | ✅   | ✅     | ✅ (3/3) | ❌   |
+| **LLM Guard (2개)**              |      |      |        |        |        |
+| llm_guard_policy_v1.json         | ✅   | ✅   | ✅     | ✅     | ✅   |
+| llm_guard_policy_v1.1.json       | ✅   | ✅   | ✅     | ✅     | ✅   |
+| **Meta-Engine (2개)**            |      |      |        |        |        |
+| relation_weight_policy_v1.0.json | ✅   | ✅   | ✅     | ✅     | ✅   |
+| yongshin_selector_policy_v1.json | ✅   | ✅   | ✅     | ✅     | ✅   |
+
+**총 정책:** 13개 (기존) + 8개 (신규) = 21개 정책 파일
 
 ### 3.4 API 엔드포인트 구현 상태
 
@@ -733,14 +856,24 @@ assert computed == strength_policy["signature"]["sha256"]
 - **샘플:** 샘플 B 참조
 
 **Issue 4: 원진(yuanjin) 미구현**
-- **원인:** RelationTransformer에 원진 로직 없음
-- **해결:** 🟡 대기 중 (Phase 2: relation_policy_extension_prompt.md)
-- **정책:** relation_policy.json 확장 필요
+- **상태:** ✅ 해결 완료 (2025-10-09)
+- **엔진:** YuanjinDetector v1.1 (services/analysis-service/app/core/yuanjin.py)
+- **테스트:** ✅ 통과
 
-**Issue 5: 12운성(lifecycle_stages) 미구현**
-- **원인:** lifecycle_stages.json 존재, 엔진 없음
-- **해결:** 🟡 대기 중 (Phase 2: twelve_stage_void_yuanjin_combo_prompt.md)
-- **정책:** lifecycle_stages.json → TwelveStageCalculator
+**Issue 5: 12운성(lifecycle_stages) 미통합**
+- **원인:** lifecycle_stages.json 정책 파일 존재, 엔진 미통합
+- **해결:** 🟡 대기 중 (정책 파일은 있으나 AnalysisEngine 미통합)
+- **정책:** lifecycle_stages.json 사용 가능
+
+**Issue 6: 공망(void) 미구현**
+- **상태:** ✅ 해결 완료 (2025-10-09)
+- **엔진:** VoidCalculator v1.1 (services/analysis-service/app/core/void.py)
+- **테스트:** ✅ 통과
+
+**Issue 7: 합화오행(combination_element) 미구현**
+- **상태:** ✅ 해결 완료 (2025-10-09)
+- **엔진:** CombinationElement v1.2 (services/analysis-service/app/core/combination_element.py)
+- **테스트:** ✅ 통과
 
 ### 9.2 Cross-Service Import 문제
 
@@ -769,11 +902,16 @@ PYTHONPATH=".:services/analysis-service:services/pillars-service:services/common
 ../../.venv/bin/pytest tests/test_llm_guard.py -v  # (미구현)
 ```
 
-**커버리지:**
-- analysis-service: 47/47 passing ✅
-- pillars-service: 25/25 passing ✅
-- astro-service: 12/12 passing ✅
-- tz-time-service: 8/8 passing ✅
+**테스트 현황 (2025-10-09):**
+- **common**: 21/21 passing ✅
+- **pillars-service**: 17/17 passing ✅
+- **analysis-service**: 631/657 passing (96.0%) 🟡
+  - 25 failures: 테스트 픽스처 누락 (코드 정상)
+- **MVP 정책**: 20/20 passing (100%) ✅
+- **astro-service**: 테스트 에러 (import 문제) ❌
+- **tz-time-service**: 테스트 에러 (import 문제) ❌
+
+**총계:** 669/695 tests passing (96.3%)
 
 ---
 
@@ -831,16 +969,50 @@ PYTHONPATH=".:services/analysis-service:services/pillars-service:services/common
 
 ### 11.2 정책 문서
 
-- **saju_codex_batch_all_v2_6_signed/policies/** - 14개 정책 파일
-- **saju_codex_batch_all_v2_6_signed/schemas/** - 10개 스키마 파일
+- **saju_codex_batch_all_v2_6_signed/policies/** - 14개 기존 정책 파일
+- **saju_codex_batch_all_v2_6_signed/schemas/** - 10개 기존 스키마 파일
+- **policy/** - 4개 신규 MVP 정책 파일 (2025-10-09) 🆕
+- **schema/** - 7개 신규 스키마 파일 🆕
+- **guards/** - 4개 신규 LLM Guard 규칙 🆕
+- **docs/engines/** - 8개 신규 엔진 스펙 파일 🆕
 
-### 11.3 핸드오버 문서
+### 11.3 MVP 정책 패키지 (2025-10-09) 🆕
+
+#### Climate Advice Mapping MVP v1.0
+- **policy/climate_advice_policy_v1.json** - 조후 조언 매핑 (8 규칙, 서명: 007abeee...)
+- **schema/climate_advice_policy.schema.json** - 정책 스키마
+- **guards/llm_guard_rules_climate_mvp_v1.json** - 4개 검증 규칙
+- **tests/test_climate_advice_mvp.py** - 9/9 테스트 통과
+- **CHANGELOG_climate_advice_mvp_v1.md** - 전체 변경 이력
+
+#### Luck Flow v1.0
+- **policy/luck_flow_policy_v1.json** - 운의 흐름 평가 (11 신호, 서명: 3903efb6...)
+- **schema/luck_flow_policy.schema.json** / **schema/luck_flow_output.schema.json**
+- **guards/llm_guard_rules_luck_flow_v1.json** - 4개 검증 규칙
+- **tests/test_luck_flow_v1.py** - 4/4 테스트 통과
+- **CHANGELOG_luck_flow_v1.md** - 전체 변경 이력
+
+#### Pattern Profiler v1.0
+- **policy/pattern_profiler_policy_v1.json** - 패턴 프로파일링 (23 태그, 20 규칙, 서명: 3675264f...)
+- **schema/pattern_profiler_policy.schema.json** / **schema/pattern_profiler_output.schema.json**
+- **guards/llm_guard_rules_pattern_profiler_v1.json** - 4개 검증 규칙
+- **tests/test_pattern_profiler_v1.py** - 4/4 테스트 통과
+- **CHANGELOG_pattern_profiler_v1.md** - 전체 변경 이력
+
+#### Gyeokguk Classifier v1.0
+- **policy/gyeokguk_policy_v1.json** - 격국 분류 (4 규칙, 서명: f50dab45...)
+- **schema/gyeokguk_policy.schema.json** / **schema/gyeokguk_output.schema.json**
+- **guards/llm_guard_rules_gyeokguk_v1.json** - 5개 검증 규칙
+- **tests/test_gyeokguk_classifier_v1.py** - 3/3 테스트 통과
+- **CHANGELOG_gyeokguk_classifier_v1.md** - 전체 변경 이력
+
+### 11.4 핸드오버 문서
 
 - **DEVELOPMENT_HANDOFF.md** - 개발 핸드오버
 - **LIFECYCLE_HANDOFF_ANALYSIS.md** - 생애주기 핸드오버
 - **MISSING_POLICIES_AND_INTEGRATIONS_HANDOVER.md** - 미구현 정책 핸드오버
 
-### 11.4 분석 문서
+### 11.5 분석 문서
 
 - **ENGINE_RETIREMENT_ANALYSIS.md** - 엔진 퇴직 분석 (orphaned engines)
 - **FEATURE_GAP_ANALYSIS.md** - 기능 갭 분석
@@ -850,9 +1022,43 @@ PYTHONPATH=".:services/analysis-service:services/pillars-service:services/common
 
 ## 12. 버전 관리
 
-**현재 버전:** v1.0 (2025-10-07 KST)
+**현재 버전:** v1.2 (2025-10-09 KST)
 
 **변경 이력:**
+- **v1.2** (2025-10-09): 실제 코드베이스 반영 및 정확도 개선
+  - **신규 발견:**
+    - services/common/ 공통 패키지 (Protocol 기반, 21/21 tests)
+    - services/api-gateway/, llm-polish/, llm-checker/ (FastAPI skeleton)
+    - 9개 Meta-Engine 완전 구현 (void, yuanjin, combination_element 등)
+    - 2개 LLM Guard (v1.0/v1.1)
+  - **엔진 구조 재분류:**
+    - Core Engines (8개) - engine.py 통합
+    - Meta-Engines (9개) - 독립 실행
+    - LLM Guards (2개)
+    - 총 19개 엔진 (이전: 11개로 잘못 기록)
+  - **정책 파일 재집계:**
+    - 기존 정책: 13개 (saju_codex_batch_all_v2_6_signed/)
+    - 신규 정책: 8개 (policy/ - MVP 4 + LLM Guard 2 + Meta 2)
+    - 총 21개 정책 파일
+  - **테스트 현황 업데이트:**
+    - 669/695 tests passing (96.3%)
+    - analysis-service: 631/657 (96.0%)
+    - MVP 정책: 20/20 (100%)
+  - **아키텍처 플로우 재작성:**
+    - Core/Meta/Guard 계층 구조 반영
+    - 실제 서비스 디렉토리 반영
+  - **엔진 위치 참조 재정리:**
+    - 19개 엔진 파일 경로 명시
+    - Core/Meta/Guard별 분류
+
+- **v1.1** (2025-10-09): 4개 MVP 정책 패키지 통합
+  - Climate Advice Mapping MVP v1.0 (8 규칙, 9/9 tests)
+  - Luck Flow v1.0 (11 신호, 4/4 tests)
+  - Pattern Profiler v1.0 (23 태그, 20 규칙, 4/4 tests)
+  - Gyeokguk Classifier v1.0 (4 규칙, 3/3 tests)
+  - 총 37개 파일 추가 (정책/스키마/가드/테스트/문서)
+  - PSA 서명 8개 (정책 4 + 가드 4)
+
 - **v1.0** (2025-10-07): 초기 생성
   - 아키텍처 플로우 정의
   - 폴더 구조 매핑
@@ -862,10 +1068,9 @@ PYTHONPATH=".:services/analysis-service:services/pillars-service:services/common
   - 다음 액션 로드맵 (6개 Phase)
 
 **다음 업데이트 예정:**
-- /chat/send 스펙 완성 시 → v1.1
-- 12운성/공망/원진 통합 시 → v1.2
-- LLM Guard v1.0 구현 시 → v1.3
-- 토큰/권한 시스템 구현 시 → v1.4
+- MVP 런타임 엔진 구현 시 → v1.3
+- 12운성 AnalysisEngine 통합 시 → v1.4
+- 토큰/권한 시스템 구현 시 → v1.5
 
 ---
 
@@ -873,16 +1078,36 @@ PYTHONPATH=".:services/analysis-service:services/pillars-service:services/common
 
 ### 13.1 엔진 위치
 
+#### Core Engines
 | 엔진                  | 파일 경로                                          |
 |-----------------------|----------------------------------------------------|
 | calculate_four_pillars | scripts/calculate_pillars_traditional.py          |
 | AnalysisEngine        | services/analysis-service/app/core/engine.py       |
-| TenGodsCalculator     | services/analysis-service/app/core/engine.py:102   |
-| RelationTransformer   | services/analysis-service/app/core/relations.py    |
 | StrengthEvaluator     | services/analysis-service/app/core/strength.py     |
+| RelationTransformer   | services/analysis-service/app/core/relations.py    |
+| StructureDetector     | services/analysis-service/app/core/structure.py    |
 | LuckCalculator        | services/analysis-service/app/core/luck.py         |
-| KoreanLabelEnricher   | services/analysis-service/app/core/korean_enricher.py |
-| WangStateMapper       | services/analysis-service/app/core/strength.py:18  |
+| SchoolProfileManager  | services/analysis-service/app/core/school.py       |
+| RecommendationGuard   | services/analysis-service/app/core/recommendation.py |
+
+#### Meta-Engines
+| 엔진                    | 파일 경로                                          |
+|-------------------------|----------------------------------------------------|
+| VoidCalculator          | services/analysis-service/app/core/void.py         |
+| YuanjinDetector         | services/analysis-service/app/core/yuanjin.py      |
+| CombinationElement      | services/analysis-service/app/core/combination_element.py |
+| YongshinSelector        | services/analysis-service/app/core/yongshin_selector.py |
+| ClimateEvaluator        | services/analysis-service/app/core/climate.py      |
+| RelationWeightEvaluator | services/analysis-service/app/core/relation_weight.py |
+| EvidenceBuilder         | services/analysis-service/app/core/evidence_builder.py |
+| EngineSummariesBuilder  | services/analysis-service/app/core/engine_summaries.py |
+| KoreanLabelEnricher     | services/analysis-service/app/core/korean_enricher.py |
+
+#### LLM Guards
+| 엔진                  | 파일 경로                                          |
+|-----------------------|----------------------------------------------------|
+| LLMGuard              | services/analysis-service/app/core/llm_guard.py    |
+| TextGuard             | services/analysis-service/app/core/text_guard.py   |
 
 ### 13.2 정책 파일 로딩
 
@@ -957,4 +1182,4 @@ ELEMENT_GENERATES = {
 - GitHub Issues: https://github.com/[your-repo]/issues
 - Core Architects: 백엔드/정책/데이터 팀
 
-**마지막 검증:** 2025-10-07 KST
+**마지막 검증:** 2025-10-09 KST

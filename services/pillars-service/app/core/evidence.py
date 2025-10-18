@@ -3,58 +3,18 @@
 from __future__ import annotations
 
 import json
+
+# Import real implementations from shared common package
+import sys
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from pathlib import Path as _Path
 from typing import Dict, Iterable, Tuple
 from zoneinfo import ZoneInfo
 
-# TODO: Fix cross-service imports - hyphens in module names not supported
-# from services.analysis-service.app.core.luck import LuckCalculator, LuckContext, ShenshaCatalog
-# from services.analysis-service.app.core.school import SchoolProfileManager
-
-
-class LuckCalculator:
-    """Temporary placeholder for LuckCalculator to fix CI."""
-
-    def compute_start_age(self, context: "LuckContext") -> dict:
-        """Stub method returning placeholder values."""
-        return {
-            "prev_term": "unknown",
-            "next_term": "unknown",
-            "interval_days": 0,
-            "days_from_prev": 0,
-            "start_age": 0,
-        }
-
-    def luck_direction(self, context: "LuckContext") -> dict:
-        """Stub method returning placeholder values."""
-        return {"direction": "forward", "method": "unknown", "sex_at_birth": "unknown"}
-
-
-@dataclass
-class LuckContext:
-    """Temporary placeholder for LuckContext to fix CI."""
-
-    local_dt: datetime
-    timezone: str
-    day_master: str | None = None
-    gender: str | None = None
-
-
-class ShenshaCatalog:
-    """Temporary placeholder for ShenshaCatalog to fix CI."""
-
-    def list_enabled(self) -> list:
-        """Stub method."""
-        return []
-
-
-class SchoolProfileManager:
-    """Temporary placeholder for SchoolProfileManager to fix CI."""
-
-    pass
-
+sys.path.insert(0, str(_Path(__file__).resolve().parents[4] / "services" / "common"))
+from saju_common.engines import LuckCalculator, LuckContext, ShenshaCatalog
 
 from .month import SimpleSolarTermLoader
 from .strength import StrengthEvaluator

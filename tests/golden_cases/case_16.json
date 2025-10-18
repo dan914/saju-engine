@@ -33,7 +33,8 @@
   "expect": {
     "patterns_include": [
       "weak_daymaster",
-      "luck_declining",
+      "primary_low",
+      "yongshin_opposed",
       "climate_misaligned",
       "relation_conflict"
     ]

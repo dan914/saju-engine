@@ -1,21 +1,26 @@
 {
   "engine": "relation_weight_evaluator",
-  "policy_version": "1.0.0",
-  "policy_signature": "UNSIGNED",
+  "policy_version": "relation_weight_v1.0.0",
+  "policy_date": "2025-10-09",
+  "policy_signature": "2dabd3057eb32f6102a8b46a48d4eeca00cf1baa8f642c9141aa632c32364949",
+  "ko_labels": true,
+  "dependencies": [
+    "relation_policy.json"
+  ],
   "description": "Relation impact weight and confidence quantification policy - separates detection from validation/weighting",
   "relations": [
     {
       "relation": "sanhe",
       "label_ko": "삼합",
-      "base_weight": 0.70,
-      "confidence": 0.90,
+      "base_weight": 0.7,
+      "confidence": 0.9,
       "strict_mode_required": true,
       "modifiers": {
         "pivot_month": 0.15,
-        "month_adjacent": 0.20,
-        "tonggen_or_season_support": 0.10,
+        "month_adjacent": 0.2,
+        "tonggen_or_season_support": 0.1,
         "blocked_by_chong_hai": -0.25,
-        "incomplete_half_combo": -0.50
+        "incomplete_half_combo": -0.5
       },
       "notes": "삼합은 국(局) 완전체일 때 강력. formed 판정은 pivot+adjacent(+무블로커)로 강화."
     },
@@ -28,7 +33,7 @@
       "modifiers": {
         "on_day_branch": 0.05,
         "double_liuhe": 0.05,
-        "broken_by_chong": -0.20,
+        "broken_by_chong": -0.2,
         "inside_strong_combo": -0.05
       },
       "notes": "결속과 완화의 신호. 합화로의 전환은 일반적으로 제한적(관계의 끈으로 해석)."
@@ -36,15 +41,15 @@
     {
       "relation": "ganhe",
       "label_ko": "간합(오합)",
-      "base_weight": 0.50,
-      "confidence": 0.70,
+      "base_weight": 0.5,
+      "confidence": 0.7,
       "strict_mode_required": false,
       "modifiers": {
-        "adjacent_stems": 0.10,
+        "adjacent_stems": 0.1,
         "season_supports_result": 0.15,
-        "non_adjacent": -0.30,
-        "season_conflict": -0.20,
-        "multi_competing_he": -0.10
+        "non_adjacent": -0.3,
+        "season_conflict": -0.2,
+        "multi_competing_he": -0.1
       },
       "flags": {
         "emit_hua_field": true
@@ -55,37 +60,37 @@
       "relation": "chong",
       "label_ko": "충",
       "base_weight": 0.55,
-      "confidence": 0.90,
+      "confidence": 0.9,
       "strict_mode_required": false,
       "modifiers": {
-        "pivot_month": 0.10,
+        "pivot_month": 0.1,
         "stacked_chong": 0.15,
-        "two_pairs_in_chart": 0.10,
+        "two_pairs_in_chart": 0.1,
         "buffered_by_strong_combo": -0.25,
-        "neutralized_by_he": -0.10
+        "neutralized_by_he": -0.1
       },
       "notes": "사건·변동의 1급 신호. 다만 강결속(삼합국)은 쉽게 못 깸."
     },
     {
       "relation": "xing",
       "label_ko": "형",
-      "base_weight": 0.40,
-      "confidence": 0.80,
+      "base_weight": 0.4,
+      "confidence": 0.8,
       "strict_mode_required": false,
       "modifiers": {
-        "full_triplet_strict": 0.10,
+        "full_triplet_strict": 0.1,
         "pair_xing": 0.05,
         "self_xing": 0.05,
         "inside_combo": -0.05,
-        "coexists_with_chong": -0.10
+        "coexists_with_chong": -0.1
       },
       "notes": "은밀·지속적 긴장. 삼형은 엄격 조건 충족 시에만 강도 상승."
     },
     {
       "relation": "hai",
       "label_ko": "해(害)",
-      "base_weight": 0.30,
-      "confidence": 0.70,
+      "base_weight": 0.3,
+      "confidence": 0.7,
       "strict_mode_required": false,
       "modifiers": {
         "intense_pairs": 0.05,
@@ -98,13 +103,13 @@
     {
       "relation": "yuanjin",
       "label_ko": "원진",
-      "base_weight": 0.20,
+      "base_weight": 0.2,
       "confidence": 0.55,
       "strict_mode_required": false,
       "modifiers": {
         "on_spouse_palace": 0.05,
         "conflicts_with_liuhe": 0.05,
-        "resolved_by_he": -0.10
+        "resolved_by_he": -0.1
       },
       "notes": "감정적 틀어짐 신호(輕). 독립 작용보다 보조적 신호로 사용."
     }

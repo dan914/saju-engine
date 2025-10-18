@@ -186,6 +186,8 @@ def _normalize_inputs(inputs: Dict[str, Any], created_at: str) -> List[Dict[str,
             else:
                 from app.core.combination_element import (
                     POLICY_SIGNATURE as _WS,
+                )
+                from app.core.combination_element import (
                     POLICY_VERSION as _WV,
                 )
 

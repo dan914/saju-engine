@@ -1,5 +1,5 @@
 {
-  "id": "PATTERN_BALANCED_CONTEXT",
+  "id": "PATTERN_BALANCED",
   "context": {
     "season": "봄",
     "year": 2025
@@ -24,12 +24,9 @@
   "yongshin": {
     "primary": "목"
   },
-  "sewoon": {
-    "current": "辛酉"
-  },
   "expect": {
     "patterns_include": [
-      "balanced_context"
+      "weak_daymaster"
     ]
   }
 }

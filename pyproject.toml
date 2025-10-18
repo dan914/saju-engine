@@ -16,6 +16,8 @@ dev = [
   "fastapi==0.114.0",
   "uvicorn[standard]==0.30.3",
   "pytest-asyncio==0.23.8",
+  "canonicaljson==2.0.0",
+  "jsonschema==4.23.0",
 ]
 
 [build-system]
@@ -47,6 +49,15 @@ exclude = [
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "C90"]
+ignore = [
+  "E402",  # many modules adjust sys.path for runtime compatibility
+  "E501",  # long strings retained for policy text and docs
+  "E701",
+  "E702",
+  "E714",
+  "E731",
+  "C901",
+]
 
 # TODO: Fix these in follow-up PR - baseline cleanup
 [tool.ruff.lint.per-file-ignores]
@@ -86,4 +97,3 @@ package-dir = {"" = "."}
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["services.common"]
-

@@ -1,33 +1,50 @@
-# 사주 앱 필수 고지/면책 문구 모음 (Copy & Paste)
-
-아래 문장은 서비스 전 영역에서 일관되게 사용해야 하는 고지·면책 문구입니다. 상황에 맞게 그대로 복사하여 붙여넣으세요.
-
----
-
-## 1. AI 활용 고지
-> "본 서비스는 계산 로직을 변경하지 않고, AI는 설명과 문체만 다듬습니다."
-
-## 2. 면책 문구 (건강/법률/재무 등)
-> "제공되는 해석은 참고용으로만 활용해 주세요. 건강, 법률, 재무 등 중대한 의사결정은 반드시 전문가와 상담하시기 바랍니다."
-
-## 3. 개인정보 처리 안내
-> "입력하신 개인 정보는 명시된 목적(사주 분석)으로만 사용되며, 동의 없이 제3자에게 제공되지 않습니다. 삭제 및 내보내기 기능을 통해 언제든지 정보를 관리하실 수 있습니다."
-
-## 4. 타임존/이력 고지
-> "본 서비스는 IANA 타임존 데이터베이스의 역사적 변경 사항(예: 서울 1987–88 서머타임, 평양 2015–2018 +08:30)을 반영합니다."
-
-## 5. 규칙/정책 버전 고지 (근거 보기 고정 라벨)
-> "규칙: KR_classic v1.4 · boundary=LCRO · ε=1ms · 子時23:00"
-
-## 6. LLM 결과 검증 고지
-> "AI가 생성한 요약 내용은 계산 결과를 수정하지 않으며, 필요한 경우 근거 보기 탭에서 세부 근거를 확인하실 수 있습니다."
-
-## 7. 사용자 입력 신뢰도 요청 (선택)
-> "출생 시각의 정확도가 낮을 경우 분석 결과가 달라질 수 있습니다. 가능한 정확한 정보를 입력해 주세요."
-
----
-
-### 사용 가이드
-- 위 문구는 고객용 UI, 이메일, 보고서 등 사용자 접점에 그대로 삽입합니다.
-- 개발 및 QA 환경에서도 동일한 문구를 사용하여 회귀 테스트 시 UI 변경을 감지합니다.
-- 추가로 필요한 법적 고지 사항이 있다면 `docs/DISCLAIMERS.md`에 항목을 추가하고 변경 이력을 기록하세요.
+개인 사주 리포트 면책 및 정책 안내
+리포트의 목적 및 활용 한계
+이 개인 사주 리포트는 사용자의 자기 이해와 방향 설정을 위한 참고 자료로 제공됩니다. 사주팔자(네 가지 기둥) 분석을 통해 삶의 경향성과 성향에 대한 조언과 통찰을 제시하지만, 이는 결정적인 예언이나 보장을 의미하지 않습니다. 운세 해석 결과는 참고사항일 뿐이며, 실제 삶의 결과는 개인의 노력과 환경 등에 따라 달라질 수 있습니다.
+이 리포트는 다음을 목적으로 제공합니다:
+사용자의 생년월일시를 기반으로 한 사주 원국 해석과 개인 성찰에 도움이 되는 정보 제공
+십신(열 가지 신살)과 관계에 대한 요약, 운세의 강약(득령·득지·득생·득조) 평가 등을 통한 전반적인 운세 흐름 안내
+현재부터 미래의 대운 및 세운 변화에 대한 로드맵과 조언 제시
+이 리포트는 다음을 목적으로 하지 않습니다:
+특정 사건이나 미래를 정확히 예언하거나 보장하는 용도
+건강, 재무, 법률 등에 대해 전문적인 조언 또는 결정을 내려주는 용도
+사용자의 삶을 단정짓거나 중요한 결정을 대신하는 용도
+본 리포트의 내용을 바탕으로 내리는 모든 결정은 사용자 본인의 책임입니다. 리포트는 어디까지나 참고자료이며, 중요한 문제에 대해서는 해당 분야의 전문가 상담 등 추가적인 판단 근거를 활용하시기 바랍니다.
+법적 및 윤리적 면책 조항
+본 리포트에 제공된 정보는 일반적인 조언과 통찰을 제공하기 위한 것이며, 어떠한 경우에도 의료적, 법률적 또는 재정적 조언으로 간주되지 않습니다. 리포트의 해석 내용 때문에 발생하는 직접 또는 간접적 손해에 대해 당사는 책임을 지지 않습니다. 특히 건강, 법률, 재무와 관련된 사항은 본 리포트의 내용을 근거로 자기 판단만으로 결정되어서는 안 되며, 필요할 경우 관련 분야의 전문가의 조언을 구하시기 바랍니다. 이 리포트는 운세와 성향에 대한 참고 정보일 뿐, 사용자의 삶을 제한하거나 보장하지 않습니다.
+AI 개입 범위 안내
+본 리포트는 보다 이해하기 쉬운 표현과 서술을 위해 **AI 기술(대규모 언어 모델)**을 일부 활용하여 작성되었습니다. 중요: AI는 사용자의 생년월일시를 바탕으로 산출된 사주 원국과 운세 분석 결과를 변경하지 않습니다. 즉, 모든 운세 계산과 해석의 핵심은 기존 알고리즘과 원칙에 따라 결정되며, AI는 문장을 다듬고 내용을 구성하는 역할만 담당합니다. 리포트에 포함된 사주풀이 내용과 조언은 사주 명리학의 원리에 충실하며, AI 개입은 텍스트의 문체와 가독성 향상에 국한되어 있습니다. 따라서 본문에 사용된 어조나 표현이 부드럽게 다듬어졌을 뿐, 계산된 운세 결과나 해석의 의미는 변함이 없음을 알려드립니다.
+개인정보 처리 및 국외이전 고지
+리포트 생성 과정에서 사용자가 제공한 개인정보(예: 이름, 생년월일시 등 필수 정보)는 오직 운세 해석 및 리포트 생성 목적으로만 사용됩니다. 당사는 개인정보보호법 등 관련 법령을 준수하며, 수집된 개인정보는 최소한의 범위로만 활용됩니다.
+본 서비스의 특성상, 운세 해석을 위한 일부 데이터 처리에 해외 서버 및 AI 서비스를 이용할 수 있습니다. 예를 들어, **리포트 서술을 위한 AI 분석 과정에서 사용자의 정보가 국외(예: 미국 등에 위치한 서버)**로 전송되어 처리될 수 있습니다. 이러한 국외이전은 리포트 제공에 필수적인 절차이며, 당사는 이 과정에서 정보가 안전하게 처리될 수 있도록 적절한 보호조치를 적용합니다.
+수집된 개인정보는 리포트 제공을 위해 필요한 기간 동안에만 보유되며, 이용 목적 달성 후에는 관련 법령에 따라 지체 없이 파기됩니다. 리포트를 신청하시는 것은 이러한 개인정보 처리 및 국외이전에 동의하신 것으로 간주됩니다. 개인정보와 관련된 문의사항이 있으시면 언제든지 당사에 연락하여 주시기 바랍니다.
+출처 및 해석 근거
+본 리포트의 운세 해석은 전통 사주 명리학 이론과 원리에 근거하고 있습니다. 네 기둥으로 이루어진 사주 원국, 십신(十神)과 십이운성 등의 개념을 활용하여 사용자의 성향과 운세를 분석하였으며, 이러한 해석의 근거는 동양 철학 및 명리학의 고전적인 지식체계에 따릅니다.
+또한 리포트에는 투명성을 높이기 위해 “근거 보기” 부록이 포함되어 있습니다. 이 부록에는 사주를 계산하는 과정에서 사용된 절기 변경 시각, ΔT 값 조정, 표준시/시간대 변환 내역 등 기술적인 상세 정보가 기록되어 있습니다. 사용자는 해당 부록을 통해 리포트 내용의 산출 근거와 과정을 확인할 수 있습니다. 이러한 자료는 리포트 결과가 체계적이고 재현 가능한 계산에 기반하고 있음을 보여주며, 사용자의 이해를 돕기 위한 참고용으로 제공됩니다.
+버전 정보
+본 리포트는 사주 해석 알고리즘 및 정책 버전 1.0(2025년 9월 기준)에 따라 생성되었습니다. 당사의 해석 규칙과 알고리즘은 지속적으로 개선 및 업데이트될 수 있으며, 리포트 상의 버전 정보는 최신 변경사항을 반영합니다. 버전 번호와 적용 날짜를 통해 사용자는 해당 리포트가 어떤 규칙과 기준에 따라 작성되었는지 확인할 수 있습니다. 향후 리포트 내용이나 해석 방식에 중요한 변경이 있을 경우, 업데이트된 버전 번호와 개정일을 함께 명시하여 투명성을 유지하겠습니다. 최신 정책 버전에 관한 자세한 내용은 당사 공식 웹사이트 또는 고객센터를 통해 확인하실 수 있습니다.
+Personal Four Pillars Report Disclaimer and Policies
+Purpose and Limitations of the Report
+This personal Four Pillars (Bazi) report is provided as a resource for self-reflection and guidance. It offers insights into your life patterns and tendencies based on your birth data, aiming to give advice and perspective rather than absolute predictions. While the analysis can highlight potential strengths, challenges, and timing in your life, it is not a guarantee of future events. The content of this report should be used as a reference for personal consideration, and actual outcomes in life will vary depending on your own actions and circumstances.
+This report is intended to:
+Provide you with a Four Pillars chart interpretation and insights for personal reflection based on your birth date and time.
+Summarize key factors such as the Ten Gods (십신) relationships and assess the overall balance of energies (including strength indicators like season, terrain, support, timing) to give a general overview of your life’s influences.
+Offer a roadmap of your major luck cycles (10-year Luck Pillars) and annual fortunes, with guidance on potential opportunities and cautionary periods.
+This report is NOT intended to:
+Predict specific events or guarantee outcomes in your future with absolute certainty.
+Serve as professional advice in areas like health, finance, or law, nor to provide any diagnosis, investment planning, or legal counsel.
+Make decisions on your behalf or assert unchangeable destiny; it should not replace your own judgment or consultation with appropriate professionals for important matters.
+Any actions or decisions you undertake based on this report are your personal responsibility. Treat this analysis as informational guidance. For any significant life decisions or issues, consider it a starting point and seek additional advice from qualified professionals as needed.
+Legal and Ethical Disclaimer
+The information in this report is provided in good faith for guidance and personal insight. However, it does not constitute medical, legal, financial, or other professional advice. We make no warranties about the absolute accuracy or completeness of the interpretations. No liability will be accepted by the provider for any consequences (direct or indirect) arising from actions taken based on this report. In particular, regarding health, financial, or legal concerns, this report’s content should not be your sole basis for decisions. Always consider consulting a licensed doctor, financial advisor, attorney, or other relevant professionals for advice pertaining to those fields. This report offers perspective, not certainty, and it respects the fact that each individual’s free will and personal effort play a crucial role in shaping their life.
+Scope of AI Involvement
+To enhance clarity and readability, this report has been prepared with the assistance of AI technology (a large language model). Important: The AI has not altered or biased any of the core astrological calculations or outcomes derived from your birth information. All Four Pillars calculations, analyses of your chart, and the determination of factors like Ten Gods interactions and luck cycles have been generated by our established system and remain exactly as computed. The AI’s role is strictly limited to refining the language and presentation of these results – essentially, helping to phrase the analysis in clear, conversational English. In other words, while the wording and narrative style have been polished by the AI for better understanding, the underlying data, calculations, and interpretations remain unchanged and faithful to the traditional analysis. We want to assure you that the essence and accuracy of your reading are preserved, with AI serving only as a writing assistant.
+Personal Data Handling and Overseas Processing
+In order to generate this report, you provided certain personal information (such as your name, birth date, and birth time). We use this personal data solely for the purpose of calculating and delivering your Four Pillars analysis, and for no other purpose. We are committed to protecting your privacy and adhere to applicable data protection laws in handling your information.
+Please be aware that, as part of the report generation process (for example, during AI-based analysis and text generation), your data may be processed on secure servers located outside your home country. This could include servers in other countries (e.g., the United States) where our computational or AI services are hosted. Such transfer of data is only done out of necessity to produce the report, and we take appropriate measures to ensure your information is handled safely and securely during this process.
+Your personal data is retained only for as long as necessary to fulfill the report request and provide our service. After your report is generated and delivered, any personally identifying data is either not stored at all, or is securely deleted in accordance with our data retention policies and relevant laws. By requesting this report, you acknowledge and consent that your information may be processed in this manner (including internationally) for the purpose of providing you with the service. If you have any questions or concerns about how your data is used, please contact us and we will be happy to provide more information.
+Sources and Basis of Interpretation
+The interpretations and analyses presented in this report are based on classical Four Pillars of Destiny (Bazi) principles and trusted astrological sources. We derive insights using established methods from Eastern astrology, including the calculation of Heavenly Stems and Earthly Branches of your birth chart, the Ten Gods theory, twelve life stages, and other traditional metrics. Our system relies on well-known formulas and references in oriental metaphysics to ensure that the reading is grounded in authentic methodology.
+For transparency and those interested, we have included a “Basis & Calculations” appendix with this report. In that appendix, you will find detailed technical information such as the exact timing of solar terms (节气), any ΔT (Delta T) time corrections applied, and timezone conversion logs used in computing your chart. This information shows the step-by-step foundation of how your Four Pillars chart and luck cycles were calculated. Providing these details allows you to verify the computational basis of your reading and illustrates that the results are based on systematic, reproducible calculations rather than guesswork. We encourage you to review the appendix if you are interested in the technical aspects or sources behind your report.
+Version Information
+This report has been generated using our Four Pillars analysis engine and guidelines version 1.0 (as of September 2025). We continuously improve our interpretation rules and technical algorithms to provide more accurate and insightful readings. The version number and date are provided so you know which set of rules and updates were applied to your report. As our system evolves, any significant changes in the analytical process or interpretative content will be reflected by an updated version number and date on future reports. We remain committed to transparency; therefore, if there are major updates or revisions to our methodology, we will clearly communicate those in the report’s version information or through our official website and support channels. By providing the version info, we ensure you are aware of the context and timeframe of the knowledge and rules that shaped your reading.

@@ -391,16 +391,16 @@ BirthDateTimeValidator.validate_datetime_object(
 **Ten Gods Mapping:**
 ```
 Day Master (日主) relationships:
-- 比肩 (Bi Jian) - Shoulder to shoulder (same element, same yin/yang)
-- 劫財 (Jie Cai) - Robbing wealth (same element, opposite yin/yang)
-- 食神 (Shi Shen) - Eating god (produced by day master, same yin/yang)
-- 傷官 (Shang Guan) - Hurting officer (produced, opposite yin/yang)
-- 偏財 (Pian Cai) - Indirect wealth (controlled, same yin/yang)
-- 正財 (Zheng Cai) - Direct wealth (controlled, opposite yin/yang)
-- 七殺 (Qi Sha) - Seven killings (controls day master, same yin/yang)
-- 正官 (Zheng Guan) - Direct officer (controls, opposite yin/yang)
-- 偏印 (Pian Yin) - Indirect seal (produces day master, same yin/yang)
-- 正印 (Zheng Yin) - Direct seal (produces, opposite yin/yang)
+- 比肩 (비견, Bi Jian) - Shoulder to shoulder (same element, same yin/yang)
+- 劫財 (겁재, Jie Cai) - Robbing wealth (same element, opposite yin/yang)
+- 食神 (식신, Shi Shen) - Eating god (produced by day master, same yin/yang)
+- 傷官 (상관, Shang Guan) - Hurting officer (produced, opposite yin/yang)
+- 偏財 (편재, Pian Cai) - Indirect wealth (controlled, same yin/yang)
+- 正財 (정재, Zheng Cai) - Direct wealth (controlled, opposite yin/yang)
+- 七殺 (편관/칠살, Qi Sha) - Seven killings (controls day master, same yin/yang)
+- 正官 (정관, Zheng Guan) - Direct officer (controls, opposite yin/yang)
+- 偏印 (편인, Pian Yin) - Indirect seal (produces day master, same yin/yang)
+- 正印 (정인, Zheng Yin) - Direct seal (produces, opposite yin/yang)
 ```
 
 ---
