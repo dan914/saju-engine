@@ -21,7 +21,9 @@ from typing import Any, Dict
 class TwelveStagesCalculator:
     """Calculate Twelve Life Stages for each pillar position."""
 
-    def __init__(self, policy: Dict[str, Any], *, output_policy_version: str = "twelve_stages_v1.0"):
+    def __init__(
+        self, policy: Dict[str, Any], *, output_policy_version: str = "twelve_stages_v1.0"
+    ):
         self.policy = policy
         self.output_policy_version = output_policy_version
         self.mappings = policy["mappings"]
@@ -56,7 +58,7 @@ class TwelveStagesCalculator:
             "by_pillar": {},
             "summary": {},
             "dominant": [],
-            "weakest": []
+            "weakest": [],
         }
 
         # Calculate stage for each pillar
@@ -73,7 +75,7 @@ class TwelveStagesCalculator:
                 "branch": branch,
                 "stage_zh": stage_zh,
                 "stage_ko": stage_ko,
-                "stage_en": stage_en
+                "stage_en": stage_en,
             }
 
             # Count for summary

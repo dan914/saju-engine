@@ -18,6 +18,7 @@ Usage:
 Version: 1.0.0
 Date: 2025-10-10
 """
+
 import csv
 from dataclasses import dataclass
 from datetime import datetime
@@ -34,6 +35,7 @@ class SolarTermEntry:
         term: Chinese name of solar term (e.g., "立春", "小寒")
         utc_time: Exact UTC datetime of solar term occurrence
     """
+
     term: str
     utc_time: datetime
 
@@ -50,6 +52,7 @@ class FileSolarTermLoader:
     Attributes:
         table_path: Path to directory containing terms_YYYY.csv files
     """
+
     table_path: Path
 
     def load_year(self, year: int) -> Iterable[SolarTermEntry]:
@@ -75,18 +78,12 @@ class FileSolarTermLoader:
 
         if not file_path.exists():
             raise FileNotFoundError(
-                f"Solar term data missing for year {year}. "
-                f"Expected file: {file_path}"
+                f"Solar term data missing for year {year}. " f"Expected file: {file_path}"
             )
 
         with file_path.open("r", encoding="utf-8") as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 # Parse ISO 8601 UTC timestamp
-                utc_time = datetime.fromisoformat(
-                    row["utc_time"].replace("Z", "+00:00")
-                )
-                yield SolarTermEntry(
-                    term=row["term"],
-                    utc_time=utc_time
-                )
+                utc_time = datetime.fromisoformat(row["utc_time"].replace("Z", "+00:00"))
+                yield SolarTermEntry(term=row["term"], utc_time=utc_time)

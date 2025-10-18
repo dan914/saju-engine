@@ -36,15 +36,20 @@ def build_scenario_1_신약():
             "evidence": {
                 "strength": {"level": "신약", "score": 25},
                 "relations": {"sanhe": [{"element": "木", "formed": True}]},
-                "ten_gods": {"summary": "정관격"}
+                "ten_gods": {"summary": "정관격"},
             },
             "candidate_answer": "일간이 약하므로 목(木)과 수(水)로 보강하는 것이 중요합니다.",
             "engine_summaries": {
                 "strength": {"score": 0.25, "bucket": "신약", "confidence": 0.8},
                 "relation_summary": {
-                    "sanhe": 0.7, "liuhe": 0.0, "ganhe": 0.0,
-                    "chong": 0.0, "xing": 0.0, "hai": 0.0,
-                    "sanhe_element": "木", "ganhe_result": ""
+                    "sanhe": 0.7,
+                    "liuhe": 0.0,
+                    "ganhe": 0.0,
+                    "chong": 0.0,
+                    "xing": 0.0,
+                    "hai": 0.0,
+                    "sanhe_element": "木",
+                    "ganhe_result": "",
                 },
                 "relation_items": [
                     {
@@ -54,21 +59,21 @@ def build_scenario_1_신약():
                         "strict_mode_required": True,
                         "formed": True,
                         "hua": False,
-                        "element": "木"
+                        "element": "木",
                     }
                 ],
                 "yongshin_result": {
                     "yongshin": ["木", "水"],
                     "bojosin": [],
                     "confidence": 0.75,
-                    "strategy": "부억"
+                    "strategy": "부억",
                 },
-                "climate": {"season_element": "火", "support": "보통"}
+                "climate": {"season_element": "火", "support": "보통"},
             },
-            "policy_context": {"locale": "ko-KR", "ui_mode": "explainable"}
+            "policy_context": {"locale": "ko-KR", "ui_mode": "explainable"},
         },
         "expected_verdict": "allow",
-        "expected_rules_triggered": []
+        "expected_rules_triggered": [],
     }
 
 
@@ -84,15 +89,20 @@ def build_scenario_2_중화():
             "evidence": {
                 "strength": {"level": "중화", "score": 50},
                 "relations": {"liuhe": [{"element": "土", "formed": True}]},
-                "ten_gods": {"summary": "정관격"}
+                "ten_gods": {"summary": "정관격"},
             },
             "candidate_answer": "일간의 강약이 균형을 이루고 있으므로 현 상태를 유지하는 것이 좋습니다.",
             "engine_summaries": {
                 "strength": {"score": 0.50, "bucket": "중화", "confidence": 0.8},
                 "relation_summary": {
-                    "sanhe": 0.0, "liuhe": 0.5, "ganhe": 0.0,
-                    "chong": 0.0, "xing": 0.0, "hai": 0.0,
-                    "sanhe_element": "", "ganhe_result": ""
+                    "sanhe": 0.0,
+                    "liuhe": 0.5,
+                    "ganhe": 0.0,
+                    "chong": 0.0,
+                    "xing": 0.0,
+                    "hai": 0.0,
+                    "sanhe_element": "",
+                    "ganhe_result": "",
                 },
                 "relation_items": [
                     {
@@ -102,21 +112,21 @@ def build_scenario_2_중화():
                         "strict_mode_required": False,
                         "formed": True,
                         "hua": False,
-                        "element": "土"
+                        "element": "土",
                     }
                 ],
                 "yongshin_result": {
                     "yongshin": ["土"],
                     "bojosin": [],
                     "confidence": 0.70,
-                    "strategy": "조후"
+                    "strategy": "조후",
                 },
-                "climate": {"season_element": "土", "support": "강"}
+                "climate": {"season_element": "土", "support": "강"},
             },
-            "policy_context": {"locale": "ko-KR", "ui_mode": "explainable"}
+            "policy_context": {"locale": "ko-KR", "ui_mode": "explainable"},
         },
         "expected_verdict": "allow",
-        "expected_rules_triggered": []
+        "expected_rules_triggered": [],
     }
 
 
@@ -132,15 +142,20 @@ def build_scenario_3_신강():
             "evidence": {
                 "strength": {"level": "신강", "score": 75},
                 "relations": {"chong": [{"element": "金", "formed": True}]},
-                "ten_gods": {"summary": "식신격"}
+                "ten_gods": {"summary": "식신격"},
             },
             "candidate_answer": "일간이 강하므로 금(金)과 수(水)로 설기하여 균형을 맞추는 것이 필요합니다.",
             "engine_summaries": {
                 "strength": {"score": 0.75, "bucket": "신강", "confidence": 0.8},
                 "relation_summary": {
-                    "sanhe": 0.0, "liuhe": 0.0, "ganhe": 0.0,
-                    "chong": 0.6, "xing": 0.0, "hai": 0.0,
-                    "sanhe_element": "", "ganhe_result": ""
+                    "sanhe": 0.0,
+                    "liuhe": 0.0,
+                    "ganhe": 0.0,
+                    "chong": 0.6,
+                    "xing": 0.0,
+                    "hai": 0.0,
+                    "sanhe_element": "",
+                    "ganhe_result": "",
                 },
                 "relation_items": [
                     {
@@ -150,21 +165,21 @@ def build_scenario_3_신강():
                         "strict_mode_required": False,
                         "formed": True,
                         "hua": False,
-                        "element": "金"
+                        "element": "金",
                     }
                 ],
                 "yongshin_result": {
                     "yongshin": ["金", "水"],
                     "bojosin": [],
                     "confidence": 0.70,
-                    "strategy": "억부"
+                    "strategy": "억부",
                 },
-                "climate": {"season_element": "水", "support": "강"}
+                "climate": {"season_element": "水", "support": "강"},
             },
-            "policy_context": {"locale": "ko-KR", "ui_mode": "explainable"}
+            "policy_context": {"locale": "ko-KR", "ui_mode": "explainable"},
         },
         "expected_verdict": "allow",
-        "expected_rules_triggered": []
+        "expected_rules_triggered": [],
     }
 
 
@@ -197,24 +212,21 @@ def run_smoke_test(guard: LLMGuardV11, scenario: dict) -> dict:
         "risk_score": result["risk"]["score"],
         "risk_level": result["risk"]["level"],
         "evaluation_time_ms": result["meta"]["evaluation_time_ms"],
-        "full_result": result
+        "full_result": result,
     }
 
 
 def format_summary(results: list) -> str:
     """Format compact summary for stdout"""
-    lines = [
-        "=" * 60,
-        "E2E Smoke Test Results — LLM Guard v1.1",
-        "=" * 60,
-        ""
-    ]
+    lines = ["=" * 60, "E2E Smoke Test Results — LLM Guard v1.1", "=" * 60, ""]
 
     for r in results:
         status = "✅ PASS" if r["verdict_match"] else "❌ FAIL"
         lines.append(f"{status} | {r['scenario']}")
         lines.append(f"    Expected: {r['expected_verdict']} | Actual: {r['actual_verdict']}")
-        lines.append(f"    Risk: {r['risk_level']} ({r['risk_score']}) | Time: {r['evaluation_time_ms']:.2f}ms")
+        lines.append(
+            f"    Risk: {r['risk_level']} ({r['risk_score']}) | Time: {r['evaluation_time_ms']:.2f}ms"
+        )
         if r["rules_triggered"]:
             lines.append(f"    Triggered: {', '.join(r['rules_triggered'])}")
         lines.append("")
@@ -236,7 +248,7 @@ def format_detailed_report(results: list) -> str:
         "**Policy:** policy/llm_guard_policy_v1.1.json",
         "**Scenarios:** 3 (신약/중화/신강)\n",
         "---\n",
-        "## Test Results\n"
+        "## Test Results\n",
     ]
 
     for r in results:
@@ -292,11 +304,7 @@ def main():
     guard = LLMGuardV11("policy/llm_guard_policy_v1.1.json")
 
     print("Building test scenarios...")
-    scenarios = [
-        build_scenario_1_신약(),
-        build_scenario_2_중화(),
-        build_scenario_3_신강()
-    ]
+    scenarios = [build_scenario_1_신약(), build_scenario_2_중화(), build_scenario_3_신강()]
 
     print(f"Running {len(scenarios)} smoke tests...\n")
     results = []

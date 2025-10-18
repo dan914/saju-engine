@@ -8,6 +8,7 @@ for cross-engine consistency validation.
 Version: 1.0.0
 Date: 2025-10-09 KST
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict, List
@@ -103,15 +104,11 @@ class EngineSummariesBuilder:
             # Extract element results for sanhe/ganhe
             if rel_type == "sanhe" and not relation_summary["sanhe_element"]:
                 # Priority: element field, then b field (result element)
-                relation_summary["sanhe_element"] = (
-                    item.get("element", "") or item.get("b", "")
-                )
+                relation_summary["sanhe_element"] = item.get("element", "") or item.get("b", "")
 
             if rel_type == "ganhe" and item.get("hua", False):
                 # Ganhe with hua (化) - transformation completed
-                relation_summary["ganhe_result"] = (
-                    item.get("element", "") or item.get("b", "")
-                )
+                relation_summary["ganhe_result"] = item.get("element", "") or item.get("b", "")
 
         # Build final structure
         return {
@@ -184,12 +181,12 @@ class EngineSummariesBuilder:
         - 害: Lower impact (0.45)
         """
         weights = {
-            "sanhe": 0.85,    # 三合 - Strong combination
-            "he6": 0.75,      # 六合 - Harmony
-            "chong": 0.90,    # 沖 - Strong clash
-            "xing": 0.70,     # 刑 - Punishment
-            "po": 0.50,       # 破 - Break
-            "hai": 0.45,      # 害 - Harm
+            "sanhe": 0.85,  # 三合 - Strong combination
+            "he6": 0.75,  # 六合 - Harmony
+            "chong": 0.90,  # 沖 - Strong clash
+            "xing": 0.70,  # 刑 - Punishment
+            "po": 0.50,  # 破 - Break
+            "hai": 0.45,  # 害 - Harm
         }
 
         return weights.get(rel_type, 0.60)  # Default for unknown types
@@ -213,9 +210,7 @@ class EngineSummariesBuilder:
         strength = {
             "score": normalized_score,
             "bucket": bucket,
-            "confidence": EngineSummariesBuilder._calculate_strength_confidence(
-                raw_score, bucket
-            ),
+            "confidence": EngineSummariesBuilder._calculate_strength_confidence(raw_score, bucket),
         }
 
         # Extract relations
@@ -224,16 +219,18 @@ class EngineSummariesBuilder:
         for rel_type in ["he6", "sanhe", "chong", "xing", "po", "hai"]:
             items = relations_data.get(rel_type, [])
             for item in items:
-                relation_items.append({
-                    "type": rel_type,
-                    "impact_weight": EngineSummariesBuilder._calculate_relation_impact_weight(
-                        rel_type
-                    ),
-                    "formed": True,
-                    "hua": item.get("hua", False),
-                    "element": item.get("element", ""),
-                    **item
-                })
+                relation_items.append(
+                    {
+                        "type": rel_type,
+                        "impact_weight": EngineSummariesBuilder._calculate_relation_impact_weight(
+                            rel_type
+                        ),
+                        "formed": True,
+                        "hua": item.get("hua", False),
+                        "element": item.get("element", ""),
+                        **item,
+                    }
+                )
 
         # Extract yongshin
         yongshin_data = result.get("yongshin", {})

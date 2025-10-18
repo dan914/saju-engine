@@ -29,7 +29,7 @@ LABELS_KO = {
     "害": "해",
     "刑_三刑": "삼형",
     "刑_自刑": "자형",
-    "刑_偏刑": "편형"
+    "刑_偏刑": "편형",
 }
 
 LABELS_EN = {
@@ -43,7 +43,7 @@ LABELS_EN = {
     "害": "hai",
     "刑_三刑": "xing-tri",
     "刑_自刑": "xing-self",
-    "刑_偏刑": "xing-bias"
+    "刑_偏刑": "xing-bias",
 }
 
 # Nature classification (auspicious/neutral/inauspicious)
@@ -58,7 +58,7 @@ NATURE_MAP = {
     "害": "inauspicious",
     "刑_三刑": "inauspicious",
     "刑_自刑": "inauspicious",
-    "刑_偏刑": "inauspicious"
+    "刑_偏刑": "inauspicious",
 }
 
 # Score ranges for each relationship type
@@ -73,7 +73,7 @@ SCORE_RANGES = {
     "害": {"min": -8, "max": 0},
     "刑_三刑": {"min": -12, "max": 0},
     "刑_自刑": {"min": -6, "max": 0},
-    "刑_偏刑": {"min": -10, "max": 0}
+    "刑_偏刑": {"min": -10, "max": 0},
 }
 
 
@@ -104,7 +104,7 @@ def transform_attenuation(old_policy: Dict[str, Any]) -> List[Dict[str, Any]]:
         new_rule = {
             "when": f"{condition} present",
             "attenuate": attenuate,
-            "factor": rule["factor"]
+            "factor": rule["factor"],
         }
         new_rules.append(new_rule)
 
@@ -135,13 +135,10 @@ def transform_confidence_rules(policy: Dict[str, Any]) -> Dict[str, Any]:
         "normalization": {
             "score_range": {
                 "min": score_bounds.get("min", -20),
-                "max": score_bounds.get("max", 20)
+                "max": score_bounds.get("max", 20),
             },
-            "priority_range": {
-                "min": 0,
-                "max": 100
-            }
-        }
+            "priority_range": {"min": 0, "max": 100},
+        },
     }
 
 
@@ -175,15 +172,15 @@ def transform_rules_to_relationships(flat_rules: List[Dict[str, Any]]) -> Dict[s
                 "label_en": LABELS_EN.get(kind, kind.lower()),
                 "nature": NATURE_MAP.get(kind, "neutral"),
                 "score_range": SCORE_RANGES.get(kind, {"min": -10, "max": 10}),
-                "rules": []
+                "rules": [],
             }
 
         # Transform rule fields
         transformed_rule = {
-            "branches": rule["pattern"],           # Rename: pattern → branches
+            "branches": rule["pattern"],  # Rename: pattern → branches
             "priority": rule["priority"],
-            "score_hint": rule["score_delta"],     # Rename: score_delta → score_hint
-            "note_ko": rule.get("notes_ko", "")    # Rename: notes_ko → note_ko
+            "score_hint": rule["score_delta"],  # Rename: score_delta → score_hint
+            "note_ko": rule.get("notes_ko", ""),  # Rename: notes_ko → note_ko
         }
 
         # Add optional fields if present
@@ -194,12 +191,10 @@ def transform_rules_to_relationships(flat_rules: List[Dict[str, Any]]) -> Dict[s
         if "刑" in kind:
             if "directionality" in rule:
                 # Map directionality to xing_type
-                dir_map = {
-                    "self": "self",
-                    "cyclic": "punishment_of_power",
-                    "mutual": "ungrateful"
-                }
-                transformed_rule["xing_type"] = dir_map.get(rule["directionality"], rule["directionality"])
+                dir_map = {"self": "self", "cyclic": "punishment_of_power", "mutual": "ungrateful"}
+                transformed_rule["xing_type"] = dir_map.get(
+                    rule["directionality"], rule["directionality"]
+                )
 
             # Add stacking behavior for self-punishment
             if rule["directionality"] == "self":
@@ -243,33 +238,30 @@ def migrate_policy(input_path: Path, output_path: Path, backup_path: Path = None
         "version": old_policy.get("version", "1.1"),
         "policy_name": "relation_policy",  # Schema constant
         "description": old_policy.get("description", ""),
-
         # Keep existing conservation structure (already correct)
         "conservation": old_policy.get("conservation", {}),
-
         # Transformed fields
         "confidence_rules": transform_confidence_rules(old_policy),
         "mutual_exclusion_groups": old_policy.get("mutual_exclusion_groups", []),
         "attenuation_rules": transform_attenuation(old_policy),
         "relationships": transform_rules_to_relationships(old_policy.get("rules", [])),
-
         # New required fields
         "aggregation": {
-            "score_formula": old_policy.get("aggregation_contract", {}).get("method", "weighted_sum"),
-            "score_note_ko": "가중합 계산: Σ(score_delta × weight × attenuation_factor)"
+            "score_formula": old_policy.get("aggregation_contract", {}).get(
+                "method", "weighted_sum"
+            ),
+            "score_note_ko": "가중합 계산: Σ(score_delta × weight × attenuation_factor)",
         },
-
         "evidence_template": {
             "relation_type": "",
             "branches_involved": [],
             "element_produced": None,
             "conservation_detail": {},
             "attenuation_applied": None,
-            "confidence": 0.0
+            "confidence": 0.0,
         },
-
         # Keep CI checks (already correct)
-        "ci_checks": old_policy.get("ci_checks", [])
+        "ci_checks": old_policy.get("ci_checks", []),
     }
 
     # Write migrated policy
@@ -297,9 +289,21 @@ def migrate_policy(input_path: Path, output_path: Path, backup_path: Path = None
 
 if __name__ == "__main__":
     repo_root = Path(__file__).parent.parent
-    input_path = repo_root / "saju_codex_batch_all_v2_6_signed" / "policies" / "relation_policy.json"
-    backup_path = repo_root / "saju_codex_batch_all_v2_6_signed" / "policies" / "relation_policy_v1.1_backup.json"
-    output_path = repo_root / "saju_codex_batch_all_v2_6_signed" / "policies" / "relation_policy_migrated.json"
+    input_path = (
+        repo_root / "saju_codex_batch_all_v2_6_signed" / "policies" / "relation_policy.json"
+    )
+    backup_path = (
+        repo_root
+        / "saju_codex_batch_all_v2_6_signed"
+        / "policies"
+        / "relation_policy_v1.1_backup.json"
+    )
+    output_path = (
+        repo_root
+        / "saju_codex_batch_all_v2_6_signed"
+        / "policies"
+        / "relation_policy_migrated.json"
+    )
 
     if not input_path.exists():
         print(f"❌ Error: Input file not found: {input_path}")
@@ -319,5 +323,6 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"❌ Error during migration: {e}")
         import traceback
+
         traceback.print_exc()
         exit(1)

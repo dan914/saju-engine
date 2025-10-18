@@ -12,6 +12,7 @@ Version: 1.1.0
 Date: 2025-10-09 KST
 Policy: policy/llm_guard_policy_v1.1.json
 """
+
 import json
 import re
 import time
@@ -70,12 +71,7 @@ class LLMGuardV11:
             "AMBIG-800": self._eval_ambig_800,
         }
 
-    def decide(
-        self,
-        payload: Dict[str, Any],
-        *,
-        timeout_ms: int = 1500
-    ) -> Dict[str, Any]:
+    def decide(self, payload: Dict[str, Any], *, timeout_ms: int = 1500) -> Dict[str, Any]:
         """
         Evaluate candidate answer against all rules.
 
@@ -110,31 +106,33 @@ class LLMGuardV11:
         # Sequential rule evaluation (fail-fast on first error)
         for rule_id in self.eval_order:
             if rule_id not in self.evaluators:
-                trace.append({
-                    "rule_id": rule_id,
-                    "result": "skip",
-                    "note_ko": f"평가기 미구현: {rule_id}"
-                })
+                trace.append(
+                    {"rule_id": rule_id, "result": "skip", "note_ko": f"평가기 미구현: {rule_id}"}
+                )
                 continue
 
             evaluator = self.evaluators[rule_id]
             result = evaluator(evidence, candidate, summaries, context)
 
-            trace.append({
-                "rule_id": rule_id,
-                "result": result["result"],  # "pass" | "fail"
-                "evidence_refs": result.get("evidence_refs", []),
-                "note_ko": result.get("note_ko", "")
-            })
+            trace.append(
+                {
+                    "rule_id": rule_id,
+                    "result": result["result"],  # "pass" | "fail"
+                    "evidence_refs": result.get("evidence_refs", []),
+                    "note_ko": result.get("note_ko", ""),
+                }
+            )
 
             if result["result"] == "fail":
-                violations.append({
-                    "rule_id": rule_id,
-                    "severity": self.rules[rule_id]["severity"],
-                    "reason_code": result.get("reason_code", "GENERIC"),
-                    "description_ko": result.get("description_ko", ""),
-                    "evidence_refs": result.get("evidence_refs", [])
-                })
+                violations.append(
+                    {
+                        "rule_id": rule_id,
+                        "severity": self.rules[rule_id]["severity"],
+                        "reason_code": result.get("reason_code", "GENERIC"),
+                        "description_ko": result.get("description_ko", ""),
+                        "evidence_refs": result.get("evidence_refs", []),
+                    }
+                )
 
                 # Fail-fast on first error (per v1.1 policy)
                 if self.rules[rule_id]["severity"] == "error":
@@ -156,20 +154,17 @@ class LLMGuardV11:
             "logs": {
                 "trace": trace,
                 "redactions": [],  # TODO: Implement PII redaction
-                "recommendations": self._generate_recommendations(violations, verdict)
+                "recommendations": self._generate_recommendations(violations, verdict),
             },
             "meta": {
                 "guard_version": self.version,
                 "evaluation_time_ms": round(elapsed_ms, 2),
-                "timeout_applied": elapsed_ms >= timeout_ms
-            }
+                "timeout_applied": elapsed_ms >= timeout_ms,
+            },
         }
 
     def revise_once(
-        self,
-        payload: Dict[str, Any],
-        remediations: List[str],
-        model_fn: callable
+        self, payload: Dict[str, Any], remediations: List[str], model_fn: callable
     ) -> Dict[str, Any]:
         """
         Retry generation with remediation guidance (1 attempt only).
@@ -196,18 +191,25 @@ class LLMGuardV11:
                 "violations": [],
                 "risk": {"score": 30, "level": "MEDIUM"},
                 "logs": {
-                    "trace": [{"rule_id": "REVISE-ERROR", "result": "fail", "note_ko": f"재생성 실패: {e}"}],
+                    "trace": [
+                        {
+                            "rule_id": "REVISE-ERROR",
+                            "result": "fail",
+                            "note_ko": f"재생성 실패: {e}",
+                        }
+                    ],
                     "redactions": [],
-                    "recommendations": ["재생성 중 오류 발생. 수동 검토 권장."]
+                    "recommendations": ["재생성 중 오류 발생. 수동 검토 권장."],
                 },
-                "meta": {"guard_version": self.version, "evaluation_time_ms": 0, "timeout_applied": True}
+                "meta": {
+                    "guard_version": self.version,
+                    "evaluation_time_ms": 0,
+                    "timeout_applied": True,
+                },
             }
 
         # Re-evaluate with revised candidate
-        revised_payload = {
-            **payload,
-            "candidate_answer": revised_candidate
-        }
+        revised_payload = {**payload, "candidate_answer": revised_candidate}
         return self.decide(revised_payload)
 
     # ============================================================
@@ -215,11 +217,7 @@ class LLMGuardV11:
     # ============================================================
 
     def _eval_struct_000(
-        self,
-        evidence: Dict,
-        candidate: str,
-        summaries: Dict,
-        context: Dict
+        self, evidence: Dict, candidate: str, summaries: Dict, context: Dict
     ) -> Dict[str, Any]:
         """
         STRUCT-000: 필수 필드 존재 검증
@@ -238,20 +236,13 @@ class LLMGuardV11:
                 "reason_code": "MISSING-FIELDS",
                 "description_ko": f"필수 필드 누락: {', '.join(missing) if missing else '답변 텍스트 비어있음'}",
                 "evidence_refs": missing,
-                "note_ko": "구조 검증 실패 - 재생성 불가"
+                "note_ko": "구조 검증 실패 - 재생성 불가",
             }
 
-        return {
-            "result": "pass",
-            "note_ko": "구조 검증 통과"
-        }
+        return {"result": "pass", "note_ko": "구조 검증 통과"}
 
     def _eval_evid_bind_100(
-        self,
-        evidence: Dict,
-        candidate: str,
-        summaries: Dict,
-        context: Dict
+        self, evidence: Dict, candidate: str, summaries: Dict, context: Dict
     ) -> Dict[str, Any]:
         """
         EVID-BIND-100: 증거 기반 진술 검증
@@ -270,17 +261,10 @@ class LLMGuardV11:
                 # TODO: Implement semantic matching
                 pass
 
-        return {
-            "result": "pass",
-            "note_ko": "증거 기반 검증 통과"
-        }
+        return {"result": "pass", "note_ko": "증거 기반 검증 통과"}
 
     def _eval_scope_200(
-        self,
-        evidence: Dict,
-        candidate: str,
-        summaries: Dict,
-        context: Dict
+        self, evidence: Dict, candidate: str, summaries: Dict, context: Dict
     ) -> Dict[str, Any]:
         """
         SCOPE-200: 업무 범위 내 응답 검증
@@ -300,20 +284,13 @@ class LLMGuardV11:
                     "result": "fail",
                     "reason_code": "OUT-OF-SCOPE",
                     "description_ko": "업무 범위 외 주제 감지",
-                    "note_ko": "사주 분석 범위를 벗어남"
+                    "note_ko": "사주 분석 범위를 벗어남",
                 }
 
-        return {
-            "result": "pass",
-            "note_ko": "업무 범위 검증 통과"
-        }
+        return {"result": "pass", "note_ko": "업무 범위 검증 통과"}
 
     def _eval_modal_300(
-        self,
-        evidence: Dict,
-        candidate: str,
-        summaries: Dict,
-        context: Dict
+        self, evidence: Dict, candidate: str, summaries: Dict, context: Dict
     ) -> Dict[str, Any]:
         """
         MODAL-300: 양상 표현 검증
@@ -332,20 +309,13 @@ class LLMGuardV11:
                     "result": "fail",
                     "reason_code": "OVERLY-DEFINITIVE",
                     "description_ko": "단정적 표현 사용",
-                    "note_ko": "'경향이 있습니다', '가능성이 있습니다' 등 완화 표현 권장"
+                    "note_ko": "'경향이 있습니다', '가능성이 있습니다' 등 완화 표현 권장",
                 }
 
-        return {
-            "result": "pass",
-            "note_ko": "양상 표현 검증 통과"
-        }
+        return {"result": "pass", "note_ko": "양상 표현 검증 통과"}
 
     def _eval_conf_low_310(
-        self,
-        evidence: Dict,
-        candidate: str,
-        summaries: Dict,
-        context: Dict
+        self, evidence: Dict, candidate: str, summaries: Dict, context: Dict
     ) -> Dict[str, Any]:
         """
         CONF-LOW-310: 낮은 신뢰도 검증
@@ -363,20 +333,13 @@ class LLMGuardV11:
                 "reason_code": "CONFIDENCE-LOW",
                 "description_ko": f"평균 신뢰도 {avg_conf:.2f} < 0.40",
                 "evidence_refs": ["strength.confidence", "yongshin.confidence"],
-                "note_ko": "신뢰도가 낮습니다. 해석 결과를 주의 깊게 검토하세요."
+                "note_ko": "신뢰도가 낮습니다. 해석 결과를 주의 깊게 검토하세요.",
             }
 
-        return {
-            "result": "pass",
-            "note_ko": f"신뢰도 검증 통과 (avg={avg_conf:.2f})"
-        }
+        return {"result": "pass", "note_ko": f"신뢰도 검증 통과 (avg={avg_conf:.2f})"}
 
     def _eval_rel_400(
-        self,
-        evidence: Dict,
-        candidate: str,
-        summaries: Dict,
-        context: Dict
+        self, evidence: Dict, candidate: str, summaries: Dict, context: Dict
     ) -> Dict[str, Any]:
         """
         REL-400: 관계 검증
@@ -384,17 +347,10 @@ class LLMGuardV11:
         Checks relations (sanhe/chong/etc.) mentioned in candidate are in evidence.
         """
         # TODO: Implement semantic relation matching
-        return {
-            "result": "pass",
-            "note_ko": "관계 검증 통과"
-        }
+        return {"result": "pass", "note_ko": "관계 검증 통과"}
 
     def _eval_rel_overweight_410(
-        self,
-        evidence: Dict,
-        candidate: str,
-        summaries: Dict,
-        context: Dict
+        self, evidence: Dict, candidate: str, summaries: Dict, context: Dict
     ) -> Dict[str, Any]:
         """
         REL-OVERWEIGHT-410: 관계 과대 평가 검증
@@ -412,27 +368,22 @@ class LLMGuardV11:
             # If strict_mode_required but not formed, and mentioned prominently
             if strict_required and not formed:
                 # Check if relation type appears in candidate
-                rel_type_ko = {"sanhe": "삼합", "chong": "충", "xing": "형"}.get(item.get("type"), "")
+                rel_type_ko = {"sanhe": "삼합", "chong": "충", "xing": "형"}.get(
+                    item.get("type"), ""
+                )
                 if rel_type_ko and rel_type_ko in candidate:
                     return {
                         "result": "fail",
                         "reason_code": "RELATION-OVERWEIGHT",
                         "description_ko": f"{rel_type_ko} 관계가 성립하지 않았으나 강조됨",
                         "evidence_refs": [f"relation.{item.get('type')}"],
-                        "note_ko": f"conditions_met={len(conditions_met)}, formed={formed}"
+                        "note_ko": f"conditions_met={len(conditions_met)}, formed={formed}",
                     }
 
-        return {
-            "result": "pass",
-            "note_ko": "관계 과대 평가 검증 통과"
-        }
+        return {"result": "pass", "note_ko": "관계 과대 평가 검증 통과"}
 
     def _eval_consist_450(
-        self,
-        evidence: Dict,
-        candidate: str,
-        summaries: Dict,
-        context: Dict
+        self, evidence: Dict, candidate: str, summaries: Dict, context: Dict
     ) -> Dict[str, Any]:
         """
         CONSIST-450: 엔진 간 일관성 검증
@@ -456,7 +407,7 @@ class LLMGuardV11:
                 "reason_code": "CONSIST-MISMATCH",
                 "description_ko": f"{bucket} 상태인데 {strategy} 전략 사용 (불일치)",
                 "evidence_refs": ["strength.bucket", "yongshin.strategy"],
-                "note_ko": "신약은 부억(보강) 전략이 적합합니다"
+                "note_ko": "신약은 부억(보강) 전략이 적합합니다",
             }
 
         # Check 신강 + 부억 mismatch (strong + support = bad)
@@ -466,20 +417,13 @@ class LLMGuardV11:
                 "reason_code": "CONSIST-MISMATCH",
                 "description_ko": f"{bucket} 상태인데 {strategy} 전략 사용 (불일치)",
                 "evidence_refs": ["strength.bucket", "yongshin.strategy"],
-                "note_ko": "신강은 억부(억제) 전략이 적합합니다"
+                "note_ko": "신강은 억부(억제) 전략이 적합합니다",
             }
 
-        return {
-            "result": "pass",
-            "note_ko": f"일관성 검증 통과 ({bucket} + {strategy})"
-        }
+        return {"result": "pass", "note_ko": f"일관성 검증 통과 ({bucket} + {strategy})"}
 
     def _eval_yongshin_unsupported_460(
-        self,
-        evidence: Dict,
-        candidate: str,
-        summaries: Dict,
-        context: Dict
+        self, evidence: Dict, candidate: str, summaries: Dict, context: Dict
     ) -> Dict[str, Any]:
         """
         YONGSHIN-UNSUPPORTED-460: 용신 환경 지지 검증
@@ -511,20 +455,13 @@ class LLMGuardV11:
                     "reason_code": "YONGSHIN-NO-SUPPORT",
                     "description_ko": f"용신 {','.join(yongshin_list)}이(가) 계절·관계 지지를 받지 못함",
                     "evidence_refs": ["climate.support", "relation_summary"],
-                    "note_ko": "용신이 불리한 환경에 있습니다"
+                    "note_ko": "용신이 불리한 환경에 있습니다",
                 }
 
-        return {
-            "result": "pass",
-            "note_ko": "용신 환경 검증 통과"
-        }
+        return {"result": "pass", "note_ko": "용신 환경 검증 통과"}
 
     def _eval_sig_500(
-        self,
-        evidence: Dict,
-        candidate: str,
-        summaries: Dict,
-        context: Dict
+        self, evidence: Dict, candidate: str, summaries: Dict, context: Dict
     ) -> Dict[str, Any]:
         """
         SIG-500: 정책 서명 검증
@@ -532,17 +469,10 @@ class LLMGuardV11:
         Checks evidence contains valid policy signature.
         """
         # TODO: Implement RFC-8785 signature verification
-        return {
-            "result": "pass",
-            "note_ko": "서명 검증 통과"
-        }
+        return {"result": "pass", "note_ko": "서명 검증 통과"}
 
     def _eval_pii_600(
-        self,
-        evidence: Dict,
-        candidate: str,
-        summaries: Dict,
-        context: Dict
+        self, evidence: Dict, candidate: str, summaries: Dict, context: Dict
     ) -> Dict[str, Any]:
         """
         PII-600: 개인정보 노출 검증
@@ -561,20 +491,13 @@ class LLMGuardV11:
                     "result": "fail",
                     "reason_code": "PII-DETECTED",
                     "description_ko": f"{pii_type} 노출 감지",
-                    "note_ko": "개인정보를 마스킹해야 합니다"
+                    "note_ko": "개인정보를 마스킹해야 합니다",
                 }
 
-        return {
-            "result": "pass",
-            "note_ko": "PII 검증 통과"
-        }
+        return {"result": "pass", "note_ko": "PII 검증 통과"}
 
     def _eval_ko_700(
-        self,
-        evidence: Dict,
-        candidate: str,
-        summaries: Dict,
-        context: Dict
+        self, evidence: Dict, candidate: str, summaries: Dict, context: Dict
     ) -> Dict[str, Any]:
         """
         KO-700: 한국어 우선 라벨 검증
@@ -590,20 +513,13 @@ class LLMGuardV11:
                 "result": "fail",
                 "reason_code": "EN-LABEL-USED",
                 "description_ko": f"영어 라벨 사용 감지: {', '.join(found_english)}",
-                "note_ko": "한국어 라벨을 사용하세요 (strength → 강약, yongshin → 용신)"
+                "note_ko": "한국어 라벨을 사용하세요 (strength → 강약, yongshin → 용신)",
             }
 
-        return {
-            "result": "pass",
-            "note_ko": "한국어 라벨 검증 통과"
-        }
+        return {"result": "pass", "note_ko": "한국어 라벨 검증 통과"}
 
     def _eval_ambig_800(
-        self,
-        evidence: Dict,
-        candidate: str,
-        summaries: Dict,
-        context: Dict
+        self, evidence: Dict, candidate: str, summaries: Dict, context: Dict
     ) -> Dict[str, Any]:
         """
         AMBIG-800: 모호성 검증
@@ -621,13 +537,10 @@ class LLMGuardV11:
                     "result": "fail",
                     "reason_code": "AMBIGUOUS-PHRASING",
                     "description_ko": "모호한 표현 사용",
-                    "note_ko": "'경향이 있습니다', '가능성이 높습니다' 등 명확한 표현 권장"
+                    "note_ko": "'경향이 있습니다', '가능성이 높습니다' 등 명확한 표현 권장",
                 }
 
-        return {
-            "result": "pass",
-            "note_ko": "모호성 검증 통과"
-        }
+        return {"result": "pass", "note_ko": "모호성 검증 통과"}
 
     # ============================================================
     # Helper Methods
@@ -636,11 +549,7 @@ class LLMGuardV11:
     def _calculate_risk(self, violations: List[Dict]) -> Dict[str, Any]:
         """Calculate risk score and stratification level"""
         if not violations:
-            return {
-                "score": 0,
-                "level": "LOW",
-                "breakdown": {}
-            }
+            return {"score": 0, "level": "LOW", "breakdown": {}}
 
         weight_map = self.risk_model.get("violation_weight", {})
         special_weights = weight_map.get("special", {})
@@ -661,11 +570,14 @@ class LLMGuardV11:
         score = min(100, max(0, score))
 
         # Determine level
-        levels = self.risk_model.get("stratification", {
-            "LOW": {"min": 0, "max": 29},
-            "MEDIUM": {"min": 30, "max": 69},
-            "HIGH": {"min": 70, "max": 100}
-        })
+        levels = self.risk_model.get(
+            "stratification",
+            {
+                "LOW": {"min": 0, "max": 29},
+                "MEDIUM": {"min": 30, "max": 69},
+                "HIGH": {"min": 70, "max": 100},
+            },
+        )
 
         level = "LOW"
         for lvl, bounds in levels.items():
@@ -673,17 +585,9 @@ class LLMGuardV11:
                 level = lvl
                 break
 
-        return {
-            "score": score,
-            "level": level,
-            "breakdown": breakdown
-        }
+        return {"score": score, "level": level, "breakdown": breakdown}
 
-    def _determine_verdict(
-        self,
-        violations: List[Dict],
-        risk: Dict[str, Any]
-    ) -> str:
+    def _determine_verdict(self, violations: List[Dict], risk: Dict[str, Any]) -> str:
         """Determine final verdict based on violations and risk"""
         if not violations:
             return "allow"
@@ -701,11 +605,7 @@ class LLMGuardV11:
         else:
             return "allow"
 
-    def _generate_recommendations(
-        self,
-        violations: List[Dict],
-        verdict: str
-    ) -> List[str]:
+    def _generate_recommendations(self, violations: List[Dict], verdict: str) -> List[str]:
         """Generate remediation recommendations"""
         if not violations:
             return []
@@ -726,11 +626,7 @@ class LLMGuardV11:
 
         return recs
 
-    def _build_revision_prompt(
-        self,
-        original: str,
-        remediations: List[str]
-    ) -> str:
+    def _build_revision_prompt(self, original: str, remediations: List[str]) -> str:
         """Build revision prompt with remediation guidance"""
         return f"""다음 답변을 개선하세요:
 

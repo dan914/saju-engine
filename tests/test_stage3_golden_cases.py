@@ -18,7 +18,9 @@ from pathlib import Path
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "services" / "analysis-service" / "app" / "core"))
+sys.path.insert(
+    0, str(Path(__file__).parent.parent / "services" / "analysis-service" / "app" / "core")
+)
 
 from climate_advice import ClimateAdvice
 from gyeokguk_classifier import GyeokgukClassifier
@@ -43,7 +45,7 @@ def engines():
         "climate_advice": ClimateAdvice(),
         "luck_flow": LuckFlow(),
         "gyeokguk": GyeokgukClassifier(),
-        "pattern": PatternProfiler()
+        "pattern": PatternProfiler(),
     }
 
 
@@ -56,8 +58,9 @@ def test_climate_advice_match(case, engines):
     result = engines["climate_advice"].run(case)
     expected_id = case["expect"]["climate_policy_id"]
 
-    assert result["matched_policy_id"] == expected_id, \
-        f"Expected climate_policy_id={expected_id}, got {result['matched_policy_id']}"
+    assert (
+        result["matched_policy_id"] == expected_id
+    ), f"Expected climate_policy_id={expected_id}, got {result['matched_policy_id']}"
     assert result["engine"] == "climate_advice"
     assert "evidence_ref" in result
 
@@ -71,8 +74,9 @@ def test_luck_flow_trend(case, engines):
     result = engines["luck_flow"].run(case)
     expected_trend = case["expect"]["luck_flow_trend"]
 
-    assert result["trend"] == expected_trend, \
-        f"Expected trend={expected_trend}, got {result['trend']}"
+    assert (
+        result["trend"] == expected_trend
+    ), f"Expected trend={expected_trend}, got {result['trend']}"
     assert result["engine"] == "luck_flow"
     assert "evidence_ref" in result
     assert "drivers" in result
@@ -88,8 +92,7 @@ def test_gyeokguk_type(case, engines):
     result = engines["gyeokguk"].run(case)
     expected_type = case["expect"]["gyeokguk_type"]
 
-    assert result["type"] == expected_type, \
-        f"Expected type={expected_type}, got {result['type']}"
+    assert result["type"] == expected_type, f"Expected type={expected_type}, got {result['type']}"
     assert result["engine"] == "gyeokguk_classifier"
     assert "evidence_ref" in result
     assert "basis" in result
@@ -105,8 +108,9 @@ def test_pattern_profiler_patterns(case, engines):
     expected_patterns = set(case["expect"]["patterns_include"])
     actual_patterns = set(result.get("patterns", []))
 
-    assert expected_patterns.issubset(actual_patterns), \
-        f"Expected patterns {expected_patterns} not found in {actual_patterns}"
+    assert expected_patterns.issubset(
+        actual_patterns
+    ), f"Expected patterns {expected_patterns} not found in {actual_patterns}"
     assert result["engine"] == "pattern_profiler"
     assert "evidence_ref" in result
 
@@ -135,7 +139,9 @@ def test_e2e_pipeline(case, engines):
 
     # Verify evidence_ref present in all
     for result in [lf_result, gk_result, ca_result, pp_result]:
-        assert "evidence_ref" in result, f"Missing evidence_ref in {result.get('engine', 'unknown')}"
+        assert (
+            "evidence_ref" in result
+        ), f"Missing evidence_ref in {result.get('engine', 'unknown')}"
 
 
 def test_golden_cases_loaded():

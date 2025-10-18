@@ -39,7 +39,7 @@ def cmd_sign(args):
                 file_path,
                 in_place=args.in_place,
                 write_sidecar=args.write_sidecar,
-                strict=args.strict
+                strict=args.strict,
             )
             results.append(result)
 
@@ -76,7 +76,7 @@ def cmd_verify(args):
             result = verify_file(file_path, strict=args.strict)
             results.append(result)
 
-            if result['is_valid']:
+            if result["is_valid"]:
                 print(f"✅ Valid: {result['path']}")
                 print(f"   SHA-256: {result['expected']}")
             else:
@@ -103,7 +103,7 @@ def cmd_diff(args):
     try:
         result = diff_files(args.files[0], args.files[1])
 
-        if result['are_equal']:
+        if result["are_equal"]:
             print("✅ Files are structurally identical (excluding signatures)")
             print(f"   A: {args.files[0]}")
             print(f"   B: {args.files[1]}")
@@ -114,11 +114,11 @@ def cmd_diff(args):
 
             if args.verbose:
                 print("\nCanonical A:")
-                print(result['canonical_a'][:500])
+                print(result["canonical_a"][:500])
                 print("\nCanonical B:")
-                print(result['canonical_b'][:500])
+                print(result["canonical_b"][:500])
 
-        return 0 if result['are_equal'] else 1
+        return 0 if result["are_equal"] else 1
 
     except Exception as e:
         print(f"❌ Error: {e}", file=sys.stderr)
@@ -130,7 +130,7 @@ def _expand_patterns(patterns):
     files = []
     for pattern in patterns:
         # Handle glob patterns
-        if '*' in pattern or '?' in pattern:
+        if "*" in pattern or "?" in pattern:
             matched = glob.glob(pattern, recursive=True)
             files.extend(matched)
         else:
@@ -146,29 +146,26 @@ def main():
         description="Policy Signature Auditor - Sign, verify, and diff policy files"
     )
 
-    subparsers = parser.add_subparsers(dest='command', help='Command to execute')
+    subparsers = parser.add_subparsers(dest="command", help="Command to execute")
 
     # Sign command
-    sign_parser = subparsers.add_parser('sign', help='Sign policy file(s)')
-    sign_parser.add_argument('files', nargs='+', help='Policy file(s) or pattern')
-    sign_parser.add_argument('--in-place', action='store_true',
-                            help='Update file with signature')
-    sign_parser.add_argument('--write-sidecar', action='store_true',
-                            help='Write <file>.sha256 sidecar')
-    sign_parser.add_argument('--strict', action='store_true',
-                            help='Validate meta fields')
+    sign_parser = subparsers.add_parser("sign", help="Sign policy file(s)")
+    sign_parser.add_argument("files", nargs="+", help="Policy file(s) or pattern")
+    sign_parser.add_argument("--in-place", action="store_true", help="Update file with signature")
+    sign_parser.add_argument(
+        "--write-sidecar", action="store_true", help="Write <file>.sha256 sidecar"
+    )
+    sign_parser.add_argument("--strict", action="store_true", help="Validate meta fields")
 
     # Verify command
-    verify_parser = subparsers.add_parser('verify', help='Verify policy file(s)')
-    verify_parser.add_argument('files', nargs='+', help='Policy file(s) or pattern')
-    verify_parser.add_argument('--strict', action='store_true',
-                              help='Validate meta fields')
+    verify_parser = subparsers.add_parser("verify", help="Verify policy file(s)")
+    verify_parser.add_argument("files", nargs="+", help="Policy file(s) or pattern")
+    verify_parser.add_argument("--strict", action="store_true", help="Validate meta fields")
 
     # Diff command
-    diff_parser = subparsers.add_parser('diff', help='Compare two policy files')
-    diff_parser.add_argument('files', nargs=2, help='Two policy files to compare')
-    diff_parser.add_argument('--verbose', '-v', action='store_true',
-                            help='Show canonical forms')
+    diff_parser = subparsers.add_parser("diff", help="Compare two policy files")
+    diff_parser.add_argument("files", nargs=2, help="Two policy files to compare")
+    diff_parser.add_argument("--verbose", "-v", action="store_true", help="Show canonical forms")
 
     args = parser.parse_args()
 
@@ -177,16 +174,16 @@ def main():
         return 2
 
     # Route to command handler
-    if args.command == 'sign':
+    if args.command == "sign":
         return cmd_sign(args)
-    elif args.command == 'verify':
+    elif args.command == "verify":
         return cmd_verify(args)
-    elif args.command == 'diff':
+    elif args.command == "diff":
         return cmd_diff(args)
     else:
         parser.print_help()
         return 2
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

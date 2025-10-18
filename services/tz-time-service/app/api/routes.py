@@ -34,6 +34,7 @@ def get_tzdb_version() -> str:
     # Try tzdata package metadata
     try:
         import importlib.metadata
+
         return importlib.metadata.version("tzdata")
     except (importlib.metadata.PackageNotFoundError, ModuleNotFoundError):
         pass
@@ -41,6 +42,7 @@ def get_tzdb_version() -> str:
     # Try system tzdata version file (on some Unix systems)
     try:
         from pathlib import Path
+
         for tzdata_path in ["/usr/share/zoneinfo", "/usr/share/lib/zoneinfo"]:
             version_file = Path(tzdata_path) / "+VERSION"
             if version_file.exists():

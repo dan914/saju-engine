@@ -32,15 +32,13 @@ def _resolve_with_fallback(primary: str, *fallbacks: str) -> Path:
 
 # Note: v2_5 has incompatible schema (matrix-based), skip to v1_1
 RELATION_POLICY_PATH = _resolve_with_fallback(
-    "relation_transform_rules_v1_1.json",
-    "relation_transform_rules.json"
+    "relation_transform_rules_v1_1.json", "relation_transform_rules.json"
 )
 
 # Optional policy files - may not exist
 try:
     FIVE_HE_POLICY_PATH = _resolve_with_fallback(
-        "five_he_policy_v1_2.json",
-        "five_he_policy_v1.json"
+        "five_he_policy_v1_2.json", "five_he_policy_v1.json"
     )
 except FileNotFoundError:
     FIVE_HE_POLICY_PATH = None
@@ -208,17 +206,16 @@ class RelationTransformer:
             if conditions.get("deny_if_conflict") and has_conflict:
                 valid = False
 
-            results.append({
-                "pair": pair,
-                "valid": valid,
-                "month_support": month_support,
-                "huashen_present": huashen_present
-            })
+            results.append(
+                {
+                    "pair": pair,
+                    "valid": valid,
+                    "month_support": month_support,
+                    "huashen_present": huashen_present,
+                }
+            )
 
-        return {
-            "pairs": results,
-            "scope": self._five_he_policy.get("transform_scope", "none")
-        }
+        return {"pairs": results, "scope": self._five_he_policy.get("transform_scope", "none")}
 
     def _check_zixing(self, ctx: RelationContext) -> Dict[str, object]:
         """
@@ -240,16 +237,9 @@ class RelationTransformer:
             # Zixing typically requires 2+ of same branch
             if count >= 2:
                 severity = "high" if count >= 3 else "medium"
-                results.append({
-                    "branch": branch,
-                    "count": count,
-                    "severity": severity
-                })
+                results.append({"branch": branch, "count": count, "severity": severity})
 
-        return {
-            "zixing_detected": results,
-            "total_branches": len(results)
-        }
+        return {"zixing_detected": results, "total_branches": len(results)}
 
     def _check_banhe_boost(self, ctx: RelationContext) -> List[Dict[str, str]]:
         """
@@ -276,10 +266,6 @@ class RelationTransformer:
             # Check if exactly 2 branches present (not all 3 = that's sanhe)
             present = [b for b in group if b in ctx.branches]
             if len(present) == 2:
-                boosts.append({
-                    "element": element,
-                    "branches": "/".join(present),
-                    "type": "banhe"
-                })
+                boosts.append({"element": element, "branches": "/".join(present), "type": "banhe"})
 
         return boosts

@@ -10,17 +10,35 @@ import copy
 import hashlib
 from typing import Any, Dict
 
-HEAVENLY_STEMS = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"]
-EARTHLY_BRANCHES = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"]
+HEAVENLY_STEMS = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+EARTHLY_BRANCHES = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
 
 STEM_TO_ELEMENT = {
-    "甲":"木","乙":"木","丙":"火","丁":"火","戊":"土","己":"土","庚":"金","辛":"金","壬":"水","癸":"水"
+    "甲": "木",
+    "乙": "木",
+    "丙": "火",
+    "丁": "火",
+    "戊": "土",
+    "己": "土",
+    "庚": "金",
+    "辛": "金",
+    "壬": "水",
+    "癸": "水",
 }
 STEM_TO_POLARITY = {
-    "甲":"陽","丙":"陽","戊":"陽","庚":"陽","壬":"陽",
-    "乙":"陰","丁":"陰","己":"陰","辛":"陰","癸":"陰"
+    "甲": "陽",
+    "丙": "陽",
+    "戊": "陽",
+    "庚": "陽",
+    "壬": "陽",
+    "乙": "陰",
+    "丁": "陰",
+    "己": "陰",
+    "辛": "陰",
+    "癸": "陰",
 }
-TEN_GODS_ENUM_ZH = ["比肩","劫財","食神","傷官","偏財","正財","偏官","正官","偏印","正印"]
+TEN_GODS_ENUM_ZH = ["比肩", "劫財", "食神", "傷官", "偏財", "正財", "偏官", "正官", "偏印", "正印"]
+
 
 class TenGodsCalculator:
     def __init__(self, policy: Dict[str, Any], *, output_policy_version: str = "ten_gods_v1.0"):
@@ -44,7 +62,7 @@ class TenGodsCalculator:
             "missing": [],
         }
 
-        for slot in ("year","month","day","hour"):
+        for slot in ("year", "month", "day", "hour"):
             stem = pillars[slot]["stem"]
             br = pillars[slot]["branch"]
             vs_day = self._rel_label(day_stem, stem)
@@ -58,7 +76,7 @@ class TenGodsCalculator:
                 "stem": stem,
                 "vs_day": vs_day,
                 "branch": br,
-                "hidden": hidden_map
+                "hidden": hidden_map,
             }
 
         counts = {}
@@ -80,11 +98,13 @@ class TenGodsCalculator:
         e_day = STEM_TO_ELEMENT[day_stem]
         e_tgt = STEM_TO_ELEMENT[target_stem]
 
-        same_elem = (e_day == e_tgt)
-        same_polarity = (STEM_TO_POLARITY[day_stem] == STEM_TO_POLARITY[target_stem])
+        same_elem = e_day == e_tgt
+        same_polarity = STEM_TO_POLARITY[day_stem] == STEM_TO_POLARITY[target_stem]
 
         if same_elem:
-            code = self._mapping["same_element"]["same_polarity" if same_polarity else "diff_polarity"]
+            code = self._mapping["same_element"][
+                "same_polarity" if same_polarity else "diff_polarity"
+            ]
         elif self._sheng[e_day] == e_tgt:
             code = self._mapping["wo_sheng"]["same_polarity" if same_polarity else "diff_polarity"]
         elif self._ke[e_day] == e_tgt:
@@ -107,7 +127,7 @@ class TenGodsCalculator:
 
     @staticmethod
     def _validate_input(pillars: Dict[str, Dict[str, str]]) -> None:
-        for pos in ("year","month","day","hour"):
+        for pos in ("year", "month", "day", "hour"):
             if pos not in pillars:
                 raise ValueError(f"Missing pillar: {pos}")
             st = pillars[pos].get("stem")
@@ -124,16 +144,17 @@ class TenGodsCalculator:
         data = json.dumps(obj, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(data.encode("utf-8")).hexdigest()
 
+
 # Load our actual policy
 with open("saju_codex_batch_all_v2_6_signed/policies/branch_tengods_policy.json") as f:
     policy = json.load(f)
 
 # Test with 2000-09-14 case
 pillars = {
-    "year":  {"stem": "庚", "branch": "辰"},
+    "year": {"stem": "庚", "branch": "辰"},
     "month": {"stem": "乙", "branch": "酉"},
-    "day":   {"stem": "乙", "branch": "亥"},
-    "hour":  {"stem": "辛", "branch": "巳"}
+    "day": {"stem": "乙", "branch": "亥"},
+    "hour": {"stem": "辛", "branch": "巳"},
 }
 
 print("Testing user's Ten Gods engine with our policy...")

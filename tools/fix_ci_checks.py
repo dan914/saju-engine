@@ -17,13 +17,16 @@ def transform_ci_checks(ci_checks):
         new_check = {
             "check_id": check["id"],
             "description": check["description"],
-            "assertion": check["description"]  # Use description as assertion
+            "assertion": check["description"],  # Use description as assertion
         }
         transformed.append(new_check)
     return transformed
 
+
 def main():
-    policy_path = Path("/Users/yujumyeong/coding/ projects/사주/saju_codex_batch_all_v2_6_signed/policies/relation_policy.json")
+    policy_path = Path(
+        "/Users/yujumyeong/coding/ projects/사주/saju_codex_batch_all_v2_6_signed/policies/relation_policy.json"
+    )
 
     # Load policy
     with open(policy_path) as f:
@@ -37,7 +40,7 @@ def main():
     print(f"Transformed ci_checks count: {len(policy['ci_checks'])}")
 
     # Save updated policy
-    with open(policy_path, 'w') as f:
+    with open(policy_path, "w") as f:
         json.dump(policy, f, ensure_ascii=False, indent=2)
 
     print(f"✅ Updated {policy_path}")
@@ -45,6 +48,7 @@ def main():
     # Show first transformed check
     print("\nSample transformed check:")
     print(json.dumps(policy["ci_checks"][0], ensure_ascii=False, indent=2))
+
 
 if __name__ == "__main__":
     main()

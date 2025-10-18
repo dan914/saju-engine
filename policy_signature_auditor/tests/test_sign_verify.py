@@ -26,7 +26,7 @@ def test_sign_and_verify():
 
     # Load sample policy
     sample_path = Path(__file__).parent / "data" / "sample_policy.json"
-    with open(sample_path, 'r', encoding='utf-8') as f:
+    with open(sample_path, "r", encoding="utf-8") as f:
         policy = json.load(f)
 
     # Sign
@@ -48,7 +48,7 @@ def test_detect_tampering():
 
     # Load and sign policy
     sample_path = Path(__file__).parent / "data" / "sample_policy.json"
-    with open(sample_path, 'r', encoding='utf-8') as f:
+    with open(sample_path, "r", encoding="utf-8") as f:
         policy = json.load(f)
 
     sha256_hash, signed_policy = sign_policy(policy, strict=True)
@@ -74,14 +74,14 @@ def test_diff_policies():
         "policy_version": "test_v1.0.0",
         "policy_date": "2025-10-09",
         "policy_signature": "HASH_A",
-        "rules": [{"id": 1, "value": 100}]
+        "rules": [{"id": 1, "value": 100}],
     }
 
     policy_b = {
         "policy_version": "test_v1.0.0",
         "policy_date": "2025-10-09",
         "policy_signature": "HASH_B",  # Different signature
-        "rules": [{"id": 1, "value": 100}]  # Same content
+        "rules": [{"id": 1, "value": 100}],  # Same content
     }
 
     # Diff (should be equal despite different signatures)
@@ -105,7 +105,7 @@ def test_strict_mode_validation():
         "policy_version": "test_v1.0.0",
         # Missing policy_date
         "ko_labels": True,
-        "dependencies": []
+        "dependencies": [],
     }
 
     try:
@@ -120,7 +120,7 @@ def test_strict_mode_validation():
         "policy_version": "test_v1.0.0",
         "policy_date": "2025-10-09",
         "ko_labels": False,  # Should be true
-        "dependencies": []
+        "dependencies": [],
     }
 
     try:
@@ -138,13 +138,13 @@ def test_file_operations():
     from policy_signature_auditor.auditor import sign_file, verify_file
 
     # Create temporary file
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         policy = {
             "policy_version": "test_v1.0.0",
             "policy_date": "2025-10-09",
             "policy_signature": "UNSIGNED",
             "ko_labels": True,
-            "dependencies": []
+            "dependencies": [],
         }
         json.dump(policy, f, indent=2)
         temp_path = f.name
@@ -152,12 +152,12 @@ def test_file_operations():
     try:
         # Sign in-place
         result = sign_file(temp_path, in_place=True, strict=True)
-        assert result['hash'], "Hash should be generated"
+        assert result["hash"], "Hash should be generated"
         print(f"   ✅ File signed: {result['hash'][:16]}...")
 
         # Verify
         result = verify_file(temp_path, strict=True)
-        assert result['is_valid'], "File signature should be valid"
+        assert result["is_valid"], "File signature should be valid"
         print("   ✅ File verified")
 
     finally:
@@ -189,9 +189,10 @@ def main():
     except Exception as e:
         print(f"\n❌ Error: {e}")
         import traceback
+
         traceback.print_exc()
         return 2
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

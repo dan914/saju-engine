@@ -44,51 +44,77 @@ from app.core.yuanjin import apply_yuanjin_flags, explain_yuanjin
 
 # Season mapping from branch
 BRANCH_TO_SEASON = {
-    "寅": "봄", "卯": "봄", "辰": "장하",
-    "巳": "여름", "午": "여름", "未": "장하",
-    "申": "가을", "酉": "가을", "戌": "장하",
-    "亥": "겨울", "子": "겨울", "丑": "장하"
+    "寅": "봄",
+    "卯": "봄",
+    "辰": "장하",
+    "巳": "여름",
+    "午": "여름",
+    "未": "장하",
+    "申": "가을",
+    "酉": "가을",
+    "戌": "장하",
+    "亥": "겨울",
+    "子": "겨울",
+    "丑": "장하",
 }
 
 # Element mapping
 STEM_TO_ELEMENT = {
-    "甲": "木", "乙": "木",
-    "丙": "火", "丁": "火",
-    "戊": "土", "己": "土",
-    "庚": "金", "辛": "金",
-    "壬": "水", "癸": "水"
+    "甲": "木",
+    "乙": "木",
+    "丙": "火",
+    "丁": "火",
+    "戊": "土",
+    "己": "土",
+    "庚": "金",
+    "辛": "金",
+    "壬": "水",
+    "癸": "水",
 }
 
 BRANCH_TO_ELEMENT = {
-    "子": "水", "丑": "土", "寅": "木", "卯": "木",
-    "辰": "土", "巳": "火", "午": "火", "未": "土",
-    "申": "金", "酉": "金", "戌": "土", "亥": "水"
+    "子": "水",
+    "丑": "土",
+    "寅": "木",
+    "卯": "木",
+    "辰": "土",
+    "巳": "火",
+    "午": "火",
+    "未": "土",
+    "申": "金",
+    "酉": "金",
+    "戌": "土",
+    "亥": "水",
 }
 
 # Convert Chinese element names to Korean (for yongshin)
-CHINESE_TO_KOREAN_ELEMENT = {
-    "木": "목", "火": "화", "土": "토", "金": "금", "水": "수"
-}
+CHINESE_TO_KOREAN_ELEMENT = {"木": "목", "火": "화", "土": "토", "金": "금", "水": "수"}
 
 # Season to Korean element mapping
 SEASON_TO_KOREAN_ELEMENT = {
-    "봄": "목",    # Spring → Wood
+    "봄": "목",  # Spring → Wood
     "여름": "화",  # Summer → Fire
     "가을": "금",  # Autumn → Metal
     "겨울": "수",  # Winter → Water
-    "장하": "토"   # Late season → Earth
+    "장하": "토",  # Late season → Earth
 }
 
 # Grade code to YongshinSelector bin mapping (Source of Truth)
 _GRADE_TO_BIN = {
     # Korean codes
-    "태강": "strong", "극신강": "strong", "신강": "strong",
+    "태강": "strong",
+    "극신강": "strong",
+    "신강": "strong",
     "중화": "balanced",
-    "신약": "weak", "태약": "weak", "극신약": "weak",
+    "신약": "weak",
+    "태약": "weak",
+    "극신약": "weak",
     # English codes (for compatibility)
-    "very_strong": "strong", "strong": "strong",
+    "very_strong": "strong",
+    "strong": "strong",
     "balanced": "balanced",
-    "weak": "weak", "very_weak": "weak",
+    "weak": "weak",
+    "very_weak": "weak",
 }
 
 
@@ -141,6 +167,7 @@ class SajuOrchestrator:
         # Ten Gods calculator
         import json
         from pathlib import Path
+
         policy_path = Path("saju_codex_batch_all_v2_6_signed/policies/branch_tengods_policy.json")
         with open(policy_path, encoding="utf-8") as f:
             ten_gods_policy = json.load(f)
@@ -150,10 +177,14 @@ class SajuOrchestrator:
         lifecycle_path = Path("saju_codex_batch_all_v2_6_signed/policies/lifecycle_stages.json")
         with open(lifecycle_path, encoding="utf-8") as f:
             lifecycle_policy = json.load(f)
-        self.twelve_stages = TwelveStagesCalculator(lifecycle_policy, output_policy_version="twelve_stages_v1.0")
+        self.twelve_stages = TwelveStagesCalculator(
+            lifecycle_policy, output_policy_version="twelve_stages_v1.0"
+        )
 
         # Luck Pillars calculator
-        luck_pillars_path = Path("saju_codex_batch_all_v2_6_signed/policies/luck_pillars_policy.json")
+        luck_pillars_path = Path(
+            "saju_codex_batch_all_v2_6_signed/policies/luck_pillars_policy.json"
+        )
         with open(luck_pillars_path, encoding="utf-8") as f:
             luck_pillars_policy = json.load(f)
         self.luck = LuckCalculator(luck_pillars_policy)
@@ -173,11 +204,7 @@ class SajuOrchestrator:
         self.llm_guard = LLMGuard.default()
         self.text_guard = TextGuard.from_file()
 
-    def analyze(
-        self,
-        pillars: Dict[str, str],
-        birth_context: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    def analyze(self, pillars: Dict[str, str], birth_context: Dict[str, Any]) -> Dict[str, Any]:
         """Run complete Saju analysis.
 
         Args:
@@ -233,7 +260,7 @@ class SajuOrchestrator:
                 strength_result,
                 weighted_relations,  # Use weighted relations
                 climate_result,
-                elements  # Use transformed elements
+                elements,  # Use transformed elements
             )
 
             # 11. Call LuckCalculator
@@ -255,7 +282,7 @@ class SajuOrchestrator:
                 weighted_relations,  # Use weighted relations
                 climate_result,
                 yongshin_result,
-                elements  # Use transformed elements
+                elements,  # Use transformed elements
             )
             # Call Stage-3 engines in dependency order
             lf = self.luck_flow.run(stage3_context)
@@ -283,7 +310,7 @@ class SajuOrchestrator:
                 "yuanjin": yuanjin_result,
                 "ten_gods": ten_gods_result,  # NEW: Ten Gods analysis
                 "twelve_stages": twelve_stages_result,  # NEW: Twelve Stages analysis
-                "stage3": stage3_result
+                "stage3": stage3_result,
             }
 
             # 17. Call EvidenceBuilder (collect evidence for all engines)
@@ -342,19 +369,20 @@ class SajuOrchestrator:
                     "SchoolProfileManager",
                     "RecommendationGuard",
                     "LLMGuard",  # NEW
-                    "TextGuard"  # NEW
-                ]
+                    "TextGuard",  # NEW
+                ],
             }
 
             return enriched
 
         except Exception as e:
             import traceback
+
             return {
                 "status": "error",
                 "error_message": str(e),
                 "error_type": type(e).__name__,
-                "traceback": traceback.format_exc()
+                "traceback": traceback.format_exc(),
             }
 
     # Helper methods for input processing
@@ -392,10 +420,7 @@ class SajuOrchestrator:
         return counts
 
     def _calculate_elements(
-        self,
-        stems: List[str],
-        branches: List[str],
-        strength_result: Dict
+        self, stems: List[str], branches: List[str], strength_result: Dict
     ) -> Dict[str, float]:
         """Calculate element distribution from stems and branches."""
         # Start with basic counts
@@ -416,17 +441,14 @@ class SajuOrchestrator:
         # Normalize to percentages
         total = sum(element_counts.values())
         if total > 0:
-            element_counts = {k: v/total for k, v in element_counts.items()}
+            element_counts = {k: v / total for k, v in element_counts.items()}
 
         return element_counts
 
     # Engine-specific call methods
 
     def _call_strength(
-        self,
-        pillars: Dict[str, str],
-        stems: List[str],
-        branches: List[str]
+        self, pillars: Dict[str, str], stems: List[str], branches: List[str]
     ) -> Dict[str, Any]:
         """Call StrengthEvaluator v2 with simplified API."""
         # v2 API: evaluate(pillars, season)
@@ -440,10 +462,7 @@ class SajuOrchestrator:
     def _call_relations(self, pillars: Dict[str, str], branches: List[str]) -> Dict[str, Any]:
         """Call RelationTransformer with RelationContext."""
         # RelationContext takes branches list and month_branch
-        ctx = RelationContext(
-            branches=branches,
-            month_branch=branches[1]  # Month is index 1
-        )
+        ctx = RelationContext(branches=branches, month_branch=branches[1])  # Month is index 1
         result = self.relations.evaluate(ctx)
 
         # Convert RelationResult to dict for orchestrator use
@@ -452,17 +471,14 @@ class SajuOrchestrator:
             "transform_to": result.transform_to,
             "boosts": result.boosts,
             "notes": result.notes,
-            "extras": result.extras
+            "extras": result.extras,
         }
 
     def _call_climate(self, month_branch: str) -> Dict[str, Any]:
         """Call ClimateEvaluator with ClimateContext."""
         # ClimateContext needs month_branch and segment
         # Segment defaults to "early" if not specified
-        ctx = ClimateContext(
-            month_branch=month_branch,
-            segment="early"
-        )
+        ctx = ClimateContext(month_branch=month_branch, segment="early")
         return self.climate.evaluate(ctx)
 
     def _call_yongshin(
@@ -472,7 +488,7 @@ class SajuOrchestrator:
         strength_result: Dict,
         relations_result: Dict,
         climate_result: Dict,
-        elements: Dict[str, float]
+        elements: Dict[str, float],
     ) -> Dict[str, Any]:
         """Call YongshinSelector v2 with simplified dual-output API."""
         # v2 API: select(day_master, strength, relations, climate, elements_dist)
@@ -481,7 +497,7 @@ class SajuOrchestrator:
         strength_for_v2 = {
             "bin": strength_result.get("bin", "balanced"),
             "score_normalized": strength_result.get("score_normalized", 0.5),
-            "grade_code": strength_result.get("grade_code", "중화")
+            "grade_code": strength_result.get("grade_code", "중화"),
         }
 
         # Prepare relations payload (v2 expects: flags list)
@@ -500,11 +516,13 @@ class SajuOrchestrator:
 
         # Convert elements distribution from Chinese (木火土金水) to English (wood/fire/earth/metal/water)
         CHINESE_TO_ENGLISH = {
-            "木": "wood", "火": "fire", "土": "earth", "金": "metal", "水": "water"
+            "木": "wood",
+            "火": "fire",
+            "土": "earth",
+            "金": "metal",
+            "水": "water",
         }
-        elements_english = {
-            CHINESE_TO_ENGLISH.get(k, k): v for k, v in elements.items()
-        }
+        elements_english = {CHINESE_TO_ENGLISH.get(k, k): v for k, v in elements.items()}
 
         # Call v2 API
         result = self.yongshin.select(
@@ -512,7 +530,7 @@ class SajuOrchestrator:
             strength=strength_for_v2,
             relations=relations_for_v2,
             climate=climate_for_v2,
-            elements_dist=elements_english
+            elements_dist=elements_english,
         )
 
         # v2 returns: {policy_version, integrated, split, rationale}
@@ -530,16 +548,17 @@ class SajuOrchestrator:
             "integrated": integrated,
             "split": split,
             "rationale": result.get("rationale", []),
-
             # Old-style compatibility fields
             "yongshin": [primary.get("elem_ko", "")],  # Primary as list
             "bojosin": [secondary.get("elem_ko", "")] if secondary.get("elem_ko") else [],
             "gisin": [],  # Not provided in v2 output
             "confidence": integrated.get("confidence", 0.75),
-            "strategy": ""  # Not in v2
+            "strategy": "",  # Not in v2
         }
 
-    def _call_luck(self, pillars: Dict[str, str], birth_context: Dict[str, Any], day_stem: str) -> Dict[str, Any]:
+    def _call_luck(
+        self, pillars: Dict[str, str], birth_context: Dict[str, Any], day_stem: str
+    ) -> Dict[str, Any]:
         """Call LuckCalculator v1.0 to generate decade luck pillars.
 
         Args:
@@ -587,7 +606,7 @@ class SajuOrchestrator:
                 "method": "solar_term_interval",
                 "pillars": [],
                 "current_luck": None,
-                "policy_signature": ""
+                "policy_signature": "",
             }
 
         # 2. Calculate solar terms for start_age (reuse FileSolarTermLoader)
@@ -629,7 +648,7 @@ class SajuOrchestrator:
             "birth_ts": birth_dt.isoformat(),
             "age_years_decimal": age_years_decimal,
             "luck": {},  # Let policy calculate (no override)
-            "solar_terms": solar_terms
+            "solar_terms": solar_terms,
         }
 
         # 5. Convert pillars to new format (str → dict)
@@ -655,7 +674,7 @@ class SajuOrchestrator:
                 "method": "solar_term_interval",
                 "pillars": [],
                 "current_luck": None,
-                "policy_signature": ""
+                "policy_signature": "",
             }
 
     def _build_stage3_context(
@@ -665,7 +684,7 @@ class SajuOrchestrator:
         relations_result: Dict,
         climate_result: Dict,
         yongshin_result: Dict,
-        elements: Dict[str, float]
+        elements: Dict[str, float],
     ) -> Dict[str, Any]:
         """Build context for Stage-3 engines."""
         # Extract relation flags from RelationResult
@@ -695,20 +714,13 @@ class SajuOrchestrator:
 
         return {
             "season": season,
-            "strength": {
-                "phase": strength_result.get("grade_code", "중화"),
-                "elements": elements
-            },
-            "relation": {
-                "flags": relation_flags
-            },
+            "strength": {"phase": strength_result.get("grade_code", "중화"), "elements": elements},
+            "relation": {"flags": relation_flags},
             "climate": {
                 "flags": [],  # ClimateEvaluator doesn't return flags
-                "balance_index": balance_index
+                "balance_index": balance_index,
             },
-            "yongshin": {
-                "primary": yongshin_primary
-            }
+            "yongshin": {"primary": yongshin_primary},
         }
 
     def _call_shensha(self) -> Dict[str, Any]:
@@ -728,7 +740,7 @@ class SajuOrchestrator:
         return {
             **void_explanation,  # Includes: policy_version, policy_signature, day_index, xun_start, kong
             "flags": void_flags,
-            "day_pillar": day_pillar
+            "day_pillar": day_pillar,
         }
 
     def _call_yuanjin(self, branches: List[str]) -> Dict[str, Any]:
@@ -742,7 +754,7 @@ class SajuOrchestrator:
         # Return complete yuanjin data (includes policy_version for evidence_builder)
         return {
             **yuanjin_explanation,  # Includes: policy_version, policy_signature, present_branches, hits, pair_count
-            "flags": yuanjin_flags
+            "flags": yuanjin_flags,
         }
 
     def _normalize_strength_score(self, raw: float) -> float:
@@ -798,7 +810,7 @@ class SajuOrchestrator:
         relations_result: Dict[str, Any],
         pillars: Dict[str, str],
         stems: List[str],
-        branches: List[str]
+        branches: List[str],
     ) -> Dict[str, Any]:
         """Call RelationWeightEvaluator to add weights to detected relations."""
         try:
@@ -813,11 +825,9 @@ class SajuOrchestrator:
                     rel_type, participants_str = note.split(":", 1)
                     participants = participants_str.split("/")
                     if len(participants) == 2:
-                        pairs_detected.append({
-                            "type": rel_type,
-                            "participants": participants,
-                            "formed": True
-                        })
+                        pairs_detected.append(
+                            {"type": rel_type, "participants": participants, "formed": True}
+                        )
 
             # Also check extras for additional relations (five_he, zixing)
             extras = relations_result.get("extras", {})
@@ -831,13 +841,12 @@ class SajuOrchestrator:
                 "heavenly": stems,
                 "earthly": branches,
                 "month_branch": branches[1],  # Month branch
-                "season_element": STEM_TO_ELEMENT.get(stems[2], "")  # Day stem element as proxy
+                "season_element": STEM_TO_ELEMENT.get(stems[2], ""),  # Day stem element as proxy
             }
 
             # Call with correct API
             weighted_result = self.relation_weight.evaluate(
-                pairs_detected=pairs_detected,
-                context=context
+                pairs_detected=pairs_detected, context=context
             )
             return weighted_result
         except Exception as e:
@@ -877,7 +886,7 @@ class SajuOrchestrator:
                 "summary": {},
                 "dominant": [],
                 "missing": [],
-                "policy_signature": ""
+                "policy_signature": "",
             }
 
     def _call_twelve_stages(self, pillars: Dict[str, str]) -> Dict[str, Any]:
@@ -901,13 +910,11 @@ class SajuOrchestrator:
                 "by_pillar": {},
                 "summary": {},
                 "dominant": [],
-                "weakest": []
+                "weakest": [],
             }
 
     def _call_combination_element(
-        self,
-        weighted_relations: Dict[str, Any],
-        elements_raw: Dict[str, float]
+        self, weighted_relations: Dict[str, Any], elements_raw: Dict[str, float]
     ) -> Tuple[Dict[str, float], List[Dict[str, Any]]]:
         """
         Call CombinationElement to transform element distribution based on relations.
@@ -920,7 +927,7 @@ class SajuOrchestrator:
             elements_transformed, trace = transform_wuxing(
                 relations=weighted_relations,
                 dist_raw=elements_raw,
-                policy=None  # Use default policy
+                policy=None,  # Use default policy
             )
 
             # Normalize the transformed distribution
@@ -932,10 +939,7 @@ class SajuOrchestrator:
             return elements_raw, []
 
     def _call_evidence_builder(
-        self,
-        combined: Dict[str, Any],
-        pillars: Dict[str, str],
-        birth_context: Dict[str, Any]
+        self, combined: Dict[str, Any], pillars: Dict[str, str], birth_context: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Call build_evidence to collect evidence for void/yuanjin/wuxing_adjust."""
         try:
@@ -954,7 +958,7 @@ class SajuOrchestrator:
             if "combination_trace" in combined and "elements_distribution" in combined:
                 inputs["wuxing_adjust"] = {
                     "dist": combined["elements_distribution"],
-                    "trace": combined["combination_trace"]
+                    "trace": combined["combination_trace"],
                 }
 
             # Call function-based API
@@ -965,9 +969,7 @@ class SajuOrchestrator:
             return {"evidence_version": "evidence_v1.0.0", "sections": [], "error": str(e)}
 
     def _call_engine_summaries(
-        self,
-        combined: Dict[str, Any],
-        evidence: Dict[str, Any]
+        self, combined: Dict[str, Any], evidence: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Call EngineSummariesBuilder to prepare summaries for LLM Guard."""
         try:
@@ -981,7 +983,7 @@ class SajuOrchestrator:
                 "bucket": bucket,
                 "confidence": EngineSummariesBuilder._calculate_strength_confidence(
                     raw_score, bucket
-                )  # ✅ Use calculation method (not placeholder)
+                ),  # ✅ Use calculation method (not placeholder)
             }
 
             # Extract relation items with calculated impact_weight
@@ -990,16 +992,18 @@ class SajuOrchestrator:
             for rel_type in ["he6", "sanhe", "chong", "xing", "po", "hai"]:
                 items = relations.get(rel_type, [])
                 for item in items:
-                    relation_items.append({
-                        "type": rel_type,
-                        "impact_weight": EngineSummariesBuilder._calculate_relation_impact_weight(
-                            rel_type
-                        ),  # ✅ Use calculation method (not placeholder)
-                        "formed": True,
-                        "hua": item.get("hua", False),
-                        "element": item.get("element", ""),
-                        **item
-                    })
+                    relation_items.append(
+                        {
+                            "type": rel_type,
+                            "impact_weight": EngineSummariesBuilder._calculate_relation_impact_weight(
+                                rel_type
+                            ),  # ✅ Use calculation method (not placeholder)
+                            "formed": True,
+                            "hua": item.get("hua", False),
+                            "element": item.get("element", ""),
+                            **item,
+                        }
+                    )
 
             # Extract yongshin data (use actual confidence from engine)
             yongshin_data = combined.get("yongshin", {})
@@ -1007,22 +1011,19 @@ class SajuOrchestrator:
                 "yongshin": yongshin_data.get("yongshin", []),
                 "bojosin": yongshin_data.get("bojosin", []),
                 "confidence": float(yongshin_data.get("confidence", 0.75)),
-                "strategy": yongshin_data.get("strategy", "")
+                "strategy": yongshin_data.get("strategy", ""),
             }
 
             # Extract climate data
             climate_data = combined.get("climate", {})
             climate = {
                 "season_element": combined.get("season", ""),  # Use season as proxy
-                "support": climate_data.get("support", "보통")
+                "support": climate_data.get("support", "보통"),
             }
 
             # Call static method
             summaries = EngineSummariesBuilder.build(
-                strength=strength,
-                relation_items=relation_items,
-                yongshin=yongshin,
-                climate=climate
+                strength=strength, relation_items=relation_items, yongshin=yongshin, climate=climate
             )
             return summaries
         except Exception as e:
@@ -1030,9 +1031,7 @@ class SajuOrchestrator:
             return {"error": str(e)}
 
     def _call_llm_guard(
-        self,
-        enriched: Dict[str, Any],
-        summaries: Dict[str, Any]
+        self, enriched: Dict[str, Any], summaries: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
         LLM Guard integration (designed for LLM enhancement workflow).
@@ -1043,11 +1042,7 @@ class SajuOrchestrator:
         try:
             # LLMGuard is designed for validating LLM-generated responses
             # Not applicable until we add LLM enhancement to the workflow
-            return {
-                "enabled": True,
-                "ready_for_llm": True,
-                "summaries_available": bool(summaries)
-            }
+            return {"enabled": True, "ready_for_llm": True, "summaries_available": bool(summaries)}
         except Exception as e:
             print(f"LLM Guard setup failed: {e}")
             return {"enabled": False, "error": str(e)}
@@ -1065,7 +1060,7 @@ class SajuOrchestrator:
             return {
                 "enabled": True,
                 "guard_available": True,
-                "forbidden_terms_count": len(self.text_guard.forbidden_terms)
+                "forbidden_terms_count": len(self.text_guard.forbidden_terms),
             }
         except Exception as e:
             print(f"Text Guard setup failed: {e}")

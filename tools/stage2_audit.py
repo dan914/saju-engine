@@ -15,6 +15,7 @@ ROOT = Path.cwd()
 REPORTS = ROOT / "reports"
 REPORTS.mkdir(exist_ok=True, parents=True)
 
+
 def find_files(patterns: List[str]) -> List[Path]:
     """Find files matching glob patterns"""
     out = []
@@ -22,6 +23,7 @@ def find_files(patterns: List[str]) -> List[Path]:
         out.extend([Path(p) for p in glob.glob(pat, recursive=True)])
     # unique & existing
     return sorted(set([p for p in out if p.exists()]))
+
 
 def run(cmd: List[str], check: bool = False) -> Tuple[int, str, str]:
     """Run shell command and capture output"""
@@ -31,22 +33,19 @@ def run(cmd: List[str], check: bool = False) -> Tuple[int, str, str]:
     except Exception as e:
         return 127, "", str(e)
 
+
 def has_psa() -> bool:
     """Check if Policy Signature Auditor exists"""
     return (ROOT / "policy_signature_auditor" / "psa_cli.py").exists()
+
 
 def verify_signatures() -> Tuple[str, int, int, int]:
     """Verify policy signatures and generate schema sidecar hashes"""
     report = []
 
     # Separate policy files (require signature) from schema files (sidecar hash only)
-    policy_targets = find_files([
-        "policy/**/*.json",
-        "core/policy_engines/**/policy/*.json"
-    ])
-    schema_targets = find_files([
-        "schema/**/*.json"
-    ])
+    policy_targets = find_files(["policy/**/*.json", "core/policy_engines/**/policy/*.json"])
+    schema_targets = find_files(["schema/**/*.json"])
 
     if not policy_targets and not schema_targets:
         report.append("⚠️  No JSON policy/schema files found.")
@@ -58,12 +57,14 @@ def verify_signatures() -> Tuple[str, int, int, int]:
         # 1) Policy files: signature verification
         report.append("## Policy File Signatures")
         for p in policy_targets:
-            rc, out, stderr = run([
-                sys.executable,
-                str(ROOT / "policy_signature_auditor" / "psa_cli.py"),
-                "verify",
-                str(p)
-            ])
+            rc, out, stderr = run(
+                [
+                    sys.executable,
+                    str(ROOT / "policy_signature_auditor" / "psa_cli.py"),
+                    "verify",
+                    str(p),
+                ]
+            )
 
             try:
                 rel_path = p.relative_to(ROOT)
@@ -101,9 +102,12 @@ def verify_signatures() -> Tuple[str, int, int, int]:
                 report.append(f"❌ HASH ERROR: {rel_path} :: {e}")
     else:
         report.append("⚠️  PSA not found. Skipping verify.")
-        report.append("   Add policy_signature_auditor/psa_cli.py to enable signature verification.")
+        report.append(
+            "   Add policy_signature_auditor/psa_cli.py to enable signature verification."
+        )
 
     return "\n".join(report), ok, mis, err
+
 
 def load_json(p: Path) -> Tuple[Optional[Dict], Optional[str]]:
     """Load JSON file safely"""
@@ -111,6 +115,7 @@ def load_json(p: Path) -> Tuple[Optional[Dict], Optional[str]]:
         return json.loads(p.read_text(encoding="utf-8")), None
     except Exception as e:
         return None, str(e)
+
 
 def jsonl_lines(p: Path) -> List[Dict]:
     """Parse JSONL file"""
@@ -123,10 +128,12 @@ def jsonl_lines(p: Path) -> List[Dict]:
                 continue
     return lines
 
+
 def write_report(name: str, content: str):
     """Write report to file"""
     (REPORTS / name).write_text(content, encoding="utf-8")
     print(f"✅ Generated: reports/{name}")
+
 
 def inventory() -> str:
     """Generate repository inventory"""
@@ -140,7 +147,7 @@ def inventory() -> str:
         "tests",
         "report",
         "core/policy_engines",
-        "policy_signature_auditor"
+        "policy_signature_auditor",
     ]
 
     for d in dirs:
@@ -153,6 +160,7 @@ def inventory() -> str:
 
     return "\n\n".join(top) if top else "⚠️  No standard directories found."
 
+
 def rule_matrix() -> str:
     """Generate LLM Guard rule coverage matrix"""
     cases_v10 = find_files(["tests/llm_guard_cases_v1.jsonl"])
@@ -161,7 +169,7 @@ def rule_matrix() -> str:
     lines = [
         "# LLM Guard Rule ↔ Test Coverage Matrix\n",
         "**Primary Test Suite:** v1.1 (single source of truth)",
-        "**v1.0 Status:** Legacy/regression only (heuristic coverage detection)\n"
+        "**v1.0 Status:** Legacy/regression only (heuristic coverage detection)\n",
     ]
 
     rules_v10 = [
@@ -173,20 +181,17 @@ def rule_matrix() -> str:
         "SIG-500",
         "PII-600",
         "KO-700",
-        "AMBIG-800"
+        "AMBIG-800",
     ]
 
     rules_v11 = rules_v10 + [
         "CONF-LOW-310",
         "REL-OVERWEIGHT-410",
         "CONSIST-450",
-        "YONGSHIN-UNSUPPORTED-460"
+        "YONGSHIN-UNSUPPORTED-460",
     ]
 
-    for label, cases, rules in [
-        ("v1.0", cases_v10, rules_v10),
-        ("v1.1", cases_v11, rules_v11)
-    ]:
+    for label, cases, rules in [("v1.0", cases_v10, rules_v10), ("v1.1", cases_v11, rules_v11)]:
         covered = {r: [] for r in rules}
 
         if cases:
@@ -219,7 +224,7 @@ def rule_matrix() -> str:
                         "PII": "PII-600",
                         "KO": "KO-700",
                         "KOREAN": "KO-700",
-                        "AMBIG": "AMBIG-800"
+                        "AMBIG": "AMBIG-800",
                     }
                     for keyword, rule_id in heuristic_map.items():
                         if keyword in name_upper and rule_id in covered:
@@ -253,6 +258,7 @@ def rule_matrix() -> str:
 
     return "\n".join(lines)
 
+
 def schema_conformance() -> str:
     """Check schema file presence and basic structure"""
     out = ["# Schema Conformance Report\n"]
@@ -263,7 +269,7 @@ def schema_conformance() -> str:
         "v1.1 Input": "schema/llm_guard_input_v1.1.json",
         "v1.1 Output": "schema/llm_guard_output_v1.1.json",
         "Gyeokguk Input": "schema/gyeokguk_input_schema_v1.json",
-        "Gyeokguk Output": "schema/gyeokguk_output_schema_v1.json"
+        "Gyeokguk Output": "schema/gyeokguk_output_schema_v1.json",
     }
 
     out.append("## Schema Files\n")
@@ -280,7 +286,7 @@ def schema_conformance() -> str:
     sample_paths = [
         "report/saju/sample_evidence.json",
         "samples/llm_guard_v1.1_io_examples.md",
-        "samples/gyeokguk_io_examples_v1.md"
+        "samples/gyeokguk_io_examples_v1.md",
     ]
 
     out.append("| Sample | Status | Path |")
@@ -293,11 +299,12 @@ def schema_conformance() -> str:
 
     return "\n".join(out)
 
+
 def cross_engine_consistency_probe() -> str:
     """Static probe for cross-engine consistency (no runtime)"""
     lines = [
         "# Cross-Engine Consistency Probe (Static Analysis)\n",
-        "This probe checks field presence and plausible value ranges without runtime execution.\n"
+        "This probe checks field presence and plausible value ranges without runtime execution.\n",
     ]
 
     # Check if v1.1 input schema has engine_summaries
@@ -320,7 +327,7 @@ def cross_engine_consistency_probe() -> str:
                     "strength": "Strength evaluation",
                     "relation_summary": "Relation analysis",
                     "yongshin_result": "Yongshin selection",
-                    "climate": "Climate evaluation"
+                    "climate": "Climate evaluation",
                 }
 
                 lines.append("\n### Required Fields:\n")
@@ -352,11 +359,14 @@ def cross_engine_consistency_probe() -> str:
         lines.append(f"- Test cases with `engine_summaries`: **{has_engine_sum}/{len(cases)}**\n")
 
         if has_engine_sum < len(cases):
-            lines.append(f"⚠️  **GAP:** {len(cases) - has_engine_sum} test cases missing `engine_summaries`\n")
+            lines.append(
+                f"⚠️  **GAP:** {len(cases) - has_engine_sum} test cases missing `engine_summaries`\n"
+            )
     else:
         lines.append("⚠️  v1.1 test file not found\n")
 
     return "\n".join(lines)
+
 
 def check_policy_signatures_detailed() -> str:
     """Detailed policy signature verification report"""
@@ -366,24 +376,24 @@ def check_policy_signatures_detailed() -> str:
     known_policies = {
         "LLM Guard v1.0": {
             "path": "policy/llm_guard_policy_v1.json",
-            "expected_hash": "a4dec83545592db3f3d7f3bdfaaf556a325e2c78f5ce7a39813ec6a077960ad2"
+            "expected_hash": "a4dec83545592db3f3d7f3bdfaaf556a325e2c78f5ce7a39813ec6a077960ad2",
         },
         "LLM Guard v1.1": {
             "path": "policy/llm_guard_policy_v1.1.json",
-            "expected_hash": "591f3f6270efb0907eadd43ff0ea5eeeb1d88fbab45c654af5f669009dc966f7"
+            "expected_hash": "591f3f6270efb0907eadd43ff0ea5eeeb1d88fbab45c654af5f669009dc966f7",
         },
         "Relation Weight v1.0": {
             "path": "policy/relation_weight_policy_v1.0.json",
-            "expected_hash": "704cf74d323a034ca8f49ceda2659a91e3ff1aed89ee4845950af6eb39df1b67"
+            "expected_hash": "704cf74d323a034ca8f49ceda2659a91e3ff1aed89ee4845950af6eb39df1b67",
         },
         "Yongshin Selector v1.0": {
             "path": "policy/yongshin_selector_policy_v1.json",
-            "expected_hash": "e0c95f3fdb1d382b06cd90eca7256f3121d648693d0986f67a5c5d368339cb8c"
+            "expected_hash": "e0c95f3fdb1d382b06cd90eca7256f3121d648693d0986f67a5c5d368339cb8c",
         },
         "Gyeokguk Classifier v1.0": {
             "path": "policy/gyeokguk_policy_v1.json",
-            "expected_hash": "05089c0a3f0577c1c56214d11a2511c02413cfa1ef1fc39e174129a0fb894aa6"
-        }
+            "expected_hash": "05089c0a3f0577c1c56214d11a2511c02413cfa1ef1fc39e174129a0fb894aa6",
+        },
     }
 
     lines.append("## Known Policy Signatures\n")
@@ -405,13 +415,16 @@ def check_policy_signatures_detailed() -> str:
                 else:
                     status = "❌ MISMATCH"
 
-                lines.append(f"| {name} | {status} | `{expected[:16]}...` | `{actual[:16] if actual != 'UNSIGNED' else 'UNSIGNED'}...` |")
+                lines.append(
+                    f"| {name} | {status} | `{expected[:16]}...` | `{actual[:16] if actual != 'UNSIGNED' else 'UNSIGNED'}...` |"
+                )
             else:
                 lines.append(f"| {name} | ❌ ERROR | `{expected[:16]}...` | Load error |")
         else:
             lines.append(f"| {name} | ⚠️  MISSING | `{expected[:16]}...` | File not found |")
 
     return "\n".join(lines)
+
 
 def main():
     """Main audit execution"""
@@ -791,6 +804,7 @@ pytest services/analysis-service/tests/test_llm_guard_e2e.py -v
     print("=" * 60)
 
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

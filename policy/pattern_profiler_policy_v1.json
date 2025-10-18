@@ -242,6 +242,97 @@
           "balanced_context"
         ]
       }
+    },
+    {
+      "id": "R_WOOD_EMP",
+      "when": {
+        "strength.elements_any": [
+          "high:wood"
+        ]
+      },
+      "emit": {
+        "tags": [
+          "wood_emphasis"
+        ]
+      }
+    },
+    {
+      "id": "R_FIRE_EMP",
+      "when": {
+        "strength.elements_any": [
+          "high:fire"
+        ]
+      },
+      "emit": {
+        "tags": [
+          "fire_emphasis"
+        ]
+      }
+    },
+    {
+      "id": "R_EARTH_EMP",
+      "when": {
+        "strength.elements_any": [
+          "high:earth"
+        ]
+      },
+      "emit": {
+        "tags": [
+          "earth_emphasis"
+        ]
+      }
+    },
+    {
+      "id": "R_METAL_EMP",
+      "when": {
+        "strength.elements_any": [
+          "high:metal"
+        ]
+      },
+      "emit": {
+        "tags": [
+          "metal_emphasis"
+        ]
+      }
+    },
+    {
+      "id": "R_WATER_EMP",
+      "when": {
+        "strength.elements_any": [
+          "high:water"
+        ]
+      },
+      "emit": {
+        "tags": [
+          "water_emphasis"
+        ]
+      }
+    },
+    {
+      "id": "R_BAL_DRY",
+      "when": {
+        "climate.flags_any": [
+          "dryness"
+        ]
+      },
+      "emit": {
+        "tags": [
+          "balance_dry"
+        ]
+      }
+    },
+    {
+      "id": "R_BAL_HUMID",
+      "when": {
+        "climate.flags_any": [
+          "humidity"
+        ]
+      },
+      "emit": {
+        "tags": [
+          "balance_humid"
+        ]
+      }
     }
   ]
 }

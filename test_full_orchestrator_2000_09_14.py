@@ -34,7 +34,7 @@ try:
         mode="traditional_kr",
         zi_hour_mode="default",
         use_refined=True,
-        return_metadata=True
+        return_metadata=True,
     )
 
     print(f"Year:  {pillars_result['year']}")
@@ -48,6 +48,7 @@ try:
 except Exception as e:
     print(f"❌ ERROR in pillar calculation: {e}")
     import traceback
+
     traceback.print_exc()
     sys.exit(1)
 
@@ -67,13 +68,13 @@ try:
         "year": pillars_result["year"],
         "month": pillars_result["month"],
         "day": pillars_result["day"],
-        "hour": pillars_result["hour"]
+        "hour": pillars_result["hour"],
     }
 
     birth_context = {
         "birth_dt": "2000-09-14T10:00:00+09:00",
         "gender": "male",
-        "timezone": "Asia/Seoul"
+        "timezone": "Asia/Seoul",
     }
 
     print("Input:")
@@ -90,6 +91,7 @@ try:
 except Exception as e:
     print(f"❌ ERROR in orchestrator: {e}")
     import traceback
+
     traceback.print_exc()
     sys.exit(1)
 
@@ -116,7 +118,7 @@ engines = [
     "yuanjin",
     "ten_gods",
     "twelve_stages",
-    "stage3"
+    "stage3",
 ]
 
 for engine_name in engines:
@@ -143,29 +145,31 @@ for engine_name in engines:
                 print(f"  direction: {engine_result.get('direction', 'N/A')}")
                 print(f"  start_age: {engine_result.get('start_age', 'N/A')}")
                 print(f"  pillars_count: {len(engine_result.get('pillars', []))}")
-                if engine_result.get('pillars'):
+                if engine_result.get("pillars"):
                     print(f"  first_pillar: {engine_result['pillars'][0]}")
                 print(f"  current_luck: {engine_result.get('current_luck', 'N/A')}")
 
             elif engine_name == "ten_gods":
-                by_pillar = engine_result.get('by_pillar', {})
-                summary = engine_result.get('summary', {})
+                by_pillar = engine_result.get("by_pillar", {})
+                summary = engine_result.get("summary", {})
                 print(f"  by_pillar keys: {list(by_pillar.keys())}")
                 print(f"  summary: {summary}")
                 print(f"  dominant: {engine_result.get('dominant', 'N/A')}")
                 print(f"  missing: {engine_result.get('missing', 'N/A')}")
 
             elif engine_name == "twelve_stages":
-                by_pillar = engine_result.get('by_pillar', {})
+                by_pillar = engine_result.get("by_pillar", {})
                 print(f"  by_pillar keys: {list(by_pillar.keys())}")
                 print(f"  dominant: {engine_result.get('dominant', 'N/A')}")
                 print(f"  weakest: {engine_result.get('weakest', 'N/A')}")
 
             elif engine_name == "stage3":
-                for stage3_engine in ['luck_flow', 'gyeokguk', 'climate_advice', 'pattern']:
+                for stage3_engine in ["luck_flow", "gyeokguk", "climate_advice", "pattern"]:
                     if stage3_engine in engine_result:
                         stage3_data = engine_result[stage3_engine]
-                        print(f"  {stage3_engine}: {type(stage3_data).__name__} with {len(stage3_data) if isinstance(stage3_data, (dict, list)) else 'N/A'} items")
+                        print(
+                            f"  {stage3_engine}: {type(stage3_data).__name__} with {len(stage3_data) if isinstance(stage3_data, (dict, list)) else 'N/A'} items"
+                        )
 
             else:
                 # Just show structure
@@ -190,6 +194,7 @@ print("=" * 80)
 print("VALIDATION")
 print("=" * 80)
 print()
+
 
 def check_for_stubs(obj, path="root"):
     """Recursively check for stub/placeholder values"""
@@ -216,6 +221,7 @@ def check_for_stubs(obj, path="root"):
             issues.extend(check_for_stubs(item, f"{path}[{i}]"))
 
     return issues
+
 
 print("Checking for stubs/placeholders...")
 issues = check_for_stubs(result)
@@ -257,7 +263,7 @@ print("=" * 80)
 
 # Save full result to file
 output_file = Path(__file__).parent / "test_result_2000_09_14_full.json"
-with open(output_file, 'w', encoding='utf-8') as f:
+with open(output_file, "w", encoding="utf-8") as f:
     json.dump(result, f, ensure_ascii=False, indent=2)
 
 print(f"Full result saved to: {output_file}")

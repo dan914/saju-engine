@@ -8,6 +8,7 @@ Validates:
 4. Wang states are valid (旺, 相, 休, 囚, 死)
 5. RFC-8785 signature integrity
 """
+
 import hashlib
 import json
 from pathlib import Path
@@ -51,7 +52,9 @@ class TestSeasonsWangMapPolicy:
 
         for branch, elements in self.policy["by_branch"].items():
             actual_elements = list(elements.keys())
-            assert len(actual_elements) == 5, f"Branch {branch} has {len(actual_elements)} elements, expected 5"
+            assert (
+                len(actual_elements) == 5
+            ), f"Branch {branch} has {len(actual_elements)} elements, expected 5"
 
             for element in expected_elements:
                 assert element in actual_elements, f"Branch {branch} missing element: {element}"
@@ -62,7 +65,9 @@ class TestSeasonsWangMapPolicy:
 
         for branch, elements in self.policy["by_branch"].items():
             for element, state in elements.items():
-                assert state in valid_states, f"Branch {branch}, element {element}: invalid state '{state}'"
+                assert (
+                    state in valid_states
+                ), f"Branch {branch}, element {element}: invalid state '{state}'"
 
     def test_stages_array(self):
         """Test that stages array contains all 5 Wang states"""
@@ -97,7 +102,9 @@ class TestSeasonsWangMapPolicy:
         canonical = encode_canonical_json(policy_copy)
         computed = hashlib.sha256(canonical).hexdigest()
 
-        assert computed == signature, f"Signature mismatch:\nExpected: {signature}\nComputed: {computed}"
+        assert (
+            computed == signature
+        ), f"Signature mismatch:\nExpected: {signature}\nComputed: {computed}"
 
     def test_policy_version_format(self):
         """Test that policy_version follows naming convention"""

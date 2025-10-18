@@ -48,31 +48,28 @@ class TestStrengthV2Fix:
 
         Expected: 신약 (기존: 중화 ❌)
         """
-        pillars = {
-            "year": "癸卯",
-            "month": "甲子",
-            "day": "庚寅",
-            "hour": "丙戌"
-        }
+        pillars = {"year": "癸卯", "month": "甲子", "day": "庚寅", "hour": "丙戌"}
 
         result = evaluator.evaluate(pillars, season="winter")
         strength = result["strength"]
 
         # Verify stem_visible calculation
-        assert strength["details"]["stem_visible"] == -12, \
-            f"stem_visible should be -12 (癸=0, 甲=-4, 丙=-8), got {strength['details']['stem_visible']}"
+        assert (
+            strength["details"]["stem_visible"] == -12
+        ), f"stem_visible should be -12 (癸=0, 甲=-4, 丙=-8), got {strength['details']['stem_visible']}"
 
         # Verify grade is 신약 (not 중화)
-        assert strength["grade_code"] == "신약", \
-            f"Grade should be 신약, got {strength['grade_code']}"
+        assert (
+            strength["grade_code"] == "신약"
+        ), f"Grade should be 신약, got {strength['grade_code']}"
 
         # Verify normalized score is in weak range (20-39)
-        assert 20 <= strength["score"] < 40, \
-            f"Normalized score should be in weak range (20-39), got {strength['score']}"
+        assert (
+            20 <= strength["score"] < 40
+        ), f"Normalized score should be in weak range (20-39), got {strength['score']}"
 
         # Verify bin is weak
-        assert strength["bin"] == "weak", \
-            f"Bin should be weak, got {strength['bin']}"
+        assert strength["bin"] == "weak", f"Bin should be weak, got {strength['bin']}"
 
     # -------------------------------------------------------------------------
     # Case 2: Pure output/wealth/official (식·재·관만 투간)
@@ -88,19 +85,15 @@ class TestStrengthV2Fix:
         - 丁(火): official → -8
         → stem_visible ≤ 0
         """
-        pillars = {
-            "year": "癸丙",
-            "month": "甲子",
-            "day": "庚申",
-            "hour": "丁巳"
-        }
+        pillars = {"year": "癸丙", "month": "甲子", "day": "庚申", "hour": "丁巳"}
 
         result = evaluator.evaluate(pillars, season="winter")
         strength = result["strength"]
 
         # stem_visible should be negative or zero
-        assert strength["details"]["stem_visible"] <= 0, \
-            f"stem_visible for pure output/wealth/official should be ≤0, got {strength['details']['stem_visible']}"
+        assert (
+            strength["details"]["stem_visible"] <= 0
+        ), f"stem_visible for pure output/wealth/official should be ≤0, got {strength['details']['stem_visible']}"
 
     # -------------------------------------------------------------------------
     # Case 3: Pure resource/companion (印·比만 투간)
@@ -116,23 +109,21 @@ class TestStrengthV2Fix:
         - 辛(금): companion → +8
         → stem_visible = 10 + 8 + 8 = 26 → capped at +15
         """
-        pillars = {
-            "year": "己巳",
-            "month": "庚申",
-            "day": "庚申",
-            "hour": "辛酉"
-        }
+        pillars = {"year": "己巳", "month": "庚申", "day": "庚申", "hour": "辛酉"}
 
         result = evaluator.evaluate(pillars, season="autumn")
         strength = result["strength"]
 
         # stem_visible should be capped at +15
-        assert strength["details"]["stem_visible"] == 15, \
-            f"stem_visible should be capped at +15, got {strength['details']['stem_visible']}"
+        assert (
+            strength["details"]["stem_visible"] == 15
+        ), f"stem_visible should be capped at +15, got {strength['details']['stem_visible']}"
 
         # Grade should be strong (신강 or 극신강)
-        assert strength["grade_code"] in ["신강", "극신강"], \
-            f"Grade should be 신강 or 극신강, got {strength['grade_code']}"
+        assert strength["grade_code"] in [
+            "신강",
+            "극신강",
+        ], f"Grade should be 신강 or 극신강, got {strength['grade_code']}"
 
     # -------------------------------------------------------------------------
     # Case 4: Month stem effect - ke_to_other (日克月)
@@ -147,8 +138,8 @@ class TestStrengthV2Fix:
         pillars = {
             "year": "癸卯",
             "month": "甲子",  # 甲 = 木
-            "day": "庚寅",    # 庚 = 金
-            "hour": "丙戌"
+            "day": "庚寅",  # 庚 = 金
+            "hour": "丙戌",
         }
 
         result = evaluator.evaluate(pillars, season="winter")
@@ -161,8 +152,9 @@ class TestStrengthV2Fix:
         # base = -15 + 0 + (-12) + 4 = -23
         # total = -23 * 0.95 = -21.85
         expected_raw = -21.85
-        assert abs(strength["score_raw"] - expected_raw) < 0.1, \
-            f"Raw score should be ~{expected_raw} (with -5% ke_to_other), got {strength['score_raw']}"
+        assert (
+            abs(strength["score_raw"] - expected_raw) < 0.1
+        ), f"Raw score should be ~{expected_raw} (with -5% ke_to_other), got {strength['score_raw']}"
 
     # -------------------------------------------------------------------------
     # Case 5: Theoretical range validation
@@ -178,25 +170,27 @@ class TestStrengthV2Fix:
         """
         # Test extreme positive case
         pillars_max = {
-            "year": "己巳",   # 己土 = resource (+10)
+            "year": "己巳",  # 己土 = resource (+10)
             "month": "庚申",  # 庚金 = companion (+8)
             "day": "庚申",
-            "hour": "辛酉"    # 辛金 = companion (+8)
+            "hour": "辛酉",  # 辛金 = companion (+8)
         }
         result_max = evaluator.evaluate(pillars_max, season="autumn")
-        assert result_max["strength"]["details"]["stem_visible"] == 15, \
-            "Max stem_visible should be capped at +15"
+        assert (
+            result_max["strength"]["details"]["stem_visible"] == 15
+        ), "Max stem_visible should be capped at +15"
 
         # Test extreme negative case
         pillars_min = {
-            "year": "癸卯",   # 癸水 = output (0)
+            "year": "癸卯",  # 癸水 = output (0)
             "month": "甲子",  # 甲木 = wealth (-4)
-            "day": "庚寅",    # 庚金
-            "hour": "丙戌"    # 丙火 = official (-8)
+            "day": "庚寅",  # 庚金
+            "hour": "丙戌",  # 丙火 = official (-8)
         }
         result_min = evaluator.evaluate(pillars_min, season="winter")
-        assert result_min["strength"]["details"]["stem_visible"] <= 0, \
-            "stem_visible with only output/wealth/official should be ≤0"
+        assert (
+            result_min["strength"]["details"]["stem_visible"] <= 0
+        ), "stem_visible with only output/wealth/official should be ≤0"
 
     # -------------------------------------------------------------------------
     # Case 6: Grade distribution sanity check
@@ -210,7 +204,6 @@ class TestStrengthV2Fix:
             # Weak cases (계절에 맞게 설정)
             ({"year": "癸卯", "month": "甲子", "day": "庚寅", "hour": "丙戌"}, "winter", "신약"),
             ({"year": "壬寅", "month": "癸卯", "day": "庚午", "hour": "丁亥"}, "spring", "신약"),
-
             # Strong cases (금이 왕성한 계절)
             ({"year": "己巳", "month": "庚申", "day": "庚申", "hour": "辛酉"}, "autumn", "신강"),
             ({"year": "戊戌", "month": "己酉", "day": "庚子", "hour": "辛巳"}, "autumn", "신강"),
@@ -224,17 +217,21 @@ class TestStrengthV2Fix:
 
             # Verify grade is in expected category
             if expected_category == "신약":
-                assert grade in ["극신약", "신약"], \
-                    f"Expected weak grade, got {grade} for {pillars} (season={season})"
+                assert grade in [
+                    "극신약",
+                    "신약",
+                ], f"Expected weak grade, got {grade} for {pillars} (season={season})"
             elif expected_category == "신강":
-                assert grade in ["신강", "극신강", "중화"], \
-                    f"Expected strong grade, got {grade} for {pillars} (season={season})"
+                assert grade in [
+                    "신강",
+                    "극신강",
+                    "중화",
+                ], f"Expected strong grade, got {grade} for {pillars} (season={season})"
 
         # Verify we got variety (not all same grade)
         grades = [r[1] for r in results]
         unique_grades = set(grades)
-        assert len(unique_grades) >= 2, \
-            f"Should have variety in grades, got only: {unique_grades}"
+        assert len(unique_grades) >= 2, f"Should have variety in grades, got only: {unique_grades}"
 
 
 # Run tests if executed directly

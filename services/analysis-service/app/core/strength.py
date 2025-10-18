@@ -379,7 +379,9 @@ class StrengthEvaluator:
 
         # Month stem effect based on ten gods relation (if month_stem provided)
         month_stem = locals().get("month_stem")  # Get from parameters if added
-        month_stem_effect = self._compute_month_stem_effect(day_stem, month_stem) if month_stem else 0
+        month_stem_effect = (
+            self._compute_month_stem_effect(day_stem, month_stem) if month_stem else 0
+        )
 
         # Wealth location bonus
         wealth_bonus, wealth_hits_log = self.compute_wealth_location_bonus(
@@ -436,6 +438,7 @@ class StrengthEvaluator:
         """
         import sys
         from pathlib import Path
+
         sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "services" / "common"))
         from saju_common import BRANCH_TO_SEASON, SEASON_ELEMENT_BOOST, STEM_TO_ELEMENT
 
@@ -494,6 +497,7 @@ class StrengthEvaluator:
         """
         import sys
         from pathlib import Path
+
         sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "services" / "common"))
         from saju_common import ELEMENT_CONTROLS, ELEMENT_GENERATES, STEM_TO_ELEMENT
 

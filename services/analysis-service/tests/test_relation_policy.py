@@ -152,7 +152,9 @@ def test_ci_rel_01_positive_priorities(policy):
     """CI-REL-01: All relationships must have positive priority"""
     for rel_type, rel_data in policy["relationships"].items():
         for rule in rel_data["rules"]:
-            assert rule["priority"] > 0, f"{rel_type} rule has non-positive priority: {rule['priority']}"
+            assert (
+                rule["priority"] > 0
+            ), f"{rel_type} rule has non-positive priority: {rule['priority']}"
 
 
 def test_ci_rel_02_valid_score_ranges(policy):
@@ -160,7 +162,9 @@ def test_ci_rel_02_valid_score_ranges(policy):
     # Check score_range for each relationship type
     for rel_type, rel_data in policy["relationships"].items():
         score_range = rel_data["score_range"]
-        assert score_range["min"] < score_range["max"], f"Invalid score range for {rel_type}: {score_range}"
+        assert (
+            score_range["min"] < score_range["max"]
+        ), f"Invalid score range for {rel_type}: {score_range}"
 
 
 def test_ci_rel_03_hidden_stems_sum(policy):
@@ -277,7 +281,9 @@ def test_ci_rel_12_valid_branches(policy):
     for rel_type, rel_data in policy["relationships"].items():
         for rule in rel_data["rules"]:
             for branch in rule["branches"]:
-                assert branch in valid_branches, f"{rel_type} rule contains invalid branch: {branch}"
+                assert (
+                    branch in valid_branches
+                ), f"{rel_type} rule contains invalid branch: {branch}"
 
 
 # ============================================================================

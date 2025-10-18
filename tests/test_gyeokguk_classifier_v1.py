@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 """
 정책 기반 모의평가로 격국 type만 검증합니다. 엔진 런타임 구현은 필요 없습니다.
@@ -7,8 +6,10 @@ import json
 from pathlib import Path
 
 POLICY = json.loads(Path("policy/gyeokguk_policy_v1.json").read_text(encoding="utf-8"))
+IO_DATA = json.loads(Path("docs/engines/gyeokguk_classifier.io.json").read_text(encoding="utf-8"))
 
-ALLOWED_TYPES = {"정격","종격","화격","특수격"}
+ALLOWED_TYPES = {"정격", "종격", "화격", "특수격"}
+
 
 def _get(ctx, path, default=None):
     cur = ctx
@@ -18,16 +19,30 @@ def _get(ctx, path, default=None):
         cur = cur[p]
     return cur
 
+
 def _primary(ctx):
     return _get(ctx, "yongshin.primary")
+
 
 def _elem_level(ctx, elem):
     return _get(ctx, f"strength.elements.{elem}")
 
+
 def _map_korean_elem(x):
-    m = {"목":"wood","화":"fire","토":"earth","금":"metal","수":"water",
-         "wood":"wood","fire":"fire","earth":"earth","metal":"metal","water":"water"}
+    m = {
+        "목": "wood",
+        "화": "fire",
+        "토": "earth",
+        "금": "metal",
+        "수": "water",
+        "wood": "wood",
+        "fire": "fire",
+        "earth": "earth",
+        "metal": "metal",
+        "water": "water",
+    }
     return m.get(x, x)
+
 
 def _match_when(when, ctx):
     # strength.phase_in
@@ -65,6 +80,7 @@ def _match_when(when, ctx):
         return False
     return True
 
+
 def evaluate(ctx):
     for rule in POLICY["rules"]:
         if _match_when(rule["when"], ctx):
@@ -72,11 +88,13 @@ def evaluate(ctx):
             return e["type"], e["basis"], e["confidence"], e["notes"]
     return None, [], 0.0, ""
 
+
 def test_examples_match_expected_types():
-    for ex in POLICY["examples"]:
-        t, basis, conf, notes = evaluate(ex)
-        assert t == ex["expect_type"], f"{ex['id']}: expected {ex['expect_type']}, got {t}"
+    for ex in IO_DATA["cases"]:
+        t, basis, conf, notes = evaluate(ex["input"])
+        assert t == ex["expected_type"], f"{ex['id']}: expected {ex['expected_type']}, got {t}"
         assert t in ALLOWED_TYPES
+
 
 def test_basis_subset_and_confidence_range():
     catalog = set(POLICY["criteria_catalog"])
@@ -88,7 +106,8 @@ def test_basis_subset_and_confidence_range():
         assert 0.0 <= conf <= 1.0
         assert "\n" not in notes and len(notes) <= 200
 
+
 def test_policy_minimum_structure():
     assert POLICY.get("policy_version") == "gyeokguk_policy_v1"
     assert "rules" in POLICY and len(POLICY["rules"]) >= 4
-    assert "examples" in POLICY and len(POLICY["examples"]) >= 4
+    assert "cases" in IO_DATA and len(IO_DATA["cases"]) >= 4

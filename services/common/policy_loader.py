@@ -25,6 +25,7 @@ LEGACY_DIRS = [
     PROJECT_ROOT / "saju_codex_batch_all_v2_6_signed" / "policies",
 ]
 
+
 def search_candidates(filename: str) -> List[Path]:
     candidates = []
     env_dir = os.getenv("POLICY_DIR")
@@ -34,13 +35,16 @@ def search_candidates(filename: str) -> List[Path]:
     candidates.extend(LEGACY_DIRS)
     return [Path(d) / filename for d in candidates]
 
+
 def resolve_policy_path(filename: str) -> Path:
     for p in search_candidates(filename):
         if p.exists():
             return p
     raise FileNotFoundError(
-        f"Policy file not found: {filename}\nSearched in:\n- " + "\n- ".join(map(str, [c.parent for c in search_candidates(filename)]))
+        f"Policy file not found: {filename}\nSearched in:\n- "
+        + "\n- ".join(map(str, [c.parent for c in search_candidates(filename)]))
     )
+
 
 def load_policy_json(filename: str):
     path = resolve_policy_path(filename)

@@ -8,6 +8,7 @@ Validates:
 4. Bin map covers all tiers
 5. RFC-8785 signature integrity
 """
+
 import hashlib
 import json
 from pathlib import Path
@@ -48,8 +49,9 @@ class TestStrengthGradingTiersPolicy:
         min_scores = [tier["min"] for tier in self.policy["tiers"]]
 
         # Should be descending: [80, 60, 40, 20, 0]
-        assert min_scores == sorted(min_scores, reverse=True), \
-            f"Tiers not in descending order: {min_scores}"
+        assert min_scores == sorted(
+            min_scores, reverse=True
+        ), f"Tiers not in descending order: {min_scores}"
 
     def test_tier_min_ranges(self):
         """Test that tier min scores cover 0-100 range appropriately"""
@@ -63,24 +65,23 @@ class TestStrengthGradingTiersPolicy:
 
         # All mins should be 0-100
         for tier in tiers:
-            assert 0 <= tier["min"] <= 100, \
-                f"Tier {tier['name']} min out of range: {tier['min']}"
+            assert 0 <= tier["min"] <= 100, f"Tier {tier['name']} min out of range: {tier['min']}"
 
     def test_bin_map_coverage(self):
         """Test that bin_map covers all 5 tiers"""
         tier_names = {tier["name"] for tier in self.policy["tiers"]}
         bin_map_keys = set(self.policy["bin_map"].keys())
 
-        assert bin_map_keys == tier_names, \
-            f"bin_map doesn't cover all tiers. Missing: {tier_names - bin_map_keys}"
+        assert (
+            bin_map_keys == tier_names
+        ), f"bin_map doesn't cover all tiers. Missing: {tier_names - bin_map_keys}"
 
     def test_bin_values_are_valid(self):
         """Test that bin_map values are one of: strong, balanced, weak"""
         valid_bins = {"strong", "balanced", "weak"}
 
         for tier, bin_val in self.policy["bin_map"].items():
-            assert bin_val in valid_bins, \
-                f"Tier {tier} has invalid bin value: {bin_val}"
+            assert bin_val in valid_bins, f"Tier {tier} has invalid bin value: {bin_val}"
 
     def test_bin_mapping_logic(self):
         """Test that bin mapping follows expected strength logic"""
@@ -109,7 +110,9 @@ class TestStrengthGradingTiersPolicy:
         canonical = encode_canonical_json(policy_copy)
         computed = hashlib.sha256(canonical).hexdigest()
 
-        assert computed == signature, f"Signature mismatch:\nExpected: {signature}\nComputed: {computed}"
+        assert (
+            computed == signature
+        ), f"Signature mismatch:\nExpected: {signature}\nComputed: {computed}"
 
     def test_policy_version_format(self):
         """Test that policy_version follows naming convention"""

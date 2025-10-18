@@ -1,21 +1,22 @@
-
 # -*- coding: utf-8 -*-
 import json
 import re
 from pathlib import Path
 
 POLICY = json.loads(Path("policy/pattern_profiler_policy_v1.json").read_text(encoding="utf-8"))
+IO_DATA = json.loads(Path("docs/engines/pattern_profiler.io.json").read_text(encoding="utf-8"))
 TAGS = set(POLICY["tags_catalog"])
 RULES = POLICY["rules"]
-EXAMPLES = POLICY["examples"]
+EXAMPLES = IO_DATA["cases"]
 
 ALLOWED_TEMPLATE_VARS = {
     "yongshin.primary",
     "luck_flow.trend",
     "climate.balance_index",
     "strength.phase",
-    "gyeokguk.type"
+    "gyeokguk.type",
 }
+
 
 def _get(ctx, path, default=None):
     cur = ctx
@@ -25,12 +26,15 @@ def _get(ctx, path, default=None):
         cur = cur[p]
     return cur
 
+
 def _primary(ctx):
     return _get(ctx, "yongshin.primary")
+
 
 def _elem_level(ctx, elem):
     elems = _get(ctx, "strength.elements", {})
     return elems.get(elem)
+
 
 def _match_when(when, ctx):
     # strength.phase_in
@@ -45,7 +49,7 @@ def _match_when(when, ctx):
             if el == "primary":
                 el = _primary(ctx)
             # map korean to english element keys
-            mapping = {"목":"wood","화":"fire","토":"earth","금":"metal","수":"water"}
+            mapping = {"목": "wood", "화": "fire", "토": "earth", "금": "metal", "수": "water"}
             el = mapping.get(el, el)
             if _elem_level(ctx, el) == lv:
                 ok = True
@@ -84,6 +88,7 @@ def _match_when(when, ctx):
             return False
     return True
 
+
 def emit_patterns(policy, ctx):
     tags = []
     briefs = {"one_liner": "", "key_points": []}
@@ -102,11 +107,13 @@ def emit_patterns(policy, ctx):
                     briefs["key_points"].extend(bt["key_points"])
     return tags, briefs
 
+
 def test_examples_emit_expected_patterns():
     for ex in EXAMPLES:
-        tags, _briefs = emit_patterns(POLICY, ex)
-        assert set(ex["expect_patterns"]).issubset(set(tags))
+        tags, _briefs = emit_patterns(POLICY, ex["input"])
+        assert set(ex["expected_patterns"]).issubset(set(tags))
         assert set(tags).issubset(TAGS)
+
 
 def test_one_liner_template_variables_are_allowed():
     # Collect all one_liner templates
@@ -121,10 +128,11 @@ def test_one_liner_template_variables_are_allowed():
         for v in vars_found:
             assert v in ALLOWED_TEMPLATE_VARS, f"Template var not allowed: {v}"
 
+
 def test_guard_limits_templates_comply():
     for r in RULES:
         bt = r["emit"].get("brief_templates") if "emit" in r else None
-        if not bt: 
+        if not bt:
             continue
         if "one_liner" in bt:
             s = bt["one_liner"]
@@ -134,6 +142,7 @@ def test_guard_limits_templates_comply():
             assert len(kps) <= 5
             for k in kps:
                 assert len(k) <= 80
+
 
 def test_tags_catalog_unique():
     assert len(TAGS) == len(POLICY["tags_catalog"])

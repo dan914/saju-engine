@@ -7,6 +7,7 @@ Tests verify:
 3. SimpleDeltaT: ΔT calculation for modern dates
 4. Protocol compliance
 """
+
 import sys
 from datetime import date, datetime, timezone
 from pathlib import Path

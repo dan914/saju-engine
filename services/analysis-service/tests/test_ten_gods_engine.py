@@ -35,10 +35,10 @@ def test_schema_validation():
     schema = load_schema()
 
     pillars = {
-        "year":  {"stem": "庚", "branch": "辰"},
+        "year": {"stem": "庚", "branch": "辰"},
         "month": {"stem": "乙", "branch": "酉"},
-        "day":   {"stem": "乙", "branch": "亥"},
-        "hour":  {"stem": "辛", "branch": "巳"}
+        "day": {"stem": "乙", "branch": "亥"},
+        "hour": {"stem": "辛", "branch": "巳"},
     }
 
     engine = TenGodsCalculator(policy, output_policy_version="ten_gods_v1.0")
@@ -53,10 +53,10 @@ def test_sample_chart_output():
     policy = load_policy()
 
     pillars = {
-        "year":  {"stem": "庚", "branch": "辰"},
+        "year": {"stem": "庚", "branch": "辰"},
         "month": {"stem": "乙", "branch": "酉"},
-        "day":   {"stem": "乙", "branch": "亥"},
-        "hour":  {"stem": "辛", "branch": "巳"}
+        "day": {"stem": "乙", "branch": "亥"},
+        "hour": {"stem": "辛", "branch": "巳"},
     }
 
     engine = TenGodsCalculator(policy, output_policy_version="ten_gods_v1.0")
@@ -89,17 +89,17 @@ def test_day_stem_flip_changes_calculation():
     policy = load_policy()
 
     pillars_A = {
-        "year":  {"stem": "庚", "branch": "辰"},
+        "year": {"stem": "庚", "branch": "辰"},
         "month": {"stem": "乙", "branch": "酉"},
-        "day":   {"stem": "乙", "branch": "亥"},
-        "hour":  {"stem": "辛", "branch": "巳"}
+        "day": {"stem": "乙", "branch": "亥"},
+        "hour": {"stem": "辛", "branch": "巳"},
     }
 
     pillars_B = {
-        "year":  {"stem": "庚", "branch": "辰"},
+        "year": {"stem": "庚", "branch": "辰"},
         "month": {"stem": "乙", "branch": "酉"},
-        "day":   {"stem": "甲", "branch": "亥"},  # Changed to 甲
-        "hour":  {"stem": "辛", "branch": "巳"}
+        "day": {"stem": "甲", "branch": "亥"},  # Changed to 甲
+        "hour": {"stem": "辛", "branch": "巳"},
     }
 
     engine = TenGodsCalculator(policy)
@@ -116,10 +116,10 @@ def test_hidden_stems_counted():
     policy = load_policy()
 
     pillars = {
-        "year":  {"stem": "庚", "branch": "辰"},
+        "year": {"stem": "庚", "branch": "辰"},
         "month": {"stem": "乙", "branch": "酉"},
-        "day":   {"stem": "乙", "branch": "亥"},
-        "hour":  {"stem": "辛", "branch": "巳"}
+        "day": {"stem": "乙", "branch": "亥"},
+        "hour": {"stem": "辛", "branch": "巳"},
     }
 
     engine = TenGodsCalculator(policy)
@@ -141,10 +141,10 @@ def test_signature_deterministic():
     policy = load_policy()
 
     pillars = {
-        "year":  {"stem": "庚", "branch": "辰"},
+        "year": {"stem": "庚", "branch": "辰"},
         "month": {"stem": "乙", "branch": "酉"},
-        "day":   {"stem": "乙", "branch": "亥"},
-        "hour":  {"stem": "辛", "branch": "巳"}
+        "day": {"stem": "乙", "branch": "亥"},
+        "hour": {"stem": "辛", "branch": "巳"},
     }
 
     engine = TenGodsCalculator(policy)

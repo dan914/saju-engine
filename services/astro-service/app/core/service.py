@@ -32,7 +32,9 @@ class SolarTermService:
         if entries:
             delta_t_values = [e.delta_t_seconds for e in entries]
             avg_delta_t = sum(delta_t_values) / len(delta_t_values)
-            delta_t_range = max(delta_t_values) - min(delta_t_values) if len(delta_t_values) > 1 else 0.0
+            delta_t_range = (
+                max(delta_t_values) - min(delta_t_values) if len(delta_t_values) > 1 else 0.0
+            )
             source = entries[0].source
             algo_version = entries[0].algo_version
         else:

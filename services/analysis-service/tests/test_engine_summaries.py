@@ -8,6 +8,7 @@ Tests verify:
 4. Score normalization (0-100 → 0-1)
 5. Schema compliance with llm_guard_input_v1.1.json
 """
+
 import pytest
 from app.core.engine_summaries import EngineSummariesBuilder
 
@@ -23,7 +24,7 @@ class TestEngineSummariesBuilder:
             strength={"score": 0.65, "bucket": "중화", "confidence": 0.8},
             relation_items=[],
             yongshin={"yongshin": ["木"], "bojosin": ["水"], "confidence": 0.75},
-            climate={"season_element": "火", "support": "강"}
+            climate={"season_element": "火", "support": "강"},
         )
 
         # Verify top-level structure
@@ -62,7 +63,7 @@ class TestEngineSummariesBuilder:
             strength={"score": 0.5},
             relation_items=relation_items,
             yongshin={"yongshin": []},
-            climate={"season_element": ""}
+            climate={"season_element": ""},
         )
 
         summary = result["relation_summary"]
@@ -85,7 +86,7 @@ class TestEngineSummariesBuilder:
             strength={"score": 0.5},
             relation_items=relation_items,
             yongshin={"yongshin": []},
-            climate={"season_element": ""}
+            climate={"season_element": ""},
         )
 
         # Should take first sanhe, not highest weight
@@ -97,14 +98,14 @@ class TestEngineSummariesBuilder:
 
         relation_items = [
             {"type": "ganhe", "impact_weight": 0.50, "hua": False, "element": "木"},  # Should skip
-            {"type": "ganhe", "impact_weight": 0.70, "hua": True, "element": "金"},   # Should use
+            {"type": "ganhe", "impact_weight": 0.70, "hua": True, "element": "金"},  # Should use
         ]
 
         result = builder.build(
             strength={"score": 0.5},
             relation_items=relation_items,
             yongshin={"yongshin": []},
-            climate={"season_element": ""}
+            climate={"season_element": ""},
         )
 
         assert result["relation_summary"]["ganhe_result"] == "金"
@@ -117,7 +118,7 @@ class TestEngineSummariesBuilder:
             strength={"score": 65},  # 0-100 scale
             relation_items=[],
             yongshin={"yongshin": []},
-            climate={"season_element": ""}
+            climate={"season_element": ""},
         )
 
         assert result["strength"]["score"] == 0.65
@@ -130,7 +131,7 @@ class TestEngineSummariesBuilder:
             strength={"score": 0.65},  # Already 0-1 scale
             relation_items=[],
             yongshin={"yongshin": []},
-            climate={"season_element": ""}
+            climate={"season_element": ""},
         )
 
         assert result["strength"]["score"] == 0.65
@@ -143,7 +144,7 @@ class TestEngineSummariesBuilder:
             strength={},  # Missing all fields
             relation_items=[],
             yongshin={},  # Missing all fields
-            climate={}  # Missing all fields
+            climate={},  # Missing all fields
         )
 
         # Verify defaults
@@ -171,7 +172,7 @@ class TestEngineSummariesBuilder:
             strength={"score": 0.5},
             relation_items=relation_items,
             yongshin={"yongshin": []},
-            climate={"season_element": ""}
+            climate={"season_element": ""},
         )
 
         # Should preserve all original fields
@@ -188,11 +189,14 @@ class TestEngineSummariesBuilder:
 
         result = builder.build(
             strength={"score": 25, "bucket": "신약", "confidence": 0.8},
-            relation_items=[
-                {"type": "sanhe", "impact_weight": 0.70, "element": "木"}
-            ],
-            yongshin={"yongshin": ["木", "水"], "bojosin": [], "confidence": 0.75, "strategy": "부억"},
-            climate={"season_element": "火", "support": "약"}
+            relation_items=[{"type": "sanhe", "impact_weight": 0.70, "element": "木"}],
+            yongshin={
+                "yongshin": ["木", "水"],
+                "bojosin": [],
+                "confidence": 0.75,
+                "strategy": "부억",
+            },
+            climate={"season_element": "火", "support": "약"},
         )
 
         # This scenario should PASS CONSIST-450 (신약 + 부억 = consistent)
@@ -210,11 +214,14 @@ class TestEngineSummariesBuilder:
 
         result = builder.build(
             strength={"score": 75, "bucket": "신강", "confidence": 0.8},
-            relation_items=[
-                {"type": "chong", "impact_weight": 0.60}
-            ],
-            yongshin={"yongshin": ["金"], "bojosin": ["水"], "confidence": 0.70, "strategy": "억부"},
-            climate={"season_element": "木", "support": "강"}
+            relation_items=[{"type": "chong", "impact_weight": 0.60}],
+            yongshin={
+                "yongshin": ["金"],
+                "bojosin": ["水"],
+                "confidence": 0.70,
+                "strategy": "억부",
+            },
+            climate={"season_element": "木", "support": "강"},
         )
 
         # This scenario should PASS CONSIST-450 (신강 + 억부 = consistent)

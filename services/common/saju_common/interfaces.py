@@ -13,6 +13,7 @@ module name issues.
 Version: 1.0.0
 Date: 2025-10-09 KST
 """
+
 from __future__ import annotations
 
 from datetime import date, datetime

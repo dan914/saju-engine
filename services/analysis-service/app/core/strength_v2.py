@@ -31,6 +31,7 @@ class StrengthEvaluator:
       - normalize [-70, 120] → [0, 100] → grading tiers → bin
       - score_normalized: 0.0~1.0 (0=극신약, 1=극신강)
     """
+
     # --- Strength normalization policy (v2) ---
     # 이론적 점수 범위: 정책에서 검증된 구성 요소 범위 합산
     THEORETICAL_MIN: float = -70.0
@@ -92,14 +93,16 @@ class StrengthEvaluator:
         return max(0.0, min(100.0, normalized))
 
     # --- helpers ---------------------------------------------------------
-    def _month_state_score(self, month_branch: str, day_stem: str) -> Tuple[int,str]:
+    def _month_state_score(self, month_branch: str, day_stem: str) -> Tuple[int, str]:
         elem = elem_of_stem(day_stem)
         stage = self.wang_map["by_branch"].get(month_branch, {}).get(elem, "休")
         score = self.wang_map["score_map"][stage]
         # Return score and phase(왕/상/휴/囚/死)
         return score, stage
 
-    def _branch_root_score(self, day_stem: str, day_branch: str, other_branches: Iterable[str], month_branch: str) -> int:
+    def _branch_root_score(
+        self, day_stem: str, day_branch: str, other_branches: Iterable[str], month_branch: str
+    ) -> int:
         """
         Adjustment 1: Enhanced Branch Root Scoring (동오행 통근)
         - Exact match: main +5, sub +3, minor +0 (+2 if month branch)
@@ -148,8 +151,13 @@ class StrengthEvaluator:
 
         return score
 
-    def _stem_visible_score(self, day_stem: str, stems_visible: Iterable[str],
-                            branch_root: int = 0, month_state: int = 0) -> int:
+    def _stem_visible_score(
+        self,
+        day_stem: str,
+        stems_visible: Iterable[str],
+        branch_root: int = 0,
+        month_state: int = 0,
+    ) -> int:
         """
         Adjustment 2: Refined Ten Gods Weights (십성 가중 정교화) - Conservative Tuning v2.2
         - 강화(+): resource(印, 生我) +10, companion(比/劫, 同氣) +8
@@ -169,24 +177,26 @@ class StrengthEvaluator:
         weight_pos = {"resource": 10, "companion": 8}
         weight_neg = {"output": -3, "wealth": -4, "official": -5}
 
-        cats = {"resource":0, "companion":0, "output":0, "wealth":0, "official":0}
+        cats = {"resource": 0, "companion": 0, "output": 0, "wealth": 0, "official": 0}
 
         for st in stems_visible:
             # 같은 글자(동간) 노출은 companion(+)
             if st == day_stem:
                 cats["companion"] += 1
                 continue
-            cat = ten_god_bucket(day_elem, elem_of_stem(st))  # -> resource/companion/output/wealth/official
+            cat = ten_god_bucket(
+                day_elem, elem_of_stem(st)
+            )  # -> resource/companion/output/wealth/official
             if cat in weight_pos:
                 cats[cat] += 1
             elif cat in weight_neg:
                 cats[cat] += 1
 
         # Calculate points by category
-        pos_points = (cats["resource"] * weight_pos["resource"] +
-                      cats["companion"] * weight_pos["companion"])
-        neg_points = (cats["output"] * weight_neg["output"] +
-                      cats["wealth"] * weight_neg["wealth"])
+        pos_points = (
+            cats["resource"] * weight_pos["resource"] + cats["companion"] * weight_pos["companion"]
+        )
+        neg_points = cats["output"] * weight_neg["output"] + cats["wealth"] * weight_neg["wealth"]
         official_points = cats["official"] * weight_neg["official"]
 
         # Apply diminishing returns cap for multiple officials
@@ -213,10 +223,10 @@ class StrengthEvaluator:
         """
         bset = set(branches)
         score = 0
-        CHONG = [("子","午"),("丑","未"),("寅","申"),("卯","酉"),("辰","戌"),("巳","亥")]
-        HAI   = [("子","未"),("丑","午"),("寅","巳"),("卯","辰"),("申","亥"),("酉","戌")]
-        LIUHE = [("子","丑"),("寅","亥"),("卯","戌"),("辰","酉"),("巳","申"),("午","未")]
-        SANHE = [("寅","午","戌"),("亥","卯","未"),("申","子","辰"),("巳","酉","丑")]
+        CHONG = [("子", "午"), ("丑", "未"), ("寅", "申"), ("卯", "酉"), ("辰", "戌"), ("巳", "亥")]
+        HAI = [("子", "未"), ("丑", "午"), ("寅", "巳"), ("卯", "辰"), ("申", "亥"), ("酉", "戌")]
+        LIUHE = [("子", "丑"), ("寅", "亥"), ("卯", "戌"), ("辰", "酉"), ("巳", "申"), ("午", "未")]
+        SANHE = [("寅", "午", "戌"), ("亥", "卯", "未"), ("申", "子", "辰"), ("巳", "酉", "丑")]
 
         used = set()
 
@@ -255,25 +265,28 @@ class StrengthEvaluator:
         """
         from .utils_strength_yongshin import elem_of_stem as e
         from .utils_strength_yongshin import rel_of
+
         r = rel_of(e(day_stem), e(month_stem))
         adj = 0.0
-        if r == "gen_from_other":       # 月生日 → 보강
+        if r == "gen_from_other":  # 月生日 → 보강
             adj = +0.10
-        elif r == "gen_to_other":       # 日生月 → 누수
+        elif r == "gen_to_other":  # 日生月 → 누수
             adj = -0.10
-        elif r == "ke_from_other":      # 月克日 → 억제(강한 감점)
+        elif r == "ke_from_other":  # 月克日 → 억제(강한 감점)
             adj = -0.15
-        elif r == "ke_to_other":        # 日克月 → 소모(경감점)
+        elif r == "ke_to_other":  # 日克月 → 소모(경감점)
             adj = -0.05
         return base_score * (1.0 + adj)
 
-    def _day_branch_stage_bonus(self, day_stem: str, day_branch: str, all_branches: Iterable[str]) -> int:
+    def _day_branch_stage_bonus(
+        self, day_stem: str, day_branch: str, all_branches: Iterable[str]
+    ) -> int:
         """
         Adjustment 6: Day Branch Lifecycle Stage Bonus (일지 12운성) with variant and damping
         - Supports orthodox (經典) and mirror (陰干隨陽) systems
         - Applies damping when day_branch is in chong/hai relationship
         """
-        if not hasattr(self, 'lifecycle') or not self.lifecycle:
+        if not hasattr(self, "lifecycle") or not self.lifecycle:
             return 0
 
         # Get base stage from mappings
@@ -293,17 +306,34 @@ class StrengthEvaluator:
 
         # Apply damping if day_branch is in chong/hai conflict
         bset = set(all_branches)
-        CHONG_PAIRS = [("子","午"),("丑","未"),("寅","申"),("卯","酉"),("辰","戌"),("巳","亥")]
-        HAI_PAIRS = [("子","未"),("丑","午"),("寅","巳"),("卯","辰"),("申","亥"),("酉","戌")]
+        CHONG_PAIRS = [
+            ("子", "午"),
+            ("丑", "未"),
+            ("寅", "申"),
+            ("卯", "酉"),
+            ("辰", "戌"),
+            ("巳", "亥"),
+        ]
+        HAI_PAIRS = [
+            ("子", "未"),
+            ("丑", "午"),
+            ("寅", "巳"),
+            ("卯", "辰"),
+            ("申", "亥"),
+            ("酉", "戌"),
+        ]
 
         # Check if day_branch is in chong relationship
-        if any((a == day_branch and b in bset) or (b == day_branch and a in bset)
-               for a, b in CHONG_PAIRS):
+        if any(
+            (a == day_branch and b in bset) or (b == day_branch and a in bset)
+            for a, b in CHONG_PAIRS
+        ):
             val = round(val * self.damping.get("on_chong", 1.0))
 
         # Check if day_branch is in hai relationship
-        if any((a == day_branch and b in bset) or (b == day_branch and a in bset)
-               for a, b in HAI_PAIRS):
+        if any(
+            (a == day_branch and b in bset) or (b == day_branch and a in bset) for a, b in HAI_PAIRS
+        ):
             val = round(val * self.damping.get("on_hai", 1.0))
 
         return int(val)
@@ -322,7 +352,7 @@ class StrengthEvaluator:
         return self.grading["bin_map"].get(grade, "balanced")
 
     # --- public ----------------------------------------------------------
-    def evaluate(self, pillars: Dict[str,str], season: str = None) -> Dict[str,Any]:
+    def evaluate(self, pillars: Dict[str, str], season: str = None) -> Dict[str, Any]:
         ys, yb = parse_pillar(pillars["year"])
         ms, mb = parse_pillar(pillars["month"])
         ds, db = parse_pillar(pillars["day"])
@@ -335,7 +365,9 @@ class StrengthEvaluator:
         br_score = self._branch_root_score(ds, db, [yb, mb, hb], month_branch=mb)
 
         # stem_visible (with no-root protection)
-        sv_score = self._stem_visible_score(ds, [ys, ms, hs], branch_root=br_score, month_state=ms_score)
+        sv_score = self._stem_visible_score(
+            ds, [ys, ms, hs], branch_root=br_score, month_state=ms_score
+        )
 
         # combo_clash
         cc_score = self._combo_clash_score([yb, mb, db, hb])
@@ -357,8 +389,8 @@ class StrengthEvaluator:
 
         return {
             "strength": {
-                "score_raw": round(total, 2),      # 진단용 원시 점수
-                "score": round(score, 2),          # UI 표시용 정규화 점수
+                "score_raw": round(total, 2),  # 진단용 원시 점수
+                "score": round(score, 2),  # UI 표시용 정규화 점수
                 "score_normalized": round(normalized, 4),  # 0-1 스케일
                 "grade_code": grade,
                 "bin": binv,
@@ -369,12 +401,12 @@ class StrengthEvaluator:
                     "stem_visible": sv_score,
                     "combo_clash": cc_score,
                     "day_branch_stage_bonus": stage_bonus,
-                    "month_stem_effect_applied": True
+                    "month_stem_effect_applied": True,
                 },
                 "policy": {
                     "min": self.THEORETICAL_MIN,
                     "max": self.THEORETICAL_MAX,
-                    "range": self.THEORETICAL_RANGE
-                }
+                    "range": self.THEORETICAL_RANGE,
+                },
             }
         }

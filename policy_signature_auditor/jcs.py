@@ -23,17 +23,17 @@ def canonicalize(obj: Any) -> bytes:
     Returns:
         UTF-8 encoded canonical representation
     """
-    return _serialize(obj).encode('utf-8')
+    return _serialize(obj).encode("utf-8")
 
 
 def _serialize(obj: Any) -> str:
     """Recursively serialize object to canonical string."""
     if obj is None:
-        return 'null'
+        return "null"
     elif obj is True:
-        return 'true'
+        return "true"
     elif obj is False:
-        return 'false'
+        return "false"
     elif isinstance(obj, str):
         return _serialize_string(obj)
     elif isinstance(obj, (int, float)):
@@ -53,24 +53,24 @@ def _serialize_string(s: str) -> str:
         code = ord(char)
         if char == '"':
             result.append('\\"')
-        elif char == '\\':
-            result.append('\\\\')
-        elif char == '\b':
-            result.append('\\b')
-        elif char == '\f':
-            result.append('\\f')
-        elif char == '\n':
-            result.append('\\n')
-        elif char == '\r':
-            result.append('\\r')
-        elif char == '\t':
-            result.append('\\t')
+        elif char == "\\":
+            result.append("\\\\")
+        elif char == "\b":
+            result.append("\\b")
+        elif char == "\f":
+            result.append("\\f")
+        elif char == "\n":
+            result.append("\\n")
+        elif char == "\r":
+            result.append("\\r")
+        elif char == "\t":
+            result.append("\\t")
         elif code < 0x20:  # Control characters
-            result.append(f'\\u{code:04x}')
+            result.append(f"\\u{code:04x}")
         else:
             result.append(char)
     result.append('"')
-    return ''.join(result)
+    return "".join(result)
 
 
 def _serialize_number(n: float) -> str:
@@ -82,7 +82,7 @@ def _serialize_number(n: float) -> str:
     """
     # Handle special cases
     if n == 0:
-        return '0'
+        return "0"
     if math.isnan(n) or math.isinf(n):
         raise ValueError(f"Cannot canonicalize NaN or Infinity: {n}")
 
@@ -94,14 +94,14 @@ def _serialize_number(n: float) -> str:
     s = repr(n)
 
     # Remove unnecessary trailing zeros after decimal point
-    if '.' in s and 'e' not in s and 'E' not in s:
-        s = s.rstrip('0').rstrip('.')
+    if "." in s and "e" not in s and "E" not in s:
+        s = s.rstrip("0").rstrip(".")
 
     # Normalize exponent notation
-    if 'E' in s:
-        s = s.replace('E', 'e')
-    if 'e+' in s:
-        s = s.replace('e+', 'e')
+    if "E" in s:
+        s = s.replace("E", "e")
+    if "e+" in s:
+        s = s.replace("e+", "e")
 
     return s
 
@@ -109,15 +109,15 @@ def _serialize_number(n: float) -> str:
 def _serialize_array(arr: list) -> str:
     """Serialize array."""
     if not arr:
-        return '[]'
+        return "[]"
     elements = [_serialize(item) for item in arr]
-    return '[' + ','.join(elements) + ']'
+    return "[" + ",".join(elements) + "]"
 
 
 def _serialize_object(obj: dict) -> str:
     """Serialize object with sorted keys."""
     if not obj:
-        return '{}'
+        return "{}"
 
     # Sort keys by Unicode code points (Python's default string sort)
     sorted_keys = sorted(obj.keys())
@@ -126,19 +126,19 @@ def _serialize_object(obj: dict) -> str:
     for key in sorted_keys:
         key_str = _serialize_string(key)
         value_str = _serialize(obj[key])
-        pairs.append(f'{key_str}:{value_str}')
+        pairs.append(f"{key_str}:{value_str}")
 
-    return '{' + ','.join(pairs) + '}'
+    return "{" + ",".join(pairs) + "}"
 
 
 def test_canonicalize():
     """Self-test function."""
     # Test basic types
-    assert canonicalize(None) == b'null'
-    assert canonicalize(True) == b'true'
-    assert canonicalize(False) == b'false'
-    assert canonicalize(0) == b'0'
-    assert canonicalize(42) == b'42'
+    assert canonicalize(None) == b"null"
+    assert canonicalize(True) == b"true"
+    assert canonicalize(False) == b"false"
+    assert canonicalize(0) == b"0"
+    assert canonicalize(42) == b"42"
     assert canonicalize("hello") == b'"hello"'
 
     # Test string escaping
@@ -146,24 +146,20 @@ def test_canonicalize():
     assert canonicalize('say "hi"') == b'"say \\"hi\\""'
 
     # Test arrays
-    assert canonicalize([1, 2, 3]) == b'[1,2,3]'
-    assert canonicalize([]) == b'[]'
+    assert canonicalize([1, 2, 3]) == b"[1,2,3]"
+    assert canonicalize([]) == b"[]"
 
     # Test objects with key sorting
     result = canonicalize({"z": 1, "a": 2, "m": 3})
     assert result == b'{"a":2,"m":3,"z":1}'
 
     # Test nested structures
-    result = canonicalize({
-        "numbers": [1, 2, 3],
-        "string": "test",
-        "nested": {"b": 2, "a": 1}
-    })
+    result = canonicalize({"numbers": [1, 2, 3], "string": "test", "nested": {"b": 2, "a": 1}})
     expected = b'{"nested":{"a":1,"b":2},"numbers":[1,2,3],"string":"test"}'
     assert result == expected
 
     print("✅ All JCS canonicalization tests passed")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_canonicalize()

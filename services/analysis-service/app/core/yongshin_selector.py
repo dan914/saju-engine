@@ -51,7 +51,7 @@ class YongshinSelector:
     @staticmethod
     def _load_policy(path: str) -> Dict[str, Any]:
         """Load and validate policy JSON."""
-        with open(path, 'r', encoding='utf-8') as f:
+        with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
 
     def select(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -114,7 +114,7 @@ class YongshinSelector:
             strength_bin,
             relation_summary.get("relation_hits", 0),
             relation_summary.get("relation_misses", 0),
-            climate
+            climate,
         )
 
         # 9. Generate rationale
@@ -134,7 +134,7 @@ class YongshinSelector:
             "rationale": rationale,
             "scores": {e: round(scores[e], 2) for e in self.five_elements},
             "rules_fired": rules_fired,
-            "explain": explain
+            "explain": explain,
         }
 
     def _auto_normalize(self, score: float) -> float:
@@ -195,8 +195,9 @@ class YongshinSelector:
             return "balanced"
         return "strong"
 
-    def _apply_base_preferences(self, scores: Dict[str, float], day_element: str,
-                                strength_bin: str, rules_fired: List[str]) -> None:
+    def _apply_base_preferences(
+        self, scores: Dict[str, float], day_element: str, strength_bin: str, rules_fired: List[str]
+    ) -> None:
         """
         Apply base preferences based on strength bin.
 
@@ -215,7 +216,7 @@ class YongshinSelector:
             "companion": 0.12,
             "output": 0.15,
             "wealth": 0.12,
-            "official": 0.10
+            "official": 0.10,
         }
 
         # Map preferences to elements
@@ -224,7 +225,7 @@ class YongshinSelector:
             "companion": day_element,
             "output": self.cycles["generates"][day_element],
             "wealth": self.cycles["controls"][day_element],
-            "official": self.cycles["controlled_by"][day_element]
+            "official": self.cycles["controlled_by"][day_element],
         }
 
         for pref in preferences:
@@ -233,9 +234,9 @@ class YongshinSelector:
                 scores[target_element] += bonuses.get(pref, 0.0)
                 rules_fired.append(f"BASE:{pref}→{target_element}")
 
-    def _apply_relation_bias(self, scores: Dict[str, float],
-                            relation_summary: Dict[str, Any],
-                            rules_fired: List[str]) -> None:
+    def _apply_relation_bias(
+        self, scores: Dict[str, float], relation_summary: Dict[str, Any], rules_fired: List[str]
+    ) -> None:
         """Apply relation bias rules (sanhe, chong, ganhe, etc.)."""
         bias_rules = self.policy["relation_bias_rules"]
 
@@ -272,7 +273,11 @@ class YongshinSelector:
                     scores[e] += delta
                 rules_fired.append(f"REL:{rel_type}→전체완화")
                 continue
-            elif toward in ["inside_combo_target", "obstructed_element", "opposite_of_sanhe_if_any"]:
+            elif toward in [
+                "inside_combo_target",
+                "obstructed_element",
+                "opposite_of_sanhe_if_any",
+            ]:
                 # These require more context - skip for v1.0
                 continue
 
@@ -280,8 +285,13 @@ class YongshinSelector:
                 scores[target_element] += delta
                 rules_fired.append(f"REL:{rel_type}→{target_element}")
 
-    def _apply_climate_bias(self, scores: Dict[str, float], day_element: str,
-                           climate: Dict[str, Any], rules_fired: List[str]) -> None:
+    def _apply_climate_bias(
+        self,
+        scores: Dict[str, float],
+        day_element: str,
+        climate: Dict[str, Any],
+        rules_fired: List[str],
+    ) -> None:
         """Apply climate bias (season support/conflict)."""
         season_element = climate["season_element"]
         support_label = climate["support"]
@@ -311,9 +321,9 @@ class YongshinSelector:
             scores[season_element] += support_delta
             rules_fired.append(f"CLIMATE:support_label[{support_label}]")
 
-    def _apply_distribution_bias(self, scores: Dict[str, float],
-                                 elements_dist: Dict[str, float],
-                                 rules_fired: List[str]) -> None:
+    def _apply_distribution_bias(
+        self, scores: Dict[str, float], elements_dist: Dict[str, float], rules_fired: List[str]
+    ) -> None:
         """Apply distribution bias (deficit/excess correction)."""
         bias_config = self.policy["distribution_bias"]
         target_ratio = bias_config["target_ratio"]
@@ -337,7 +347,9 @@ class YongshinSelector:
                 if abs(delta) > 0.01:
                     rules_fired.append(f"DIST:excess[{element}]")
 
-    def _categorize_elements(self, scores: Dict[str, float]) -> Tuple[List[str], List[str], List[str]]:
+    def _categorize_elements(
+        self, scores: Dict[str, float]
+    ) -> Tuple[List[str], List[str], List[str]]:
         """
         Sort elements by score and categorize.
 
@@ -381,8 +393,9 @@ class YongshinSelector:
 
         return yongshin, bojosin, gisin
 
-    def _calculate_confidence(self, strength_bin: str, relation_hits: int,
-                             relation_misses: int, climate: Dict[str, Any]) -> float:
+    def _calculate_confidence(
+        self, strength_bin: str, relation_hits: int, relation_misses: int, climate: Dict[str, Any]
+    ) -> float:
         """Calculate confidence score."""
         conf_model = self.policy["confidence_model"]
 
@@ -398,9 +411,15 @@ class YongshinSelector:
         cap_max = conf_model["cap_max"]
         return max(cap_min, min(cap_max, confidence))
 
-    def _generate_rationale(self, strength_bin: str, yongshin: List[str], gisin: List[str],
-                           relation_summary: Dict[str, Any], climate: Dict[str, Any],
-                           elements_dist: Dict[str, float]) -> List[str]:
+    def _generate_rationale(
+        self,
+        strength_bin: str,
+        yongshin: List[str],
+        gisin: List[str],
+        relation_summary: Dict[str, Any],
+        climate: Dict[str, Any],
+        elements_dist: Dict[str, float],
+    ) -> List[str]:
         """Generate human-readable rationale."""
         rationale = []
 
@@ -408,7 +427,7 @@ class YongshinSelector:
         strength_map = {
             "weak": "신약 → 인성·비겁 선호",
             "balanced": "중화 → 균형 유지 선호",
-            "strong": "신강 → 식상·관·재 선호"
+            "strong": "신강 → 식상·관·재 선호",
         }
         rationale.append(strength_map.get(strength_bin, ""))
 
@@ -440,8 +459,9 @@ class YongshinSelector:
 
         return rationale
 
-    def _generate_explain(self, strength_bin: str, yongshin: List[str],
-                         relation_summary: Dict[str, Any]) -> str:
+    def _generate_explain(
+        self, strength_bin: str, yongshin: List[str], relation_summary: Dict[str, Any]
+    ) -> str:
         """Generate concise explanation."""
         strength_label = {"weak": "신약형", "balanced": "중화형", "strong": "신강형"}[strength_bin]
 
@@ -463,7 +483,9 @@ class YongshinSelector:
 
 
 # Convenience function for standalone usage
-def select_yongshin(input_data: Dict[str, Any], policy_path: Optional[str] = None) -> Dict[str, Any]:
+def select_yongshin(
+    input_data: Dict[str, Any], policy_path: Optional[str] = None
+) -> Dict[str, Any]:
     """
     Standalone function to select yongshin.
 

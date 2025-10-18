@@ -9,6 +9,7 @@ Validates:
 5. Array sizes: sub (0-2), minor (0-1)
 6. RFC-8785 signature integrity
 """
+
 import hashlib
 import json
 from pathlib import Path
@@ -44,8 +45,9 @@ class TestZangganTablePolicy:
         actual_branches = set(self.policy["by_branch"].keys())
 
         assert len(actual_branches) == 12, f"Expected 12 branches, got {len(actual_branches)}"
-        assert actual_branches == expected_branches, \
-            f"Branch mismatch. Missing: {expected_branches - actual_branches}"
+        assert (
+            actual_branches == expected_branches
+        ), f"Branch mismatch. Missing: {expected_branches - actual_branches}"
 
     def test_each_branch_has_required_fields(self):
         """Test that each branch has main, sub, minor fields"""
@@ -58,8 +60,7 @@ class TestZangganTablePolicy:
         """Test that main stem is a valid heavenly stem"""
         for branch, entry in self.policy["by_branch"].items():
             main = entry["main"]
-            assert main in self.valid_stems, \
-                f"Branch {branch}: invalid main stem '{main}'"
+            assert main in self.valid_stems, f"Branch {branch}: invalid main stem '{main}'"
 
     def test_sub_stems_are_valid(self):
         """Test that sub stems are valid and within size limit"""
@@ -69,8 +70,7 @@ class TestZangganTablePolicy:
             assert len(sub) <= 2, f"Branch {branch}: sub has {len(sub)} items, max 2"
 
             for stem in sub:
-                assert stem in self.valid_stems, \
-                    f"Branch {branch}: invalid sub stem '{stem}'"
+                assert stem in self.valid_stems, f"Branch {branch}: invalid sub stem '{stem}'"
 
     def test_minor_stems_are_valid(self):
         """Test that minor stems are valid and within size limit"""
@@ -80,8 +80,7 @@ class TestZangganTablePolicy:
             assert len(minor) <= 1, f"Branch {branch}: minor has {len(minor)} items, max 1"
 
             for stem in minor:
-                assert stem in self.valid_stems, \
-                    f"Branch {branch}: invalid minor stem '{stem}'"
+                assert stem in self.valid_stems, f"Branch {branch}: invalid minor stem '{stem}'"
 
     def test_no_duplicate_stems_within_branch(self):
         """Test that each branch doesn't have duplicate stems across main/sub/minor"""
@@ -89,8 +88,9 @@ class TestZangganTablePolicy:
             all_stems = [entry["main"]] + entry["sub"] + entry["minor"]
             unique_stems = set(all_stems)
 
-            assert len(all_stems) == len(unique_stems), \
-                f"Branch {branch} has duplicate stems: {all_stems}"
+            assert len(all_stems) == len(
+                unique_stems
+            ), f"Branch {branch} has duplicate stems: {all_stems}"
 
     def test_known_zanggan_examples(self):
         """Test known zanggan mappings from traditional theory"""
@@ -120,7 +120,9 @@ class TestZangganTablePolicy:
         canonical = encode_canonical_json(policy_copy)
         computed = hashlib.sha256(canonical).hexdigest()
 
-        assert computed == signature, f"Signature mismatch:\nExpected: {signature}\nComputed: {computed}"
+        assert (
+            computed == signature
+        ), f"Signature mismatch:\nExpected: {signature}\nComputed: {computed}"
 
     def test_policy_version_format(self):
         """Test that policy_version follows naming convention"""

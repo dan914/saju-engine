@@ -26,6 +26,7 @@ TERM_DATA_PATH = Path(__file__).resolve().parents[4] / "data"
 @dataclass(slots=True)
 class LuckContext:
     """Context for luck calculations."""
+
     local_dt: datetime
     timezone: str
     day_master: Optional[str] = None
@@ -42,7 +43,9 @@ class LuckCalculator:
         self._term_loader = FileSolarTermLoader(TERM_DATA_PATH)
         self._resolver = TimeResolver()
 
-    def compute_start_age(self, ctx: LuckContext, direction: Optional[str] = None) -> Dict[str, float | str]:
+    def compute_start_age(
+        self, ctx: LuckContext, direction: Optional[str] = None
+    ) -> Dict[str, float | str]:
         """
         Calculate luck cycle start age based on direction.
 
@@ -174,12 +177,7 @@ class LuckCalculator:
             year_stem = pillars["year"][0]  # First character is the stem
 
         # Create context
-        ctx = LuckContext(
-            local_dt=birth_dt,
-            timezone=timezone,
-            gender=gender,
-            year_stem=year_stem
-        )
+        ctx = LuckContext(local_dt=birth_dt, timezone=timezone, gender=gender, year_stem=year_stem)
 
         # First determine direction (needed for start_age calculation)
         direction_result = self.luck_direction(ctx)

@@ -55,6 +55,7 @@ def check_for_issues(data, path="root"):
 
     return issues
 
+
 def main():
     print("=" * 80)
     print("COMPREHENSIVE TEST: 2000-09-14, 10:00 AM Seoul, Male")
@@ -75,7 +76,7 @@ def main():
             mode="traditional_kr",
             zi_hour_mode="default",
             use_refined=True,
-            return_metadata=True
+            return_metadata=True,
         )
 
         print(f"✅ Year:  {pillars_result['year']}")
@@ -85,7 +86,7 @@ def main():
         print()
 
         # Check metadata
-        metadata = pillars_result.get('metadata', {})
+        metadata = pillars_result.get("metadata", {})
         print("Metadata:")
         print(f"  LMT offset: {metadata.get('lmt_offset', 'MISSING')} minutes")
         print(f"  DST applied: {metadata.get('dst_applied', 'MISSING')}")
@@ -103,6 +104,7 @@ def main():
     except Exception as e:
         print(f"❌ PILLAR CALCULATION ERROR: {e}")
         import traceback
+
         traceback.print_exc()
         return
 
@@ -116,17 +118,17 @@ def main():
         # Build request
         request_data = {
             "pillars": {
-                "year": {"pillar": pillars_result['year']},
-                "month": {"pillar": pillars_result['month']},
-                "day": {"pillar": pillars_result['day']},
-                "hour": {"pillar": pillars_result['hour']}
+                "year": {"pillar": pillars_result["year"]},
+                "month": {"pillar": pillars_result["month"]},
+                "day": {"pillar": pillars_result["day"]},
+                "hour": {"pillar": pillars_result["hour"]},
             },
             "options": {
                 "birth_dt": "2000-09-14T10:00:00+09:00",
                 "timezone": "Asia/Seoul",
                 "gender": "male",
-                "calendar": "solar"
-            }
+                "calendar": "solar",
+            },
         }
 
         print(f"Request: {json.dumps(request_data, indent=2, ensure_ascii=False)}")
@@ -142,26 +144,28 @@ def main():
         print("-" * 80)
 
         # Strength
-        strength = result.get('strength', {})
-        print(f"Strength: {strength.get('grade_code', 'MISSING')} (score: {strength.get('total', 'MISSING')})")
+        strength = result.get("strength", {})
+        print(
+            f"Strength: {strength.get('grade_code', 'MISSING')} (score: {strength.get('total', 'MISSING')})"
+        )
 
         # Yongshin
-        yongshin = result.get('yongshin', {})
+        yongshin = result.get("yongshin", {})
         print(f"Yongshin: {yongshin.get('yongshin', 'MISSING')}")
         print(f"Yongshin Confidence: {yongshin.get('confidence', 'MISSING')}")
 
         # Gyeokguk
-        gyeokguk = result.get('stage3', {}).get('gyeokguk', {})
+        gyeokguk = result.get("stage3", {}).get("gyeokguk", {})
         print(f"Gyeokguk: {gyeokguk.get('classification', 'MISSING')}")
 
         # Engine summaries
-        summaries = result.get('engine_summaries', {})
+        summaries = result.get("engine_summaries", {})
         if summaries:
             print("\nEngine Summaries:")
-            strength_sum = summaries.get('strength', {})
+            strength_sum = summaries.get("strength", {})
             print(f"  Strength confidence: {strength_sum.get('confidence', 'MISSING')}")
 
-            yongshin_sum = summaries.get('yongshin_result', {})
+            yongshin_sum = summaries.get("yongshin_result", {})
             print(f"  Yongshin confidence: {yongshin_sum.get('confidence', 'MISSING')}")
 
         print()
@@ -210,7 +214,7 @@ def main():
 
         # Save full result for inspection
         output_file = Path(__file__).parent / "test_result_2000_09_14.json"
-        with open(output_file, 'w', encoding='utf-8') as f:
+        with open(output_file, "w", encoding="utf-8") as f:
             json.dump(result, f, indent=2, ensure_ascii=False, default=str)
 
         print(f"📄 Full result saved to: {output_file}")
@@ -219,12 +223,14 @@ def main():
     except Exception as e:
         print(f"❌ ORCHESTRATOR ERROR: {e}")
         import traceback
+
         traceback.print_exc()
         return
 
     print("=" * 80)
     print("TEST COMPLETE")
     print("=" * 80)
+
 
 if __name__ == "__main__":
     main()

@@ -15,37 +15,37 @@ KOREAN_TZ_EVENTS = [
         "iana": "Asia/Seoul",
         "kind": "dst",
         "effective_from": datetime(1987, 5, 10, 2, 0, 0),
-        "notes": "1987 DST start (+1 hour)"
+        "notes": "1987 DST start (+1 hour)",
     },
     {
         "iana": "Asia/Seoul",
         "kind": "dst",
         "effective_from": datetime(1987, 10, 11, 3, 0, 0),
-        "notes": "1987 DST end (-1 hour)"
+        "notes": "1987 DST end (-1 hour)",
     },
     {
         "iana": "Asia/Seoul",
         "kind": "dst",
         "effective_from": datetime(1988, 5, 8, 2, 0, 0),
-        "notes": "1988 DST start (+1 hour)"
+        "notes": "1988 DST start (+1 hour)",
     },
     {
         "iana": "Asia/Seoul",
         "kind": "dst",
         "effective_from": datetime(1988, 10, 9, 3, 0, 0),
-        "notes": "1988 DST end (-1 hour)"
+        "notes": "1988 DST end (-1 hour)",
     },
     {
         "iana": "Asia/Pyongyang",
         "kind": "policy",
         "effective_from": datetime(2015, 8, 15, 0, 0, 0),
-        "notes": "UTC+08:30 adoption (Pyongyang Time)"
+        "notes": "UTC+08:30 adoption (Pyongyang Time)",
     },
     {
         "iana": "Asia/Pyongyang",
         "kind": "policy",
         "effective_from": datetime(2018, 5, 5, 0, 0, 0),
-        "notes": "UTC+09:00 reversion (reunification gesture)"
+        "notes": "UTC+09:00 reversion (reunification gesture)",
     },
 ]
 
@@ -56,11 +56,7 @@ class TimeEventDetector:
 
     transition_window_hours: int = 48
 
-    def _is_relevant_event(
-        self,
-        event_time: datetime,
-        request_time: datetime
-    ) -> bool:
+    def _is_relevant_event(self, event_time: datetime, request_time: datetime) -> bool:
         """Check if event is within temporal window of request.
 
         Args:
@@ -108,10 +104,7 @@ class TimeEventDetector:
                 continue
 
             # Check if event is within temporal window
-            if not self._is_relevant_event(
-                event_data["effective_from"],
-                instant
-            ):
+            if not self._is_relevant_event(event_data["effective_from"], instant):
                 continue
 
             # Event is relevant - add to results

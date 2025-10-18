@@ -31,9 +31,7 @@ def _resolve_with_fallback(primary: str, *fallbacks: str) -> Path:
 
 
 STRUCTURE_POLICY_PATH = _resolve_with_fallback(
-    "structure_rules_v2_6.json",
-    "structure_rules_v2_5.json",
-    "structure_rules_v1.json"
+    "structure_rules_v2_6.json", "structure_rules_v2_5.json", "structure_rules_v1.json"
 )
 
 

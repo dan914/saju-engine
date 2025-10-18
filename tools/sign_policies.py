@@ -21,6 +21,7 @@ from typing import Any, Dict
 
 try:
     from canonicaljson import encode_canonical_json
+
     HAS_CANONICAL = True
 except ImportError:
     HAS_CANONICAL = False
@@ -40,7 +41,8 @@ def sign_policy_rfc8785(policy_data: Dict[str, Any]) -> str:
     """
     # Remove signature fields if present
     data_copy = {
-        k: v for k, v in policy_data.items()
+        k: v
+        for k, v in policy_data.items()
         if k not in ("policy_signature", "signature", "signatures")
     }
 
@@ -50,11 +52,8 @@ def sign_policy_rfc8785(policy_data: Dict[str, Any]) -> str:
     else:
         # Fallback: deterministic JSON (not fully RFC-8785 compliant)
         canonical = json.dumps(
-            data_copy,
-            ensure_ascii=False,
-            sort_keys=True,
-            separators=(',', ':')
-        ).encode('utf-8')
+            data_copy, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+        ).encode("utf-8")
 
     # Compute SHA-256
     sha256 = hashlib.sha256(canonical).hexdigest()
@@ -74,7 +73,7 @@ def sign_policy_file(policy_path: Path, signature_field: str = "policy_signature
     """
     try:
         # Read policy
-        with policy_path.open('r', encoding='utf-8') as f:
+        with policy_path.open("r", encoding="utf-8") as f:
             policy = json.load(f)
 
         # Check if already has placeholder
@@ -87,9 +86,9 @@ def sign_policy_file(policy_path: Path, signature_field: str = "policy_signature
         policy[signature_field] = signature
 
         # Write back
-        with policy_path.open('w', encoding='utf-8') as f:
+        with policy_path.open("w", encoding="utf-8") as f:
             json.dump(policy, f, indent=2, ensure_ascii=False)
-            f.write('\n')  # Add trailing newline
+            f.write("\n")  # Add trailing newline
 
         # Report
         if old_sig == "<TO_BE_FILLED_BY_PSA>":
@@ -129,7 +128,7 @@ def main():
         print("   Signatures will NOT be RFC-8785 compliant!")
         print()
         response = input("Continue anyway? [y/N]: ")
-        if response.lower() != 'y':
+        if response.lower() != "y":
             print("Aborted.")
             return 1
         print()

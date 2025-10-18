@@ -8,6 +8,7 @@ Tests verify:
 4. Yongshin environmental support (YONGSHIN-UNSUPPORTED-460)
 5. Risk scoring and verdict determination
 """
+
 import pytest
 from app.guard.llm_guard_v1_1 import LLMGuardV11
 
@@ -31,9 +32,9 @@ class TestLLMGuardV11NewRules:
                 "relation_summary": {},
                 "relation_items": [],
                 "yongshin_result": {"yongshin": [], "confidence": 0.35},
-                "climate": {"season_element": "火", "support": "보통"}
+                "climate": {"season_element": "火", "support": "보통"},
             },
-            "policy_context": {"locale": "ko-KR"}
+            "policy_context": {"locale": "ko-KR"},
         }
 
         result = guard.decide(payload)
@@ -58,9 +59,9 @@ class TestLLMGuardV11NewRules:
                 "relation_summary": {},
                 "relation_items": [],
                 "yongshin_result": {"yongshin": [], "confidence": 0.75},
-                "climate": {"season_element": "火", "support": "보통"}
+                "climate": {"season_element": "火", "support": "보통"},
             },
-            "policy_context": {"locale": "ko-KR"}
+            "policy_context": {"locale": "ko-KR"},
         }
 
         result = guard.decide(payload)
@@ -80,11 +81,11 @@ class TestLLMGuardV11NewRules:
                 "yongshin_result": {
                     "yongshin": ["金"],
                     "confidence": 0.75,
-                    "strategy": "억부"  # Suppress strategy - wrong for weak
+                    "strategy": "억부",  # Suppress strategy - wrong for weak
                 },
-                "climate": {"season_element": "火", "support": "보통"}
+                "climate": {"season_element": "火", "support": "보통"},
             },
-            "policy_context": {"locale": "ko-KR"}
+            "policy_context": {"locale": "ko-KR"},
         }
 
         result = guard.decide(payload)
@@ -108,11 +109,11 @@ class TestLLMGuardV11NewRules:
                 "yongshin_result": {
                     "yongshin": ["木", "水"],
                     "confidence": 0.75,
-                    "strategy": "부억"  # Support strategy - correct for weak
+                    "strategy": "부억",  # Support strategy - correct for weak
                 },
-                "climate": {"season_element": "火", "support": "보통"}
+                "climate": {"season_element": "火", "support": "보통"},
             },
-            "policy_context": {"locale": "ko-KR"}
+            "policy_context": {"locale": "ko-KR"},
         }
 
         result = guard.decide(payload)
@@ -133,11 +134,11 @@ class TestLLMGuardV11NewRules:
                 "yongshin_result": {
                     "yongshin": ["木"],
                     "confidence": 0.70,
-                    "strategy": "부억"  # Support strategy - wrong for strong
+                    "strategy": "부억",  # Support strategy - wrong for strong
                 },
-                "climate": {"season_element": "水", "support": "강"}
+                "climate": {"season_element": "水", "support": "강"},
             },
-            "policy_context": {"locale": "ko-KR"}
+            "policy_context": {"locale": "ko-KR"},
         }
 
         result = guard.decide(payload)
@@ -160,11 +161,11 @@ class TestLLMGuardV11NewRules:
                 "yongshin_result": {
                     "yongshin": ["金", "水"],
                     "confidence": 0.70,
-                    "strategy": "억부"  # Suppress strategy - correct for strong
+                    "strategy": "억부",  # Suppress strategy - correct for strong
                 },
-                "climate": {"season_element": "水", "support": "강"}
+                "climate": {"season_element": "水", "support": "강"},
             },
-            "policy_context": {"locale": "ko-KR"}
+            "policy_context": {"locale": "ko-KR"},
         }
 
         result = guard.decide(payload)
@@ -187,13 +188,13 @@ class TestLLMGuardV11NewRules:
                         "impact_weight": 0.5,
                         "conditions_met": ["지지위치"],  # Only 1 condition
                         "strict_mode_required": True,
-                        "formed": False  # Not formed!
+                        "formed": False,  # Not formed!
                     }
                 ],
                 "yongshin_result": {"yongshin": [], "confidence": 0.75},
-                "climate": {"season_element": "火", "support": "보통"}
+                "climate": {"season_element": "火", "support": "보통"},
             },
-            "policy_context": {"locale": "ko-KR"}
+            "policy_context": {"locale": "ko-KR"},
         }
 
         result = guard.decide(payload)
@@ -217,13 +218,13 @@ class TestLLMGuardV11NewRules:
                         "impact_weight": 0.7,
                         "conditions_met": ["지지위치", "천간투출", "월령"],
                         "strict_mode_required": True,
-                        "formed": True  # Formed!
+                        "formed": True,  # Formed!
                     }
                 ],
                 "yongshin_result": {"yongshin": [], "confidence": 0.75},
-                "climate": {"season_element": "火", "support": "보통"}
+                "climate": {"season_element": "火", "support": "보통"},
             },
-            "policy_context": {"locale": "ko-KR"}
+            "policy_context": {"locale": "ko-KR"},
         }
 
         result = guard.decide(payload)
@@ -240,16 +241,10 @@ class TestLLMGuardV11NewRules:
                 "strength": {"score": 0.5, "bucket": "중화", "confidence": 0.8},
                 "relation_summary": {"sanhe_element": "金"},  # Different from yongshin
                 "relation_items": [],
-                "yongshin_result": {
-                    "yongshin": ["木"],  # No relation support
-                    "confidence": 0.70
-                },
-                "climate": {
-                    "season_element": "火",
-                    "support": "약"  # Weak support!
-                }
+                "yongshin_result": {"yongshin": ["木"], "confidence": 0.70},  # No relation support
+                "climate": {"season_element": "火", "support": "약"},  # Weak support!
             },
-            "policy_context": {"locale": "ko-KR"}
+            "policy_context": {"locale": "ko-KR"},
         }
 
         result = guard.decide(payload)
@@ -268,16 +263,13 @@ class TestLLMGuardV11NewRules:
                 "strength": {"score": 0.5, "bucket": "중화", "confidence": 0.8},
                 "relation_summary": {"sanhe_element": "木"},  # Matches yongshin!
                 "relation_items": [],
-                "yongshin_result": {
-                    "yongshin": ["木"],
-                    "confidence": 0.70
-                },
+                "yongshin_result": {"yongshin": ["木"], "confidence": 0.70},
                 "climate": {
                     "season_element": "火",
-                    "support": "약"  # Weak climate, but has relation support
-                }
+                    "support": "약",  # Weak climate, but has relation support
+                },
             },
-            "policy_context": {"locale": "ko-KR"}
+            "policy_context": {"locale": "ko-KR"},
         }
 
         result = guard.decide(payload)
@@ -297,11 +289,11 @@ class TestLLMGuardV11NewRules:
                 "yongshin_result": {
                     "yongshin": ["金"],
                     "confidence": 0.75,
-                    "strategy": "억부"  # Triggers CONSIST-450
+                    "strategy": "억부",  # Triggers CONSIST-450
                 },
-                "climate": {"season_element": "火", "support": "보통"}
+                "climate": {"season_element": "火", "support": "보통"},
             },
-            "policy_context": {"locale": "ko-KR"}
+            "policy_context": {"locale": "ko-KR"},
         }
 
         result = guard.decide(payload)

@@ -6,6 +6,7 @@ Tests for climate advice mapping policy v1.0
 - 1 fallback scenario (balanced, no match)
 - Total: 9 test cases
 """
+
 import json
 from pathlib import Path
 

@@ -31,7 +31,7 @@ class TimezoneConverter:
     def __post_init__(self):
         """Initialize delta_t_calculator if not provided."""
         if self.delta_t_calculator is None:
-            object.__setattr__(self, 'delta_t_calculator', SimpleDeltaT())
+            object.__setattr__(self, "delta_t_calculator", SimpleDeltaT())
 
     def convert(self, request: TimeConversionRequest) -> TimeConversionResponse:
         src = _ensure_awareness(request.instant, request.source_tz)
@@ -41,8 +41,7 @@ class TimezoneConverter:
 
         # Calculate Delta-T for astronomical accuracy
         delta_t = self.delta_t_calculator.delta_t_seconds(
-            year=request.instant.year,
-            month=request.instant.month
+            year=request.instant.year, month=request.instant.month
         )
 
         trace = TraceMetadata(

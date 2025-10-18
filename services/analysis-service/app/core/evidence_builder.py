@@ -173,9 +173,7 @@ def _normalize_inputs(inputs: Dict[str, Any], created_at: str) -> List[Dict[str,
     if "wuxing_adjust" in inputs and inputs["wuxing_adjust"]:
         w = inputs["wuxing_adjust"]
         if not isinstance(w, dict) or "dist" not in w or "trace" not in w:
-            raise ValueError(
-                "wuxing_adjust 입력은 {'dist':{}, 'trace':[]} 형식이어야 합니다."
-            )
+            raise ValueError("wuxing_adjust 입력은 {'dist':{}, 'trace':[]} 형식이어야 합니다.")
         # 엔진 버전/시그니처(있으면 사용, 없으면 모듈에서 읽기→실패 시 fallback)
         engine_version = None
         engine_signature = None
@@ -194,9 +192,7 @@ def _normalize_inputs(inputs: Dict[str, Any], created_at: str) -> List[Dict[str,
                 engine_version, engine_signature = _WV, _WS
         except Exception:
             engine_version = engine_version or "combination_element_v1.2.0"
-            engine_signature = engine_signature or sha256_signature(
-                {"fallback": "wuxing_adjust"}
-            )
+            engine_signature = engine_signature or sha256_signature({"fallback": "wuxing_adjust"})
         sec = {
             "type": "wuxing_adjust",
             "engine_version": engine_version,

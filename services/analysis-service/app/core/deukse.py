@@ -68,7 +68,7 @@ class DeukseEvaluator:
         for elem in ["木", "火", "土", "金", "水"]:
             percent = elements.get(elem, 0.0) * 100  # Convert to percentage
             diff = percent - self.target_percent
-            variance += diff ** 2
+            variance += diff**2
         return variance
 
     def _calculate_max_gap(self, elements: Dict[str, float]) -> float:
@@ -122,11 +122,7 @@ class DeukseEvaluator:
         total = dispersion_penalty + skew_penalty
         return round(total, 2)
 
-    def _climate_bonus(
-        self,
-        elements: Dict[str, float],
-        climate_segment: str
-    ) -> float:
+    def _climate_bonus(self, elements: Dict[str, float], climate_segment: str) -> float:
         """Calculate climate adjustment bonus.
 
         Bonuses for having climate-appropriate elements:
@@ -167,9 +163,7 @@ class DeukseEvaluator:
         return round(bonus, 2)
 
     def evaluate(
-        self,
-        elements: Dict[str, float],
-        climate_segment: str | None = None
+        self, elements: Dict[str, float], climate_segment: str | None = None
     ) -> Dict[str, Any]:
         """Evaluate 得勢 (element momentum) score.
 
@@ -206,5 +200,5 @@ class DeukseEvaluator:
             "climate_bonus": climate,
             "variance": round(variance, 2),
             "max_gap": round(max_gap, 2),
-            "climate_segment": climate_segment
+            "climate_segment": climate_segment,
         }

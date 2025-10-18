@@ -76,7 +76,7 @@ def verify_policy(policy: Dict[str, Any], strict: bool = False) -> Tuple[bool, s
     # Recompute hash
     expected_hash, _ = sign_policy(policy, strict=False)  # Don't re-validate
 
-    is_valid = (stored_signature == expected_hash)
+    is_valid = stored_signature == expected_hash
     return is_valid, expected_hash, stored_signature
 
 
@@ -98,10 +98,10 @@ def diff_policies(policy_a: Dict[str, Any], policy_b: Dict[str, Any]) -> Tuple[b
     b_copy.pop("policy_signature", None)
 
     # Canonicalize
-    canonical_a = jcs.canonicalize(a_copy).decode('utf-8')
-    canonical_b = jcs.canonicalize(b_copy).decode('utf-8')
+    canonical_a = jcs.canonicalize(a_copy).decode("utf-8")
+    canonical_b = jcs.canonicalize(b_copy).decode("utf-8")
 
-    are_equal = (canonical_a == canonical_b)
+    are_equal = canonical_a == canonical_b
     return are_equal, canonical_a, canonical_b
 
 
@@ -133,8 +133,9 @@ def _validate_policy_meta(policy: Dict[str, Any]) -> None:
         raise ValueError("dependencies must be a list in strict mode")
 
 
-def sign_file(file_path: str, in_place: bool = False, write_sidecar: bool = False,
-              strict: bool = False) -> Dict[str, Any]:
+def sign_file(
+    file_path: str, in_place: bool = False, write_sidecar: bool = False, strict: bool = False
+) -> Dict[str, Any]:
     """
     Sign a policy file.
 
@@ -152,7 +153,7 @@ def sign_file(file_path: str, in_place: bool = False, write_sidecar: bool = Fals
         raise FileNotFoundError(f"Policy file not found: {file_path}")
 
     # Load policy
-    with open(path, 'r', encoding='utf-8') as f:
+    with open(path, "r", encoding="utf-8") as f:
         policy = json.load(f)
 
     # Sign
@@ -160,20 +161,16 @@ def sign_file(file_path: str, in_place: bool = False, write_sidecar: bool = Fals
 
     # Write in-place
     if in_place:
-        with open(path, 'w', encoding='utf-8') as f:
+        with open(path, "w", encoding="utf-8") as f:
             json.dump(signed_policy, f, ensure_ascii=False, indent=2)
 
     # Write sidecar
     if write_sidecar:
-        sidecar_path = path.with_suffix(path.suffix + '.sha256')
-        with open(sidecar_path, 'w', encoding='utf-8') as f:
+        sidecar_path = path.with_suffix(path.suffix + ".sha256")
+        with open(sidecar_path, "w", encoding="utf-8") as f:
             f.write(sha256_hash)
 
-    return {
-        "path": str(path),
-        "hash": sha256_hash,
-        "signed_policy": signed_policy
-    }
+    return {"path": str(path), "hash": sha256_hash, "signed_policy": signed_policy}
 
 
 def verify_file(file_path: str, strict: bool = False) -> Dict[str, Any]:
@@ -192,18 +189,13 @@ def verify_file(file_path: str, strict: bool = False) -> Dict[str, Any]:
         raise FileNotFoundError(f"Policy file not found: {file_path}")
 
     # Load policy
-    with open(path, 'r', encoding='utf-8') as f:
+    with open(path, "r", encoding="utf-8") as f:
         policy = json.load(f)
 
     # Verify
     is_valid, expected, actual = verify_policy(policy, strict=strict)
 
-    return {
-        "path": str(path),
-        "is_valid": is_valid,
-        "expected": expected,
-        "actual": actual
-    }
+    return {"path": str(path), "is_valid": is_valid, "expected": expected, "actual": actual}
 
 
 def diff_files(file_a: str, file_b: str) -> Dict[str, Any]:
@@ -226,16 +218,12 @@ def diff_files(file_a: str, file_b: str) -> Dict[str, Any]:
         raise FileNotFoundError(f"Policy file not found: {file_b}")
 
     # Load policies
-    with open(path_a, 'r', encoding='utf-8') as f:
+    with open(path_a, "r", encoding="utf-8") as f:
         policy_a = json.load(f)
-    with open(path_b, 'r', encoding='utf-8') as f:
+    with open(path_b, "r", encoding="utf-8") as f:
         policy_b = json.load(f)
 
     # Diff
     are_equal, canonical_a, canonical_b = diff_policies(policy_a, policy_b)
 
-    return {
-        "are_equal": are_equal,
-        "canonical_a": canonical_a,
-        "canonical_b": canonical_b
-    }
+    return {"are_equal": are_equal, "canonical_a": canonical_a, "canonical_b": canonical_b}

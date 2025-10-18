@@ -110,9 +110,7 @@ class AnalysisEngine:
             "timezone": getattr(options, "timezone", "Asia/Seoul"),
         }
 
-    def _map_to_response(
-        self, result: Dict[str, Any], pillars: Dict[str, str]
-    ) -> AnalysisResponse:
+    def _map_to_response(self, result: Dict[str, Any], pillars: Dict[str, str]) -> AnalysisResponse:
         """Map orchestrator output to AnalysisResponse.
 
         Args:
@@ -168,9 +166,7 @@ class AnalysisEngine:
 
         # Construct AnalysisResponse
         return AnalysisResponse(
-            ten_gods=TenGodsResult(
-                summary=ten_gods_data.get("summary", {})
-            ),
+            ten_gods=TenGodsResult(summary=ten_gods_data.get("summary", {})),
             relations=RelationsResult(
                 he6=relations_data.get("he6", []),
                 sanhe=relations_data.get("sanhe", []),
@@ -196,7 +192,9 @@ class AnalysisEngine:
                 combo_clash=strength_details_data.get("combo_clash", 0),
                 season_adjust=strength_details_data.get("season_adjust", 0),
                 month_stem_effect=strength_details_data.get("month_stem_effect", 0),
-                wealth_location_bonus_total=strength_details_data.get("wealth_location_bonus_total", 0.0),
+                wealth_location_bonus_total=strength_details_data.get(
+                    "wealth_location_bonus_total", 0.0
+                ),
                 wealth_location_hits=strength_details_data.get("wealth_location_hits", []),
                 total=strength_details_data.get("total", 0.0),
                 grade_code=strength_details_data.get("grade_code", "unknown"),

@@ -16,9 +16,7 @@ ISOZ = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
 
 # Inline sha256_signature for tests
 def sha256_signature(obj):
-    canonical_str = json.dumps(
-        obj, ensure_ascii=False, sort_keys=True, separators=(",", ":")
-    )
+    canonical_str = json.dumps(obj, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(canonical_str.encode("utf-8")).hexdigest()
 
 

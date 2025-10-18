@@ -21,7 +21,7 @@ import importlib.util
 
 spec = importlib.util.spec_from_file_location(
     "yongshin_selector",
-    str(Path(__file__).resolve().parents[1] / "app" / "core" / "yongshin_selector.py")
+    str(Path(__file__).resolve().parents[1] / "app" / "core" / "yongshin_selector.py"),
 )
 yongshin_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(yongshin_module)
@@ -31,7 +31,7 @@ YongshinSelector = yongshin_module.YongshinSelector
 def load_test_cases(jsonl_path: str):
     """Load JSONL test cases."""
     cases = []
-    with open(jsonl_path, 'r', encoding='utf-8') as f:
+    with open(jsonl_path, "r", encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if line:
@@ -41,7 +41,15 @@ def load_test_cases(jsonl_path: str):
 
 def validate_output_schema(output: dict, case_name: str) -> None:
     """Validate output has required fields."""
-    required = ["policy_version", "yongshin", "gisin", "confidence", "rationale", "scores", "rules_fired"]
+    required = [
+        "policy_version",
+        "yongshin",
+        "gisin",
+        "confidence",
+        "rationale",
+        "scores",
+        "rules_fired",
+    ]
 
     for field in required:
         assert field in output, f"[{case_name}] Missing field: {field}"
@@ -49,7 +57,9 @@ def validate_output_schema(output: dict, case_name: str) -> None:
     # Validate types
     assert isinstance(output["yongshin"], list), f"[{case_name}] yongshin must be list"
     assert isinstance(output["gisin"], list), f"[{case_name}] gisin must be list"
-    assert isinstance(output["confidence"], (int, float)), f"[{case_name}] confidence must be number"
+    assert isinstance(
+        output["confidence"], (int, float)
+    ), f"[{case_name}] confidence must be number"
     assert isinstance(output["scores"], dict), f"[{case_name}] scores must be dict"
     assert isinstance(output["rules_fired"], list), f"[{case_name}] rules_fired must be list"
 
@@ -64,26 +74,30 @@ def validate_expectations(output: dict, expected: dict, case_name: str) -> None:
     # Check yongshin contains expected elements
     expected_yongshin = expected.get("yongshin", [])
     for elem in expected_yongshin:
-        assert elem in output["yongshin"] or elem in output.get("bojosin", []), \
-            f"[{case_name}] Expected yongshin/bojosin element '{elem}' not found in output"
+        assert elem in output["yongshin"] or elem in output.get(
+            "bojosin", []
+        ), f"[{case_name}] Expected yongshin/bojosin element '{elem}' not found in output"
 
     # Check gisin contains expected elements
     expected_gisin = expected.get("gisin", [])
     for elem in expected_gisin:
-        assert elem in output["gisin"], \
-            f"[{case_name}] Expected gisin element '{elem}' not found in output"
+        assert (
+            elem in output["gisin"]
+        ), f"[{case_name}] Expected gisin element '{elem}' not found in output"
 
     # Check confidence threshold
     min_confidence = expected.get("confidence_min", 0.0)
-    assert output["confidence"] >= min_confidence, \
-        f"[{case_name}] Confidence {output['confidence']} below minimum {min_confidence}"
+    assert (
+        output["confidence"] >= min_confidence
+    ), f"[{case_name}] Confidence {output['confidence']} below minimum {min_confidence}"
 
     # Check bojosin if specified
     expected_bojosin = expected.get("bojosin", [])
     if expected_bojosin:
         for elem in expected_bojosin:
-            assert elem in output.get("bojosin", []), \
-                f"[{case_name}] Expected bojosin element '{elem}' not found in output"
+            assert elem in output.get(
+                "bojosin", []
+            ), f"[{case_name}] Expected bojosin element '{elem}' not found in output"
 
 
 def run_test_case(selector: YongshinSelector, case: dict) -> tuple:
@@ -169,5 +183,5 @@ def main():
         return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

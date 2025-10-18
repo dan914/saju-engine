@@ -35,52 +35,125 @@ from typing import Any, Callable, Dict, List, Optional
 
 # 60갑자 시퀀스 (결정적)
 SEXAGENARY = [
-    "甲子","乙丑","丙寅","丁卯","戊辰","己巳","庚午","辛未","壬申","癸酉",
-    "甲戌","乙亥","丙子","丁丑","戊寅","己卯","庚辰","辛巳","壬午","癸未",
-    "甲申","乙酉","丙戌","丁亥","戊子","己丑","庚寅","辛卯","壬辰","癸巳",
-    "甲午","乙未","丙申","丁酉","戊戌","己亥","庚子","辛丑","壬寅","癸卯",
-    "甲辰","乙巳","丙午","丁未","戊申","己酉","庚戌","辛亥","壬子","癸丑",
-    "甲寅","乙卯","丙辰","丁巳","戊午","己未","庚申","辛酉","壬戌","癸亥"
+    "甲子",
+    "乙丑",
+    "丙寅",
+    "丁卯",
+    "戊辰",
+    "己巳",
+    "庚午",
+    "辛未",
+    "壬申",
+    "癸酉",
+    "甲戌",
+    "乙亥",
+    "丙子",
+    "丁丑",
+    "戊寅",
+    "己卯",
+    "庚辰",
+    "辛巳",
+    "壬午",
+    "癸未",
+    "甲申",
+    "乙酉",
+    "丙戌",
+    "丁亥",
+    "戊子",
+    "己丑",
+    "庚寅",
+    "辛卯",
+    "壬辰",
+    "癸巳",
+    "甲午",
+    "乙未",
+    "丙申",
+    "丁酉",
+    "戊戌",
+    "己亥",
+    "庚子",
+    "辛丑",
+    "壬寅",
+    "癸卯",
+    "甲辰",
+    "乙巳",
+    "丙午",
+    "丁未",
+    "戊申",
+    "己酉",
+    "庚戌",
+    "辛亥",
+    "壬子",
+    "癸丑",
+    "甲寅",
+    "乙卯",
+    "丙辰",
+    "丁巳",
+    "戊午",
+    "己未",
+    "庚申",
+    "辛酉",
+    "壬戌",
+    "癸亥",
 ]
-HEAVENLY = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"]
-EARTHLY  = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"]
+HEAVENLY = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+EARTHLY = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
 
 STEM_YINYANG = {
-    "甲":"yang","丙":"yang","戊":"yang","庚":"yang","壬":"yang",
-    "乙":"yin","丁":"yin","己":"yin","辛":"yin","癸":"yin"
+    "甲": "yang",
+    "丙": "yang",
+    "戊": "yang",
+    "庚": "yang",
+    "壬": "yang",
+    "乙": "yin",
+    "丁": "yin",
+    "己": "yin",
+    "辛": "yin",
+    "癸": "yin",
 }
+
 
 def pillar_to_index(pillar: str) -> int:
     return SEXAGENARY.index(pillar)
 
+
 def index_to_pillar(idx: int) -> str:
     return SEXAGENARY[idx % 60]
+
 
 def stem_of(pillar: str) -> str:
     return pillar[0]
 
+
 def branch_of(pillar: str) -> str:
     return pillar[1]
+
 
 def build_pillar(stem: str, branch: str) -> str:
     return stem + branch
 
+
 @dataclass
 class BirthContext:
-    sex: str                    # "male" | "female"
-    birth_ts: str               # ISO-8601 with TZ
+    sex: str  # "male" | "female"
+    birth_ts: str  # ISO-8601 with TZ
     age_years_decimal: float
-    luck: Dict[str, Any]        # {"direction"?, "start_age"?, "method"?, ...}
-    solar_terms: Dict[str, str] # {"next_jie_ts"?, "prev_jie_ts"?} (선택)
+    luck: Dict[str, Any]  # {"direction"?, "start_age"?, "method"?, ...}
+    solar_terms: Dict[str, str]  # {"next_jie_ts"?, "prev_jie_ts"?} (선택)
+
 
 class LuckCalculator:
     def __init__(
         self,
         policy: Dict[str, Any],
         *,
-        lifecycle_resolver: Optional[Callable[[str, str], Dict[str, Any]]] = None,  # (stem,branch)-> {...}
-        tengods_resolver: Optional[Callable[[str, str], str]] = None,               # (day_stem, other_stem)-> "正官" ...
-        day_stem_for_labels: Optional[str] = None
+        lifecycle_resolver: Optional[
+            Callable[[str, str], Dict[str, Any]]
+        ] = None,  # (stem,branch)-> {...}
+        tengods_resolver: Optional[
+            Callable[[str, str], str]
+        ] = None,  # (day_stem, other_stem)-> "正官" ...
+        day_stem_for_labels: Optional[str] = None,
     ):
         self.policy = policy
         self.lifecycle_resolver = lifecycle_resolver
@@ -88,7 +161,9 @@ class LuckCalculator:
         self.day_stem_for_labels = day_stem_for_labels
 
     # ---------- Public ----------
-    def evaluate(self, birth_ctx: Dict[str, Any], pillars: Dict[str, Dict[str, str]]) -> Dict[str, Any]:
+    def evaluate(
+        self, birth_ctx: Dict[str, Any], pillars: Dict[str, Dict[str, str]]
+    ) -> Dict[str, Any]:
         direction = self._resolve_direction(birth_ctx, pillars)
         start_age = self._resolve_start_age(birth_ctx, direction)  # float, ctx 우선
 
@@ -127,10 +202,7 @@ class LuckCalculator:
 
         # 현재 대운(경계 판단은 raw로 계산; 표시값과 무관)
         current = self._current_decade(
-            age=birth_ctx["age_years_decimal"],
-            start_age=start_age,
-            step=step_years,
-            seq=seq
+            age=birth_ctx["age_years_decimal"], start_age=start_age, step=step_years, seq=seq
         )
 
         out = {
@@ -139,7 +211,7 @@ class LuckCalculator:
             "start_age": float(start_age),  # ctx 값을 변형하지 않고 그대로 유지
             "method": (birth_ctx.get("luck") or {}).get("method", "solar_term_interval"),
             "pillars": pillars_out,
-            "current_luck": current
+            "current_luck": current,
         }
         out["policy_signature"] = self._sha256_canonical(out)
         return out
@@ -153,16 +225,18 @@ class LuckCalculator:
         step = 1 if direction == "forward" else -1
         return [index_to_pillar(base_idx + step * (offset + i - 1)) for i in range(1, n + 1)]
 
-    def _resolve_direction(self, birth_ctx: Dict[str, Any], pillars: Dict[str, Dict[str, str]]) -> str:
+    def _resolve_direction(
+        self, birth_ctx: Dict[str, Any], pillars: Dict[str, Dict[str, str]]
+    ) -> str:
         in_dir = (birth_ctx.get("luck") or {}).get("direction")
         if in_dir in ("forward", "reverse"):
             return in_dir
 
         year_stem = pillars["year"]["stem"]
         yinyang = STEM_YINYANG[year_stem]  # "yang"/"yin"
-        gender = birth_ctx["sex"]          # "male"/"female"
+        gender = birth_ctx["sex"]  # "male"/"female"
         matrix = self.policy["direction"]["matrix"]
-        val = matrix[gender][yinyang]      # "forward" | "backward"
+        val = matrix[gender][yinyang]  # "forward" | "backward"
         return "forward" if val == "forward" else "reverse"
 
     def _resolve_start_age(self, birth_ctx: Dict[str, Any], direction: str) -> float:
@@ -194,8 +268,8 @@ class LuckCalculator:
         else:  # reverse/backward
             hours = (birth_dt - jie_dt).total_seconds() / 3600.0
 
-        days = hours / self.policy["start_age"]["conversion"]["hours_per_day"]      # 24
-        years = days / self.policy["start_age"]["conversion"]["days_per_year"]      # 3.0
+        days = hours / self.policy["start_age"]["conversion"]["hours_per_day"]  # 24
+        years = days / self.policy["start_age"]["conversion"]["days_per_year"]  # 3.0
 
         # 반올림 규칙 적용
         r = self.policy["start_age"]["rounding"]
@@ -203,7 +277,7 @@ class LuckCalculator:
 
     @staticmethod
     def _round_policy(x: float, *, decimals: int, mode: str) -> float:
-        f = 10 ** decimals
+        f = 10**decimals
         val = x * f
         if mode == "half_up":
             return math.floor(val + 0.5) / f
@@ -217,7 +291,7 @@ class LuckCalculator:
         series = self.policy["generation"]["age_series"]
         decimals = int(series.get("display_decimals", 0))
         mode = series.get("display_round", "floor")
-        f = 10 ** decimals
+        f = 10**decimals
         val = x * f
         if mode == "floor":
             return math.floor(val) / f
@@ -225,7 +299,9 @@ class LuckCalculator:
             return math.ceil(val) / f
         return math.floor(val + 0.5) / f
 
-    def _current_decade(self, *, age: float, start_age: float, step: int, seq: List[str]) -> Optional[Dict[str, Any]]:
+    def _current_decade(
+        self, *, age: float, start_age: float, step: int, seq: List[str]
+    ) -> Optional[Dict[str, Any]]:
         if age < start_age:
             return None
         # decade 번호 (1..len(seq)), 경계는 좌측 포함/우측 배타
@@ -233,15 +309,13 @@ class LuckCalculator:
         if k < 1 or k > len(seq):
             return None
         start_k = start_age + step * (k - 1)
-        return {
-            "pillar": seq[k - 1],
-            "decade": k,
-            "years_into_decade": round(age - start_k, 2)
-        }
+        return {"pillar": seq[k - 1], "decade": k, "years_into_decade": round(age - start_k, 2)}
 
     @staticmethod
     def _sha256_canonical(obj_with_sig: Dict[str, Any]) -> str:
         o = copy.deepcopy(obj_with_sig)
         o.pop("policy_signature", None)
-        data = json.dumps(o, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        data = json.dumps(o, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode(
+            "utf-8"
+        )
         return hashlib.sha256(data).hexdigest()

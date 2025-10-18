@@ -15,5 +15,5 @@ __all__ = [
     "sign_file",
     "verify_file",
     "diff_files",
-    "canonicalize"
+    "canonicalize",
 ]

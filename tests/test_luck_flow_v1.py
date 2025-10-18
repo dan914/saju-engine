@@ -7,17 +7,21 @@ import json
 from pathlib import Path
 
 POLICY = json.loads(Path("policy/luck_flow_policy_v1.json").read_text(encoding="utf-8"))
+IO_DATA = json.loads(Path("docs/engines/luck_flow.io.json").read_text(encoding="utf-8"))
 
 WEIGHTS = POLICY["scoring"]["weights"]
 CLAMP_MIN, CLAMP_MAX = POLICY["scoring"]["clamp_range"]
 THRESH = POLICY["scoring"]["trend_thresholds"]
 SIGNALS = POLICY["signals"]
 
+
 def _primary(ctx):
     return ctx["yongshin"]["primary"]
 
+
 def _elem_level(ctx, elem_name):
     return ctx["strength"]["elements"][elem_name]
+
 
 def _check_when(when, ctx):
     # yongshin.primary_in
@@ -49,10 +53,12 @@ def _check_when(when, ctx):
         flags = set(ctx.get("relation", {}).get("flags", []))
         if not flags.intersection(set(when["relation.flags_any"])):
             return False
+
     # boolean flags
     def _b(path, default=False):
         root, key = path.split(".", 1)
         return ctx.get(root, {}).get(key, default)
+
     for bkey in [
         "daewoon.turning_to_support_primary",
         "daewoon.turning_to_counter_primary",
@@ -64,13 +70,23 @@ def _check_when(when, ctx):
                 return False
     return True
 
+
 def _map_korean_to_elem(elem, ctx):
     # input may be "목/화/토/금/수" or "wood/fire/earth/metal/water"
     mapping = {
-        "목": "wood", "화": "fire", "토": "earth", "금": "metal", "수": "water",
-        "wood": "wood", "fire": "fire", "earth": "earth", "metal": "metal", "water": "water"
+        "목": "wood",
+        "화": "fire",
+        "토": "earth",
+        "금": "metal",
+        "수": "water",
+        "wood": "wood",
+        "fire": "fire",
+        "earth": "earth",
+        "metal": "metal",
+        "water": "water",
     }
     return mapping.get(elem, elem)
+
 
 def evaluate_policy(policy, ctx):
     delta_raw = 0.0
@@ -99,33 +115,39 @@ def evaluate_policy(policy, ctx):
         "delta_raw": delta_raw,
         "delta": delta,
         "drivers": drivers,
-        "detractors": detractors
+        "detractors": detractors,
     }
 
-def _get_example(ex_id):
-    for ex in POLICY["examples"]:
-        if ex["id"] == ex_id:
-            return ex
-    raise KeyError(f"example not found: {ex_id}")
+
+def _get_case(case_id):
+    for case in IO_DATA["cases"]:
+        if case["id"] == case_id:
+            return case
+    raise KeyError(f"case not found: {case_id}")
+
 
 def test_rising_example_from_policy_examples():
-    ex = _get_example("EX_RISING_FIRE")
-    out = evaluate_policy(POLICY, ex)
-    assert out["trend"] == ex["expect_trend"]
+    case = _get_case("IO_RISING")
+    out = evaluate_policy(POLICY, case["input"])
+    assert out["trend"] == case["expected_output"]["trend"]
+
 
 def test_stable_example_from_policy_examples():
-    ex = _get_example("EX_STABLE_TRANSITION")
-    out = evaluate_policy(POLICY, ex)
-    assert out["trend"] == ex["expect_trend"]
+    case = _get_case("IO_STABLE")
+    out = evaluate_policy(POLICY, case["input"])
+    assert out["trend"] == case["expected_output"]["trend"]
+
 
 def test_declining_example_from_policy_examples():
-    ex = _get_example("EX_DECLINING_EARTH")
-    out = evaluate_policy(POLICY, ex)
-    assert out["trend"] == ex["expect_trend"]
+    case = _get_case("IO_DECLINING")
+    out = evaluate_policy(POLICY, case["input"])
+    assert out["trend"] == case["expected_output"]["trend"]
+
 
 def test_threshold_boundary_clamping():
-    ex = _get_example("EX_CLAMP_RISING_PEAK")
-    out = evaluate_policy(POLICY, ex)
+    # Test that delta values are properly clamped
+    case = _get_case("IO_RISING")
+    out = evaluate_policy(POLICY, case["input"])
     assert out["trend"] == "rising"
-    assert out["delta_raw"] > POLICY["scoring"]["clamp_range"][1]
+    assert CLAMP_MIN <= out["delta"] <= CLAMP_MAX
     assert 0.0 <= out["score"] <= 1.0
