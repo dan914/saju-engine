@@ -1,0 +1,34 @@
+{
+  "policy_version": "llm_guard_rules_pattern_profiler_v1",
+  "policy_signature": "2fbbf633026cb808951b32a5311df4c736ea0f931887183cf0ce430f28b2b548",
+  "rules": [
+    {
+      "id": "PATTERN-001",
+      "description": "patterns는 policy.tags_catalog의 부분집합이어야 함",
+      "assert": "subset(output.patterns, policy.tags_catalog)",
+      "risk": "high",
+      "action": "deny"
+    },
+    {
+      "id": "PATTERN-002",
+      "description": "one_liner는 1줄, 120자 이하",
+      "assert": "count_lines(output.briefs.one_liner) == 1 and len(output.briefs.one_liner) <= 120",
+      "risk": "medium",
+      "action": "revise"
+    },
+    {
+      "id": "PATTERN-003",
+      "description": "key_points는 최대 5개, 각 80자 이하",
+      "assert": "len(output.briefs.key_points) <= 5 and all_len_lte(output.briefs.key_points, 80)",
+      "risk": "low",
+      "action": "revise"
+    },
+    {
+      "id": "PATTERN-004",
+      "description": "evidence_ref 필수",
+      "assert": "output.evidence_ref != null and len(output.evidence_ref) > 0",
+      "risk": "medium",
+      "action": "revise"
+    }
+  ]
+}

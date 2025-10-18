@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "/schemas/gyeokguk_input_v1.json",
+  "title": "Gyeokguk Classifier Input v1.0",
+  "description": "Input schema for Gyeokguk (格局) classification based on Strength, Relation, Yongshin, and Climate outputs",
+  "type": "object",
+  "required": ["strength", "relation_summary", "yongshin", "climate"],
+  "properties": {
+    "strength": {
+      "type": "object",
+      "description": "Strength evaluation output from StrengthEvaluator",
+      "required": ["score"],
+      "properties": {
+        "score": {
+          "type": "number",
+          "description": "Normalized strength score (0.0 to 1.0)",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "relation_summary": {
+      "type": "object",
+      "description": "Relation summary from RelationTransformer + RelationWeightEvaluator",
+      "properties": {
+        "sanhe": {
+          "type": "number",
+          "description": "삼합(三合) impact weight",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "ganhe": {
+          "type": "number",
+          "description": "간합(干合) impact weight",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "ganhe_hua": {
+          "type": "boolean",
+          "description": "Whether ganhe resulted in transformation (化)"
+        },
+        "liuhe": {
+          "type": "number",
+          "description": "육합(六合) impact weight",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "chong": {
+          "type": "number",
+          "description": "충(沖) impact weight",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "xing": {
+          "type": "number",
+          "description": "형(刑) impact weight",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "hai": {
+          "type": "number",
+          "description": "해(害) impact weight",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "sanhe_element": {
+          "type": "string",
+          "description": "Resulting element from sanhe (empty if not formed)",
+          "enum": ["", "목", "화", "토", "금", "수"]
+        },
+        "ganhe_result": {
+          "type": "string",
+          "description": "Resulting element from ganhe (empty if not transformed)",
+          "enum": ["", "목", "화", "토", "금", "수"]
+        }
+      },
+      "additionalProperties": true
+    },
+    "yongshin": {
+      "type": "array",
+      "description": "Selected beneficial elements (용신) from YongshinSelector",
+      "items": {
+        "type": "string",
+        "enum": ["목", "화", "토", "금", "수"]
+      },
+      "minItems": 1
+    },
+    "climate": {
+      "type": "object",
+      "description": "Climate evaluation from ClimateEvaluator",
+      "required": ["season_element", "support"],
+      "properties": {
+        "season_element": {
+          "type": "string",
+          "description": "Seasonal element (계절 오행)",
+          "enum": ["목", "화", "토", "금", "수"]
+        },
+        "support": {
+          "type": "string",
+          "description": "Seasonal support level for day master",
+          "enum": ["강함", "보통", "약함"]
+        }
+      },
+      "additionalProperties": true
+    },
+    "ten_gods_summary": {
+      "type": "object",
+      "description": "Ten Gods distribution (optional, for dominant pattern detection)",
+      "properties": {
+        "비견": {
+          "type": "number",
+          "description": "Count of 비견 (比肩)"
+        },
+        "겁재": {
+          "type": "number",
+          "description": "Count of 겁재 (劫財)"
+        },
+        "식신": {
+          "type": "number",
+          "description": "Count of 식신 (食神)"
+        },
+        "상관": {
+          "type": "number",
+          "description": "Count of 상관 (傷官)"
+        },
+        "정재": {
+          "type": "number",
+          "description": "Count of 정재 (正財)"
+        },
+        "편재": {
+          "type": "number",
+          "description": "Count of 편재 (偏財)"
+        },
+        "정관": {
+          "type": "number",
+          "description": "Count of 정관 (正官)"
+        },
+        "편관": {
+          "type": "number",
+          "description": "Count of 편관 (偏官)"
+        },
+        "정인": {
+          "type": "number",
+          "description": "Count of 정인 (正印)"
+        },
+        "편인": {
+          "type": "number",
+          "description": "Count of 편인 (偏印)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "elements_distribution": {
+      "type": "object",
+      "description": "Five elements distribution (optional, for balance analysis)",
+      "properties": {
+        "목": {
+          "type": "number",
+          "description": "Proportion of 목 (木) element"
+        },
+        "화": {
+          "type": "number",
+          "description": "Proportion of 화 (火) element"
+        },
+        "토": {
+          "type": "number",
+          "description": "Proportion of 토 (土) element"
+        },
+        "금": {
+          "type": "number",
+          "description": "Proportion of 금 (金) element"
+        },
+        "수": {
+          "type": "number",
+          "description": "Proportion of 수 (水) element"
+        }
+      },
+      "additionalProperties": false
+    },
+    "context": {
+      "type": "object",
+      "description": "Additional context for gyeokguk classification",
+      "properties": {
+        "month_branch": {
+          "type": "string",
+          "description": "Month branch (월지) for seasonal reference"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "/schemas/strength_grading_tiers.schema.json",
+  "title": "Strength Grading Tiers Policy Schema",
+  "description": "Schema for validating strength grading tiers policy files that define buckets for strength evaluation (극신강, 신강, 중화, 신약, 극신약).",
+  "type": "object",
+  "required": ["policy_version", "tiers", "bin_map", "policy_signature"],
+  "properties": {
+    "policy_version": {
+      "type": "string",
+      "description": "Policy version identifier",
+      "pattern": "^strength_grading_tiers_v\\d+$"
+    },
+    "tiers": {
+      "type": "array",
+      "description": "The five strength tiers in descending order",
+      "items": {
+        "$ref": "#/$defs/tier"
+      },
+      "minItems": 5,
+      "maxItems": 5
+    },
+    "bin_map": {
+      "type": "object",
+      "description": "Mapping of tier names to simplified bins (strong/balanced/weak)",
+      "required": ["극신강", "신강", "중화", "신약", "극신약"],
+      "properties": {
+        "극신강": { "$ref": "#/$defs/bin_name" },
+        "신강": { "$ref": "#/$defs/bin_name" },
+        "중화": { "$ref": "#/$defs/bin_name" },
+        "신약": { "$ref": "#/$defs/bin_name" },
+        "극신약": { "$ref": "#/$defs/bin_name" }
+      },
+      "additionalProperties": false
+    },
+    "policy_signature": {
+      "type": "string",
+      "description": "RFC-8785 canonical JSON SHA-256 signature",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "tier": {
+      "type": "object",
+      "description": "A single strength tier definition",
+      "required": ["name", "min"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Tier name in Korean",
+          "enum": ["극신강", "신강", "중화", "신약", "극신약"]
+        },
+        "min": {
+          "type": "integer",
+          "description": "Minimum score for this tier (0-100)",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "additionalProperties": false
+    },
+    "bin_name": {
+      "type": "string",
+      "description": "Simplified bin category",
+      "enum": ["strong", "balanced", "weak"]
+    }
+  }
+}

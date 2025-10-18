@@ -3,40 +3,18 @@
 from __future__ import annotations
 
 import json
+
+# Import real implementations from shared common package
+import sys
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from pathlib import Path as _Path
 from typing import Dict, Iterable, Tuple
 from zoneinfo import ZoneInfo
 
-# TODO: Fix cross-service imports - hyphens in module names not supported
-# from services.analysis-service.app.core.luck import LuckCalculator, LuckContext, ShenshaCatalog
-# from services.analysis-service.app.core.school import SchoolProfileManager
-
-
-class LuckCalculator:
-    """Temporary placeholder for LuckCalculator to fix CI."""
-
-    pass
-
-
-class LuckContext:
-    """Temporary placeholder for LuckContext to fix CI."""
-
-    pass
-
-
-class ShenshaCatalog:
-    """Temporary placeholder for ShenshaCatalog to fix CI."""
-
-    pass
-
-
-class SchoolProfileManager:
-    """Temporary placeholder for SchoolProfileManager to fix CI."""
-
-    pass
-
+sys.path.insert(0, str(_Path(__file__).resolve().parents[4] / "services" / "common"))
+from saju_common.engines import LuckCalculator, LuckContext, ShenshaCatalog
 
 from .month import SimpleSolarTermLoader
 from .strength import StrengthEvaluator
@@ -48,7 +26,7 @@ CLIMATE_POLICY_PATH = (
     / "policies"
     / "climate_map_v1.json"
 )
-TERM_DATA_PATH = Path(__file__).resolve().parents[4] / "data" / "sample"
+TERM_DATA_PATH = Path(__file__).resolve().parents[4] / "data"
 SCHOOL_POLICY_PATH = Path(__file__).resolve().parents[4] / "policies" / "school_profiles_v1.json"
 
 

@@ -3,16 +3,19 @@
 from __future__ import annotations
 
 import json
+
+# Import from common package (replaces cross-service imports)
+import sys
 from dataclasses import dataclass
 from pathlib import Path
+from pathlib import Path as _Path
 from typing import Iterable, List
 
-POLICY_PATH = (
-    Path(__file__).resolve().parents[5]
-    / "saju_codex_addendum_v2"
-    / "policies"
-    / "text_guard_policy_v1.json"
-)
+sys.path.insert(0, str(_Path(__file__).resolve().parents[4] / "services" / "common"))
+from policy_loader import resolve_policy_path
+
+# Use policy loader for flexible path resolution
+POLICY_PATH = resolve_policy_path("text_guard_policy_v1.json")
 
 
 @dataclass(slots=True)

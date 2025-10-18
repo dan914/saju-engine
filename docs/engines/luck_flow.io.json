@@ -1,0 +1,127 @@
+{
+  "cases": [
+    {
+      "id": "IO_RISING",
+      "input": {
+        "yongshin": {
+          "primary": "화"
+        },
+        "strength": {
+          "elements": {
+            "wood": "normal",
+            "fire": "high",
+            "earth": "normal",
+            "metal": "low",
+            "water": "low"
+          }
+        },
+        "climate": {
+          "balance_index": 1
+        },
+        "relation": {
+          "flags": [
+            "combine"
+          ]
+        },
+        "daewoon": {
+          "current": "丙午",
+          "next": "丁未",
+          "turning_to_support_primary": true
+        },
+        "sewoon": {
+          "current": "丙辰",
+          "supports_primary": true
+        },
+        "context": {
+          "year": 2026,
+          "age": 27
+        }
+      },
+      "expected_output": {
+        "trend": "rising"
+      }
+    },
+    {
+      "id": "IO_STABLE",
+      "input": {
+        "yongshin": {
+          "primary": "목"
+        },
+        "strength": {
+          "elements": {
+            "wood": "normal",
+            "fire": "normal",
+            "earth": "normal",
+            "metal": "normal",
+            "water": "normal"
+          }
+        },
+        "climate": {
+          "balance_index": 0
+        },
+        "relation": {
+          "flags": []
+        },
+        "daewoon": {
+          "current": "乙卯",
+          "next": "丙辰",
+          "turning_to_support_primary": false,
+          "turning_to_counter_primary": false
+        },
+        "sewoon": {
+          "current": "辛酉",
+          "supports_primary": false,
+          "counters_primary": false
+        },
+        "context": {
+          "year": 2025,
+          "age": 26
+        }
+      },
+      "expected_output": {
+        "trend": "stable"
+      }
+    },
+    {
+      "id": "IO_DECLINING",
+      "input": {
+        "yongshin": {
+          "primary": "토"
+        },
+        "strength": {
+          "elements": {
+            "wood": "high",
+            "fire": "low",
+            "earth": "low",
+            "metal": "normal",
+            "water": "high"
+          }
+        },
+        "climate": {
+          "balance_index": -1
+        },
+        "relation": {
+          "flags": [
+            "chong"
+          ]
+        },
+        "daewoon": {
+          "current": "壬子",
+          "next": "癸丑",
+          "turning_to_counter_primary": true
+        },
+        "sewoon": {
+          "current": "壬寅",
+          "counters_primary": true
+        },
+        "context": {
+          "year": 2027,
+          "age": 28
+        }
+      },
+      "expected_output": {
+        "trend": "declining"
+      }
+    }
+  ]
+}

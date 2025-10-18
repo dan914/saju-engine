@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "/schemas/zanggan_table.schema.json",
+  "title": "Zanggan Table Policy Schema",
+  "description": "Maps the twelve Earthly Branches (地支) to their hidden Heavenly Stems (地支藏干). Validates policy/zanggan_table.json including policy_version and RFC-8785 canonical JSON signature (SHA-256 hex).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["policy_version", "by_branch", "policy_signature"],
+  "properties": {
+    "policy_version": {
+      "type": "string",
+      "pattern": "^zanggan_table_v\\d+$",
+      "description": "Version string like zanggan_table_v1, zanggan_table_v2, ..."
+    },
+    "by_branch": {
+      "type": "object",
+      "description": "Object keyed by the 12 Earthly Branches: 子, 丑, 寅, 卯, 辰, 巳, 午, 未, 申, 酉, 戌, 亥.",
+      "properties": {
+        "子": { "$ref": "#/$defs/zanggan_entry" },
+        "丑": { "$ref": "#/$defs/zanggan_entry" },
+        "寅": { "$ref": "#/$defs/zanggan_entry" },
+        "卯": { "$ref": "#/$defs/zanggan_entry" },
+        "辰": { "$ref": "#/$defs/zanggan_entry" },
+        "巳": { "$ref": "#/$defs/zanggan_entry" },
+        "午": { "$ref": "#/$defs/zanggan_entry" },
+        "未": { "$ref": "#/$defs/zanggan_entry" },
+        "申": { "$ref": "#/$defs/zanggan_entry" },
+        "酉": { "$ref": "#/$defs/zanggan_entry" },
+        "戌": { "$ref": "#/$defs/zanggan_entry" },
+        "亥": { "$ref": "#/$defs/zanggan_entry" }
+      },
+      "required": ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"],
+      "additionalProperties": false,
+      "minProperties": 12,
+      "maxProperties": 12
+    },
+    "policy_signature": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{64}$",
+      "description": "Hex-encoded SHA-256 over the RFC-8785 canonicalized JSON document."
+    }
+  },
+  "$defs": {
+    "heavenly_stem": {
+      "type": "string",
+      "enum": ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"],
+      "description": "One of the Ten Heavenly Stems (天干)."
+    },
+    "zanggan_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["main", "sub", "minor"],
+      "properties": {
+        "main": {
+          "$ref": "#/$defs/heavenly_stem",
+          "description": "Primary hidden stem (本氣)."
+        },
+        "sub": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/heavenly_stem" },
+          "minItems": 0,
+          "maxItems": 2,
+          "description": "Secondary hidden stems (中氣). 0–2 items."
+        },
+        "minor": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/heavenly_stem" },
+          "minItems": 0,
+          "maxItems": 1,
+          "description": "Tertiary hidden stem (餘氣). 0–1 item."
+        }
+      }
+    }
+  }
+}

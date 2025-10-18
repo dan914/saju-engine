@@ -1,0 +1,236 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Elements Distribution Criteria Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "generated_on": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "disclaimer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "zanggan_policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string",
+              "enum": ["zanggan_table"]
+            },
+            "version": {
+              "type": "string",
+              "pattern": "^\\d+(?:\\.\\d+){0,2}$"
+            },
+            "signature": {
+              "type": "string",
+              "minLength": 6,
+              "maxLength": 128
+            }
+          },
+          "required": ["name", "version", "signature"]
+        }
+      },
+      "required": ["zanggan_policy"]
+    },
+    "counting_method": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["hidden_only", "branch_plus_hidden"]
+        },
+        "stems": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "weight": {
+              "type": "number",
+              "minimum": 0
+            },
+            "desc": {
+              "type": "string"
+            }
+          },
+          "required": ["weight"]
+        },
+        "branches": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "weight": {
+              "type": "number",
+              "minimum": 0
+            },
+            "desc": {
+              "type": "string"
+            }
+          },
+          "required": ["weight"]
+        },
+        "hidden_stems": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "primary": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "weight": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "required": ["weight"]
+            },
+            "secondary": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "weight": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "required": ["weight"]
+            },
+            "tertiary": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "weight": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "required": ["weight"]
+            }
+          },
+          "required": ["primary", "secondary", "tertiary"]
+        },
+        "relation_transform": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "apply": {
+              "type": "boolean"
+            },
+            "note": {
+              "type": "string"
+            }
+          },
+          "required": ["apply"]
+        },
+        "rounding": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "decimals": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 6
+            }
+          },
+          "required": ["decimals"]
+        }
+      },
+      "required": ["mode", "stems", "branches", "hidden_stems", "relation_transform", "rounding"]
+    },
+    "thresholds": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "excessive": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "developed": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "appropriate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "deficient": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "required": ["excessive", "developed", "appropriate", "deficient"]
+    },
+    "labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "zh": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "excessive": { "type": "string" },
+            "developed": { "type": "string" },
+            "appropriate": { "type": "string" },
+            "deficient": { "type": "string" }
+          },
+          "required": ["excessive", "developed", "appropriate", "deficient"]
+        },
+        "ko": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "excessive": { "type": "string" },
+            "developed": { "type": "string" },
+            "appropriate": { "type": "string" },
+            "deficient": { "type": "string" }
+          },
+          "required": ["excessive", "developed", "appropriate", "deficient"]
+        },
+        "en": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "excessive": { "type": "string" },
+            "developed": { "type": "string" },
+            "appropriate": { "type": "string" },
+            "deficient": { "type": "string" }
+          },
+          "required": ["excessive", "developed", "appropriate", "deficient"]
+        }
+      },
+      "required": ["zh", "ko", "en"]
+    }
+  },
+  "required": [
+    "version",
+    "generated_on",
+    "source_refs",
+    "disclaimer",
+    "dependencies",
+    "counting_method",
+    "thresholds",
+    "labels"
+  ]
+}

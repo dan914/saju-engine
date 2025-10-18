@@ -1,0 +1,33 @@
+{
+  "policy_version": "strength_grading_tiers_v1",
+  "tiers": [
+    {
+      "name": "극신강",
+      "min": 80
+    },
+    {
+      "name": "신강",
+      "min": 60
+    },
+    {
+      "name": "중화",
+      "min": 40
+    },
+    {
+      "name": "신약",
+      "min": 20
+    },
+    {
+      "name": "극신약",
+      "min": 0
+    }
+  ],
+  "bin_map": {
+    "극신강": "strong",
+    "신강": "strong",
+    "중화": "balanced",
+    "신약": "weak",
+    "극신약": "weak"
+  },
+  "policy_signature": "dd53062f7a48621883f439563eda594929fc59d1e08c6e38cc5f3a6262fbca20"
+}

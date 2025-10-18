@@ -1,0 +1,59 @@
+{
+  "policy_version": "yongshin_dual_v1",
+  "climate_rules": {
+    "봄": {
+      "candidates": [
+        "토",
+        "화"
+      ],
+      "primary_weight": 0.2
+    },
+    "여름": {
+      "candidates": [
+        "수"
+      ],
+      "primary_weight": 0.25
+    },
+    "가을": {
+      "candidates": [
+        "수"
+      ],
+      "primary_weight": 0.2
+    },
+    "겨울": {
+      "candidates": [
+        "화"
+      ],
+      "primary_weight": 0.25
+    }
+  },
+  "bin_base_weights": {
+    "weak": {
+      "resource": 0.22,
+      "companion": 0.15,
+      "output": 0.06,
+      "wealth": 0.06,
+      "official": 0.06
+    },
+    "balanced": {
+      "resource": 0.1,
+      "companion": 0.06,
+      "output": 0.1,
+      "wealth": 0.08,
+      "official": 0.08
+    },
+    "strong": {
+      "resource": 0.06,
+      "companion": 0.06,
+      "output": 0.18,
+      "wealth": 0.15,
+      "official": 0.1
+    }
+  },
+  "distribution": {
+    "target_ratio": 0.2,
+    "deficit_gain_max": 0.15,
+    "excess_penalty_max": 0.1
+  },
+  "policy_signature": "710041a84db2bc79d04bf4233c60d8e06fcd16ee0adde7e9a8e325b0a4a0f674"
+}

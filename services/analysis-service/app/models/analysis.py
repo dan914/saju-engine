@@ -16,9 +16,12 @@ class PillarInput(BaseModel):
 
 
 class AnalysisOptions(BaseModel):
-    """Optional toggles (placeholder for future customization)."""
+    """Optional toggles and birth context for analysis."""
 
     include_trace: bool = True
+    birth_dt: str | None = None  # ISO8601 datetime string
+    gender: str | None = None  # "M" or "F"
+    timezone: str = "Asia/Seoul"  # IANA timezone
 
 
 class TenGodsResult(BaseModel):

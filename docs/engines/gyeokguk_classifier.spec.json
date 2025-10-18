@@ -1,0 +1,40 @@
+{
+  "engine": "gyeokguk_classifier",
+  "version": "1.0.0",
+  "input_contract": {
+    "engine_summaries_v1_1": {
+      "yongshin": {
+        "primary": "string"
+      },
+      "strength": {
+        "phase": "왕|상|휴|수|사",
+        "elements": {
+          "wood": "low|normal|high",
+          "fire": "low|normal|high",
+          "earth": "low|normal|high",
+          "metal": "low|normal|high",
+          "water": "low|normal|high"
+        }
+      },
+      "relation": {
+        "flags": [
+          "combine|sanhe|chong|harm"
+        ]
+      },
+      "climate": {
+        "balance_index": "integer -2..+2"
+      },
+      "luck_flow": {
+        "trend": "rising|stable|declining"
+      }
+    }
+  },
+  "output_contract": {
+    "policy_version": "string",
+    "type": "정격|종격|화격|특수격",
+    "basis": "array<string,max5>",
+    "confidence": "0..1",
+    "notes": "string<=200",
+    "evidence_ref": "string"
+  }
+}

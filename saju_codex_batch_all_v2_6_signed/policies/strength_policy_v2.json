@@ -1,0 +1,107 @@
+{
+  "version": "2.0.1",
+  "generated_on": "2025-10-05T00:00:00+09:00",
+  "signature": "<TO_BE_FILLED_BY_CI>",
+  "engine_name_ko": "강약 평가기 v2",
+  "source_refs": ["三命通會", "子平真詮", "Modern Saju practice"],
+  "disclaimer": "본 강약 평가는 정책 기반의 정량화 규칙(현대 실무+전통 원칙)으로 산출됩니다.",
+  "dependencies": {
+    "elements_distribution": { "name": "elements_distribution_criteria", "version": "1.1", "signature": "<SIG_ELEMENTS>" },
+    "lifecycle_stages": { "name": "lifecycle_stages", "version": "1.0", "signature": "<SIG_LIFECYCLE>" },
+    "relation_policy": { "name": "relation_policy", "version": "1.0", "signature": "<SIG_REL>" },
+    "climate_map": { "name": "climate_map_v1", "version": "1.0", "signature": "<SIG_CLIMATE>" }
+  },
+  "options": {
+    "relation_policy": { "apply": false }
+  },
+  "ci_checks": {
+    "on_fail": "fail_build",
+    "assertions": [
+      { "id": "W_SUM_100", "expr": "weights.deukryeong + weights.deukji + weights.deuksi + weights.deukse == 100" },
+      { "id": "BUCKET_ORDER", "expr": "buckets.thresholds.tae_gang > buckets.thresholds.jung_gang > buckets.thresholds.jung_hwa > buckets.thresholds.jung_yak > buckets.thresholds.tae_yak" },
+      { "id": "CLIMATE_ENUM", "expr": "all(deukse.climate_adjust.segments in ['寒','熱','燥','濕'])" },
+      { "id": "HIDDEN_REF_EXISTS", "expr": "json_pointer_exists('#/common_hidden_weights')" }
+    ]
+  },
+  "common_hidden_weights": { "primary": 1.0, "secondary": 0.6, "tertiary": 0.3 },
+  "weights": {
+    "deukryeong": 30.0,
+    "deukji": 25.0,
+    "deuksi": 10.0,
+    "deukse": 35.0
+  },
+  "relations": {
+    "elements": ["木","火","土","金","水"],
+    "sheng": { "木":"火", "火":"土", "土":"金", "金":"水", "水":"木" },
+    "ke": { "木":"土", "土":"水", "水":"火", "火":"金", "金":"木" }
+  },
+  "deukryeong": {
+    "month_wang_map": {
+      "子": {"木":0.2,"火":0.0,"土":0.2,"金":0.6,"水":1.0},
+      "丑": {"木":0.2,"火":0.1,"土":1.0,"金":0.4,"水":0.6},
+      "寅": {"木":1.0,"火":0.6,"土":0.2,"金":0.0,"水":0.3},
+      "卯": {"木":1.0,"火":0.5,"土":0.2,"金":0.1,"水":0.2},
+      "辰": {"木":0.6,"火":0.3,"土":1.0,"金":0.2,"水":0.3},
+      "巳": {"木":0.3,"火":1.0,"土":0.6,"金":0.2,"水":0.0},
+      "午": {"木":0.3,"火":1.0,"土":0.5,"金":0.1,"水":0.0},
+      "未": {"木":0.3,"火":0.6,"土":1.0,"金":0.3,"水":0.1},
+      "申": {"木":0.0,"火":0.2,"土":0.4,"金":1.0,"水":0.6},
+      "酉": {"木":0.1,"火":0.2,"土":0.3,"金":1.0,"水":0.5},
+      "戌": {"木":0.1,"火":0.5,"土":1.0,"金":0.6,"水":0.2},
+      "亥": {"木":0.6,"火":0.0,"土":0.2,"金":0.4,"水":1.0}
+    },
+    "scoring": {
+      "full_threshold": 0.8,
+      "partial_threshold": 0.4,
+      "match_day_element": { "full": 1.0, "partial": 0.6 },
+      "opposite": -0.4
+    }
+  },
+  "deukji": {
+    "pillar_weights": { "year": 0.4, "month": 0.8, "day": 1.0, "hour": 0.6 },
+    "hidden_weights_ref": "#/common_hidden_weights",
+    "affinity": { "same": 1.0, "sheng_to_day": 0.7, "ke_by_day": 0.5, "ke_to_day": -0.6, "sheng_by_day": -0.4 },
+    "normalization": { "min": -1.68, "max": 2.8, "clamp": true }
+  },
+  "deuksi": {
+    "branch_primary_element_map": {
+      "子":"水","丑":"土","寅":"木","卯":"木","辰":"土","巳":"火","午":"火","未":"土","申":"金","酉":"金","戌":"土","亥":"水"
+    },
+    "hour_branch_weight": 0.6,
+    "hour_hidden_weight": 0.4,
+    "affinity": { "same": 0.8, "sheng_to_day": 0.5, "ke_by_day": 0.3, "ke_to_day": -0.5, "sheng_by_day": -0.3 },
+    "hidden_weights_ref": "#/common_hidden_weights",
+    "normalization": { "min": -0.7, "max": 1.0, "clamp": true }
+  },
+  "deukse": {
+    "balance": {
+      "vector": ["木","火","土","金","水"],
+      "target_percent": 20.0,
+      "var_max": 1600.0,
+      "dispersion_penalty": { "method": "variance", "scale": -8.0, "cap": -15.0 },
+      "skew_penalty": { "method": "max_gap", "threshold": 25.0, "scale": -6.0 },
+      "normalize": true
+    },
+    "climate_adjust": {
+      "segments": ["寒","熱","燥","濕"],
+      "apply_mode": "deficit_scaled",
+      "target_percent": 20.0,
+      "adjust_vectors": {
+        "寒": { "火": 3.0, "土": 1.5 },
+        "熱": { "水": 3.0, "金": 1.5 },
+        "燥": { "水": 2.0 },
+        "濕": { "土": 2.0 }
+      },
+      "cap": { "min": -10.0, "max": 10.0 }
+    }
+  },
+  "buckets": {
+    "thresholds": { "tae_gang": 80, "jung_gang": 65, "jung_hwa": 50, "jung_yak": 35, "tae_yak": 0 },
+    "labels": {
+      "ko": { "tae_gang": "신강(太强)", "jung_gang": "중강(中强)", "jung_hwa": "중화(中和)", "jung_yak": "중약(中弱)", "tae_yak": "신약(太弱)" },
+      "zh": { "tae_gang": "太强", "jung_gang": "中强", "jung_hwa": "中和", "jung_yak": "中弱", "tae_yak": "太弱" },
+      "en": { "tae_gang": "Very Strong", "jung_gang": "Strong", "jung_hwa": "Balanced", "jung_yak": "Weak", "tae_yak": "Very Weak" }
+    }
+  },
+  "rounding": { "score_decimals": 1, "mode": "half_up", "label_on_raw": true }
+}

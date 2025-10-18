@@ -1,0 +1,30 @@
+{
+  "id": "SPRING_WOOD_OVER_FIRE",
+  "context": {
+    "season": "봄",
+    "year": 2026
+  },
+  "strength": {
+    "phase": "왕",
+    "elements": {
+      "wood": "high",
+      "fire": "low",
+      "earth": "normal",
+      "metal": "normal",
+      "water": "normal"
+    }
+  },
+  "relation": {
+    "flags": []
+  },
+  "climate": {
+    "flags": [],
+    "balance_index": 0
+  },
+  "yongshin": {
+    "primary": "화"
+  },
+  "expect": {
+    "climate_policy_id": "WOOD_OVER_FIRE_WEAK"
+  }
+}

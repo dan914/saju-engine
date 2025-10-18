@@ -1,0 +1,63 @@
+name: Tests
+
+on:
+  push:
+    branches: [main, docs/prompts-freeze-v1]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.11'
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-3.12.11-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-3.12.11-
+
+      - name: Cache venv
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-3.12.11-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            venv-${{ runner.os }}-3.12.11-
+
+      - name: Create virtual environment
+        run: |
+          python3.12 -m venv .venv
+          .venv/bin/pip install --upgrade pip setuptools wheel
+
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then
+            .venv/bin/pip install -r requirements.txt
+          fi
+
+      - name: Verify Python version
+        run: make verify-python
+
+      - name: Run tests
+        run: make test
+
+      - name: Generate coverage report
+        if: always()
+        run: make test-coverage || true
+
+      - name: Upload coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false

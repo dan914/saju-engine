@@ -1,0 +1,22 @@
+{
+  "climate_advice_policy_v1.json": {
+    "path": "policy/climate_advice_policy_v1.json",
+    "sha256": "1e795dabddb8dd0442ea42d95f6eedc94a07e2a1b0b5d7a83a4bea861a74f5b1"
+  },
+  "luck_flow_policy_v1.json": {
+    "path": "policy/luck_flow_policy_v1.json",
+    "sha256": "3b17a6426278204cdbdbb3940a043d9444eb16a89798ebb5401fbf672e47c96e"
+  },
+  "pattern_profiler_policy_v1.json": {
+    "path": "policy/pattern_profiler_policy_v1.json",
+    "sha256": "333f3f564f535f4da9f4e6c8cf87429bc3be4dad446554453a461d950bc61c2d"
+  },
+  "gyeokguk_policy_v1.json": {
+    "path": "policy/gyeokguk_policy_v1.json",
+    "sha256": "34451ff648acdf72974eb8a82d5c8270ede325106f1e9c6f16f67a13c90c6134"
+  },
+  "relation_policy_v1.json": {
+    "path": "policy/relation_policy_v1.json",
+    "sha256": "e002a84ade176fb002527bee2b1dddb09ce7ac959d2b2b208baba722ff1775b2"
+  }
+}

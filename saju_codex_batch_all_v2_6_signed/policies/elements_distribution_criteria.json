@@ -1,0 +1,72 @@
+{
+  "version": "1.1",
+  "generated_on": "2025-10-04T00:00:00+09:00",
+  "source_refs": [
+    "三命通會 (Sanming Tonghui)",
+    "子平真詮 (Ziping Zhenquan)",
+    "Modern Bazi/Saju practice notes"
+  ],
+  "disclaimer": "임계값 및 가중치는 전통 문헌이 아닌 현대 사주 실무에 기반한 경험적 기준입니다. 본 백분율은 오행의 양적 분포를 나타내며, 상생상극·조후·격국 등 질적 해석은 별도 규칙에 따릅니다.",
+  "dependencies": {
+    "zanggan_policy": {
+      "name": "zanggan_table",
+      "version": "2.6",
+      "signature": "7457895fc970"
+    }
+  },
+  "counting_method": {
+    "mode": "branch_plus_hidden",
+    "stems": {
+      "weight": 1.0,
+      "desc": "Each heavenly stem counts once"
+    },
+    "branches": {
+      "weight": 1.0,
+      "desc": "Each earthly branch counts once (container-level element)"
+    },
+    "hidden_stems": {
+      "primary": {
+        "weight": 1.0
+      },
+      "secondary": {
+        "weight": 0.5
+      },
+      "tertiary": {
+        "weight": 0.3
+      }
+    },
+    "relation_transform": {
+      "apply": false,
+      "note": "Hook for future 三合/半合/三會/冲/刑/破/害; must obey element-conservation and no-double-deduction invariants."
+    },
+    "rounding": {
+      "decimals": 2
+    }
+  },
+  "thresholds": {
+    "excessive": 35.0,
+    "developed": 25.0,
+    "appropriate": 15.0,
+    "deficient": 0.0
+  },
+  "labels": {
+    "zh": {
+      "excessive": "過旺",
+      "developed": "發達",
+      "appropriate": "平衡",
+      "deficient": "不足"
+    },
+    "ko": {
+      "excessive": "과다",
+      "developed": "발달",
+      "appropriate": "적정",
+      "deficient": "부족"
+    },
+    "en": {
+      "excessive": "Excessive",
+      "developed": "Developed",
+      "appropriate": "Balanced",
+      "deficient": "Deficient"
+    }
+  }
+}

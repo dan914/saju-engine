@@ -1,0 +1,125 @@
+{
+  "cases": [
+    {
+      "id": "IO_EX_JEONGGEOK_FIRE",
+      "input": {
+        "yongshin": {
+          "primary": "화"
+        },
+        "strength": {
+          "phase": "상",
+          "elements": {
+            "wood": "normal",
+            "fire": "high",
+            "earth": "normal",
+            "metal": "low",
+            "water": "low"
+          }
+        },
+        "relation": {
+          "flags": [
+            "combine"
+          ]
+        },
+        "climate": {
+          "balance_index": 1
+        },
+        "luck_flow": {
+          "trend": "rising"
+        }
+      },
+      "expected_type": "정격"
+    },
+    {
+      "id": "IO_EX_JONGGEOK_WATER",
+      "input": {
+        "yongshin": {
+          "primary": "토"
+        },
+        "strength": {
+          "phase": "수",
+          "elements": {
+            "wood": "high",
+            "fire": "low",
+            "earth": "low",
+            "metal": "normal",
+            "water": "high"
+          }
+        },
+        "relation": {
+          "flags": [
+            "chong"
+          ]
+        },
+        "climate": {
+          "balance_index": -1
+        },
+        "luck_flow": {
+          "trend": "declining"
+        }
+      },
+      "expected_type": "종격"
+    },
+    {
+      "id": "IO_EX_HWAHGEOK_WOOD",
+      "input": {
+        "yongshin": {
+          "primary": "목"
+        },
+        "strength": {
+          "phase": "휴",
+          "elements": {
+            "wood": "normal",
+            "fire": "normal",
+            "earth": "normal",
+            "metal": "normal",
+            "water": "normal"
+          }
+        },
+        "relation": {
+          "flags": [
+            "combine",
+            "sanhe"
+          ]
+        },
+        "climate": {
+          "balance_index": 2
+        },
+        "luck_flow": {
+          "trend": "rising"
+        }
+      },
+      "expected_type": "화격"
+    },
+    {
+      "id": "IO_EX_SPECIAL_YANGIN",
+      "input": {
+        "yongshin": {
+          "primary": "화"
+        },
+        "strength": {
+          "phase": "왕",
+          "elements": {
+            "wood": "high",
+            "fire": "high",
+            "earth": "normal",
+            "metal": "low",
+            "water": "low"
+          }
+        },
+        "relation": {
+          "flags": [
+            "harm"
+          ]
+        },
+        "climate": {
+          "balance_index": 0
+        },
+        "luck_flow": {
+          "trend": "stable"
+        }
+      },
+      "expected_type": "특수격"
+    }
+  ]
+}

@@ -1,0 +1,220 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "/schemas/llm_guard_output_v1.1.json",
+  "title": "LLM Guard Output Schema v1.1",
+  "description": "Output schema for LLM Guard v1.1 with risk stratification and cross-engine findings",
+  "type": "object",
+  "required": ["request_id", "verdict", "risk_score", "risk_level", "violations", "timestamp"],
+  "properties": {
+    "request_id": {
+      "type": "string",
+      "description": "Request identifier (mirrors input)",
+      "pattern": "^[a-zA-Z0-9_-]+$"
+    },
+    "verdict": {
+      "type": "string",
+      "description": "Final validation verdict",
+      "enum": ["allow", "deny", "revise"]
+    },
+    "verdict_ko": {
+      "type": "string",
+      "description": "Korean label for verdict",
+      "enum": ["허용", "거부", "수정 필요"]
+    },
+    "risk_score": {
+      "type": "number",
+      "description": "Weighted risk score (0-100) based on violation severity (NEW in v1.1)",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "risk_level": {
+      "type": "string",
+      "description": "Risk level stratification (NEW in v1.1)",
+      "enum": ["low", "medium", "high"]
+    },
+    "risk_level_ko": {
+      "type": "string",
+      "description": "Korean label for risk level (NEW in v1.1)",
+      "enum": ["낮음", "보통", "높음"]
+    },
+    "violations": {
+      "type": "array",
+      "description": "List of rule violations detected",
+      "items": {
+        "type": "object",
+        "required": ["rule_id", "severity", "reason_code", "message_ko"],
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "description": "Rule identifier",
+            "enum": [
+              "STRUCT-000",
+              "EVID-BIND-100",
+              "SCOPE-200",
+              "MODAL-300",
+              "CONF-LOW-310",
+              "REL-400",
+              "REL-OVERWEIGHT-410",
+              "CONSIST-450",
+              "YONGSHIN-UNSUPPORTED-460",
+              "SIG-500",
+              "PII-600",
+              "KO-700",
+              "AMBIG-800"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "description": "Violation severity",
+            "enum": ["warn", "error"]
+          },
+          "severity_ko": {
+            "type": "string",
+            "description": "Korean label for severity",
+            "enum": ["경고", "오류"]
+          },
+          "reason_code": {
+            "type": "string",
+            "description": "Reason code for violation",
+            "enum": [
+              "INPUT-INVALID",
+              "LLM-CLAIM-NOEVID",
+              "OUT-OF-SCOPE",
+              "MODALITY-OVERCLAIM",
+              "CONFIDENCE-LOW",
+              "REL-MISMATCH",
+              "RELATION-OVERWEIGHT",
+              "CONSIST-MISMATCH",
+              "YONGSHIN-UNSUPPORTED",
+              "POLICY-SIG-MISMATCH",
+              "PII-DETECTED",
+              "LABEL-NONCOMPLIANT",
+              "AMBIG-SOURCE"
+            ]
+          },
+          "message_ko": {
+            "type": "string",
+            "description": "Korean violation message"
+          },
+          "remediation_hint_ko": {
+            "type": "string",
+            "description": "Korean remediation hint"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "description": "Evidence fields referenced in this violation",
+            "items": { "type": "string" }
+          },
+          "details": {
+            "type": "object",
+            "description": "Additional violation details",
+            "properties": {
+              "expected": {
+                "description": "Expected value or condition"
+              },
+              "actual": {
+                "description": "Actual value or condition found"
+              },
+              "location": {
+                "type": "string",
+                "description": "Location in LLM output (character range or line)"
+              }
+            }
+          }
+        }
+      }
+    },
+    "cross_engine_findings": {
+      "type": "array",
+      "description": "Cross-engine consistency findings (NEW in v1.1)",
+      "items": {
+        "type": "object",
+        "required": ["finding_type", "engines_involved", "severity"],
+        "properties": {
+          "finding_type": {
+            "type": "string",
+            "description": "Type of cross-engine finding",
+            "enum": [
+              "strength_yongshin_mismatch",
+              "relation_yongshin_conflict",
+              "climate_yongshin_unsupported",
+              "low_confidence_cluster"
+            ]
+          },
+          "finding_type_ko": {
+            "type": "string",
+            "description": "Korean label for finding type"
+          },
+          "engines_involved": {
+            "type": "array",
+            "description": "List of engines involved in this finding",
+            "items": {
+              "type": "string",
+              "enum": ["strength", "relation", "yongshin", "climate"]
+            },
+            "minItems": 2
+          },
+          "severity": {
+            "type": "string",
+            "description": "Severity of the finding",
+            "enum": ["info", "warn", "error"]
+          },
+          "description_ko": {
+            "type": "string",
+            "description": "Korean description of the finding"
+          },
+          "evidence": {
+            "type": "object",
+            "description": "Supporting evidence from engine_summaries",
+            "properties": {
+              "strength_bucket": {
+                "type": "string"
+              },
+              "yongshin": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "relation_bias": {
+                "type": "string"
+              },
+              "climate_support": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Validation metadata",
+      "properties": {
+        "rules_evaluated": {
+          "type": "integer",
+          "description": "Number of rules evaluated",
+          "minimum": 0
+        },
+        "policy_version": {
+          "type": "string",
+          "description": "LLM Guard policy version used"
+        },
+        "policy_signature": {
+          "type": "string",
+          "description": "SHA-256 signature of policy used",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "validation_duration_ms": {
+          "type": "integer",
+          "description": "Validation duration in milliseconds",
+          "minimum": 0
+        }
+      }
+    },
+    "timestamp": {
+      "type": "string",
+      "description": "Validation timestamp (ISO 8601)",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}

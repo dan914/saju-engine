@@ -1,0 +1,31 @@
+{
+  "id": "SUMMER_FIRE_OVER_WATER",
+  "context": {
+    "season": "여름",
+    "year": 2026
+  },
+  "strength": {
+    "phase": "상",
+    "elements": {
+      "wood": "normal",
+      "fire": "high",
+      "earth": "normal",
+      "metal": "normal",
+      "water": "low"
+    }
+  },
+  "relation": {
+    "flags": []
+  },
+  "climate": {
+    "flags": [],
+    "balance_index": 1
+  },
+  "yongshin": {
+    "primary": "화"
+  },
+  "expect": {
+    "climate_policy_id": "FIRE_OVER_WATER_WEAK",
+    "luck_flow_trend": "rising"
+  }
+}

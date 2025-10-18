@@ -12,7 +12,7 @@ class PillarsComputeRequest(BaseModel):
 
     localDateTime: datetime = Field(..., alias="localDateTime")
     timezone: str
-    rules: str = Field("KR_classic_v1.4", pattern="^KR_classic_v1\.4$")
+    rules: str = Field("KR_classic_v1.4", pattern=r"^KR_classic_v1\.4$")
 
 
 class PillarComponent(BaseModel):

@@ -1,0 +1,17 @@
+{
+  "input": {
+    "strength": {
+      "phase": "왕",
+      "elements": { "wood": "high", "fire": "low", "earth": "normal", "metal": "normal", "water": "normal" }
+    },
+    "relation": { "flags": [] },
+    "yongshin": { "primary": "화", "secondary": "토" },
+    "climate": { "flags": [] },
+    "context": { "season": "봄", "month_branch": "辰" }
+  },
+  "expected_output": {
+    "advice": "불기운을 보강해 과다한 목의 발산을 순환시켜 주세요.",
+    "matched_policy_id": "WOOD_OVER_FIRE_WEAK",
+    "evidence_ref": "climate_advice/WOOD_OVER_FIRE_WEAK"
+  }
+}

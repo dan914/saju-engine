@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, status
 
-from ..core import DayBoundaryPolicy, PillarsEngine
+from ..core import PillarsEngine
 from ..models import PillarsComputeRequest, PillarsComputeResponse
 
 router = APIRouter(tags=["pillars"])
@@ -12,7 +12,7 @@ router = APIRouter(tags=["pillars"])
 
 def get_engine() -> PillarsEngine:
     """Provide a pillars engine instance."""
-    return PillarsEngine(policy=DayBoundaryPolicy())
+    return PillarsEngine()
 
 
 @router.post(

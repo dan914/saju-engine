@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evidence_log_addendum_v1_2.json",
+  "title": "Evidence Log Addendum v1.2",
+  "type": "object",
+  "required": [
+    "calcVersion",
+    "policy",
+    "dayForPillar",
+    "dayStartLocal",
+    "lmtAdjustmentMinutes",
+    "ziSplitRule",
+    "warnings"
+  ],
+  "properties": {
+    "calcVersion": { "type": "string" },
+    "policy": { "type": "string" },
+    "dayForPillar": { "type": "string", "format": "date" },
+    "dayStartLocal": { "type": "string", "format": "date-time" },
+    "lmtAdjustmentMinutes": { "type": "integer" },
+    "ziSplitRule": { "type": "string", "enum": ["split_23", "split_00"] },
+    "anchor": {
+      "type": "object",
+      "required": ["date", "pillar"],
+      "properties": {
+        "date": { "type": "string", "format": "date" },
+        "pillar": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": true
+}

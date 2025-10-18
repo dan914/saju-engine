@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "yuanjin_result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["policy_version", "policy_signature", "present_branches", "hits", "pair_count"],
+  "properties": {
+    "policy_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "policy_signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "present_branches": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "string",
+        "enum": ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"]
+      }
+    },
+    "hits": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 2,
+        "items": {
+          "type": "string",
+          "enum": ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"]
+        }
+      }
+    },
+    "pair_count": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

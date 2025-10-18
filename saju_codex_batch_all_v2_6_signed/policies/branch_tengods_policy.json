@@ -1,0 +1,84 @@
+{
+  "version": "1.1",
+  "generated_on": "2025-10-05T00:00:00+09:00",
+  "engine_name_ko": "지지 십신 정책",
+  "source_refs": ["三命通會","子平真詮","Modern Saju Practice"],
+  "disclaimer": "본 정책은 지지의 장간 구조와 일간 대비 십신 판정을 한국어 우선(KO-first)로 표준화합니다.",
+  "signature_mode": "sha256_auto_injected",
+  "signature": "<TO_BE_FILLED_BY_CI>",
+  "options": { "default_locale": "ko-KR" },
+  "dependencies": {
+    "sixty_jiazi": { "name": "sixty_jiazi", "version": "1.0", "signature": "<SIG_JIAZI>" },
+    "elements_distribution": { "name": "elements_distribution_criteria", "version": "1.1", "signature": "<SIG_ELEMENTS>" },
+    "localization_ko": { "name": "localization_ko_v1", "version": "1.0", "signature": "<SIG_LOC_KO>" },
+    "localization_en": { "name": "localization_en_v1", "version": "1.0", "signature": "<SIG_LOC_EN>" }
+  },
+  "relations": {
+    "elements": ["木","火","土","金","水"],
+    "sheng": { "木":"火","火":"土","土":"金","金":"水","水":"木" },
+    "ke": { "木":"土","土":"水","水":"火","火":"金","金":"木" }
+  },
+  "role_weights": { "primary": 1.0, "secondary": 0.6, "tertiary": 0.3 },
+  "role_labels": {
+    "ko": { "primary":"본기", "secondary":"중기", "tertiary":"여기" },
+    "zh": { "primary":"本氣", "secondary":"中氣", "tertiary":"餘氣" },
+    "en": { "primary":"Primary", "secondary":"Secondary", "tertiary":"Tertiary" }
+  },
+  "branches_hidden": {
+    "子": [{"stem":"癸","element":"水","role":"primary"}],
+    "丑": [{"stem":"己","element":"土","role":"primary"},{"stem":"癸","element":"水","role":"secondary"},{"stem":"辛","element":"金","role":"tertiary"}],
+    "寅": [{"stem":"甲","element":"木","role":"primary"},{"stem":"丙","element":"火","role":"secondary"},{"stem":"戊","element":"土","role":"tertiary"}],
+    "卯": [{"stem":"乙","element":"木","role":"primary"}],
+    "辰": [{"stem":"戊","element":"土","role":"primary"},{"stem":"乙","element":"木","role":"secondary"},{"stem":"癸","element":"水","role":"tertiary"}],
+    "巳": [{"stem":"丙","element":"火","role":"primary"},{"stem":"庚","element":"金","role":"secondary"},{"stem":"戊","element":"土","role":"tertiary"}],
+    "午": [{"stem":"丁","element":"火","role":"primary"},{"stem":"己","element":"土","role":"secondary"}],
+    "未": [{"stem":"己","element":"土","role":"primary"},{"stem":"丁","element":"火","role":"secondary"},{"stem":"乙","element":"木","role":"tertiary"}],
+    "申": [{"stem":"庚","element":"金","role":"primary"},{"stem":"壬","element":"水","role":"secondary"},{"stem":"戊","element":"土","role":"tertiary"}],
+    "酉": [{"stem":"辛","element":"金","role":"primary"}],
+    "戌": [{"stem":"戊","element":"土","role":"primary"},{"stem":"辛","element":"金","role":"secondary"},{"stem":"丁","element":"火","role":"tertiary"}],
+    "亥": [{"stem":"壬","element":"水","role":"primary"},{"stem":"甲","element":"木","role":"secondary"}]
+  },
+  "ten_gods_labels": {
+    "ko": {"BI":"비견","GE":"겁재","SIK":"식신","SANG":"상관","PJ":"편재","JJ":"정재","PG":"편관","JG":"정관","PI":"편인","JI":"정인"},
+    "zh": {"BI":"比肩","GE":"劫財","SIK":"食神","SANG":"傷官","PJ":"偏財","JJ":"正財","PG":"七殺","JG":"正官","PI":"偏印","JI":"正印"},
+    "en": {"BI":"Companion","GE":"Rob Wealth","SIK":"Food God","SANG":"Hurting Officer","PJ":"Indirect Wealth","JJ":"Direct Wealth","PG":"Seven Killings","JG":"Direct Officer","PI":"Indirect Resource","JI":"Direct Resource"}
+  },
+  "mapping_rules": {
+    "same_element": { "same_polarity": "BI", "diff_polarity": "GE" },
+    "wo_sheng": { "same_polarity": "SIK", "diff_polarity": "SANG" },
+    "wo_ke": { "same_polarity": "PJ", "diff_polarity": "JJ" },
+    "ke_wo": { "same_polarity": "PG", "diff_polarity": "JG" },
+    "sheng_wo": { "same_polarity": "PI", "diff_polarity": "JI" }
+  },
+  "aggregation": {
+    "mode": "weighted_sum_normalize",
+    "top_k": 3,
+    "threshold": 0.05,
+    "role_weights_ref": "#/role_weights",
+    "normalize": true,
+    "tie_breaker": ["weight_desc","label_order_zh"]
+  },
+  "ui_labels": {
+    "ko": {
+      "relation_same": "동류(같은 오행)",
+      "relation_sheng_by_me": "내가 생함(我生)",
+      "relation_ke_by_me": "내가 극함(我克)",
+      "relation_ke_me": "나를 극함(克我)",
+      "relation_sheng_me": "나를 생함(生我)"
+    }
+  },
+  "ci_checks": {
+    "on_fail": "fail_build",
+    "assertions": [
+      { "id":"BRANCH_KEYS_12", "expr":"keys(branches_hidden) == ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥']" },
+      { "id":"PRIMARY_PRESENT_EACH_BRANCH", "expr":"for_each(branches_hidden[b]): exists(role == 'primary')" },
+      { "id":"HIDDEN_ROLES_VALID", "expr":"for_each(branches_hidden[b]): all(role in ['primary','secondary','tertiary'])" },
+      { "id":"ROLE_WEIGHTS_ORDER", "expr":"role_weights.primary >= role_weights.secondary && role_weights.secondary >= role_weights.tertiary" },
+      { "id":"TEN_GODS_LABELS_KO_COMPLETE", "expr":"len(ten_gods_labels.ko)==10 && all_nonempty(ten_gods_labels.ko)" },
+      { "id":"TEN_GODS_LABELS_ZH_EN_COMPLETE", "expr":"len(ten_gods_labels.zh)==10 && len(ten_gods_labels.en)==10" },
+      { "id":"MAPPING_RULES_5", "expr":"count(mapping_rules)==5" },
+      { "id":"POINTER_VALID", "expr":"json_pointer_exists('#/role_weights')" },
+      { "id":"SIGNATURE_MODE", "expr":"signature_mode == 'sha256_auto_injected'" }
+    ]
+  }
+}

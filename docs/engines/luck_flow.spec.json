@@ -1,0 +1,50 @@
+{
+  "engine": "luck_flow",
+  "version": "1.0.0",
+  "input_contract": {
+    "engine_summaries_v1_1": {
+      "yongshin": {
+        "primary": "string"
+      },
+      "strength": {
+        "elements": {
+          "wood": "low|normal|high",
+          "fire": "low|normal|high",
+          "earth": "low|normal|high",
+          "metal": "low|normal|high",
+          "water": "low|normal|high"
+        }
+      },
+      "climate": {
+        "balance_index": "integer -2..+2"
+      },
+      "relation": {
+        "flags": "array<string>"
+      },
+      "daewoon": {
+        "current": "string",
+        "next": "string",
+        "turning_to_support_primary": "boolean",
+        "turning_to_counter_primary": "boolean"
+      },
+      "sewoon": {
+        "current": "string",
+        "supports_primary": "boolean",
+        "counters_primary": "boolean"
+      },
+      "context": {
+        "year": "integer",
+        "age": "integer"
+      }
+    }
+  },
+  "output_contract": {
+    "policy_version": "string",
+    "trend": "rising|stable|declining",
+    "score": "0..1",
+    "confidence": "0..1",
+    "drivers": "array<string,max4>",
+    "detractors": "array<string,max4>",
+    "evidence_ref": "string"
+  }
+}

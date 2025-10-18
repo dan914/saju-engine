@@ -1,0 +1,26 @@
+#!/bin/bash
+# scripts/py - Proxy to venv Python with safety checks
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+VENV_PYTHON="$PROJECT_ROOT/.venv/bin/python3"
+
+# Check if venv exists
+if [[ ! -f "$VENV_PYTHON" ]]; then
+    echo "❌ Virtual environment not found at $VENV_PYTHON"
+    echo "Run: python3.12 -m venv .venv && .venv/bin/pip install -r requirements.txt"
+    exit 1
+fi
+
+# Check Python version
+VERSION=$("$VENV_PYTHON" --version 2>&1 | awk '{print $2}')
+if [[ ! "$VERSION" =~ ^3\.12\. ]]; then
+    echo "❌ Expected Python 3.12.x, but got $VERSION"
+    echo "Rebuild venv: rm -rf .venv && python3.12 -m venv .venv"
+    exit 1
+fi
+
+# Forward all arguments to venv Python
+exec "$VENV_PYTHON" "$@"

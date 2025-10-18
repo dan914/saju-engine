@@ -4,17 +4,27 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
+from pathlib import Path
 
-# TODO: Fix cross-service import - hyphens in module names not supported
-# from services.astro-service.app.core.delta_t import DeltaTPolicy
+# Import from common package (replaces cross-service import)
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "common"))
+from saju_common import SimpleDeltaT
 
 
+# Wrapper class for backwards compatibility
 class DeltaTPolicy:
-    """Temporary placeholder for DeltaTPolicy to fix CI."""
+    """Wrapper for SimpleDeltaT with legacy load() method."""
 
     @staticmethod
     def load():
         return {"engine": 1.0, "boundary": 0.5}
+
+    @staticmethod
+    def delta_t_seconds(year: int, month: int) -> float:
+        """Calculate ΔT using SimpleDeltaT implementation"""
+        dt_impl = SimpleDeltaT()
+        return dt_impl.delta_t_seconds(year, month)
 
 
 def decide_alerts(

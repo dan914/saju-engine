@@ -1,0 +1,41 @@
+{
+  "policy_version": "llm_guard_rules_gyeokguk_v1",
+  "policy_signature": "07f41d63ba4138d45fbd07b15c272dcf7ff366a570d44f41e178cb56340436bc",
+  "rules": [
+    {
+      "id": "GYEKGUK-001",
+      "description": "type은 정격/종격/화격/특수격 중 하나",
+      "assert": "in_enum(output.type,[\"정격\",\"종격\",\"화격\",\"특수격\"])",
+      "risk": "high",
+      "action": "deny"
+    },
+    {
+      "id": "GYEKGUK-002",
+      "description": "confidence는 0~1",
+      "assert": "between(output.confidence,0,1)",
+      "risk": "medium",
+      "action": "revise"
+    },
+    {
+      "id": "GYEKGUK-003",
+      "description": "basis는 criteria_catalog의 부분집합",
+      "assert": "subset(output.basis, policy.criteria_catalog)",
+      "risk": "medium",
+      "action": "revise"
+    },
+    {
+      "id": "GYEKGUK-004",
+      "description": "notes는 200자 이하, 개행 금지",
+      "assert": "len(output.notes)<=200 and count_lines(output.notes)==1",
+      "risk": "low",
+      "action": "revise"
+    },
+    {
+      "id": "GYEKGUK-005",
+      "description": "evidence_ref 필수",
+      "assert": "output.evidence_ref != null and len(output.evidence_ref) > 0",
+      "risk": "medium",
+      "action": "revise"
+    }
+  ]
+}

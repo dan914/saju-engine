@@ -28,16 +28,21 @@ class PillarsEngine:
     def compute(self, request: PillarsComputeRequest) -> PillarsComputeResponse:
         result = self.calculator.compute(request.localDateTime, request.timezone)
 
+        # Extract computed values from month_term
+        month_term = result["month_term"]
+        delta_t = month_term.delta_t_seconds
+        lambda_deg = month_term.lambda_deg
+
+        # Build trace metadata with actual computed values
         trace_dict = TraceMetadata(
             rule_id="KR_classic_v1.4",
-            delta_t_seconds=57.4,
+            delta_t_seconds=delta_t,
             tz={"iana": request.timezone, "event": "none", "tzdbVersion": "2025a"},
+            astro={"lambda_deg": lambda_deg, "delta_t": delta_t},
             boundary_policy="LCRO",
             epsilon_seconds=0.001,
-            flags={"edge": False, "tzTransition": False, "deltaT>5s": False},
+            flags={"edge": False, "tzTransition": False, "deltaT>5s": abs(delta_t) > 5.0},
         ).to_dict()
-
-        month_term = result["month_term"]
         month_branch = result["month"][1]
         evidence = self.evidence_builder.build(
             local_dt=request.localDateTime,
@@ -50,6 +55,7 @@ class PillarsEngine:
             },
             month_term=month_term,
             month_branch=month_branch,
+            delta_t_seconds=delta_t,  # Use actual computed value, not default
         )
         trace_dict["evidence"] = evidence
         trace_payload = TraceInfo.model_validate(trace_dict)

@@ -1,0 +1,51 @@
+{
+  "engine": "pattern_profiler",
+  "version": "1.0.0",
+  "input_contract": {
+    "engine_summaries_v1_1": {
+      "yongshin": {
+        "primary": "string"
+      },
+      "strength": {
+        "phase": "왕|상|휴|수|사",
+        "elements": {
+          "wood": "low|normal|high",
+          "fire": "low|normal|high",
+          "earth": "low|normal|high",
+          "metal": "low|normal|high",
+          "water": "low|normal|high"
+        }
+      },
+      "relation": {
+        "flags": [
+          "combine|sanhe|chong|harm"
+        ]
+      },
+      "climate": {
+        "balance_index": "integer -2..+2",
+        "flags": [
+          "dryness|humidity"
+        ]
+      },
+      "luck_flow": {
+        "trend": "rising|stable|declining"
+      },
+      "gyeokguk": {
+        "type": "정격|종격|화격|특수"
+      },
+      "context": {
+        "season": "봄|여름|장하|가을|겨울",
+        "month_branch": "string"
+      }
+    }
+  },
+  "output_contract": {
+    "policy_version": "string",
+    "patterns": "array<string,max10>",
+    "briefs": {
+      "one_liner": "string<=120(single line)",
+      "key_points": "array<string,max5,<=80 each>"
+    },
+    "evidence_ref": "string"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "id": "WINTER_WATER_DEFICIT",
+  "context": {
+    "season": "겨울",
+    "year": 2026
+  },
+  "strength": {
+    "phase": "휴",
+    "elements": {
+      "wood": "normal",
+      "fire": "normal",
+      "earth": "normal",
+      "metal": "normal",
+      "water": "low"
+    }
+  },
+  "relation": {
+    "flags": []
+  },
+  "climate": {
+    "flags": [],
+    "balance_index": -1
+  },
+  "yongshin": {
+    "primary": "수"
+  },
+  "expect": {
+    "climate_policy_id": "WATER_DEFICIT_IN_WINTER",
+    "luck_flow_trend": "declining"
+  }
+}

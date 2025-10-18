@@ -1,0 +1,32 @@
+{
+  "id": "WINTER_WATER_OVER_FIRE_COLD",
+  "context": {
+    "season": "겨울",
+    "year": 2026
+  },
+  "strength": {
+    "phase": "사",
+    "elements": {
+      "wood": "normal",
+      "fire": "low",
+      "earth": "normal",
+      "metal": "normal",
+      "water": "high"
+    }
+  },
+  "relation": {
+    "flags": []
+  },
+  "climate": {
+    "flags": [
+      "coldness"
+    ],
+    "balance_index": -1
+  },
+  "yongshin": {
+    "primary": "화"
+  },
+  "expect": {
+    "climate_policy_id": "WATER_OVER_FIRE_WEAK"
+  }
+}

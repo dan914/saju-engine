@@ -1,0 +1,42 @@
+{
+  "id": "LUCK_CLAMP_MAX",
+  "context": {
+    "season": "여름",
+    "year": 2029
+  },
+  "strength": {
+    "phase": "왕",
+    "elements": {
+      "wood": "normal",
+      "fire": "high",
+      "earth": "normal",
+      "metal": "low",
+      "water": "low"
+    }
+  },
+  "relation": {
+    "flags": [
+      "combine",
+      "sanhe"
+    ]
+  },
+  "climate": {
+    "flags": [],
+    "balance_index": 2
+  },
+  "yongshin": {
+    "primary": "화"
+  },
+  "daewoon": {
+    "current": "丁未",
+    "next": "戊申",
+    "turning_to_support_primary": true
+  },
+  "sewoon": {
+    "current": "丙午",
+    "supports_primary": true
+  },
+  "expect": {
+    "luck_flow_trend": "rising"
+  }
+}

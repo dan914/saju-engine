@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "/schemas/seasons_wang_map.schema.json",
+  "title": "Seasons Wang Map Policy Schema",
+  "description": "Schema for validating seasons_wang_map policy files that map earthly branches to Wang-Xiang-Xiu-Qiu-Si states (旺相休囚死) for each of the five elements.",
+  "type": "object",
+  "required": ["policy_version", "stages", "score_map", "by_branch", "policy_signature"],
+  "properties": {
+    "policy_version": {
+      "type": "string",
+      "description": "Policy version identifier",
+      "pattern": "^seasons_wang_map_v\\d+$"
+    },
+    "stages": {
+      "type": "array",
+      "description": "The five Wang states in traditional order",
+      "items": {
+        "$ref": "#/$defs/wang_state"
+      },
+      "minItems": 5,
+      "maxItems": 5
+    },
+    "score_map": {
+      "type": "object",
+      "description": "Numerical scores for each Wang state",
+      "required": ["旺", "相", "休", "囚", "死"],
+      "properties": {
+        "旺": { "type": "integer" },
+        "相": { "type": "integer" },
+        "休": { "type": "integer" },
+        "囚": { "type": "integer" },
+        "死": { "type": "integer" }
+      },
+      "additionalProperties": false
+    },
+    "by_branch": {
+      "type": "object",
+      "description": "Wang states for each earthly branch and element combination",
+      "required": ["寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥", "子", "丑"],
+      "properties": {
+        "寅": { "$ref": "#/$defs/element_wang_map" },
+        "卯": { "$ref": "#/$defs/element_wang_map" },
+        "辰": { "$ref": "#/$defs/element_wang_map" },
+        "巳": { "$ref": "#/$defs/element_wang_map" },
+        "午": { "$ref": "#/$defs/element_wang_map" },
+        "未": { "$ref": "#/$defs/element_wang_map" },
+        "申": { "$ref": "#/$defs/element_wang_map" },
+        "酉": { "$ref": "#/$defs/element_wang_map" },
+        "戌": { "$ref": "#/$defs/element_wang_map" },
+        "亥": { "$ref": "#/$defs/element_wang_map" },
+        "子": { "$ref": "#/$defs/element_wang_map" },
+        "丑": { "$ref": "#/$defs/element_wang_map" }
+      },
+      "additionalProperties": false
+    },
+    "policy_signature": {
+      "type": "string",
+      "description": "RFC-8785 canonical JSON SHA-256 signature",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "wang_state": {
+      "type": "string",
+      "description": "One of the five Wang states",
+      "enum": ["旺", "相", "休", "囚", "死"]
+    },
+    "element_wang_map": {
+      "type": "object",
+      "description": "Wang states for all five elements",
+      "required": ["wood", "fire", "earth", "metal", "water"],
+      "properties": {
+        "wood": { "$ref": "#/$defs/wang_state" },
+        "fire": { "$ref": "#/$defs/wang_state" },
+        "earth": { "$ref": "#/$defs/wang_state" },
+        "metal": { "$ref": "#/$defs/wang_state" },
+        "water": { "$ref": "#/$defs/wang_state" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

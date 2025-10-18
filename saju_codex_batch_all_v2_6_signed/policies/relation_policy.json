@@ -1,0 +1,886 @@
+{
+  "version": "1.1",
+  "policy_name": "relation_policy",
+  "description": "Saju Relation Transformer Policy - Calculates 12 earthly branch relationships (三合·半合·方合·拱合·六合·沖·刑·破·害) with conservation, attenuation, mutual exclusion, and deterministic confidence rules.",
+  "conservation": {
+    "enabled": true,
+    "unit_per_branch": 1.0,
+    "budget_mode": "hidden_stems_v1",
+    "hidden_stems_dataset_version": "1.0.0",
+    "hidden_stems_weights": {
+      "子": {
+        "水": 1.0
+      },
+      "丑": {
+        "土": 0.6,
+        "金": 0.2,
+        "水": 0.2
+      },
+      "寅": {
+        "木": 0.8,
+        "火": 0.2
+      },
+      "卯": {
+        "木": 1.0
+      },
+      "辰": {
+        "土": 0.7,
+        "木": 0.2,
+        "水": 0.1
+      },
+      "巳": {
+        "火": 0.6,
+        "金": 0.3,
+        "土": 0.1
+      },
+      "午": {
+        "火": 1.0
+      },
+      "未": {
+        "土": 0.6,
+        "木": 0.2,
+        "火": 0.2
+      },
+      "申": {
+        "金": 0.7,
+        "水": 0.3
+      },
+      "酉": {
+        "金": 1.0
+      },
+      "戌": {
+        "土": 0.7,
+        "金": 0.2,
+        "火": 0.1
+      },
+      "亥": {
+        "水": 0.8,
+        "木": 0.2
+      }
+    },
+    "elemental_mapping": {
+      "branch_element_map": {
+        "子": "水",
+        "丑": "土",
+        "寅": "木",
+        "卯": "木",
+        "辰": "土",
+        "巳": "火",
+        "午": "火",
+        "未": "土",
+        "申": "金",
+        "酉": "金",
+        "戌": "土",
+        "亥": "水"
+      },
+      "triad_element_map": {
+        "亥卯未": "木",
+        "寅午戌": "火",
+        "申子辰": "水",
+        "巳酉丑": "金"
+      },
+      "liuhe_element_map": {
+        "子丑": "土",
+        "寅亥": "木",
+        "卯戌": "火",
+        "辰酉": "金",
+        "巳申": "水",
+        "午未": "火"
+      },
+      "banhe_element_map": {
+        "寅午": "火",
+        "亥卯": "木",
+        "申子": "水"
+      }
+    },
+    "fusion_rules": {
+      "三合": {
+        "consume_units": 3.0,
+        "produce_units": 3.0,
+        "requires_all": true
+      },
+      "半合": {
+        "consume_units": 2.0,
+        "produce_units": 2.0,
+        "requires_all": false,
+        "facilitator_needed": false
+      },
+      "六合": {
+        "consume_units": 2.0,
+        "produce_units": 2.0
+      },
+      "方合": {
+        "consume_units": 3.0,
+        "produce_units": 3.0
+      },
+      "拱合": {
+        "consume_units": 2.0,
+        "produce_units": 2.0,
+        "implied_missing": true
+      }
+    },
+    "leakage_tolerance": 0.0,
+    "unstable_flag": "STRUCTURE_UNSTABLE",
+    "notes_ko": "변환 전후 오행 총량(단위 합계) 동일. 장간 가중치 기반 예산모드(hidden_stems_v1) 제공."
+  },
+  "confidence_rules": {
+    "formula": "conf = clamp01( round( w_norm*(score_normalized/100) + w_conservation*(conservation_ok?1:0) + w_priority*(priority_avg/100) + w_conflict*conflict_ratio, 2) )",
+    "weights": {
+      "w_norm": 0.45,
+      "w_conservation": 0.3,
+      "w_priority": 0.15,
+      "w_conflict": -0.2
+    },
+    "normalization": {
+      "score_range": {
+        "min": -20.0,
+        "max": 20.0
+      },
+      "priority_range": {
+        "min": 0,
+        "max": 100
+      }
+    }
+  },
+  "mutual_exclusion_groups": [
+    {
+      "group": [
+        "三合",
+        "半合",
+        "拱合"
+      ],
+      "promotion": "三合",
+      "suppression": {
+        "lower_rank_weight": 0.0
+      }
+    }
+  ],
+  "attenuation_rules": [
+    {
+      "when": "沖 present",
+      "attenuate": [
+        "三合"
+      ],
+      "factor": 0.7
+    },
+    {
+      "when": "沖 present",
+      "attenuate": [
+        "六合"
+      ],
+      "factor": 0.7
+    },
+    {
+      "when": "沖 present",
+      "attenuate": [
+        "半合"
+      ],
+      "factor": 0.6
+    }
+  ],
+  "relationships": {
+    "六合": {
+      "label_ko": "육합",
+      "label_zh": "六合",
+      "label_en": "liu-he",
+      "nature": "auspicious",
+      "score_range": {
+        "min": 0,
+        "max": 10
+      },
+      "rules": [
+        {
+          "branches": [
+            "子",
+            "丑"
+          ],
+          "priority": 70,
+          "score_hint": 8.0,
+          "note_ko": "자축합(土)",
+          "element": "土"
+        },
+        {
+          "branches": [
+            "寅",
+            "亥"
+          ],
+          "priority": 70,
+          "score_hint": 8.0,
+          "note_ko": "인해합(木)",
+          "element": "木"
+        },
+        {
+          "branches": [
+            "卯",
+            "戌"
+          ],
+          "priority": 70,
+          "score_hint": 8.0,
+          "note_ko": "묘술합(火)",
+          "element": "火"
+        },
+        {
+          "branches": [
+            "辰",
+            "酉"
+          ],
+          "priority": 70,
+          "score_hint": 8.0,
+          "note_ko": "진유합(金)",
+          "element": "金"
+        },
+        {
+          "branches": [
+            "巳",
+            "申"
+          ],
+          "priority": 70,
+          "score_hint": 8.0,
+          "note_ko": "사신합(水)",
+          "element": "水"
+        },
+        {
+          "branches": [
+            "午",
+            "未"
+          ],
+          "priority": 70,
+          "score_hint": 8.0,
+          "note_ko": "오미합(火)",
+          "element": "火"
+        }
+      ]
+    },
+    "半合": {
+      "label_ko": "반합",
+      "label_zh": "半合",
+      "label_en": "ban-he",
+      "nature": "auspicious",
+      "score_range": {
+        "min": 0,
+        "max": 10
+      },
+      "rules": [
+        {
+          "branches": [
+            "寅",
+            "午"
+          ],
+          "priority": 60,
+          "score_hint": 6.0,
+          "note_ko": "인오 반합(火)",
+          "element": "火"
+        },
+        {
+          "branches": [
+            "亥",
+            "卯"
+          ],
+          "priority": 60,
+          "score_hint": 6.0,
+          "note_ko": "해묘 반합(木)",
+          "element": "木"
+        },
+        {
+          "branches": [
+            "申",
+            "子"
+          ],
+          "priority": 60,
+          "score_hint": 6.0,
+          "note_ko": "신자 반합(水)",
+          "element": "水"
+        }
+      ]
+    },
+    "三合": {
+      "label_ko": "삼합",
+      "label_zh": "三合",
+      "label_en": "san-he",
+      "nature": "auspicious",
+      "score_range": {
+        "min": 0,
+        "max": 20
+      },
+      "rules": [
+        {
+          "branches": [
+            "亥",
+            "卯",
+            "未"
+          ],
+          "priority": 75,
+          "score_hint": 18.0,
+          "note_ko": "해묘미 삼합(木局)",
+          "element": "木"
+        },
+        {
+          "branches": [
+            "寅",
+            "午",
+            "戌"
+          ],
+          "priority": 75,
+          "score_hint": 18.0,
+          "note_ko": "인오술 삼합(火局)",
+          "element": "火"
+        },
+        {
+          "branches": [
+            "申",
+            "子",
+            "辰"
+          ],
+          "priority": 75,
+          "score_hint": 18.0,
+          "note_ko": "신자진 삼합(水局)",
+          "element": "水"
+        },
+        {
+          "branches": [
+            "巳",
+            "酉",
+            "丑"
+          ],
+          "priority": 75,
+          "score_hint": 18.0,
+          "note_ko": "사유축 삼합(金局)",
+          "element": "金"
+        }
+      ]
+    },
+    "方合": {
+      "label_ko": "방합",
+      "label_zh": "方合",
+      "label_en": "fang-he",
+      "nature": "neutral",
+      "score_range": {
+        "min": 0,
+        "max": 8
+      },
+      "rules": [
+        {
+          "branches": [
+            "寅",
+            "卯",
+            "辰"
+          ],
+          "priority": 55,
+          "score_hint": 5.0,
+          "note_ko": "동방(木) 방합",
+          "element": "木"
+        },
+        {
+          "branches": [
+            "巳",
+            "午",
+            "未"
+          ],
+          "priority": 55,
+          "score_hint": 5.0,
+          "note_ko": "남방(火) 방합",
+          "element": "火"
+        },
+        {
+          "branches": [
+            "申",
+            "酉",
+            "戌"
+          ],
+          "priority": 55,
+          "score_hint": 5.0,
+          "note_ko": "서방(金) 방합",
+          "element": "金"
+        },
+        {
+          "branches": [
+            "亥",
+            "子",
+            "丑"
+          ],
+          "priority": 55,
+          "score_hint": 5.0,
+          "note_ko": "북방(水) 방합",
+          "element": "水"
+        }
+      ]
+    },
+    "拱合": {
+      "label_ko": "공합",
+      "label_zh": "拱合",
+      "label_en": "gong-he",
+      "nature": "neutral",
+      "score_range": {
+        "min": 0,
+        "max": 6
+      },
+      "rules": [
+        {
+          "branches": [
+            "亥",
+            "未"
+          ],
+          "priority": 55,
+          "score_hint": 4.0,
+          "note_ko": "해·미가 묘를 공하여 목",
+          "element": "木"
+        },
+        {
+          "branches": [
+            "寅",
+            "戌"
+          ],
+          "priority": 55,
+          "score_hint": 4.0,
+          "note_ko": "인·술이 오를 공하여 화",
+          "element": "火"
+        },
+        {
+          "branches": [
+            "巳",
+            "丑"
+          ],
+          "priority": 55,
+          "score_hint": 4.0,
+          "note_ko": "사·축이 유를 공하여 금",
+          "element": "金"
+        },
+        {
+          "branches": [
+            "子",
+            "辰"
+          ],
+          "priority": 55,
+          "score_hint": 4.0,
+          "note_ko": "자·진이 신을 공하여 수",
+          "element": "水"
+        }
+      ]
+    },
+    "沖": {
+      "label_ko": "충",
+      "label_zh": "沖",
+      "label_en": "chong",
+      "nature": "inauspicious",
+      "score_range": {
+        "min": -15,
+        "max": 0
+      },
+      "rules": [
+        {
+          "branches": [
+            "子",
+            "午"
+          ],
+          "priority": 100,
+          "score_hint": -12.0,
+          "note_ko": "자오충"
+        },
+        {
+          "branches": [
+            "丑",
+            "未"
+          ],
+          "priority": 100,
+          "score_hint": -12.0,
+          "note_ko": "축미충"
+        },
+        {
+          "branches": [
+            "寅",
+            "申"
+          ],
+          "priority": 100,
+          "score_hint": -12.0,
+          "note_ko": "인신충"
+        },
+        {
+          "branches": [
+            "卯",
+            "酉"
+          ],
+          "priority": 100,
+          "score_hint": -12.0,
+          "note_ko": "묘유충"
+        },
+        {
+          "branches": [
+            "辰",
+            "戌"
+          ],
+          "priority": 100,
+          "score_hint": -12.0,
+          "note_ko": "진술충"
+        },
+        {
+          "branches": [
+            "巳",
+            "亥"
+          ],
+          "priority": 100,
+          "score_hint": -12.0,
+          "note_ko": "사해충"
+        }
+      ]
+    },
+    "破": {
+      "label_ko": "파",
+      "label_zh": "破",
+      "label_en": "po",
+      "nature": "inauspicious",
+      "score_range": {
+        "min": -10,
+        "max": 0
+      },
+      "rules": [
+        {
+          "branches": [
+            "子",
+            "酉"
+          ],
+          "priority": 85,
+          "score_hint": -6.0,
+          "note_ko": "자유파"
+        },
+        {
+          "branches": [
+            "丑",
+            "辰"
+          ],
+          "priority": 85,
+          "score_hint": -6.0,
+          "note_ko": "축진파"
+        },
+        {
+          "branches": [
+            "寅",
+            "亥"
+          ],
+          "priority": 85,
+          "score_hint": -6.0,
+          "note_ko": "인해파"
+        },
+        {
+          "branches": [
+            "卯",
+            "子"
+          ],
+          "priority": 85,
+          "score_hint": -6.0,
+          "note_ko": "묘자파"
+        },
+        {
+          "branches": [
+            "午",
+            "卯"
+          ],
+          "priority": 85,
+          "score_hint": -6.0,
+          "note_ko": "오묘파"
+        },
+        {
+          "branches": [
+            "申",
+            "巳"
+          ],
+          "priority": 85,
+          "score_hint": -6.0,
+          "note_ko": "신사파"
+        }
+      ]
+    },
+    "害": {
+      "label_ko": "해",
+      "label_zh": "害",
+      "label_en": "hai",
+      "nature": "inauspicious",
+      "score_range": {
+        "min": -8,
+        "max": 0
+      },
+      "rules": [
+        {
+          "branches": [
+            "子",
+            "未"
+          ],
+          "priority": 80,
+          "score_hint": -5.0,
+          "note_ko": "자미해"
+        },
+        {
+          "branches": [
+            "丑",
+            "午"
+          ],
+          "priority": 80,
+          "score_hint": -5.0,
+          "note_ko": "축오해"
+        },
+        {
+          "branches": [
+            "寅",
+            "巳"
+          ],
+          "priority": 80,
+          "score_hint": -5.0,
+          "note_ko": "인사해"
+        },
+        {
+          "branches": [
+            "卯",
+            "辰"
+          ],
+          "priority": 80,
+          "score_hint": -5.0,
+          "note_ko": "묘진해"
+        },
+        {
+          "branches": [
+            "申",
+            "亥"
+          ],
+          "priority": 80,
+          "score_hint": -5.0,
+          "note_ko": "신해해"
+        },
+        {
+          "branches": [
+            "酉",
+            "戌"
+          ],
+          "priority": 80,
+          "score_hint": -5.0,
+          "note_ko": "유술해"
+        }
+      ]
+    },
+    "刑_三刑": {
+      "label_ko": "삼형",
+      "label_zh": "刑_三刑",
+      "label_en": "xing-tri",
+      "nature": "inauspicious",
+      "score_range": {
+        "min": -12,
+        "max": 0
+      },
+      "rules": [
+        {
+          "branches": [
+            "寅",
+            "巳",
+            "申"
+          ],
+          "priority": 90,
+          "score_hint": -8.0,
+          "note_ko": "삼형(寅巳申)",
+          "xing_type": "punishment_of_power"
+        }
+      ]
+    },
+    "刑_自刑": {
+      "label_ko": "자형",
+      "label_zh": "刑_自刑",
+      "label_en": "xing-self",
+      "nature": "inauspicious",
+      "score_range": {
+        "min": -6,
+        "max": 0
+      },
+      "rules": [
+        {
+          "branches": [
+            "寅",
+            "寅"
+          ],
+          "priority": 88,
+          "score_hint": -4.0,
+          "note_ko": "자형(寅寅)",
+          "xing_type": "self",
+          "xing_stack": "per_set",
+          "stack_cap": 1
+        },
+        {
+          "branches": [
+            "巳",
+            "巳"
+          ],
+          "priority": 88,
+          "score_hint": -4.0,
+          "note_ko": "자형(巳巳)",
+          "xing_type": "self",
+          "xing_stack": "per_set",
+          "stack_cap": 1
+        },
+        {
+          "branches": [
+            "申",
+            "申"
+          ],
+          "priority": 88,
+          "score_hint": -4.0,
+          "note_ko": "자형(申申)",
+          "xing_type": "self",
+          "xing_stack": "per_set",
+          "stack_cap": 1
+        }
+      ]
+    },
+    "刑_偏刑": {
+      "label_ko": "편형",
+      "label_zh": "刑_偏刑",
+      "label_en": "xing-bias",
+      "nature": "inauspicious",
+      "score_range": {
+        "min": -10,
+        "max": 0
+      },
+      "rules": [
+        {
+          "branches": [
+            "丑",
+            "戌",
+            "未"
+          ],
+          "priority": 82,
+          "score_hint": -6.0,
+          "note_ko": "편형(丑戌未)",
+          "xing_type": "ungrateful"
+        },
+        {
+          "branches": [
+            "子",
+            "卯"
+          ],
+          "priority": 82,
+          "score_hint": -6.0,
+          "note_ko": "편형(子卯)",
+          "xing_type": "ungrateful"
+        },
+        {
+          "branches": [
+            "辰",
+            "辰"
+          ],
+          "priority": 82,
+          "score_hint": -6.0,
+          "note_ko": "편형(辰辰)",
+          "xing_type": "self",
+          "xing_stack": "per_set",
+          "stack_cap": 1
+        },
+        {
+          "branches": [
+            "午",
+            "午"
+          ],
+          "priority": 82,
+          "score_hint": -6.0,
+          "note_ko": "편형(午午)",
+          "xing_type": "self",
+          "xing_stack": "per_set",
+          "stack_cap": 1
+        },
+        {
+          "branches": [
+            "酉",
+            "酉"
+          ],
+          "priority": 82,
+          "score_hint": -6.0,
+          "note_ko": "편형(酉酉)",
+          "xing_type": "self",
+          "xing_stack": "per_set",
+          "stack_cap": 1
+        },
+        {
+          "branches": [
+            "亥",
+            "亥"
+          ],
+          "priority": 82,
+          "score_hint": -6.0,
+          "note_ko": "편형(亥亥)",
+          "xing_type": "self",
+          "xing_stack": "per_set",
+          "stack_cap": 1
+        }
+      ]
+    }
+  },
+  "aggregation": {
+    "score_formula": "weighted_sum",
+    "score_note_ko": "가중합 계산: Σ(score_delta × weight × attenuation_factor)"
+  },
+  "evidence_template": {
+    "relation_type": "",
+    "branches_involved": [],
+    "element_produced": null,
+    "conservation_detail": {},
+    "attenuation_applied": null,
+    "confidence": 0.0
+  },
+  "ci_checks": [
+    {
+      "check_id": "SCHEMA_VALIDATION",
+      "description": "schemas/relation.schema.json 검증",
+      "assertion": "schemas/relation.schema.json 검증"
+    },
+    {
+      "check_id": "REQUIRED_FIELDS",
+      "description": "최상위 필수 키 및 trace 필수 키 확인",
+      "assertion": "최상위 필수 키 및 trace 필수 키 확인"
+    },
+    {
+      "check_id": "LOCALE_DEFAULT_KO",
+      "description": "locale_used 미지정 시 ko-KR 강제",
+      "assertion": "locale_used 미지정 시 ko-KR 강제"
+    },
+    {
+      "check_id": "KO_FIRST_LABEL_COVERAGE",
+      "description": "trace[*].label_ko 및 output.label_ko 필수",
+      "assertion": "trace[*].label_ko 및 output.label_ko 필수"
+    },
+    {
+      "check_id": "NO_ADDITIONAL_PROPERTIES",
+      "description": "스키마 외 필드 불허",
+      "assertion": "스키마 외 필드 불허"
+    },
+    {
+      "check_id": "SIGNATURE_AUTO_INJECT",
+      "description": "policy_signature 자동 주입",
+      "assertion": "policy_signature 자동 주입"
+    },
+    {
+      "check_id": "DETERMINISTIC_INPUT_HASH",
+      "description": "RFC8785 → SHA256 입력 해시 재현",
+      "assertion": "RFC8785 → SHA256 입력 해시 재현"
+    },
+    {
+      "check_id": "CONSERVATION_CHECK",
+      "description": "오행 총량 보존 검증(변환 전후 합계 일치)",
+      "assertion": "오행 총량 보존 검증(변환 전후 합계 일치)"
+    },
+    {
+      "check_id": "MUTUAL_EXCLUSION_ENFORCED",
+      "description": "三合 존재 시 동군(半合/拱合) weight=0 적용",
+      "assertion": "三合 존재 시 동군(半合/拱合) weight=0 적용"
+    },
+    {
+      "check_id": "CONFIDENCE_DETERMINISTIC",
+      "description": "confidence_rules 공식으로 confidence 재현",
+      "assertion": "confidence_rules 공식으로 confidence 재현"
+    },
+    {
+      "check_id": "GONGHE_2TO2",
+      "description": "拱合은 2→2 보존 규칙 준수",
+      "assertion": "拱合은 2→2 보존 규칙 준수"
+    },
+    {
+      "check_id": "HIDDEN_STEMS_CONSERVATION",
+      "description": "hidden_stems_v1 예산모드에서 분해/재분배 합계 일치",
+      "assertion": "hidden_stems_v1 예산모드에서 분해/재분배 합계 일치"
+    }
+  ],
+  "policy_signature": "3b76c2463b68d5d11f6b07679a7a3783f7aab87d17732516ed3e2a73b9e878b0"
+}

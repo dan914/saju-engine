@@ -1,0 +1,418 @@
+{
+  "season": "가을",
+  "strength": {
+    "score_raw": -11.0,
+    "score": 31.05,
+    "score_normalized": 0.3105,
+    "grade_code": "신약",
+    "bin": "weak",
+    "phase": "死",
+    "details": {
+      "month_state": -30,
+      "branch_root": 3,
+      "stem_visible": 20,
+      "combo_clash": -4,
+      "month_stem_effect_applied": true
+    },
+    "policy": {
+      "min": -70.0,
+      "max": 120.0,
+      "range": 190.0
+    }
+  },
+  "relations": {
+    "priority_hit": "chong",
+    "transform_to": null,
+    "boosts": [],
+    "notes": [
+      "chong:巳/亥"
+    ],
+    "extras": {
+      "five_he": {},
+      "zixing": {}
+    }
+  },
+  "relations_weighted": {
+    "policy_version": "relation_weight_v1.0.0",
+    "policy_signature": "2dabd3057eb32f6102a8b46a48d4eeca00cf1baa8f642c9141aa632c32364949",
+    "items": [],
+    "summary": {
+      "total": 0,
+      "by_type": {
+        "sanhe": {
+          "count": 0,
+          "avg_weight": 0.0
+        },
+        "liuhe": {
+          "count": 0,
+          "avg_weight": 0.0
+        },
+        "ganhe": {
+          "count": 0,
+          "avg_weight": 0.0
+        },
+        "chong": {
+          "count": 0,
+          "avg_weight": 0.0
+        },
+        "xing": {
+          "count": 0,
+          "avg_weight": 0.0
+        },
+        "hai": {
+          "count": 0,
+          "avg_weight": 0.0
+        },
+        "yuanjin": {
+          "count": 0,
+          "avg_weight": 0.0
+        }
+      }
+    }
+  },
+  "relations_extras": {
+    "banhe_groups": {
+      "five_he": {
+        "pairs": [],
+        "valid_count": 0
+      },
+      "zixing": {
+        "zixing_detected": [],
+        "total": 0
+      },
+      "banhe": []
+    }
+  },
+  "climate": {
+    "temp_bias": "neutral",
+    "humid_bias": "neutral",
+    "advice_bucket": []
+  },
+  "elements_distribution_raw": {
+    "木": 0.3333333333333333,
+    "火": 0.08333333333333333,
+    "土": 0.08333333333333333,
+    "金": 0.4166666666666667,
+    "水": 0.08333333333333333
+  },
+  "elements_distribution": {
+    "木": 0.3333333333333333,
+    "火": 0.08333333333333333,
+    "土": 0.08333333333333333,
+    "金": 0.4166666666666667,
+    "水": 0.08333333333333333
+  },
+  "elements_distribution_transformed": {
+    "wood": 0.2,
+    "fire": 0.2,
+    "earth": 0.2,
+    "metal": 0.2,
+    "water": 0.2
+  },
+  "combination_trace": [],
+  "yongshin": {
+    "policy_version": "yongshin_dual_v1",
+    "integrated": {
+      "primary": {
+        "elem_ko": "수",
+        "elem": "water",
+        "score": 0.42
+      },
+      "secondary": {
+        "elem_ko": "목",
+        "elem": "wood",
+        "score": 0.15
+      },
+      "scores": {
+        "wood": 0.15,
+        "fire": 0.06,
+        "earth": 0.06,
+        "metal": 0.06,
+        "water": 0.42
+      },
+      "confidence": 0.87
+    },
+    "split": {
+      "climate": {
+        "primary": "수",
+        "candidates": [
+          "수"
+        ],
+        "rule_id": "climate_가을"
+      },
+      "eokbu": {
+        "primary": "수",
+        "secondary": "목",
+        "basis": [
+          "resource",
+          "companion",
+          "output",
+          "wealth",
+          "official"
+        ],
+        "scored": [
+          "resource:0.22",
+          "companion:0.15",
+          "output:0.06"
+        ],
+        "bin": "weak",
+        "day_elem": "목"
+      }
+    },
+    "rationale": [
+      "season=가을, climate→수",
+      "bin=weak, eokbu→수/목"
+    ],
+    "yongshin": [
+      "수"
+    ],
+    "bojosin": [
+      "목"
+    ],
+    "gisin": [],
+    "confidence": 0.87,
+    "strategy": ""
+  },
+  "luck": {
+    "prev_term": "白露",
+    "next_term": "寒露",
+    "interval_days": 23.9395,
+    "days_from_prev": 6.7116,
+    "start_age": 7.9798,
+    "direction": "forward",
+    "method": "traditional_sex",
+    "sex_at_birth": "male"
+  },
+  "shensha": {
+    "enabled": false,
+    "list": []
+  },
+  "void": {
+    "policy_version": "void_calc_v1.1.0",
+    "policy_signature": "d06c1516d3d8c9ef2f1d8e69ecad373529ef32edeb8b9fe9f3f88bd40951b9a3",
+    "day_index": 11,
+    "xun_start": 10,
+    "kong": [
+      "申",
+      "酉"
+    ],
+    "flags": {
+      "flags": [
+        false,
+        true,
+        false,
+        false
+      ],
+      "hit_branches": [
+        "酉"
+      ]
+    },
+    "day_pillar": "乙亥"
+  },
+  "yuanjin": {
+    "policy_version": "yuanjin_v1.1.0",
+    "policy_signature": "2c29c8e0e6e98a0c53131970b5d3daeeb0dcece057462c7464e6229c9a555369",
+    "present_branches": [
+      "辰",
+      "酉",
+      "亥",
+      "巳"
+    ],
+    "hits": [],
+    "pair_count": 0,
+    "flags": {
+      "flags": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "pairs": []
+    }
+  },
+  "stage3": {
+    "luck_flow": {
+      "engine": "luck_flow",
+      "policy_version": "luck_flow_policy_v1",
+      "trend": "stable",
+      "score": 0.0,
+      "confidence": 0.0,
+      "drivers": [],
+      "detractors": [],
+      "evidence_ref": "luck_flow/-/-/-"
+    },
+    "gyeokguk": {
+      "engine": "gyeokguk_classifier",
+      "policy_version": "gyeokguk_policy_v1",
+      "type": "정격",
+      "basis": [
+        "월령득기"
+      ],
+      "confidence": 0.6,
+      "notes": "기본 규칙 적용(디폴트).",
+      "evidence_ref": "gyeokguk/정격"
+    },
+    "climate_advice": {
+      "engine": "climate_advice",
+      "policy_version": "climate_advice_policy_v1",
+      "matched_policy_id": null,
+      "advice": "계절과 오행의 균형을 무리 없이 유지하세요.",
+      "evidence_ref": "climate_advice/fallback"
+    },
+    "pattern": {
+      "engine": "pattern_profiler",
+      "policy_version": "pattern_profiler_policy_v1",
+      "patterns": [
+        "luck_stable",
+        "gyeokguk_pure",
+        "balanced_context"
+      ],
+      "briefs": {
+        "one_liner": "",
+        "key_points": []
+      },
+      "evidence_ref": "pattern_profiler/stable/정격"
+    }
+  },
+  "_enrichment": {
+    "korean_labels_added": true,
+    "locale": "ko-KR",
+    "enricher_version": "1.0.0",
+    "mappings_count": 141
+  },
+  "school_profile": {
+    "id": "practical_balanced",
+    "notes": "현장 절충(기본값)"
+  },
+  "recommendations": {
+    "enabled": false,
+    "action": "suppress_auto_recommendation",
+    "copy": "강약과 조후는 참고용입니다. 정확한 용신은 격국 분석과 함께 전문 상담을 권장합니다."
+  },
+  "evidence": {
+    "evidence_version": "evidence_v1.0.0",
+    "sections": [
+      {
+        "type": "void",
+        "engine_version": "void_calc_v1.1.0",
+        "engine_signature": "d06c1516d3d8c9ef2f1d8e69ecad373529ef32edeb8b9fe9f3f88bd40951b9a3",
+        "source": "services/analysis-service/app/core/void.py",
+        "payload": {
+          "kong": [
+            "申",
+            "酉"
+          ],
+          "day_index": 11,
+          "xun_start": 10
+        },
+        "created_at": "2025-10-12T05:25:27Z",
+        "section_signature": "9799048f0f65078d38f87c5e437a9624719996c950f9904590642e1496439507"
+      },
+      {
+        "type": "wuxing_adjust",
+        "engine_version": "combination_element_v1.2.0",
+        "engine_signature": "fc18a36a70ab4e8ea49f4a4783eacb433b022f95e8c568d6c1d4d9f2e767391d",
+        "source": "services/analysis-service/app/core/combination_element.py",
+        "payload": {
+          "dist": {
+            "木": 0.3333333333333333,
+            "火": 0.08333333333333333,
+            "土": 0.08333333333333333,
+            "金": 0.4166666666666667,
+            "水": 0.08333333333333333
+          },
+          "trace": []
+        },
+        "created_at": "2025-10-12T05:25:27Z",
+        "section_signature": "40de609393d6830ac88dee701995553b8d29aefd4ba36b6a8df7f355e1046108"
+      },
+      {
+        "type": "yuanjin",
+        "engine_version": "yuanjin_v1.1.0",
+        "engine_signature": "2c29c8e0e6e98a0c53131970b5d3daeeb0dcece057462c7464e6229c9a555369",
+        "source": "services/analysis-service/app/core/yuanjin.py",
+        "payload": {
+          "present_branches": [
+            "辰",
+            "酉",
+            "亥",
+            "巳"
+          ],
+          "hits": [],
+          "pair_count": 0
+        },
+        "created_at": "2025-10-12T05:25:27Z",
+        "section_signature": "4210cf3a69539a3e2b7b8bafcc9d9bfbb90a6b804ea051a63d823facc58c9e39"
+      }
+    ],
+    "evidence_signature": "5408bfbfd18e1f22331d21a2509b50e6a750e79c737e740bd87fadbf99ae4313"
+  },
+  "engine_summaries": {
+    "strength": {
+      "score": 0.5,
+      "bucket": "신약",
+      "confidence": 0.8
+    },
+    "relation_summary": {
+      "sanhe": 0.0,
+      "liuhe": 0.0,
+      "ganhe": 0.0,
+      "chong": 0.0,
+      "xing": 0.0,
+      "hai": 0.0,
+      "sanhe_element": "",
+      "ganhe_result": ""
+    },
+    "relation_items": [],
+    "yongshin_result": {
+      "yongshin": [
+        "수"
+      ],
+      "bojosin": [
+        "목"
+      ],
+      "confidence": 0.87,
+      "strategy": ""
+    },
+    "climate": {
+      "season_element": "가을",
+      "support": "보통"
+    }
+  },
+  "llm_guard": {
+    "enabled": true,
+    "ready_for_llm": true,
+    "summaries_available": true
+  },
+  "text_guard": {
+    "enabled": true,
+    "guard_available": true,
+    "forbidden_terms_count": 11
+  },
+  "status": "success",
+  "meta": {
+    "orchestrator_version": "1.2.0",
+    "timestamp": "2025-10-12T05:25:27.083673+00:00",
+    "engines_used": [
+      "StrengthEvaluator",
+      "RelationTransformer",
+      "RelationWeightEvaluator",
+      "RelationsExtras",
+      "CombinationElement",
+      "ClimateEvaluator",
+      "YongshinSelector",
+      "LuckCalculator",
+      "ShenshaCatalog",
+      "VoidCalculator",
+      "YuanjinDetector",
+      "Stage3Engines",
+      "EvidenceBuilder",
+      "EngineSummariesBuilder",
+      "KoreanLabelEnricher",
+      "SchoolProfileManager",
+      "RecommendationGuard",
+      "LLMGuard",
+      "TextGuard"
+    ]
+  }
+}

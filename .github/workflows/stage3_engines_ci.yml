@@ -1,0 +1,33 @@
+name: stage3-engines-ci
+on: { push: { branches: [ main ] }, pull_request: {} }
+jobs:
+  validate-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install pytest jsonschema pydantic fastapi
+      - name: Build policy index
+        run: python tools/build_policy_index.py
+      - name: Validate policies
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          from jsonschema import validate
+          root = pathlib.Path(".")
+          pairs = [
+            ("climate_advice_policy_v1.json","climate_advice_policy.schema.json"),
+            ("luck_flow_policy_v1.json","luck_flow_policy.schema.json"),
+            ("pattern_profiler_policy_v1.json","pattern_profiler_policy.schema.json"),
+            ("gyeokguk_policy_v1.json","gyeokguk_policy.schema.json"),
+          ]
+          for p, s in pairs:
+            data = json.loads((root/"policy"/p).read_text())
+            schema = json.loads((root/"schema"/s).read_text())
+            validate(data, schema)
+            print("OK:", p)
+          PY
+      - name: Run tests
+        env: { POLICY_DIR: "${{ github.workspace }}/policy" }
+        run: pytest -q

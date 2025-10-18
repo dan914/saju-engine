@@ -1,0 +1,27 @@
+{
+  "engine": "climate_balancer_mvp",
+  "version": "1.0.0",
+  "input_contract": {
+    "engine_summaries_v1_1": {
+      "strength": {
+        "phase": "왕|상|휴|수|사",
+        "elements": {
+          "wood": "low|normal|high",
+          "fire": "low|normal|high",
+          "earth": "low|normal|high",
+          "metal": "low|normal|high",
+          "water": "low|normal|high"
+        }
+      },
+      "relation": { "flags": ["optional"] },
+      "yongshin": { "primary": "string", "secondary": "string" },
+      "climate": { "flags": ["optional strings"] },
+      "context": { "season": "봄|여름|장하|가을|겨울", "month_branch": "string" }
+    }
+  },
+  "output_contract": {
+    "advice": "string",
+    "matched_policy_id": "string|null",
+    "evidence_ref": "string"
+  }
+}

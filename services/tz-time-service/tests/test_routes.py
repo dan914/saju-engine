@@ -15,7 +15,9 @@ def test_convert_endpoint_returns_payload() -> None:
     payload = response.json()
     assert payload["input"]["target_tz"] == "Asia/Seoul"
     assert payload["converted"].endswith("+09:00")
-    assert payload["tzdb_version"] == "2025a"
+    # tzdb_version is dynamically detected - just verify it's a non-empty string
+    assert isinstance(payload["tzdb_version"], str)
+    assert len(payload["tzdb_version"]) > 0
     assert any(event["iana"] == "Asia/Seoul" for event in payload["events"])
     trace = payload["trace"]
     assert trace["rule_id"] == "KR_classic_v1.4"

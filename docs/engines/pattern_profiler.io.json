@@ -1,0 +1,175 @@
+{
+  "cases": [
+    {
+      "id": "IO_EX_RISE_FIRE_PURE",
+      "input": {
+        "yongshin": {
+          "primary": "화"
+        },
+        "strength": {
+          "phase": "상",
+          "elements": {
+            "wood": "normal",
+            "fire": "high",
+            "earth": "normal",
+            "metal": "low",
+            "water": "low"
+          }
+        },
+        "relation": {
+          "flags": [
+            "combine"
+          ]
+        },
+        "climate": {
+          "balance_index": 1,
+          "flags": []
+        },
+        "luck_flow": {
+          "trend": "rising"
+        },
+        "gyeokguk": {
+          "type": "정격"
+        }
+      },
+      "expected_patterns": [
+        "strong_daymaster",
+        "yongshin_supported",
+        "primary_high",
+        "fire_emphasis",
+        "relation_harmony",
+        "climate_aligned",
+        "luck_rising",
+        "gyeokguk_pure"
+      ]
+    },
+    {
+      "id": "IO_EX_DECLINE_EARTH_CONFLICT",
+      "input": {
+        "yongshin": {
+          "primary": "토"
+        },
+        "strength": {
+          "phase": "휴",
+          "elements": {
+            "wood": "high",
+            "fire": "low",
+            "earth": "low",
+            "metal": "normal",
+            "water": "high"
+          }
+        },
+        "relation": {
+          "flags": [
+            "chong"
+          ]
+        },
+        "climate": {
+          "balance_index": -1,
+          "flags": [
+            "humidity"
+          ]
+        },
+        "luck_flow": {
+          "trend": "declining"
+        },
+        "gyeokguk": {
+          "type": "종격"
+        }
+      },
+      "expected_patterns": [
+        "weak_daymaster",
+        "yongshin_opposed",
+        "primary_low",
+        "water_emphasis",
+        "relation_conflict",
+        "climate_misaligned",
+        "balance_humid",
+        "luck_declining",
+        "gyeokguk_mixed"
+      ]
+    },
+    {
+      "id": "IO_EX_STABLE_BALANCED_PURE",
+      "input": {
+        "yongshin": {
+          "primary": "목"
+        },
+        "strength": {
+          "phase": "휴",
+          "elements": {
+            "wood": "normal",
+            "fire": "normal",
+            "earth": "normal",
+            "metal": "normal",
+            "water": "normal"
+          }
+        },
+        "relation": {
+          "flags": []
+        },
+        "climate": {
+          "balance_index": 0,
+          "flags": []
+        },
+        "luck_flow": {
+          "trend": "stable"
+        },
+        "gyeokguk": {
+          "type": "정격"
+        }
+      },
+      "expected_patterns": [
+        "luck_stable",
+        "gyeokguk_pure",
+        "balanced_context"
+      ]
+    },
+    {
+      "id": "IO_EX_RISE_HUMID_METAL_PURE",
+      "input": {
+        "yongshin": {
+          "primary": "금"
+        },
+        "strength": {
+          "phase": "왕",
+          "elements": {
+            "wood": "low",
+            "fire": "normal",
+            "earth": "normal",
+            "metal": "high",
+            "water": "normal"
+          }
+        },
+        "relation": {
+          "flags": [
+            "sanhe"
+          ]
+        },
+        "climate": {
+          "balance_index": 2,
+          "flags": [
+            "humidity"
+          ]
+        },
+        "luck_flow": {
+          "trend": "rising"
+        },
+        "gyeokguk": {
+          "type": "화격"
+        }
+      },
+      "expected_patterns": [
+        "strong_daymaster",
+        "yongshin_supported",
+        "primary_high",
+        "metal_emphasis",
+        "relation_harmony",
+        "balance_humid",
+        "climate_aligned",
+        "luck_rising",
+        "gyeokguk_pure"
+      ]
+    }
+  ]
+}

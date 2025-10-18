@@ -1,0 +1,197 @@
+{
+  "$id": "saju_codex:schema:yongshin:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Saju Yongshin Evidence JSON (KO-first)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["module","policy_version","policy_signature","locale_used","dependencies","inputs","trace","aggregation","output","meta"],
+  "properties": {
+    "module": { "type":"string","const":"yongshin_v1.0" },
+    "policy_version": { "type":"string","pattern":"^\\d+\\.\\d+(?:\\.\\d+)?$" },
+    "policy_signature": { "type":"string","pattern":"^([A-Fa-f0-9]{64}|PENDING)$" },
+    "locale_used": { "type":"string","enum":["ko-KR","en-US","zh-CN","zh-TW","ja-JP"],"default":"ko-KR" },
+    "dependencies": {
+      "type":"object","additionalProperties":false,
+      "required":["modules","dataset"],
+      "properties": {
+        "modules": {
+          "type":"array","minItems":1,"uniqueItems":true,
+          "items": {
+            "type":"object","additionalProperties":false,
+            "required":["name","version","role","signature","data_hash"],
+            "properties":{
+              "name":{"type":"string"},
+              "version":{"type":"string","pattern":"^\\d+\\.\\d+(?:\\.\\d+)?$"},
+              "role":{"type":"string","enum":["core","derived","aux"]},
+              "signature":{"type":"string","pattern":"^([A-Fa-f0-9]{64}|PENDING)$"},
+              "data_hash":{"type":"string","pattern":"^[A-Fa-f0-9]{64}$"}
+            }
+          }
+        },
+        "dataset": {
+          "type":"object","additionalProperties":false,
+          "required":["sixty_jiazi","jieqi"],
+          "properties": {
+            "sixty_jiazi": { "$ref":"#/$defs/datasetRef" },
+            "jieqi": { "$ref":"#/$defs/datasetRef" }
+          }
+        }
+      }
+    },
+    "inputs": {
+      "type":"object","additionalProperties":false,
+      "required":["evidence_refs","weights","context"],
+      "properties": {
+        "evidence_refs": {
+          "type":"object","additionalProperties":false,
+          "required":["strength_v2","branch_tengods_v1.1","shensha_v2","relation_v1.0"],
+          "properties": {
+            "strength_v2": { "$ref":"#/$defs/evidenceRef" },
+            "branch_tengods_v1.1": { "$ref":"#/$defs/evidenceRef" },
+            "shensha_v2": { "$ref":"#/$defs/evidenceRef" },
+            "relation_v1.0": { "$ref":"#/$defs/evidenceRef" },
+            "climate_balancer_v1.0": { "$ref":"#/$defs/evidenceRef" }
+          }
+        },
+        "weights": {
+          "type":"object","additionalProperties":false,
+          "properties":{
+            "strength_v2": { "type":"number" },
+            "branch_tengods_v1.1": { "type":"number" },
+            "shensha_v2": { "type":"number" },
+            "relation_v1.0": { "type":"number" },
+            "climate_balancer_v1.0": { "type":"number" }
+          }
+        },
+        "context": {
+          "type":"object","additionalProperties":false,
+          "required":["day_master","season","strength_state"],
+          "properties":{
+            "day_master": { "type":"string","pattern":"^[甲乙丙丁戊己庚辛壬癸]$" },
+            "season": { "type":"string","enum":["spring","summer","autumn","winter"] },
+            "strength_state": { "type":"string","enum":["weak","balanced","strong"] },
+            "climate": {
+              "type":"object","additionalProperties":false,
+              "properties":{
+                "temperature": { "type":"string","enum":["hot","warm","neutral","cool","cold"] },
+                "humidity": { "type":"string","enum":["dry","neutral","humid"] }
+              }
+            }
+          }
+        }
+      }
+    },
+    "trace": {
+      "type":"array","minItems":0,
+      "items": {
+        "type":"object","additionalProperties":false,
+        "required":["component","relation","matched","score","label_ko"],
+        "properties":{
+          "component": { "type":"string","enum":["강약","오행","조후","神煞","關係","십신"] },
+          "relation": { "type":"string" },
+          "matched": { "type":"boolean" },
+          "score": { "type":"number" },
+          "weight": { "type":"number" },
+          "label_ko": { "type":"string" },
+          "label_en": { "type":"string" },
+          "label_zh": { "type":"string" },
+          "policy_rule_id": { "type":"string" },
+          "notes_ko": { "type":"string" }
+        }
+      }
+    },
+    "aggregation": {
+      "type":"object","additionalProperties":false,
+      "required":["method","normalization","top_k","summary"],
+      "properties":{
+        "method": { "type":"string","enum":["weighted_sum"] },
+        "normalization": {
+          "type":"object","additionalProperties":false,
+          "required":["kind","params"],
+          "properties":{
+            "kind": { "type":"string","enum":["min_max"] },
+            "params": { "type":"object" }
+          }
+        },
+        "top_k": { "type":"integer","minimum":1 },
+        "summary": {
+          "type":"object","additionalProperties":false,
+          "properties":{
+            "score_by_element": {
+              "type":"object","additionalProperties":false,
+              "properties":{
+                "木":{"type":"number"},"火":{"type":"number"},"土":{"type":"number"},"金":{"type":"number"},"水":{"type":"number"}
+              }
+            },
+            "role_by_element": {
+              "type":"object","additionalProperties":false,
+              "properties":{
+                "木":{"type":"string","enum":["용신","희신","기신","중용"]},
+                "火":{"type":"string","enum":["용신","희신","기신","중용"]},
+                "土":{"type":"string","enum":["용신","희신","기신","중용"]},
+                "金":{"type":"string","enum":["용신","희신","기신","중용"]},
+                "水":{"type":"string","enum":["용신","희신","기신","중용"]}
+              }
+            },
+            "selected_labels_ko": { "type":"array","items":{"type":"string"} },
+            "notes_ko": { "type":"string" }
+          }
+        }
+      }
+    },
+    "output": {
+      "type":"object","additionalProperties":false,
+      "required":["label_ko","score","ranked_candidates"],
+      "properties":{
+        "label_ko": { "type":"string" },
+        "label_en": { "type":"string" },
+        "label_zh": { "type":"string" },
+        "score": { "type":"number" },
+        "confidence": { "type":"number","minimum":0.0,"maximum":1.0 },
+        "ranked_candidates": {
+          "type":"array","minItems":1,
+          "items": {
+            "type":"object","additionalProperties":false,
+            "required":["element","role","score"],
+            "properties":{
+              "element": { "type":"string","enum":["木","火","土","金","水"] },
+              "role": { "type":"string","enum":["용신","희신","기신","중용"] },
+              "score": { "type":"number" }
+            }
+          }
+        }
+      }
+    },
+    "meta": {
+      "type":"object","additionalProperties":false,
+      "required":["hash_inputs","timestamp"],
+      "properties":{
+        "hash_inputs": { "type":"string","pattern":"^[A-Fa-f0-9]{64}$" },
+        "timestamp": { "type":"string","format":"date-time" },
+        "run_id": { "type":"string" },
+        "schema_version": { "type":"string" }
+      }
+    }
+  },
+  "$defs": {
+    "datasetRef": {
+      "type":"object","additionalProperties":false,
+      "required":["name","version","signature"],
+      "properties":{
+        "name":{"type":"string"},
+        "version":{"type":"string"},
+        "signature":{"type":"string","pattern":"^([A-Fa-f0-9]{64}|PENDING)$"},
+        "data_hash":{"type":"string","pattern":"^[A-Fa-f0-9]{64}$"}
+      }
+    },
+    "evidenceRef": {
+      "type":"object","additionalProperties":false,
+      "required":["id","hash","score_normalized"],
+      "properties":{
+        "id": { "type":"string" },
+        "hash": { "type":"string","pattern":"^[A-Fa-f0-9]{64}$" },
+        "score_normalized": { "type":"number","minimum":0.0,"maximum":100.0 }
+      }
+    }
+  }
+}

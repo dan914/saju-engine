@@ -1,0 +1,117 @@
+{
+  "policy_version": "gyeokguk_policy_v1",
+  "policy_signature": "ddd87e64e8d4607575c29dd89824a85fa9a36cefb08853a6d99dc18e0e44b3ac",
+  "criteria_catalog": [
+    "월령득기",
+    "득지",
+    "득생",
+    "극제",
+    "종세",
+    "합화",
+    "삼합",
+    "양인",
+    "건록",
+    "용신상생",
+    "관계순생",
+    "관계충격"
+  ],
+  "rules": [
+    {
+      "id": "R_JEONGGEOK_STANDARD",
+      "when": {
+        "strength.phase_in": [
+          "왕",
+          "상"
+        ],
+        "relation.flags_any": [
+          "combine",
+          "sanhe"
+        ],
+        "climate.balance_index_gte": 0
+      },
+      "emit": {
+        "type": "정격",
+        "basis": [
+          "월령득기",
+          "용신상생",
+          "관계순생"
+        ],
+        "confidence": 0.9,
+        "notes": "월령득기와 관계 순생이 조화되어 정격으로 분류됩니다."
+      }
+    },
+    {
+      "id": "R_JONGGEOK_WEAK_TREND",
+      "when": {
+        "strength.phase_in": [
+          "휴",
+          "수",
+          "사"
+        ],
+        "strength.elements_any": [
+          "low:primary"
+        ],
+        "relation.flags_any": [
+          "chong"
+        ],
+        "climate.balance_index_lte": 0
+      },
+      "emit": {
+        "type": "종격",
+        "basis": [
+          "종세",
+          "극제"
+        ],
+        "confidence": 0.8,
+        "notes": "일간이 극약하고 외부세에 순응하는 종세 경향으로 종격 판정."
+      }
+    },
+    {
+      "id": "R_HWAHGEOK_COMBINATION_BALANCED",
+      "when": {
+        "relation.flags_any": [
+          "combine",
+          "sanhe"
+        ],
+        "strength.elements_any": [
+          "normal:primary"
+        ],
+        "climate.balance_index_gte": 1
+      },
+      "emit": {
+        "type": "화격",
+        "basis": [
+          "합화",
+          "삼합",
+          "용신상생"
+        ],
+        "confidence": 0.85,
+        "notes": "합화·삼합으로 오행 화생이 완성되어 화격으로 분류."
+      }
+    },
+    {
+      "id": "R_SPECIAL_YANGIN_GUNROK",
+      "when": {
+        "strength.phase_in": [
+          "왕"
+        ],
+        "relation.flags_any": [
+          "harm"
+        ],
+        "yongshin.primary_in": [
+          "목",
+          "화"
+        ]
+      },
+      "emit": {
+        "type": "특수격",
+        "basis": [
+          "양인",
+          "건록"
+        ],
+        "confidence": 0.75,
+        "notes": "강한 일간과 양인성 조합으로 특수격(양인/건록) 판정."
+      }
+    }
+  ]
+}

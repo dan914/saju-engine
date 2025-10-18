@@ -1,0 +1,32 @@
+{
+  "id": "CLIMATE_BOUNDARY_MAX",
+  "context": {
+    "season": "여름",
+    "year": 2026
+  },
+  "strength": {
+    "phase": "왕",
+    "elements": {
+      "wood": "normal",
+      "fire": "high",
+      "earth": "normal",
+      "metal": "low",
+      "water": "low"
+    }
+  },
+  "relation": {
+    "flags": [
+      "sanhe"
+    ]
+  },
+  "climate": {
+    "flags": [],
+    "balance_index": 2
+  },
+  "yongshin": {
+    "primary": "화"
+  },
+  "expect": {
+    "luck_flow_trend": "rising"
+  }
+}

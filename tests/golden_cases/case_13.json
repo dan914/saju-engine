@@ -1,0 +1,33 @@
+{
+  "id": "GK_HWAHGEOK",
+  "context": {
+    "season": "여름",
+    "year": 2026
+  },
+  "strength": {
+    "phase": "휴",
+    "elements": {
+      "wood": "normal",
+      "fire": "normal",
+      "earth": "normal",
+      "metal": "normal",
+      "water": "normal"
+    }
+  },
+  "relation": {
+    "flags": [
+      "combine",
+      "sanhe"
+    ]
+  },
+  "climate": {
+    "flags": [],
+    "balance_index": 2
+  },
+  "yongshin": {
+    "primary": "목"
+  },
+  "expect": {
+    "gyeokguk_type": "화격"
+  }
+}

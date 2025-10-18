@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "/schemas/gyeokguk_output_v1.json",
+  "title": "Gyeokguk Classifier Output v1.0",
+  "description": "Output schema for Gyeokguk (格局) classification result with formation strength and audit trail",
+  "type": "object",
+  "required": [
+    "policy_version",
+    "gyeokguk_code",
+    "gyeokguk_label",
+    "formation_strength",
+    "confidence",
+    "conditions_met",
+    "missing_conditions",
+    "rationale",
+    "rules_fired",
+    "score_components"
+  ],
+  "properties": {
+    "policy_version": {
+      "type": "string",
+      "description": "Gyeokguk policy version used",
+      "pattern": "^gyeokguk_v[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "gyeokguk_code": {
+      "type": "string",
+      "description": "Gyeokguk classification code",
+      "pattern": "^JG-[0-9]{3}$"
+    },
+    "gyeokguk_label": {
+      "type": "string",
+      "description": "Gyeokguk classification label in Korean",
+      "enum": ["정격", "종강격", "종약격", "화격", "인수격", "식상격", "관살격", "재격", "파격"]
+    },
+    "formation_strength": {
+      "type": "number",
+      "description": "Gyeokguk formation strength (0.0 to 1.0)",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "confidence": {
+      "type": "number",
+      "description": "Classification confidence (0.0 to 1.0)",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "conditions_met": {
+      "type": "array",
+      "description": "List of conditions satisfied for this gyeokguk",
+      "items": {
+        "type": "string"
+      }
+    },
+    "missing_conditions": {
+      "type": "array",
+      "description": "List of conditions not satisfied",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rationale": {
+      "type": "array",
+      "description": "Rationale for classification in Korean",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rules_fired": {
+      "type": "array",
+      "description": "List of rules/modifiers applied during classification",
+      "items": {
+        "type": "string"
+      }
+    },
+    "score_components": {
+      "type": "object",
+      "description": "Breakdown of formation_strength calculation",
+      "properties": {
+        "base": {
+          "type": "number",
+          "description": "Base score from gyeokguk class definition"
+        },
+        "relation": {
+          "type": "number",
+          "description": "Adjustment from relation modifiers"
+        },
+        "climate": {
+          "type": "number",
+          "description": "Adjustment from climate modifiers"
+        },
+        "yongshin": {
+          "type": "number",
+          "description": "Adjustment from yongshin synergy"
+        },
+        "shensha": {
+          "type": "number",
+          "description": "Adjustment from shensha modifiers"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

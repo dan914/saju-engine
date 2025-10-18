@@ -4,7 +4,7 @@
 
 ## 디렉터리 개요
 - `services/` — 각 백엔드 마이크로서비스(FastAPI 기반) 소스.
-- `clients/` — 모바일(Flutter)과 웹(React) 클라이언트 코드.
+- `clients/` — 모바일(Flutter)과 웹(React) 클라이언트 스켈레톤 (개발 예정).
 - `rulesets/` — 규칙 JSON 리소스(KR_classic_v1.4 등).
 - `data/` — 절기 테이블 등 정적 데이터(예: `terms_1600_2200.csv`).
 - `scripts/` — 유틸리티 스크립트(검증, 배치 작업 등).
