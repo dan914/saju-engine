@@ -1,0 +1,87 @@
+{
+  "policy_name": "Elemental Projection Policy",
+  "policy_version": "1.0.0",
+  "policy_signature": "PENDING",
+  "description_ko": "하위 Evidence를 오행벡터(木火土金水)로 투영하는 결정적 규칙. Yongshin Selector의 핵심 결손을 메우는 '증거→오행' 메타 정책.",
+  "canonicalization": { "json": "RFC8785", "encoding": "UTF-8" },
+  "hashing": { "algo": "SHA256" },
+  "five_elements": ["木","火","土","金","水"],
+  "resolver": {
+    "day_master_element_map": {
+      "甲": "木","乙": "木","丙": "火","丁": "火","戊": "土","己": "土","庚": "金","辛": "金","壬": "水","癸": "水"
+    },
+    "relative_roles": ["same","shengwo","wo_sheng","wo_ke","ke_wo"],
+    "element_relations": {
+      "木": { "same": "木", "shengwo": "水", "wo_sheng": "火", "wo_ke": "土", "ke_wo": "金" },
+      "火": { "same": "火", "shengwo": "木", "wo_sheng": "土", "wo_ke": "金", "ke_wo": "水" },
+      "土": { "same": "土", "shengwo": "火", "wo_sheng": "金", "wo_ke": "水", "ke_wo": "木" },
+      "金": { "same": "金", "shengwo": "土", "wo_sheng": "水", "wo_ke": "木", "ke_wo": "火" },
+      "水": { "same": "水", "shengwo": "金", "wo_sheng": "木", "wo_ke": "火", "ke_wo": "土" }
+    }
+  },
+  "projectors": {
+    "strength_v2": {
+      "from": "inputs.context.strength_state",
+      "method": "relative_roles_to_element",
+      "weights_by_state": {
+        "weak": { "shengwo": 1.00, "same": 0.70, "wo_sheng": 0.30, "wo_ke": 0.20, "ke_wo": -0.50 },
+        "balanced": { "shengwo": 0.60, "wo_sheng": 0.40, "same": 0.20, "wo_ke": 0.20, "ke_wo": 0.00 },
+        "strong": { "wo_sheng": 1.00, "wo_ke": 0.80, "same": -0.50, "shengwo": 0.20, "ke_wo": 0.00 }
+      },
+      "amplitude": "evidence_refs.strength_v2.score_normalized",
+      "scale": "linear_0_100",
+      "cap": { "per_element": 40.0 }
+    },
+    "branch_tengods_v1.1": {
+      "from": "ten_gods_distribution",
+      "method": "ten_gods_relative_map",
+      "relative_map": {
+        "比肩":"same","劫財":"same","食神":"wo_sheng","傷官":"wo_sheng",
+        "正財":"wo_ke","偏財":"wo_ke","正官":"ke_wo","七殺":"ke_wo","印綬":"shengwo","偏印":"shengwo"
+      },
+      "weight_per_god": 0.5,
+      "cap": { "per_engine": 10.0 },
+      "source_resolution": {
+        "prefer": "evidence.trace.top_gods",
+        "fallback": "evidence.output.selected_labels_ko",
+        "else": "empty"
+      }
+    },
+    "relation_v1.0": {
+      "from": "relation.trace",
+      "method": "relation_to_element",
+      "direction_rules": {
+        "三合|六合|半合|方合|拱合": { "direction": "to_triad_or_pair_element", "sign": "+", "unit": 1.0 },
+        "沖": { "direction": "both_pair_elements", "sign": "-", "unit": 1.0 },
+        "破|害|刑": { "direction": "both_pair_or_set", "sign": "-", "unit": 0.7 }
+      },
+      "element_lookup": "relation_policy.elemental_mapping",
+      "normalize": { "use": "evidence_refs.relation_v1.0.score_normalized", "beneficial_gte": 60.0, "harmful_lt": 40.0, "boost": 4.0, "penalty": -4.0 },
+      "cap": { "per_engine": 15.0 }
+    },
+    "climate_balancer_v1.0": {
+      "from": "inputs.context.climate",
+      "method": "lookup_bias",
+      "temperature": { "cold": { "火": 3 }, "hot": { "水": 3 }, "warm": {}, "cool": {}, "neutral": {} },
+      "humidity":    { "dry":  { "水": 2 }, "humid": { "火": 2 }, "neutral": {} },
+      "cap": { "per_engine": 5.0 }
+    },
+    "shensha_v2": {
+      "enabled": false,
+      "activation": { "min_net": 1, "min_auspicious": 2 },
+      "auspicious": { "boost": 3, "relative": ["shengwo","wo_sheng"] },
+      "inauspicious": { "penalty": -3, "relative": ["ke_wo","same"] },
+      "cap": { "per_engine": 6.0 }
+    }
+  },
+  "overlap_guards": {
+    "tengods_vs_strength": { "mode": "residual", "alpha": 0.5 },
+    "caps": { "per_element": 100.0 }
+  },
+  "metrics": {
+    "consistency": { "method": "cosine_mean", "desc": "엔진별 오행벡터와 최종벡터의 코사인 유사도 평균(0~1)" },
+    "relation_polarity": { "method": "signed_ratio_to_01", "desc": "(sum_pos - sum_neg)/sum_abs ∈[-1,1] → (x+1)/2" },
+    "strength_context": { "method": "need_alignment", "desc": "weak/strong 선호 역할과 최종 1위 오행의 정합도(0/0.5/1)" },
+    "shensha_support": { "method": "net_ratio_clamped", "desc": "(auspicious - inauspicious)/total → [0,1]" }
+  }
+}

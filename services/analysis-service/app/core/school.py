@@ -1,28 +1,19 @@
-"""School profile loader"""
+"""School profile loader.
+
+This module now imports from saju_common.engines for shared implementations.
+All functionality has been moved to the common package for cross-service reuse.
+This file is maintained for backward compatibility.
+"""
 
 from __future__ import annotations
 
-import json
-from dataclasses import dataclass
-from pathlib import Path
-from typing import Dict
+# Import from common package for shared implementations
+import sys
+from pathlib import Path as _Path
 
-POLICY_PATH = Path(__file__).resolve().parents[5] / "policies" / "school_profiles_v1.json"
+sys.path.insert(0, str(_Path(__file__).resolve().parents[4] / "services" / "common"))
 
+# Import and re-export for backward compatibility
+from saju_common.engines import SchoolProfileManager
 
-@dataclass(slots=True)
-class SchoolProfileManager:
-    profiles: Dict[str, Dict[str, object]]
-    default_id: str
-
-    @classmethod
-    def load(cls) -> "SchoolProfileManager":
-        with POLICY_PATH.open("r", encoding="utf-8") as f:
-            data = json.load(f)
-        default_id = data.get("default_profile") or data.get("default", "practical_balanced")
-        return cls(profiles=data.get("profiles", {}), default_id=default_id)
-
-    def get_profile(self, profile_id: str | None = None) -> Dict[str, object]:
-        pid = profile_id or self.default_id
-        profile = self.profiles.get(pid, {})
-        return {"id": pid, "notes": profile.get("notes")}
+__all__ = ["SchoolProfileManager"]

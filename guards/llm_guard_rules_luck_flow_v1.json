@@ -1,0 +1,34 @@
+{
+  "policy_version": "llm_guard_rules_luck_flow_v1",
+  "policy_signature": "b2dfe569c023765ae33b1536ccffcc760fa3a855bdc25563e4664ac118c729ff",
+  "rules": [
+    {
+      "id": "LUCK-001",
+      "description": "trend는 rising/stable/declining 중 하나여야 함",
+      "assert": "in_enum(output.trend,[\"rising\",\"stable\",\"declining\"])",
+      "risk": "high",
+      "action": "deny"
+    },
+    {
+      "id": "LUCK-002",
+      "description": "score와 confidence는 0~1 범위",
+      "assert": "between(output.score,0,1) and between(output.confidence,0,1)",
+      "risk": "medium",
+      "action": "revise"
+    },
+    {
+      "id": "LUCK-003",
+      "description": "drivers/detractors 개수 및 길이 제한",
+      "assert": "len(output.drivers)<=4 and len(output.detractors)<=4 and all_len_lte(output.drivers,32) and all_len_lte(output.detractors,32)",
+      "risk": "low",
+      "action": "revise"
+    },
+    {
+      "id": "LUCK-004",
+      "description": "evidence_ref 필수",
+      "assert": "output.evidence_ref != null and len(output.evidence_ref) > 0",
+      "risk": "medium",
+      "action": "revise"
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "policy_version": "climate_advice_policy_v1",
+  "policy_signature": "503a7950fd5ff37dacd1d8118815fb368ac846f422d1a3159bbc45055a103e84",
+  "locale": "ko-KR",
+  "advice_table": [
+    {
+      "id": "WOOD_OVER_FIRE_WEAK",
+      "when": {
+        "season": [
+          "봄"
+        ],
+        "strength_phase": [
+          "왕",
+          "상"
+        ],
+        "balance": {
+          "wood": "high",
+          "fire": "low"
+        }
+      },
+      "advice": "불기운을 보강해 과다한 목의 발산을 순환시켜 주세요.",
+      "rationale": "목왕하화약",
+      "severity": "medium"
+    },
+    {
+      "id": "FIRE_OVER_WATER_WEAK",
+      "when": {
+        "season": [
+          "여름"
+        ],
+        "strength_phase": [
+          "왕",
+          "상"
+        ],
+        "balance": {
+          "fire": "high",
+          "water": "low"
+        }
+      },
+      "advice": "수 기운을 보강하여 화의 과열을 식히고 진액을 지켜 주세요.",
+      "rationale": "화왕수약",
+      "severity": "medium"
+    },
+    {
+      "id": "EARTH_EXCESS_DRYNESS",
+      "when": {
+        "season": [
+          "여름",
+          "장하"
+        ],
+        "imbalance_flags": [
+          "earth_excess",
+          "dryness"
+        ]
+      },
+      "advice": "수 기운을 도입해 토의 건조를 완화하고 순환을 도우세요.",
+      "rationale": "토과건조",
+      "severity": "low"
+    },
+    {
+      "id": "EARTH_EXCESS_HUMIDITY",
+      "when": {
+        "season": [
+          "장하"
+        ],
+        "imbalance_flags": [
+          "earth_excess",
+          "humidity"
+        ]
+      },
+      "advice": "습담을 환기하고 금·화로 정체를 풀어 무겁지 않게 하세요.",
+      "rationale": "장하 토습",
+      "severity": "medium"
+    },
+    {
+      "id": "METAL_OVER_WOOD_WEAK",
+      "when": {
+        "season": [
+          "가을"
+        ],
+        "strength_phase": [
+          "왕",
+          "상"
+        ],
+        "balance": {
+          "metal": "high",
+          "wood": "low"
+        }
+      },
+      "advice": "목 기운을 보온·보습으로 지켜 과도한 금극목을 완화하세요.",
+      "rationale": "금왕목쇠",
+      "severity": "medium"
+    },
+    {
+      "id": "METAL_DRYNESS_RELIEF",
+      "when": {
+        "season": [
+          "가을"
+        ],
+        "balance": {
+          "metal": "high"
+        },
+        "imbalance_flags": [
+          "dryness"
+        ]
+      },
+      "advice": "건조를 완화하고 수로 윤활을 더해 수렴이 지나치지 않게 하세요.",
+      "rationale": "추조금강",
+      "severity": "low"
+    },
+    {
+      "id": "WATER_DEFICIT_IN_WINTER",
+      "when": {
+        "season": [
+          "겨울"
+        ],
+        "balance": {
+          "water": "low"
+        }
+      },
+      "advice": "수 보강으로 저장·휴식을 충분히 하세요.",
+      "rationale": "동절 수부족",
+      "severity": "high"
+    },
+    {
+      "id": "WATER_OVER_FIRE_WEAK",
+      "when": {
+        "season": [
+          "겨울"
+        ],
+        "balance": {
+          "water": "high",
+          "fire": "low"
+        },
+        "imbalance_flags": [
+          "coldness"
+        ]
+      },
+      "advice": "화의 온기를 도입해 한기를 덜고 순환을 깨우세요.",
+      "rationale": "한수과다·화약",
+      "severity": "medium"
+    }
+  ],
+  "matching_rules": {
+    "season_source": "month_branch",
+    "strength_key": "strength.phase",
+    "balance_key": "strength.elements",
+    "flags_key": "climate.flags"
+  },
+  "output": {
+    "mode": "single_line",
+    "fallback": "계절과 오행의 균형을 무리 없이 유지하세요."
+  }
+}

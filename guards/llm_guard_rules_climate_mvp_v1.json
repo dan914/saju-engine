@@ -1,0 +1,27 @@
+{
+  "policy_version": "llm_guard_climate_mvp_v1",
+  "policy_signature": "90b757aa1bc0318fc02cd82d0e658c395d35c727ae3d0d8fdd95c1a4726e3603",
+  "rules": [
+    {
+      "id": "CLIMATE-ADVICE-001",
+      "description": "advice는 policy 매칭 결과가 있을 때만 노출",
+      "assert": "output.advice != null -> context.matched_policy_id != null",
+      "risk": "medium",
+      "action": "revise"
+    },
+    {
+      "id": "CLIMATE-ADVICE-002",
+      "description": "advice는 반드시 한 줄",
+      "assert": "count_lines(output.advice) == 1",
+      "risk": "low",
+      "action": "revise"
+    },
+    {
+      "id": "CLIMATE-ADVICE-003",
+      "description": "문자 수 제한(모델 교체 안전장치)",
+      "assert": "len(output.advice) <= 80",
+      "risk": "low",
+      "action": "revise"
+    }
+  ]
+}

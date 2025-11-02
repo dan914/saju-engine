@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "policy_version",
+    "tags_catalog",
+    "rules"
+  ],
+  "properties": {
+    "policy_version": {
+      "type": "string"
+    },
+    "tags_catalog": {
+      "type": "array"
+    },
+    "rules": {
+      "type": "array"
+    }
+  }
+}

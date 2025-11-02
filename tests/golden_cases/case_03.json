@@ -1,0 +1,33 @@
+{
+  "id": "LATESUMMER_EARTH_HUMID",
+  "context": {
+    "season": "장하",
+    "year": 2026
+  },
+  "strength": {
+    "phase": "휴",
+    "elements": {
+      "wood": "normal",
+      "fire": "normal",
+      "earth": "normal",
+      "metal": "normal",
+      "water": "normal"
+    }
+  },
+  "relation": {
+    "flags": []
+  },
+  "climate": {
+    "flags": [
+      "earth_excess",
+      "humidity"
+    ],
+    "balance_index": 0
+  },
+  "yongshin": {
+    "primary": "토"
+  },
+  "expect": {
+    "climate_policy_id": "EARTH_EXCESS_HUMIDITY"
+  }
+}

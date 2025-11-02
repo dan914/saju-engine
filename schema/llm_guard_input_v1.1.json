@@ -1,0 +1,333 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "/schemas/llm_guard_input_v1.1.json",
+  "title": "LLM Guard Input Schema v1.1",
+  "description": "Input schema for LLM Guard v1.1 with cross-engine consistency validation",
+  "type": "object",
+  "required": ["request_id", "llm_output", "evidence", "engine_summaries"],
+  "properties": {
+    "request_id": {
+      "type": "string",
+      "description": "Unique request identifier for tracing",
+      "pattern": "^[a-zA-Z0-9_-]+$"
+    },
+    "llm_output": {
+      "type": "object",
+      "description": "LLM-generated output to validate",
+      "required": ["text"],
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "Generated text content (Korean or English)",
+          "minLength": 1
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Optional LLM generation metadata",
+          "properties": {
+            "model": {
+              "type": "string",
+              "description": "Model name (e.g., 'gemini-2.5-pro', 'gpt-5')"
+            },
+            "temperature": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 2.0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "description": "Evidence bundle from analysis engines",
+      "required": ["sources", "derived"],
+      "properties": {
+        "sources": {
+          "type": "array",
+          "description": "Source evidence items with IDs",
+          "items": {
+            "type": "object",
+            "required": ["evidence_id", "type", "confidence"],
+            "properties": {
+              "evidence_id": {
+                "type": "string",
+                "description": "Unique evidence identifier (e.g., 'STR-001', 'REL-002')",
+                "pattern": "^[A-Z]+-[0-9]{3}$"
+              },
+              "type": {
+                "type": "string",
+                "description": "Evidence type",
+                "enum": ["strength", "relation", "yongshin", "climate", "shensha", "structure"]
+              },
+              "confidence": {
+                "type": "number",
+                "description": "Confidence score (0.0 to 1.0)",
+                "minimum": 0.0,
+                "maximum": 1.0
+              },
+              "claim": {
+                "type": "string",
+                "description": "Factual claim in Korean"
+              },
+              "claim_ko": {
+                "type": "string",
+                "description": "Korean label for claim"
+              }
+            }
+          },
+          "minItems": 1
+        },
+        "derived": {
+          "type": "object",
+          "description": "Derived evidence from transformations",
+          "properties": {
+            "relations": {
+              "type": "array",
+              "description": "Detected relations (육합/삼합/충/형/파/해)",
+              "items": {
+                "type": "object",
+                "required": ["type", "pillars", "effect"],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["he6", "sanhe", "chong", "xing", "po", "hai", "yuanjin"]
+                  },
+                  "pillars": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "minItems": 2
+                  },
+                  "effect": {
+                    "type": "string",
+                    "description": "Effect description in Korean"
+                  },
+                  "effect_ko": {
+                    "type": "string",
+                    "description": "Korean label for effect"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "signatures": {
+          "type": "object",
+          "description": "Policy signatures for integrity verification",
+          "properties": {
+            "policy_refs": {
+              "type": "array",
+              "description": "Referenced policy signatures",
+              "items": {
+                "type": "object",
+                "required": ["policy_name", "policy_version", "sha256"],
+                "properties": {
+                  "policy_name": {
+                    "type": "string",
+                    "description": "Policy file name"
+                  },
+                  "policy_version": {
+                    "type": "string",
+                    "description": "Policy version string"
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "description": "SHA-256 signature of policy",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "engine_summaries": {
+      "type": "object",
+      "description": "Cross-engine summary data for consistency validation (NEW in v1.1)",
+      "required": ["strength", "relation_summary", "yongshin_result"],
+      "properties": {
+        "strength": {
+          "type": "object",
+          "description": "Strength evaluation summary from StrengthEvaluator",
+          "required": ["bucket", "score", "confidence"],
+          "properties": {
+            "bucket": {
+              "type": "string",
+              "description": "Strength classification",
+              "enum": ["극신강", "신강", "중화", "신약", "극신약"]
+            },
+            "bucket_ko": {
+              "type": "string",
+              "description": "Korean label for bucket"
+            },
+            "score": {
+              "type": "number",
+              "description": "Strength score (0-100)",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "confidence": {
+              "type": "number",
+              "description": "Confidence of strength evaluation",
+              "minimum": 0.0,
+              "maximum": 1.0
+            }
+          }
+        },
+        "relation_summary": {
+          "type": "object",
+          "description": "Relation analysis summary from RelationTransformer + RelationWeightEvaluator",
+          "required": ["relation_items"],
+          "properties": {
+            "relation_items": {
+              "type": "array",
+              "description": "Weighted relation items with condition tracking (NEW in v1.1)",
+              "items": {
+                "type": "object",
+                "required": ["type", "impact_weight", "conditions_met", "strict_mode_required"],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "Relation type",
+                    "enum": ["he6", "sanhe", "chong", "xing", "po", "hai", "yuanjin", "ganhe"]
+                  },
+                  "type_ko": {
+                    "type": "string",
+                    "description": "Korean label for relation type"
+                  },
+                  "impact_weight": {
+                    "type": "number",
+                    "description": "Impact weight (0.0 to 1.0)",
+                    "minimum": 0.0,
+                    "maximum": 1.0
+                  },
+                  "conditions_met": {
+                    "type": "array",
+                    "description": "List of conditions satisfied (e.g., 'adjacent', 'formed', 'hua')",
+                    "items": { "type": "string" }
+                  },
+                  "strict_mode_required": {
+                    "type": "boolean",
+                    "description": "Whether strict mode conditions are required for high impact"
+                  },
+                  "formed": {
+                    "type": "boolean",
+                    "description": "Whether relation fully formed (삼합 3지 완성 등)"
+                  },
+                  "hua": {
+                    "type": "boolean",
+                    "description": "Whether transformation occurred (화: 合化/三合化)"
+                  }
+                }
+              }
+            },
+            "confidence": {
+              "type": "number",
+              "description": "Overall confidence of relation analysis",
+              "minimum": 0.0,
+              "maximum": 1.0
+            }
+          }
+        },
+        "yongshin_result": {
+          "type": "object",
+          "description": "Yongshin selection result from YongshinSelector (NEW in v1.1)",
+          "required": ["yongshin", "confidence"],
+          "properties": {
+            "yongshin": {
+              "type": "array",
+              "description": "Selected beneficial elements (용신)",
+              "items": {
+                "type": "string",
+                "enum": ["목", "화", "토", "금", "수"]
+              },
+              "minItems": 1,
+              "maxItems": 2
+            },
+            "bojosin": {
+              "type": "array",
+              "description": "Auxiliary beneficial elements (보조신)",
+              "items": {
+                "type": "string",
+                "enum": ["목", "화", "토", "금", "수"]
+              }
+            },
+            "gisin": {
+              "type": "array",
+              "description": "Harmful elements (기신)",
+              "items": {
+                "type": "string",
+                "enum": ["목", "화", "토", "금", "수"]
+              }
+            },
+            "confidence": {
+              "type": "number",
+              "description": "Confidence of yongshin selection",
+              "minimum": 0.0,
+              "maximum": 1.0
+            },
+            "strategy": {
+              "type": "string",
+              "description": "Yongshin strategy applied",
+              "enum": ["부억", "조후", "통관", "전왕", "종격"]
+            },
+            "strategy_ko": {
+              "type": "string",
+              "description": "Korean label for strategy"
+            }
+          }
+        },
+        "climate": {
+          "type": "object",
+          "description": "Climate evaluation from ClimateEvaluator (OPTIONAL)",
+          "properties": {
+            "season_element": {
+              "type": "string",
+              "description": "Seasonal element (계절 오행)",
+              "enum": ["목", "화", "토", "금", "수"]
+            },
+            "support": {
+              "type": "string",
+              "description": "Climate support level for day master",
+              "enum": ["강함", "보통", "약함"]
+            },
+            "support_ko": {
+              "type": "string",
+              "description": "Korean label for support level"
+            }
+          }
+        }
+      }
+    },
+    "options": {
+      "type": "object",
+      "description": "Optional validation options",
+      "properties": {
+        "strict_mode": {
+          "type": "boolean",
+          "description": "Enable strict validation (all rules enforced)",
+          "default": false
+        },
+        "rule_subset": {
+          "type": "array",
+          "description": "Subset of rule IDs to evaluate (empty = all rules)",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]+-[A-Z0-9-]+$"
+          }
+        },
+        "ko_labels_required": {
+          "type": "boolean",
+          "description": "Require Korean labels for all enums",
+          "default": true
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,32 @@
+{
+  "id": "GK_SPECIAL",
+  "context": {
+    "season": "봄",
+    "year": 2026
+  },
+  "strength": {
+    "phase": "왕",
+    "elements": {
+      "wood": "high",
+      "fire": "high",
+      "earth": "normal",
+      "metal": "low",
+      "water": "low"
+    }
+  },
+  "relation": {
+    "flags": [
+      "harm"
+    ]
+  },
+  "climate": {
+    "flags": [],
+    "balance_index": 0
+  },
+  "yongshin": {
+    "primary": "화"
+  },
+  "expect": {
+    "gyeokguk_type": "특수격"
+  }
+}

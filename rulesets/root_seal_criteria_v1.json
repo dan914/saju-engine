@@ -1,0 +1,79 @@
+{
+  "version": "v1.0",
+  "description": "Root and seal strength scoring criteria based on SKY_LIZARD fortune app standards",
+  "source": "SKY_LIZARD Fortune App v10.4 - sipsin table analysis",
+  "extraction_date": "2025-09-29",
+  "ten_gods_scoring": {
+    "description": "Base scoring weights for Ten Gods relationships",
+    "weights": {
+      "비견": 10,
+      "겁재": 10,
+      "정인": 10,
+      "편인": 10,
+      "식신": 5,
+      "상관": 5,
+      "정재": 5,
+      "편재": 5,
+      "정관": 5,
+      "편관": 5
+    },
+    "notes": {
+      "high_score": "비견/겁재/정인/편인 = 10 points (same element or supportive)",
+      "low_score": "식신/상관/정재/편재/정관/편관 = 5 points (different elements)"
+    }
+  },
+  "root_seal_weights": {
+    "description": "Multipliers for root and seal calculations",
+    "month_support": {
+      "month_root": 8,
+      "month_seal": 6
+    },
+    "other_support": {
+      "other_root": 4,
+      "other_seal": 3
+    },
+    "hidden_stem_order": {
+      "primary": 1.0,
+      "secondary": 0.7,
+      "tertiary": 0.4
+    }
+  },
+  "strength_thresholds": {
+    "description": "Thresholds for determining daymaster strength levels",
+    "levels": {
+      "very_strong": 20,
+      "strong": 15,
+      "medium": 10,
+      "weak": 6,
+      "very_weak": 0
+    },
+    "grade_names": {
+      "very_strong": "신강",
+      "strong": "편강",
+      "medium": "중화",
+      "weak": "편약",
+      "very_weak": "신약"
+    }
+  },
+  "seasonal_adjustments": {
+    "description": "Seasonal state multipliers based on Wang state",
+    "multipliers": {
+      "旺": 1.0,
+      "相": 0.8,
+      "休": 0.6,
+      "囚": 0.4,
+      "死": 0.2
+    }
+  },
+  "calculation_formula": {
+    "description": "Standard formula for root/seal strength calculation",
+    "steps": [
+      "1. Extract hidden stems using zanggan_table.json",
+      "2. Apply ten_gods_scoring weights based on daymaster relationship",
+      "3. Apply root_seal_weights based on position (month vs other)",
+      "4. Apply hidden_stem_order multipliers",
+      "5. Apply seasonal_adjustments based on Wang state",
+      "6. Sum total score and determine strength level"
+    ]
+  }
+}

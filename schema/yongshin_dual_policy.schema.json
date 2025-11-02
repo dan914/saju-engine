@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "/schemas/yongshin_dual_policy.schema.json",
+  "title": "Yongshin Dual Policy Schema",
+  "description": "Schema for validating yongshin dual policy files that define climate rules and bin-based weights for yongshin selection.",
+  "type": "object",
+  "required": ["policy_version", "climate_rules", "bin_base_weights", "distribution", "policy_signature"],
+  "properties": {
+    "policy_version": {
+      "type": "string",
+      "description": "Policy version identifier",
+      "pattern": "^yongshin_dual_v\\d+$"
+    },
+    "climate_rules": {
+      "type": "object",
+      "description": "Climate adjustment rules for each season",
+      "required": ["봄", "여름", "가을", "겨울"],
+      "properties": {
+        "봄": { "$ref": "#/$defs/climate_rule" },
+        "여름": { "$ref": "#/$defs/climate_rule" },
+        "가을": { "$ref": "#/$defs/climate_rule" },
+        "겨울": { "$ref": "#/$defs/climate_rule" }
+      },
+      "additionalProperties": false
+    },
+    "bin_base_weights": {
+      "type": "object",
+      "description": "Base weights for ten gods by strength bin",
+      "required": ["weak", "balanced", "strong"],
+      "properties": {
+        "weak": { "$ref": "#/$defs/ten_god_weights" },
+        "balanced": { "$ref": "#/$defs/ten_god_weights" },
+        "strong": { "$ref": "#/$defs/ten_god_weights" }
+      },
+      "additionalProperties": false
+    },
+    "distribution": {
+      "type": "object",
+      "description": "Distribution adjustment parameters",
+      "required": ["target_ratio", "deficit_gain_max", "excess_penalty_max"],
+      "properties": {
+        "target_ratio": {
+          "type": "number",
+          "description": "Target distribution ratio (0-1)",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "deficit_gain_max": {
+          "type": "number",
+          "description": "Maximum gain for deficit elements (0-1)",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "excess_penalty_max": {
+          "type": "number",
+          "description": "Maximum penalty for excess elements (0-1)",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "policy_signature": {
+      "type": "string",
+      "description": "RFC-8785 canonical JSON SHA-256 signature",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "climate_rule": {
+      "type": "object",
+      "description": "Climate adjustment rule for a season",
+      "required": ["candidates", "primary_weight"],
+      "properties": {
+        "candidates": {
+          "type": "array",
+          "description": "Candidate elements for this season",
+          "items": {
+            "$ref": "#/$defs/element"
+          },
+          "minItems": 1
+        },
+        "primary_weight": {
+          "type": "number",
+          "description": "Weight adjustment for climate (0-1)",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "ten_god_weights": {
+      "type": "object",
+      "description": "Weights for the five ten gods categories",
+      "required": ["resource", "companion", "output", "wealth", "official"],
+      "properties": {
+        "resource": {
+          "type": "number",
+          "description": "Weight for resource (印) elements",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "companion": {
+          "type": "number",
+          "description": "Weight for companion (比劫) elements",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "output": {
+          "type": "number",
+          "description": "Weight for output (食傷) elements",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "wealth": {
+          "type": "number",
+          "description": "Weight for wealth (財) elements",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "official": {
+          "type": "number",
+          "description": "Weight for official (官) elements",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "element": {
+      "type": "string",
+      "description": "One of the five elements in Korean",
+      "enum": ["목", "화", "토", "금", "수"]
+    }
+  }
+}

@@ -1,0 +1,288 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.saju.engine/policies/branch_tengods_policy.schema.json",
+  "title": "branch_tengods_policy v1.1 — KO-first",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version","generated_on","engine_name_ko","source_refs","disclaimer",
+    "signature_mode","signature","options","dependencies","relations",
+    "role_weights","role_labels","branches_hidden",
+    "ten_gods_labels","mapping_rules","aggregation","ci_checks"
+  ],
+  "properties": {
+    "version": { "type": "string" },
+    "generated_on": { "type": "string", "format": "date-time" },
+    "engine_name_ko": { "type": "string" },
+    "source_refs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "disclaimer": { "type": "string" },
+    "signature_mode": { "enum": ["sha256_auto_injected"] },
+    "signature": { "type": "string" },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["default_locale"],
+      "properties": {
+        "default_locale": { "type": "string" }
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sixty_jiazi","elements_distribution","localization_ko","localization_en"],
+      "properties": {
+        "sixty_jiazi": {
+          "type": "object",
+          "required": ["name","version","signature"],
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" },
+            "signature": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "elements_distribution": {
+          "type": "object",
+          "required": ["name","version","signature"],
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" },
+            "signature": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "localization_ko": {
+          "type": "object",
+          "required": ["name","version","signature"],
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" },
+            "signature": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "localization_en": {
+          "type": "object",
+          "required": ["name","version","signature"],
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" },
+            "signature": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "relations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["elements","sheng","ke"],
+      "properties": {
+        "elements": {
+          "type": "array",
+          "items": { "enum": ["木","火","土","金","水"] },
+          "minItems": 5,
+          "maxItems": 5
+        },
+        "sheng": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["木","火","土","金","水"],
+          "properties": {
+            "木": { "enum": ["火"] },
+            "火": { "enum": ["土"] },
+            "土": { "enum": ["金"] },
+            "金": { "enum": ["水"] },
+            "水": { "enum": ["木"] }
+          }
+        },
+        "ke": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["木","火","土","金","水"],
+          "properties": {
+            "木": { "enum": ["土"] },
+            "火": { "enum": ["金"] },
+            "土": { "enum": ["水"] },
+            "金": { "enum": ["木"] },
+            "水": { "enum": ["火"] }
+          }
+        }
+      }
+    },
+    "role_weights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary","secondary","tertiary"],
+      "properties": {
+        "primary": { "type": "number", "minimum": 0 },
+        "secondary": { "type": "number", "minimum": 0 },
+        "tertiary": { "type": "number", "minimum": 0 }
+      }
+    },
+    "role_labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ko","zh","en"],
+      "properties": {
+        "ko": { "$ref": "#/$defs/roleLabelRow" },
+        "zh": { "$ref": "#/$defs/roleLabelRow" },
+        "en": { "$ref": "#/$defs/roleLabelRow" }
+      }
+    },
+    "branches_hidden": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"],
+      "properties": {
+        "子": { "$ref": "#/$defs/hiddenList" },
+        "丑": { "$ref": "#/$defs/hiddenList" },
+        "寅": { "$ref": "#/$defs/hiddenList" },
+        "卯": { "$ref": "#/$defs/hiddenList" },
+        "辰": { "$ref": "#/$defs/hiddenList" },
+        "巳": { "$ref": "#/$defs/hiddenList" },
+        "午": { "$ref": "#/$defs/hiddenList" },
+        "未": { "$ref": "#/$defs/hiddenList" },
+        "申": { "$ref": "#/$defs/hiddenList" },
+        "酉": { "$ref": "#/$defs/hiddenList" },
+        "戌": { "$ref": "#/$defs/hiddenList" },
+        "亥": { "$ref": "#/$defs/hiddenList" }
+      }
+    },
+    "ten_gods_labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ko","zh","en"],
+      "properties": {
+        "ko": { "$ref": "#/$defs/tenGodLabelRow" },
+        "zh": { "$ref": "#/$defs/tenGodLabelRow" },
+        "en": { "$ref": "#/$defs/tenGodLabelRow" }
+      }
+    },
+    "mapping_rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["same_element","wo_sheng","wo_ke","ke_wo","sheng_wo"],
+      "properties": {
+        "same_element": { "$ref": "#/$defs/parityRule" },
+        "wo_sheng": { "$ref": "#/$defs/parityRule" },
+        "wo_ke": { "$ref": "#/$defs/parityRule" },
+        "ke_wo": { "$ref": "#/$defs/parityRule" },
+        "sheng_wo": { "$ref": "#/$defs/parityRule" }
+      }
+    },
+    "aggregation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode","top_k","threshold","role_weights_ref","normalize","tie_breaker"],
+      "properties": {
+        "mode": { "enum": ["weighted_sum_normalize"] },
+        "top_k": { "type": "integer", "minimum": 1 },
+        "threshold": { "type": "number", "minimum": 0, "maximum": 1 },
+        "role_weights_ref": { "type": "string", "format": "json-pointer" },
+        "normalize": { "type": "boolean" },
+        "tie_breaker": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        }
+      }
+    },
+    "ui_labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ko": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["relation_same","relation_sheng_by_me","relation_ke_by_me","relation_ke_me","relation_sheng_me"],
+          "properties": {
+            "relation_same": { "type": "string" },
+            "relation_sheng_by_me": { "type": "string" },
+            "relation_ke_by_me": { "type": "string" },
+            "relation_ke_me": { "type": "string" },
+            "relation_sheng_me": { "type": "string" }
+          }
+        }
+      }
+    },
+    "ci_checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "on_fail": { "enum": ["fail_build","warn"] },
+        "assertions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id","expr"],
+            "properties": {
+              "id": { "type": "string" },
+              "expr": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "roleLabelRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary","secondary","tertiary"],
+      "properties": {
+        "primary": { "type": "string" },
+        "secondary": { "type": "string" },
+        "tertiary": { "type": "string" }
+      }
+    },
+    "hiddenDef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stem","element","role"],
+      "properties": {
+        "stem": { "enum": ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"] },
+        "element": { "enum": ["木","火","土","金","水"] },
+        "role": { "enum": ["primary","secondary","tertiary"] }
+      }
+    },
+    "hiddenList": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/hiddenDef" },
+      "minItems": 1
+    },
+    "tenGodKey": { "enum": ["BI","GE","SIK","SANG","PJ","JJ","PG","JG","PI","JI"] },
+    "tenGodLabelRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["BI","GE","SIK","SANG","PJ","JJ","PG","JG","PI","JI"],
+      "properties": {
+        "BI": { "type": "string" },
+        "GE": { "type": "string" },
+        "SIK": { "type": "string" },
+        "SANG": { "type": "string" },
+        "PJ": { "type": "string" },
+        "JJ": { "type": "string" },
+        "PG": { "type": "string" },
+        "JG": { "type": "string" },
+        "PI": { "type": "string" },
+        "JI": { "type": "string" }
+      }
+    },
+    "parityRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["same_polarity","diff_polarity"],
+      "properties": {
+        "same_polarity": { "$ref": "#/$defs/tenGodKey" },
+        "diff_polarity": { "$ref": "#/$defs/tenGodKey" }
+      }
+    }
+  },
+  "description": "Schema for KO-first branch_tengods_policy; parity and aggregation semantics verified via tests/CI."
+}

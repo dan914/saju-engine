@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schema/engine_summaries.v1.1.extension.climate.schema.json",
+  "type": "object",
+  "properties": {
+    "climate": {
+      "type": "object",
+      "properties": {
+        "flags": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "season": { "enum": ["봄", "여름", "장하", "가을", "겨울"] },
+        "month_branch": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

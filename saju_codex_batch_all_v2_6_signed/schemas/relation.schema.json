@@ -1,0 +1,365 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sajuengine.example.com/schemas/relation.schema.json",
+  "title": "Relation Transformer Policy Schema",
+  "description": "Schema for validating relation_policy.json - defines 12 earthly branch relationships with conservation, mutual exclusion, and attenuation rules",
+  "type": "object",
+  "required": [
+    "version",
+    "policy_name",
+    "description",
+    "conservation",
+    "confidence_rules",
+    "mutual_exclusion_groups",
+    "attenuation_rules",
+    "relationships",
+    "aggregation",
+    "evidence_template",
+    "ci_checks",
+    "policy_signature"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "Policy version (e.g., '1.1')"
+    },
+    "policy_name": {
+      "type": "string",
+      "const": "relation_policy"
+    },
+    "description": {
+      "type": "string"
+    },
+    "conservation": {
+      "type": "object",
+      "required": ["enabled", "budget_mode", "hidden_stems_weights", "fusion_rules"],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "unit_per_branch": {
+          "type": "number",
+          "description": "Energy units per branch for conservation calculations"
+        },
+        "budget_mode": {
+          "type": "string",
+          "enum": ["hidden_stems_v1"]
+        },
+        "hidden_stems_dataset_version": {
+          "type": "string",
+          "description": "Version of hidden stems dataset"
+        },
+        "hidden_stems_weights": {
+          "type": "object",
+          "description": "Element distribution weights for each earthly branch",
+          "patternProperties": {
+            "^[子丑寅卯辰巳午未申酉戌亥]$": {
+              "type": "object",
+              "patternProperties": {
+                "^[木火土金水]$": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "fusion_rules": {
+          "type": "object",
+          "description": "Energy consumption and production rules for each relationship type",
+          "patternProperties": {
+            "^(三合|半合|方合|拱合|六合|沖|刑(_[^|]+)?|破|害)$": {
+              "type": "object",
+              "required": ["consume_units", "produce_units"],
+              "properties": {
+                "consume_units": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "produce_units": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "implied_missing": {
+                  "type": "boolean",
+                  "description": "Whether this relationship implies a missing branch (e.g., 拱合)"
+                },
+                "element_override": {
+                  "type": "string",
+                  "pattern": "^[木火土金水]$",
+                  "description": "Override element for production (e.g., 三合 produces specific element)"
+                },
+                "requires_all": {
+                  "type": "boolean",
+                  "description": "Whether all branches in the relationship pattern must be present"
+                },
+                "facilitator_needed": {
+                  "type": "boolean",
+                  "description": "Whether a facilitator branch is needed for the relationship"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "elemental_mapping": {
+          "type": "object",
+          "description": "Element mappings for branches and relationships"
+        },
+        "leakage_tolerance": {
+          "type": "number",
+          "description": "Tolerance for energy conservation leakage"
+        },
+        "unstable_flag": {
+          "type": "string",
+          "description": "Flag for unstable conservation structures"
+        },
+        "notes_ko": {
+          "type": "string",
+          "description": "Korean notes about conservation"
+        }
+      },
+      "additionalProperties": false
+    },
+    "confidence_rules": {
+      "type": "object",
+      "required": ["formula", "weights", "normalization"],
+      "properties": {
+        "formula": {
+          "type": "string",
+          "description": "Mathematical formula for confidence calculation"
+        },
+        "weights": {
+          "type": "object",
+          "required": ["w_norm", "w_conservation", "w_priority", "w_conflict"],
+          "properties": {
+            "w_norm": {"type": "number", "minimum": 0, "maximum": 1},
+            "w_conservation": {"type": "number", "minimum": 0, "maximum": 1},
+            "w_priority": {"type": "number", "minimum": 0, "maximum": 1},
+            "w_conflict": {"type": "number", "minimum": -1, "maximum": 1}
+          },
+          "additionalProperties": false
+        },
+        "normalization": {
+          "type": "object",
+          "required": ["score_range", "priority_range"],
+          "properties": {
+            "score_range": {
+              "type": "object",
+              "required": ["min", "max"],
+              "properties": {
+                "min": {"type": "number"},
+                "max": {"type": "number"}
+              }
+            },
+            "priority_range": {
+              "type": "object",
+              "required": ["min", "max"],
+              "properties": {
+                "min": {"type": "number"},
+                "max": {"type": "number"}
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "mutual_exclusion_groups": {
+      "type": "array",
+      "description": "Groups of relationships that are mutually exclusive with promotion logic",
+      "items": {
+        "type": "object",
+        "required": ["group", "promotion", "suppression"],
+        "properties": {
+          "group": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^(三合|半合|方合|拱合|六合|沖|刑(_[^|]+)?|破|害)$"
+            },
+            "minItems": 2
+          },
+          "promotion": {
+            "type": "string",
+            "description": "Highest-priority relationship that suppresses others in the group"
+          },
+          "suppression": {
+            "type": "object",
+            "required": ["lower_rank_weight"],
+            "properties": {
+              "lower_rank_weight": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Weight applied to suppressed relationships (0.0 = fully suppressed)"
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "attenuation_rules": {
+      "type": "array",
+      "description": "Rules for weakening relationships when conflicts occur",
+      "items": {
+        "type": "object",
+        "required": ["when", "attenuate", "factor"],
+        "properties": {
+          "when": {
+            "type": "string",
+            "description": "Condition triggering attenuation (e.g., '沖 present')"
+          },
+          "attenuate": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^(三合|半合|方合|拱合|六合|沖|刑(_[^|]+)?|破|害)$"
+            },
+            "minItems": 1
+          },
+          "factor": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Multiplication factor for attenuation (e.g., 0.5 = 50% strength)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "relationships": {
+      "type": "object",
+      "description": "Definition of all 12 relationship types",
+      "patternProperties": {
+        "^(六合|三合|半合|方合|拱合|沖|刑(_[^|]+)?|破|害)$": {
+          "type": "object",
+          "required": ["label_ko", "label_zh", "label_en", "nature", "score_range", "rules"],
+          "properties": {
+            "label_ko": {"type": "string"},
+            "label_zh": {"type": "string"},
+            "label_en": {"type": "string"},
+            "nature": {
+              "type": "string",
+              "enum": ["auspicious", "neutral", "inauspicious"]
+            },
+            "score_range": {
+              "type": "object",
+              "required": ["min", "max"],
+              "properties": {
+                "min": {"type": "number"},
+                "max": {"type": "number"}
+              }
+            },
+            "rules": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["branches", "priority", "score_hint", "note_ko"],
+                "properties": {
+                  "branches": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[子丑寅卯辰巳午未申酉戌亥]$"
+                    },
+                    "minItems": 2
+                  },
+                  "priority": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100
+                  },
+                  "score_hint": {
+                    "type": "number"
+                  },
+                  "note_ko": {
+                    "type": "string"
+                  },
+                  "element": {
+                    "type": "string",
+                    "pattern": "^[木火土金水]$",
+                    "description": "Element produced by this relationship (for 三合, 半合, etc.)"
+                  },
+                  "xing_type": {
+                    "type": "string",
+                    "enum": ["self", "ungrateful", "punishment_of_power"],
+                    "description": "Type of 刑 relationship"
+                  },
+                  "xing_stack": {
+                    "type": "string",
+                    "enum": ["per_set", "cumulative"],
+                    "description": "How multiple 刑 instances stack"
+                  },
+                  "stack_cap": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Maximum number of stacked instances (for per_set mode)"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "aggregation": {
+      "type": "object",
+      "required": ["score_formula", "score_note_ko"],
+      "properties": {
+        "score_formula": {
+          "type": "string",
+          "description": "Formula for calculating total score"
+        },
+        "score_note_ko": {
+          "type": "string",
+          "description": "Korean explanation of score calculation"
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidence_template": {
+      "type": "object",
+      "required": ["relation_type", "branches_involved", "element_produced", "conservation_detail", "attenuation_applied", "confidence"],
+      "properties": {
+        "relation_type": {"type": "string"},
+        "branches_involved": {"type": "array"},
+        "element_produced": {"type": ["string", "null"]},
+        "conservation_detail": {"type": "object"},
+        "attenuation_applied": {"type": ["object", "null"]},
+        "confidence": {"type": "number"}
+      },
+      "additionalProperties": false
+    },
+    "ci_checks": {
+      "type": "array",
+      "description": "Continuous integration validation checks",
+      "items": {
+        "type": "object",
+        "required": ["check_id", "description", "assertion"],
+        "properties": {
+          "check_id": {"type": "string"},
+          "description": {"type": "string"},
+          "assertion": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "policy_signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "RFC-8785 canonical JSON SHA-256 signature"
+    }
+  },
+  "additionalProperties": false
+}

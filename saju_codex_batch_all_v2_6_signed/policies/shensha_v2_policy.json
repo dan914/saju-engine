@@ -1,0 +1,215 @@
+{
+  "version": "2.0",
+  "generated_on": "2025-10-05T00:00:00+09:00",
+  "engine_name_ko": "신살 매핑기 v2",
+  "source_refs": ["三命通會", "淵海子平", "神煞總論(현대 실무 편람)", "Modern Saju Practice"],
+  "disclaimer": "본 정책은 한국 실무에서 널리 쓰이는 신살(神煞)을 per-pillar 기준으로 표준화합니다. 결과는 참고 정보이며 길/흉의 단정적 해석을 금합니다.",
+  "signature_mode": "sha256_auto_injected",
+  "signature": "<TO_BE_FILLED_BY_CI>",
+  "options": { "default_locale": "ko-KR" },
+  "dependencies": {
+    "sixty_jiazi": { "name": "sixty_jiazi", "version": "1.0", "signature": "34b9825fcca720918db2af1307ffd7d5be083cb97dea49f4ddc762081cff8945" },
+    "branch_tengods_policy": { "name": "branch_tengods_policy", "version": "1.1", "signature": "40bbfbf8450db45fe8a2da9c9be74c3a8ccce834ee7a547576f7bbd131e3aa73" },
+    "elements_distribution": { "name": "elements_distribution_criteria", "version": "1.1", "signature": "<SIG_ELEMENTS>" },
+    "lifecycle_stages": { "name": "lifecycle_stages", "version": "1.1", "signature": "<SIG_LIFECYCLE>" },
+    "localization_ko": { "name": "localization_ko_v1", "version": "1.0", "signature": "<SIG_LOC_KO>" },
+    "localization_en": { "name": "localization_en_v1", "version": "1.0", "signature": "<SIG_LOC_EN>" }
+  },
+  "pillars": ["year", "month", "day", "hour"],
+  "shensha_catalog": [
+    {"key":"TIAN_E_GUIREN","labels":{"ko":"천을귀인","zh":"天乙貴人","en":"Heavenly Nobleman"},"type":"吉","score_hint":2},
+    {"key":"YUE_DE","labels":{"ko":"월덕","zh":"月德","en":"Monthly Virtue"},"type":"吉","score_hint":1},
+    {"key":"TIAN_DE","labels":{"ko":"천덕","zh":"天德","en":"Heavenly Virtue"},"type":"吉","score_hint":1},
+    {"key":"TAO_HUA","labels":{"ko":"도화","zh":"桃花","en":"Peach Blossom"},"type":"中","score_hint":0},
+    {"key":"HONG_YAN","labels":{"ko":"홍염","zh":"紅艷","en":"Red Luster"},"type":"中","score_hint":0},
+    {"key":"YI_MA","labels":{"ko":"역마","zh":"驛馬","en":"Traveling Horse"},"type":"中","score_hint":0},
+    {"key":"HUA_GAI","labels":{"ko":"화개","zh":"華蓋","en":"Canopy"},"type":"中","score_hint":0},
+    {"key":"GUAI_GANG","labels":{"ko":"괴강","zh":"魁罡","en":"Kui-Gang"},"type":"烈","score_hint":-1},
+    {"key":"JIANG_XING","labels":{"ko":"장성","zh":"將星","en":"General Star"},"type":"中","score_hint":0},
+    {"key":"BAI_HU","labels":{"ko":"백호","zh":"白虎","en":"White Tiger"},"type":"凶","score_hint":-2},
+    {"key":"XUE_REN","labels":{"ko":"혈인","zh":"血刃","en":"Blood Blade"},"type":"凶","score_hint":-2},
+    {"key":"LIU_HAI","labels":{"ko":"육해","zh":"六害","en":"Six Harm"},"type":"凶","score_hint":-1},
+    {"key":"YUAN_ZHEN","labels":{"ko":"원진","zh":"怨嗔","en":"Resentment"},"type":"凶","score_hint":-1},
+    {"key":"TIAN_LA","labels":{"ko":"천라","zh":"天羅","en":"Heaven Net"},"type":"凶","score_hint":-2},
+    {"key":"DI_WANG","labels":{"ko":"지망","zh":"地網","en":"Earth Net"},"type":"凶","score_hint":-2},
+    {"key":"WEN_CHANG","labels":{"ko":"문창","zh":"文昌","en":"Wenchang"},"type":"吉","score_hint":1},
+    {"key":"WEN_QU","labels":{"ko":"문곡","zh":"文曲","en":"Wenqu"},"type":"吉","score_hint":1},
+    {"key":"XUE_TANG","labels":{"ko":"학당","zh":"學堂","en":"Academy"},"type":"吉","score_hint":1},
+    {"key":"HONG_LUAN","labels":{"ko":"홍란","zh":"紅鸞","en":"Hong Luan"},"type":"吉","score_hint":1},
+    {"key":"TIAN_XI","labels":{"ko":"천희","zh":"天喜","en":"Tian Xi"},"type":"吉","score_hint":1}
+  ],
+  "rule_groups": {
+    "day_stem_based": {
+      "description_ko": "일간(天干) 기준 귀인·괴강 등 판정",
+      "rules": [
+        {
+          "key":"TIAN_E_GUIREN",
+          "by_day_stem_map": {
+            "甲":["丑","未"], "乙":["子","申"], "丙":["亥","酉"], "丁":["子","申"],
+            "戊":["丑","未"], "己":["亥","酉"], "庚":["丑","巳"], "辛":["寅","午"],
+            "壬":["卯","巳"], "癸":["寅","午"]
+          },
+          "apply_to": ["year","month","day","hour"],
+          "match_field": "branch",
+          "evidence_note_ko": "일간 대비 귀인 방위(支) 일치 시 해당 기둥에 천을귀인 부여"
+        },
+        {
+          "key":"GUAI_GANG",
+          "by_day_stem_map": { "庚":["辰"], "辛":["辰"], "戊":["辰"], "壬":["辰"], "癸":["辰"] },
+          "apply_to": ["day"],
+          "match_field": "branch",
+          "evidence_note_ko": "괴강(魁罡) 간단식: 특정 강성 간이 辰支와 결합할 때 판정"
+        }
+      ]
+    },
+    "year_branch_based": {
+      "description_ko": "연지(年支) 기준 도화·역마·화개 등 판정",
+      "rules": [
+        {
+          "key":"TAO_HUA",
+          "by_year_branch_map": {
+            "申":["酉"], "子":["酉"], "辰":["酉"],
+            "寅":["卯"], "午":["卯"], "戌":["卯"],
+            "巳":["午"], "酉":["午"], "丑":["午"],
+            "亥":["子"], "卯":["子"], "未":["子"]
+          },
+          "apply_to": ["year","month","day","hour"],
+          "match_field": "branch",
+          "evidence_note_ko": "연지의 삼합군에 따른 도화(桃花) 위치와 일치 시 부여"
+        },
+        {
+          "key":"YI_MA",
+          "by_year_branch_map": {
+            "申":["寅"], "子":["寅"], "辰":["寅"],
+            "寅":["申"], "午":["申"], "戌":["申"],
+            "巳":["亥"], "酉":["亥"], "丑":["亥"],
+            "亥":["巳"], "卯":["巳"], "未":["巳"]
+          },
+          "apply_to": ["year","month","day","hour"],
+          "match_field": "branch",
+          "evidence_note_ko": "연지 기준 역마(驛馬) 위치와 일치 시 부여"
+        },
+        {
+          "key":"HUA_GAI",
+          "by_year_branch_map": {
+            "申":["辰"], "子":["辰"], "辰":["辰"],
+            "寅":["戌"], "午":["戌"], "戌":["戌"],
+            "巳":["丑"], "酉":["丑"], "丑":["丑"],
+            "亥":["未"], "卯":["未"], "未":["未"]
+          },
+          "apply_to": ["year","month","day","hour"],
+          "match_field": "branch",
+          "evidence_note_ko": "연지 기준 화개(華蓋) 위치와 일치 시 부여"
+        }
+      ]
+    },
+    "pair_conflict_based": {
+      "description_ko": "지지 상충·해·형 조합에서 백호·혈인·육해·원진·천라·지망 등 판정",
+      "rules": [
+        {
+          "key":"LIU_HAI",
+          "pairs":[["子","未"],["丑","午"],["寅","巳"],["卯","辰"],["申","亥"],["酉","戌"]],
+          "apply_to_pairs": [["day","hour"],["day","month"],["day","year"],["month","hour"],["year","month"],["year","hour"]],
+          "evidence_note_ko": "육해(六害) 조합이 기둥 간에 존재할 때 부여"
+        },
+        {
+          "key":"YUAN_ZHEN",
+          "pairs":[["子","丑"],["寅","亥"],["卯","辰"],["巳","申"],["午","未"],["酉","戌"]],
+          "apply_to_pairs": [["day","month"],["day","year"],["day","hour"],["month","hour"],["year","month"],["year","hour"]],
+          "evidence_note_ko": "원진(怨嗔) 조합 시 부여"
+        },
+        {
+          "key":"TIAN_LA",
+          "by_branch":["辰","戌"],
+          "apply_to": ["year","month","day","hour"],
+          "match_field": "branch",
+          "evidence_note_ko": "천라(天羅)는 辰/戌 지지를 가진 기둥에 부여"
+        },
+        {
+          "key":"DI_WANG",
+          "by_branch":["丑","未"],
+          "apply_to": ["year","month","day","hour"],
+          "match_field": "branch",
+          "evidence_note_ko": "지망(地網)은 丑/未 지지를 가진 기둥에 부여"
+        },
+        {
+          "key":"BAI_HU",
+          "by_branch":["寅","午","戌"],
+          "apply_to":["day"],
+          "match_field": "branch",
+          "evidence_note_ko": "백호(White Tiger) 간편 규칙 — 일지 火국 삼합축에 한정"
+        },
+        {
+          "key":"XUE_REN",
+          "by_branch":["巳","酉","丑"],
+          "apply_to":["day"],
+          "match_field": "branch",
+          "evidence_note_ko": "혈인(Blood Blade) 간편 규칙 — 일지 金국 삼합축에 한정"
+        }
+      ]
+    },
+    "literacy_based": {
+      "description_ko": "문창·문곡·학당 등 학업성 신살",
+      "rules": [
+        {
+          "key":"WEN_CHANG",
+          "by_year_branch_map": {
+            "子":["巳"],"丑":["午"],"寅":["未"],"卯":["申"],"辰":["酉"],"巳":["戌"],
+            "午":["亥"],"未":["子"],"申":["丑"],"酉":["寅"],"戌":["卯"],"亥":["辰"]
+          },
+          "apply_to":["year","month","day","hour"],
+          "match_field":"branch",
+          "evidence_note_ko":"연지 기준 문창 위치 일치"
+        },
+        {
+          "key":"WEN_QU",
+          "by_year_branch_map": {
+            "子":["亥"],"丑":["子"],"寅":["丑"],"卯":["寅"],"辰":["卯"],"巳":["辰"],
+            "午":["巳"],"未":["午"],"申":["未"],"酉":["申"],"戌":["酉"],"亥":["戌"]
+          },
+          "apply_to":["year","month","day","hour"],
+          "match_field":"branch",
+          "evidence_note_ko":"연지 기준 문곡 위치 일치"
+        },
+        {
+          "key":"XUE_TANG",
+          "by_year_branch_map": {
+            "寅":["申"],"卯":["酉"],"辰":["戌"],"巳":["亥"],"午":["子"],"未":["丑"],
+            "申":["寅"],"酉":["卯"],"戌":["辰"],"亥":["巳"],"子":["午"],"丑":["未"]
+          },
+          "apply_to":["year","month","day","hour"],
+          "match_field":"branch",
+          "evidence_note_ko":"연지 기준 학당 위치 일치"
+        }
+      ]
+    }
+  },
+  "aggregation": {
+    "per_pillar_mode": "set",
+    "score_hint_mode": "sum_by_type",
+    "score_hint_formula": "total_score = sum(shensha.score_hint for shensha in all_matched)",
+    "score_hint_note_ko": "매칭된 모든 신살의 score_hint를 합산하여 총점 계산. 吉은 양수, 凶은 음수로 설계됨.",
+    "tie_breaker": ["type_priority","label_order_ko","label_order_zh","label_order_en"],
+    "type_priority": {"吉":1,"中":2,"烈":3,"凶":4}
+  },
+  "ui_labels": {
+    "ko": {
+      "disclaimer": "신살은 보조 정보입니다. 단정적 해석을 지양하세요.",
+      "type_explain": {"吉":"완만한 길성","中":"중립·상황의존","烈":"강성 변동성","凶":"주의 필요"}
+    }
+  },
+  "ci_checks": {
+    "on_fail": "fail_build",
+    "assertions": [
+      { "id":"CATALOG_MIN_18", "expr":"len(shensha_catalog) >= 18" },
+      { "id":"LABELS_KO_REQUIRED", "expr":"for_each(shensha_catalog[i]): shensha_catalog[i].labels.ko != ''" },
+      { "id":"TYPE_ENUM", "expr":"for_each(shensha_catalog[i]): shensha_catalog[i].type in ['吉','中','烈','凶']" },
+      { "id":"DEPENDENCIES_SIGNED", "expr":"dep('sixty_jiazi').signature!='' && dep('branch_tengods_policy').signature!='' && dep('elements_distribution').signature!='' && dep('lifecycle_stages').signature!=''" },
+      { "id":"TIE_BREAKER_KO_FIRST", "expr":"aggregation.tie_breaker[1]=='label_order_ko'" },
+      { "id":"DEFAULT_LOCALE_KO", "expr":"options.default_locale=='ko-KR'" },
+      { "id":"SIGNATURE_MODE", "expr":"signature_mode=='sha256_auto_injected'" },
+      { "id":"SCORE_FORMULA_EXISTS", "expr":"aggregation.score_hint_formula != ''" },
+      { "id":"LITERACY_RULES_NONEMPTY", "expr":"len(rule_groups.literacy_based.rules) > 0" }
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "engine": "sample_engine",
+  "policy_version": "sample_v1.0.0",
+  "policy_date": "2025-10-09",
+  "policy_signature": "UNSIGNED",
+  "ko_labels": true,
+  "dependencies": [
+    "strength_policy_v2.json"
+  ],
+  "rules": [
+    {
+      "id": "rule_1",
+      "condition": "strength > 0.7",
+      "action": "classify_as_strong"
+    },
+    {
+      "id": "rule_2",
+      "condition": "strength < 0.3",
+      "action": "classify_as_weak"
+    }
+  ],
+  "constants": {
+    "threshold_high": 0.7,
+    "threshold_low": 0.3
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "engine": "yongshin_selector",
+  "policy_version": "yongshin_v1.0.0",
+  "policy_date": "2025-10-09",
+  "policy_signature": "b19b33a308a937f79234bcbfe19fbc0c309a0ca4045123d39490c3409430901c",
+  "ko_labels": true,
+  "dependencies": [
+    "strength_policy_v2.json",
+    "relation_weight_v1.0.0.json",
+    "climate_policy_v1.json",
+    "shensha_v2.json"
+  ],
+  "strength_binning": {
+    "_comment": "Normalized strength score ranges (0.0~1.0). Orchestrator MUST normalize StrengthEvaluator output (-100~+100) before passing. Multi-layer defense: bin (Source of Truth) → score_normalized → score_raw (auto-normalize).",
+    "_input_schema": {
+      "bin": "string (weak|balanced|strong) - Source of Truth from grade_code mapping (PRIORITY 1)",
+      "score_normalized": "float (0.0~1.0) - Pre-normalized score (PRIORITY 2)",
+      "score_raw": "float (-100~+100) - Raw score for observability (PRIORITY 3, auto-normalized)",
+      "score": "float (deprecated) - Backward compatibility, use score_normalized or score_raw",
+      "type": "string - Original grade name (신약/중화/신강 etc) for reference"
+    },
+    "weak": [
+      0.0,
+      0.4
+    ],
+    "balanced": [
+      0.4,
+      0.6
+    ],
+    "strong": [
+      0.6,
+      1.0
+    ]
+  },
+  "five_elements": [
+    "목",
+    "화",
+    "토",
+    "금",
+    "수"
+  ],
+  "cycle_maps": {
+    "generated_by": {
+      "목": "수",
+      "화": "목",
+      "토": "화",
+      "금": "토",
+      "수": "금"
+    },
+    "generates": {
+      "목": "화",
+      "화": "토",
+      "토": "금",
+      "금": "수",
+      "수": "목"
+    },
+    "controls": {
+      "목": "토",
+      "화": "금",
+      "토": "수",
+      "금": "목",
+      "수": "화"
+    },
+    "controlled_by": {
+      "목": "금",
+      "화": "수",
+      "토": "목",
+      "금": "화",
+      "수": "토"
+    }
+  },
+  "base_preferences": {
+    "weak": [
+      "resource",
+      "companion"
+    ],
+    "balanced": [
+      "resource",
+      "output"
+    ],
+    "strong": [
+      "output",
+      "official",
+      "wealth"
+    ]
+  },
+  "relation_bias_rules": [
+    {
+      "when": {
+        "type": "sanhe",
+        "min_weight": 0.7
+      },
+      "apply": {
+        "toward": "sanhe_element",
+        "delta": 0.15
+      }
+    },
+    {
+      "when": {
+        "type": "chong",
+        "min_weight": 0.5
+      },
+      "apply": {
+        "toward": "opposite_of_sanhe_if_any",
+        "delta": -0.1
+      }
+    },
+    {
+      "when": {
+        "type": "ganhe",
+        "min_weight": 0.6,
+        "hua": true
+      },
+      "apply": {
+        "toward": "ganhe_result",
+        "delta": 0.12
+      }
+    },
+    {
+      "when": {
+        "type": "liuhe",
+        "min_weight": 0.5
+      },
+      "apply": {
+        "toward": "liuhe_softening",
+        "delta": 0.05
+      }
+    },
+    {
+      "when": {
+        "type": "xing",
+        "min_weight": 0.4
+      },
+      "apply": {
+        "toward": "inside_combo_target",
+        "delta": -0.05
+      }
+    },
+    {
+      "when": {
+        "type": "hai",
+        "min_weight": 0.35
+      },
+      "apply": {
+        "toward": "obstructed_element",
+        "delta": -0.05
+      }
+    }
+  ],
+  "climate_bias": {
+    "if_season_supports": 0.05,
+    "if_season_conflicts": -0.05,
+    "support_labels": {
+      "강함": 0.05,
+      "보통": 0.0,
+      "약함": -0.05
+    }
+  },
+  "distribution_bias": {
+    "target_ratio": 0.2,
+    "deficit_gain_per_0p10": 0.06,
+    "excess_penalty_per_0p10": -0.06
+  },
+  "confidence_model": {
+    "base": {
+      "weak": 0.8,
+      "balanced": 0.7,
+      "strong": 0.8
+    },
+    "relation_bonus_per_hit": 0.04,
+    "relation_penalty_per_miss": -0.03,
+    "climate_bonus": 0.03,
+    "cap_min": 0.4,
+    "cap_max": 0.98
+  },
+  "caps": {
+    "max_candidates": 2,
+    "min_primary_score_gap": 0.05,
+    "fallback_if_tie": "prefer_resource_over_output_over_wealth_over_official"
+  },
+  "scoring_outline": [
+    "1) strength_bin에 따라 기본 선호 축 결정(base_preferences).",
+    "2) 후보군(5행)에 대해 점수 s[e] 초기화: 0.0.",
+    "3) base_preferences 반영: resource=+0.18, companion=+0.12, output=+0.15, wealth=+0.12, official=+0.10.",
+    "4) relation_summary 적용: relation_bias_rules를 만족하는 경우 해당 오행에 delta 가산.",
+    "5) climate 적용: season_element 동일/상생이면 +0.05, 상극이면 -0.05; climate.support 라벨 가산/감산.",
+    "6) elements_distribution 편차 보정: (target_ratio-actual) * (deficit/excess 계수) 누적.",
+    "7) 최종 정렬 후 상위 1~2개를 yongshin, 다음 1~2개를 bojosin, 최하위 1~2개를 gisin으로 배치.",
+    "8) confidence = clamp(base + relation_hits*bonus + relation_miss*penalty + climate_bonus, cap_min~cap_max)."
+  ],
+  "audit_fields": [
+    "rules_fired",
+    "relation_hits",
+    "relation_misses",
+    "score_components"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "version": "v1.0",
+  "description": "Hidden stems (藏干) extraction table based on SKY_LIZARD fortune app standard",
+  "source": "SKY_LIZARD Fortune App v10.4 - jijanggan table",
+  "extraction_date": "2025-09-29",
+  "note": "This mapping represents the actual hidden stems used in production Korean fortune-telling applications",
+  "data": {
+    "子": ["壬", "癸"],
+    "丑": ["癸", "辛", "己"],
+    "寅": ["戊", "丙", "甲"],
+    "卯": ["甲", "乙"],
+    "辰": ["乙", "癸", "戊"],
+    "巳": ["戊", "庚", "丙"],
+    "午": ["丙", "己", "丁"],
+    "未": ["丁", "乙", "己"],
+    "申": ["戊", "壬", "庚"],
+    "酉": ["庚", "辛"],
+    "戌": ["辛", "丁", "戊"],
+    "亥": ["戊", "甲", "壬"]
+  },
+  "usage_notes": {
+    "order": "Primary hidden stem listed first, secondary and tertiary follow",
+    "strength_calculation": "First stem typically has highest weight in root/seal scoring",
+    "compatibility": "Matches production Korean Saju applications - use this for user consistency"
+  }
+}

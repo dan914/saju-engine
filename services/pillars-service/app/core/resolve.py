@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, time, timedelta
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from services.common import TraceMetadata
@@ -47,14 +47,13 @@ class TimeResolver:
 
 @dataclass(slots=True)
 class DayBoundaryCalculator:
-    """Compute day start using zi-start-23 policy."""
+    """Compute day start using midnight (00:00) as boundary."""
 
     epsilon_ms: int = 1
 
     def compute(self, local_dt: datetime, timezone: str) -> datetime:
         tz = ZoneInfo(timezone)
         localized = local_dt.replace(tzinfo=tz)
-        boundary = localized.replace(hour=23, minute=0, second=0, microsecond=0)
-        if localized.time() < time(23, 0, 0):
-            boundary -= timedelta(days=1)
+        # Day starts at midnight (00:00) of the same calendar day
+        boundary = localized.replace(hour=0, minute=0, second=0, microsecond=0)
         return boundary

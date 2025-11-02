@@ -1,0 +1,181 @@
+{
+  "engine": "llm_guard",
+  "policy_version": "1.0.0",
+  "policy_date": "2025-10-09",
+  "policy_signature": "b0320a6a90c2e926e6b47cae3d33e5b95d126810c77d2752a6a3233f8bc3421f",
+  "ko_labels": true,
+  "dependencies": [
+    "strength_policy_v2.json",
+    "relation_policy_v1.1.x",
+    "evidence_builder_v2.json"
+  ],
+  "evaluation_order": [
+    "STRUCT-000",
+    "EVID-BIND-100",
+    "SCOPE-200",
+    "MODAL-300",
+    "REL-400",
+    "SIG-500",
+    "PII-600",
+    "KO-700",
+    "AMBIG-800"
+  ],
+  "rules": [
+    {
+      "rule_id": "STRUCT-000",
+      "severity": "error",
+      "when": "입력 스키마 위반 또는 필수 필드 누락",
+      "check_type": "schema",
+      "action": "deny",
+      "reason_code": "INPUT-INVALID",
+      "message_ko": "입력 구조가 스키마를 위반했습니다",
+      "remediation_hint_ko": "입력 스키마를 준수하여 재요청하세요",
+      "evidence_refs": []
+    },
+    {
+      "rule_id": "EVID-BIND-100",
+      "severity": "error",
+      "when": "사실 주장에 대응하는 evidence_id 바인딩이 누락됨",
+      "check_type": "match",
+      "action": "revise",
+      "reason_code": "LLM-CLAIM-NOEVID",
+      "message_ko": "근거 없는 사실 주장이 포함되어 있습니다",
+      "remediation_hint_ko": "모든 사실 주장은 evidence.sources[].evidence_id를 인용하세요",
+      "evidence_refs": [
+        "evidence.sources[].evidence_id"
+      ]
+    },
+    {
+      "rule_id": "SCOPE-200",
+      "severity": "error",
+      "when": "의료/법률/투자 구체 단정, 출생시각 추정, 사망일 예측 등 범위 외 요청",
+      "check_type": "match",
+      "action": "deny",
+      "reason_code": "OUT-OF-SCOPE",
+      "message_ko": "허용되지 않는 범위의 요청입니다",
+      "remediation_hint_ko": "의료/법률/투자 단정, 출생시각 추정, 사망일 예측은 제공할 수 없습니다",
+      "evidence_refs": []
+    },
+    {
+      "rule_id": "MODAL-300",
+      "severity": "warn",
+      "when": "근거 confidence < 0.5인데 단정 표현('확실하다', '~이다') 사용",
+      "check_type": "calc",
+      "action": "revise",
+      "reason_code": "MODALITY-OVERCLAIM",
+      "message_ko": "근거 신뢰도에 비해 과도한 단정 표현이 사용되었습니다",
+      "remediation_hint_ko": "confidence에 맞는 완화 표현을 사용하세요 (>=0.80: '개연성이 매우 높음', 0.50-0.79: '개연성이 높음', <0.50: '가설 수준')",
+      "evidence_refs": [
+        "evidence.sources[].confidence"
+      ]
+    },
+    {
+      "rule_id": "REL-400",
+      "severity": "error",
+      "when": "Relation 탐지 결과와 모순되는 단정 (예: 충 관계 없는데 '충이 있다' 주장)",
+      "check_type": "match",
+      "action": "revise",
+      "reason_code": "REL-MISMATCH",
+      "message_ko": "관계 분석 결과와 모순되는 주장이 포함되어 있습니다",
+      "remediation_hint_ko": "evidence.derived.relations 결과와 일치하도록 수정하세요",
+      "evidence_refs": [
+        "evidence.derived.relations"
+      ]
+    },
+    {
+      "rule_id": "SIG-500",
+      "severity": "error",
+      "when": "입력 signatures.policy_refs[] 서명 검증 실패",
+      "check_type": "calc",
+      "action": "deny",
+      "reason_code": "POLICY-SIG-MISMATCH",
+      "message_ko": "정책 서명 검증에 실패했습니다",
+      "remediation_hint_ko": "정책 파일의 무결성을 확인하고 재요청하세요",
+      "evidence_refs": [
+        "evidence.signatures.policy_refs"
+      ]
+    },
+    {
+      "rule_id": "PII-600",
+      "severity": "warn",
+      "when": "PII (전화번호, 이메일, 상세주소, 주민번호 유사) 포함",
+      "check_type": "match",
+      "action": "revise",
+      "reason_code": "PII-DETECTED",
+      "message_ko": "개인 식별 정보가 포함되어 있습니다",
+      "remediation_hint_ko": "PII는 마스킹 또는 제거 후 응답하세요 (redactions[] 활용)",
+      "evidence_refs": []
+    },
+    {
+      "rule_id": "KO-700",
+      "severity": "warn",
+      "when": "KO-first 라벨 미사용 또는 영문 전용 응답",
+      "check_type": "match",
+      "action": "revise",
+      "reason_code": "LABEL-NONCOMPLIANT",
+      "message_ko": "한국어 우선(KO-first) 라벨이 누락되었습니다",
+      "remediation_hint_ko": "모든 enum/code 필드에 *_ko 병행 라벨을 제공하세요",
+      "evidence_refs": []
+    },
+    {
+      "rule_id": "AMBIG-800",
+      "severity": "warn",
+      "when": "고전/정책 출처 라벨 또는 근거 누락",
+      "check_type": "match",
+      "action": "revise",
+      "reason_code": "AMBIG-SOURCE",
+      "message_ko": "고전 또는 정책 출처 근거가 모호합니다",
+      "remediation_hint_ko": "고전 인용 시 출전(예: '자평진전'), 정책 인용 시 정책명(예: 'strength_policy_v2')을 명시하세요",
+      "evidence_refs": []
+    }
+  ],
+  "modality_mapping": [
+    {
+      "confidence_min": 0.8,
+      "confidence_max": 1.0,
+      "label_ko": "개연성이 매우 높음",
+      "allowed_expressions": [
+        "~일 가능성이 매우 높습니다",
+        "~로 해석됩니다"
+      ]
+    },
+    {
+      "confidence_min": 0.5,
+      "confidence_max": 0.79,
+      "label_ko": "개연성이 높음",
+      "allowed_expressions": [
+        "~일 가능성이 있습니다",
+        "~로 볼 수 있습니다"
+      ]
+    },
+    {
+      "confidence_min": 0.0,
+      "confidence_max": 0.49,
+      "label_ko": "가설 수준",
+      "allowed_expressions": [
+        "~일 수도 있습니다",
+        "~로 추정됩니다 (확정 아님)"
+      ]
+    }
+  ],
+  "pii_patterns": [
+    {
+      "type": "phone_kr",
+      "pattern": "01[0-9]-?[0-9]{3,4}-?[0-9]{4}"
+    },
+    {
+      "type": "email",
+      "pattern": "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
+    },
+    {
+      "type": "address_detailed",
+      "pattern": "(시|구|동|로|길)\\s*[0-9-]+.*호"
+    },
+    {
+      "type": "ssn_like",
+      "pattern": "[0-9]{6}-?[1-4][0-9]{6}"
+    }
+  ],
+  "decision_algorithm": "순차 평가: evaluation_order 순서대로 각 규칙 평가 → 첫 위반(fail) 시 해당 action 즉시 반환 → logs.trace[]에 모든 규칙 결과 기록 → decision/reasons/remediations 생성 → risk_score 계산",
+  "risk_score_heuristics": "위반 갯수 × 10 + (severity='error' 시 +20, 'warn' 시 +5) 가중 합산, 최대 100으로 클램프"
+}

@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "/schemas/ten_gods.schema.json",
+  "title": "Ten Gods Engine Output",
+  "description": "Per-pillar Ten Gods mapping and aggregated counts.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["policy_version", "by_pillar", "summary", "dominant", "missing", "policy_signature"],
+  "properties": {
+    "policy_version": {
+      "type": "string",
+      "pattern": "^ten_gods_v\\d+\\.\\d+$"
+    },
+    "by_pillar": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["year","month","day","hour"],
+      "properties": {
+        "year": { "$ref": "#/$defs/byPillarEntry" },
+        "month": { "$ref": "#/$defs/byPillarEntry" },
+        "day": { "$ref": "#/$defs/byPillarEntry" },
+        "hour": { "$ref": "#/$defs/byPillarEntry" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "比肩": { "type": "integer", "minimum": 0 },
+        "劫財": { "type": "integer", "minimum": 0 },
+        "食神": { "type": "integer", "minimum": 0 },
+        "傷官": { "type": "integer", "minimum": 0 },
+        "偏財": { "type": "integer", "minimum": 0 },
+        "正財": { "type": "integer", "minimum": 0 },
+        "七殺": { "type": "integer", "minimum": 0 },
+        "正官": { "type": "integer", "minimum": 0 },
+        "偏印": { "type": "integer", "minimum": 0 },
+        "正印": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "dominant": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/tenGodZH" },
+      "uniqueItems": true
+    },
+    "missing": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/tenGodZH" },
+      "uniqueItems": true
+    },
+    "policy_signature": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{64}$"
+    }
+  },
+  "$defs": {
+    "tenGodZH": {
+      "type": "string",
+      "enum": ["比肩","劫財","食神","傷官","偏財","正財","七殺","正官","偏印","正印"]
+    },
+    "heavenlyStem": {
+      "type": "string",
+      "enum": ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"]
+    },
+    "earthlyBranch": {
+      "type": "string",
+      "enum": ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"]
+    },
+    "byPillarEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stem","vs_day","branch","hidden"],
+      "properties": {
+        "stem": { "$ref": "#/$defs/heavenlyStem" },
+        "vs_day": { "$ref": "#/$defs/tenGodZH" },
+        "branch": { "$ref": "#/$defs/earthlyBranch" },
+        "hidden": {
+          "type": "object",
+          "additionalProperties": false,
+          "propertyNames": { "pattern": "^[甲乙丙丁戊己庚辛壬癸]$" },
+          "patternProperties": {
+            "^[甲乙丙丁戊己庚辛壬癸]$": { "$ref": "#/$defs/tenGodZH" }
+          }
+        }
+      }
+    }
+  }
+}

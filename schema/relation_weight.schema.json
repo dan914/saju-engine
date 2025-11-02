@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "/schemas/relation_weight_v1.schema.json",
+  "title": "relation_weight_evaluator_output",
+  "type": "object",
+  "required": [
+    "policy_version",
+    "policy_signature",
+    "items",
+    "summary"
+  ],
+  "properties": {
+    "policy_version": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Policy version used for evaluation (e.g., '1.0.0')"
+    },
+    "policy_signature": {
+      "type": "string",
+      "pattern": "^([0-9a-f]{64}|UNSIGNED)$",
+      "description": "SHA-256 signature of policy file or 'UNSIGNED'"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/relation_item"
+      },
+      "description": "Evaluated relation items with impact_weight and confidence"
+    },
+    "summary": {
+      "$ref": "#/$defs/summary",
+      "description": "Summary statistics by relation type"
+    }
+  },
+  "$defs": {
+    "relation_item": {
+      "type": "object",
+      "required": [
+        "type",
+        "a",
+        "b",
+        "priority",
+        "formed",
+        "impact_weight",
+        "confidence",
+        "conditions_met",
+        "missing_conditions"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "sanhe",
+            "liuhe",
+            "ganhe",
+            "chong",
+            "xing",
+            "hai",
+            "yuanjin"
+          ],
+          "description": "Relation type"
+        },
+        "a": {
+          "type": "string",
+          "minLength": 1,
+          "description": "First element (branch, stem, or triplet string)"
+        },
+        "b": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Second element (branch, stem, element, or triplet)"
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Priority level (1=highest)"
+        },
+        "formed": {
+          "type": "boolean",
+          "description": "Whether relation is fully formed (for sanhe, etc.)"
+        },
+        "hua": {
+          "type": "boolean",
+          "description": "化 (transformation) status for ganhe (optional)"
+        },
+        "element": {
+          "type": "string",
+          "enum": ["木", "火", "土", "金", "水"],
+          "description": "Result element for ganhe (optional)"
+        },
+        "impact_weight": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Quantified impact weight (0.0-1.0)"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Confidence level of the evaluation (0.0-1.0)"
+        },
+        "conditions_met": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "List of conditions met (e.g., 'pivot_month', 'month_adjacent')"
+        },
+        "missing_conditions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "List of conditions not met or negative modifiers applied"
+        },
+        "explain": {
+          "type": "string",
+          "description": "Optional KO-first explanation summary"
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "total",
+        "by_type"
+      ],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of evaluated items"
+        },
+        "by_type": {
+          "type": "object",
+          "required": [
+            "sanhe",
+            "liuhe",
+            "ganhe",
+            "chong",
+            "xing",
+            "hai",
+            "yuanjin"
+          ],
+          "properties": {
+            "sanhe": {
+              "$ref": "#/$defs/type_stats"
+            },
+            "liuhe": {
+              "$ref": "#/$defs/type_stats"
+            },
+            "ganhe": {
+              "$ref": "#/$defs/type_stats"
+            },
+            "chong": {
+              "$ref": "#/$defs/type_stats"
+            },
+            "xing": {
+              "$ref": "#/$defs/type_stats"
+            },
+            "hai": {
+              "$ref": "#/$defs/type_stats"
+            },
+            "yuanjin": {
+              "$ref": "#/$defs/type_stats"
+            }
+          }
+        }
+      }
+    },
+    "type_stats": {
+      "type": "object",
+      "required": [
+        "count",
+        "avg_weight"
+      ],
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of items of this type"
+        },
+        "avg_weight": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Average impact_weight for this type"
+        }
+      }
+    }
+  }
+}

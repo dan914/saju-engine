@@ -1,0 +1,461 @@
+{
+"module": "gyeokguk_v1.0",
+"policy_version": "1.0.0",
+"policy_signature": "PENDING",
+"locale_default": "ko-KR",
+"labels": {
+"ko": "격국 분류 정책 v1.0",
+"en": "Gyeokguk Classifier Policy v1.0",
+"zh": "格局分类策略 v1.0"
+},
+"dependencies": {
+"modules": [
+{ "name": "strength_v2", "version": ">=2.0.1", "role": "evidence" },
+{ "name": "branch_tengods_v1.1", "version": ">=1.1.0", "role": "evidence" },
+{ "name": "relation_v1.0", "version": ">=1.0.0", "role": "evidence" },
+{ "name": "elemental_projection_policy", "version": ">=1.0.0", "role": "policy" }
+],
+"optional_modules": [
+{ "name": "yongshin_v1.0", "version": ">=1.0.0", "role": "metric" }
+],
+"dataset": {
+"sixty_jiazi": { "name": "sixty_jiazi", "version": ">=1.0.0" },
+"jieqi": { "name": "jieqi", "version": ">=2025.09" }
+}
+},
+"scoring": {
+"normalization": { "kind": "min_max", "params": { "min_raw": -30.0, "max_raw": 30.0 }, "bounds": [0, 100] },
+"caps": {
+"per_rule_max": 18.0,
+"per_pattern_bonus_max": 20.0,
+"per_pattern_penalty_min": -24.0,
+"residual_guard": { "duplication_group": ["strength", "tengods", "relation"], "cap_per_group": 22.0 }
+},
+"status_thresholds": {
+"成格": { "min_score": 60.0, "min_core_coverage": 0.80, "no_breakers": true },
+"假格": { "min_score": 40.0, "min_core_coverage": 0.60, "no_breakers": true },
+"破格": { "any_breaker": true }
+}
+},
+"priority": {
+"families": ["CONG", "CORE", "PEER", "MIX", "PSEUDO"],
+"order": ["CONG_ER", "CONG_CAI", "CONG_SHA", "CONG_WANG", "CORE", "PEER", "PSEUDO", "MIX"]
+},
+"tie_breakers": [
+{ "id": "TB-1", "label_ko": "우선순위가 높은 격국 우선", "key": "family_priority", "direction": "asc" },
+{ "id": "TB-2", "label_ko": "점수 높은 격국 우선", "key": "score_normalized", "direction": "desc" },
+{ "id": "TB-3", "label_ko": "월령 적합도 높은 격국 우선", "key": "month_command_fit", "direction": "desc" },
+{ "id": "TB-4", "label_ko": "용신 정합도 높은 격국 우선(override 금지, tie-break 전용)", "key": "yongshin_alignment", "direction": "desc" },
+{ "id": "TB-5", "label_ko": "결정성 해시 사전순", "key": "deterministic_hash", "direction": "asc" }
+],
+"confidence": {
+"formula": "clamp01(0.30condition_coverage + 0.25strength_fit + 0.25month_command_fit + 0.20consistency)",
+"metrics": {
+"condition_coverage": {
+"desc_ko": "핵심/보조/패널티 평가 중 충족 비율(가중)",
+"compute": { "kind": "weighted_coverage", "weights": { "core": 0.7, "bonus": 0.2, "penalty": 0.1 } }
+},
+"strength_fit": {
+"desc_ko": "강약 상태가 격국 요구와 얼마나 맞는지",
+"map": { "perfect": 1.0, "good": 0.75, "ok": 0.5, "poor": 0.25, "bad": 0.0 }
+},
+"month_command_fit": {
+"desc_ko": "월령 득령/실령 및 계절성 적합도",
+"scale": { "dominant": 1.0, "supported": 0.75, "neutral": 0.5, "suppressed": 0.25, "conflicted": 0.0 }
+},
+"consistency": {
+"desc_ko": "상위 후보 간 격차 안정성",
+"compute": { "kind": "gap_ratio", "params": { "top_n": 3 } }
+}
+}
+},
+"selectors": {
+"ten_god_vector_key": "branch_tengods_v1.1.ten_god_vector",
+"month_command_key": "branch_tengods_v1.1.month_command",
+"strength_score_key": "strength_v2.score_normalized",
+"strength_state_key": "inputs.context.strength_state",
+"relation_events_key": "relation_v1.0.events",
+"projection_key": "elemental_projection.result_vector",
+"yongshin_align_key": "yongshin_v1.0.alignment_score"
+},
+"relation_codes": {
+"supportive": [
+{ "code": "REL-OFF-SEAL", "label_ko": "관인상생" },
+{ "code": "REL-SHA-SEAL", "label_ko": "살인상생" },
+{ "code": "REL-SG-PEIYIN", "label_ko": "상관패인" },
+{ "code": "REL-FOOD-TO-FIN", "label_ko": "식신생재" },
+{ "code": "REL-FIN-TO-OFF", "label_ko": "재생관" },
+{ "code": "REL-PEER-GUARD", "label_ko": "비겁호신" }
+],
+"penalty": [
+{ "code": "PEN-MIX-OFF-KILL", "label_ko": "관살혼잡" },
+{ "code": "PEN-SG-SEES-OFF", "label_ko": "상관견관" },
+{ "code": "PEN-FOOD-KE-SEAL", "label_ko": "식상극인" },
+{ "code": "PEN-PEER-ROB-FIN", "label_ko": "비겁탈재" },
+{ "code": "PEN-CLASH-CORE-LINK", "label_ko": "충형파해로 핵심 연쇄 붕괴" }
+],
+"breaker": [
+{ "code": "BRK-OFF-SEAL-LINK-BROKEN", "label_ko": "관인 연결 파괴" },
+{ "code": "BRK-SG-OFF-DIRECT", "label_ko": "상관이 관을 직접 극" },
+{ "code": "BRK-EXTREME-CONFLICT", "label_ko": "핵심십신이 전면 충파" }
+]
+},
+"patterns": [
+{
+"code": "ZHENGGUAN",
+"label_ko": "정관격",
+"label_zh": "正官格",
+"family": "CORE",
+"core": {
+"rule_id": "GK-ZHENGGUAN-CORE",
+"conditions": [
+{ "kind": "ten_god_dominant", "ten_god": "正官", "min_proportion": 0.18, "weight": 12.0 },
+{ "kind": "month_command_support", "ten_god": "正官", "weight": 4.0 },
+{ "kind": "strength_fit", "allowed": ["weak", "balanced"], "bonus_if_perfect": 2.0 }
+],
+"notes_ko": "정관 우세 + 월령 득령, 일간 과강 금지"
+},
+"bonuses": [
+{ "rule_id": "GK-ZHENGGUAN-BONUS-01", "kind": "relation", "code": "REL-OFF-SEAL", "score": 6.0, "notes_ko": "관인상생" },
+{ "rule_id": "GK-ZHENGGUAN-BONUS-02", "kind": "relation", "code": "REL-FIN-TO-OFF", "score": 3.0, "notes_ko": "재생관" }
+],
+"penalties": [
+{ "rule_id": "GK-ZHENGGUAN-PEN-01", "kind": "relation", "code": "PEN-MIX-OFF-KILL", "score": -6.0, "notes_ko": "관살혼잡" },
+{ "rule_id": "GK-ZHENGGUAN-PEN-02", "kind": "relation", "code": "PEN-SG-SEES-OFF", "score": -8.0, "notes_ko": "상관견관" }
+],
+"breakers": [
+{ "rule_id": "GK-ZHENGGUAN-BRK-01", "kind": "relation", "code": "BRK-OFF-SEAL-LINK-BROKEN", "notes_ko": "관인 연쇄 파괴 시 파격" }
+]
+},
+{
+"code": "QISHA",
+"label_ko": "칠살격",
+"label_zh": "七殺格",
+"family": "CORE",
+"core": {
+"rule_id": "GK-QISHA-CORE",
+"conditions": [
+{ "kind": "ten_god_dominant", "ten_god": "七殺", "min_proportion": 0.18, "weight": 12.0 },
+{ "kind": "month_command_support", "ten_god": "七殺", "weight": 4.0 },
+{ "kind": "strength_fit", "allowed": ["balanced", "weak"], "bonus_if_perfect": 1.0 }
+],
+"notes_ko": "칠살 우세, 인성의 제화 또는 식신제살 필요"
+},
+"bonuses": [
+{ "rule_id": "GK-QISHA-BONUS-01", "kind": "relation", "code": "REL-SHA-SEAL", "score": 6.0, "notes_ko": "살인상생" },
+{ "rule_id": "GK-QISHA-BONUS-02", "kind": "relation", "code": "REL-FOOD-TO-FIN", "score": 2.0, "notes_ko": "식신제살 경향 보조(실제 제어는 인성/식상 구성 확인)" }
+],
+"penalties": [
+{ "rule_id": "GK-QISHA-PEN-01", "kind": "relation", "code": "PEN-MIX-OFF-KILL", "score": -5.0, "notes_ko": "관살혼잡" }
+],
+"breakers": [
+{ "rule_id": "GK-QISHA-BRK-01", "kind": "relation", "code": "BRK-EXTREME-CONFLICT", "notes_ko": "칠살이 전면 충파되어 기능 상실" }
+]
+},
+{
+"code": "ZHENGCAI",
+"label_ko": "정재격",
+"label_zh": "正財格",
+"family": "CORE",
+"core": {
+"rule_id": "GK-ZHENGCAI-CORE",
+"conditions": [
+{ "kind": "ten_god_dominant", "ten_god": "正財", "min_proportion": 0.20, "weight": 12.0 },
+{ "kind": "month_command_support", "ten_god": "正財", "weight": 4.0 },
+{ "kind": "strength_fit", "allowed": ["balanced", "strong"], "bonus_if_perfect": 1.0 }
+],
+"notes_ko": "재성 우세, 일간 과약 금지"
+},
+"bonuses": [
+{ "rule_id": "GK-ZHENGCAI-BONUS-01", "kind": "relation", "code": "REL-FIN-TO-OFF", "score": 4.0, "notes_ko": "재생관" },
+{ "rule_id": "GK-ZHENGCAI-BONUS-02", "kind": "relation", "code": "REL-PEER-GUARD", "score": 2.0, "notes_ko": "비겁호신으로 재성 안정" }
+],
+"penalties": [
+{ "rule_id": "GK-ZHENGCAI-PEN-01", "kind": "relation", "code": "PEN-PEER-ROB-FIN", "score": -8.0, "notes_ko": "비겁탈재" }
+],
+"breakers": []
+},
+{
+"code": "PIANCAI",
+"label_ko": "편재격",
+"label_zh": "偏財格",
+"family": "CORE",
+"core": {
+"rule_id": "GK-PIANCAI-CORE",
+"conditions": [
+{ "kind": "ten_god_dominant", "ten_god": "偏財", "min_proportion": 0.20, "weight": 12.0 },
+{ "kind": "month_command_support", "ten_god": "偏財", "weight": 4.0 },
+{ "kind": "strength_fit", "allowed": ["balanced", "strong"], "bonus_if_perfect": 1.0 }
+],
+"notes_ko": "편재 우세, 활동성/유통성 강조"
+},
+"bonuses": [
+{ "rule_id": "GK-PIANCAI-BONUS-01", "kind": "relation", "code": "REL-FOOD-TO-FIN", "score": 4.0, "notes_ko": "식신생재" }
+],
+"penalties": [
+{ "rule_id": "GK-PIANCAI-PEN-01", "kind": "relation", "code": "PEN-PEER-ROB-FIN", "score": -9.0, "notes_ko": "비겁탈재" }
+],
+"breakers": []
+},
+{
+"code": "SHISHEN",
+"label_ko": "식신격",
+"label_zh": "食神格",
+"family": "CORE",
+"core": {
+"rule_id": "GK-SHISHEN-CORE",
+"conditions": [
+{ "kind": "ten_god_dominant", "ten_god": "食神", "min_proportion": 0.18, "weight": 12.0 },
+{ "kind": "month_command_support", "ten_god": "食神", "weight": 3.0 },
+{ "kind": "strength_fit", "allowed": ["strong", "balanced"], "bonus_if_perfect": 1.0 }
+],
+"notes_ko": "식신 우세, 일간이 일정 수준 이상 필요"
+},
+"bonuses": [
+{ "rule_id": "GK-SHISHEN-BONUS-01", "kind": "relation", "code": "REL-FOOD-TO-FIN", "score": 5.0, "notes_ko": "식신생재" }
+],
+"penalties": [
+{ "rule_id": "GK-SHISHEN-PEN-01", "kind": "relation", "code": "PEN-FOOD-KE-SEAL", "score": -5.0, "notes_ko": "식상극인으로 인성 훼손" }
+],
+"breakers": []
+},
+{
+"code": "SHANGGUAN",
+"label_ko": "상관격",
+"label_zh": "傷官格",
+"family": "CORE",
+"core": {
+"rule_id": "GK-SHANGGUAN-CORE",
+"conditions": [
+{ "kind": "ten_god_dominant", "ten_god": "傷官", "min_proportion": 0.18, "weight": 12.0 },
+{ "kind": "month_command_support", "ten_god": "傷官", "weight": 3.0 },
+{ "kind": "strength_fit", "allowed": ["strong", "balanced"], "bonus_if_perfect": 1.0 }
+],
+"notes_ko": "상관 우세, 제어 필요"
+},
+"bonuses": [
+{ "rule_id": "GK-SHANGGUAN-BONUS-01", "kind": "relation", "code": "REL-SG-PEIYIN", "score": 6.0, "notes_ko": "상관패인 성립" },
+{ "rule_id": "GK-SHANGGUAN-BONUS-02", "kind": "relation", "code": "REL-FOOD-TO-FIN", "score": 3.0, "notes_ko": "식상→재로 유도" }
+],
+"penalties": [
+{ "rule_id": "GK-SHANGGUAN-PEN-01", "kind": "relation", "code": "PEN-SG-SEES-OFF", "score": -10.0, "notes_ko": "상관견관" }
+],
+"breakers": [
+{ "rule_id": "GK-SHANGGUAN-BRK-01", "kind": "relation", "code": "BRK-SG-OFF-DIRECT", "notes_ko": "상관이 관을 직접 극하여 격 붕괴" }
+]
+},
+{
+"code": "YINSHOU",
+"label_ko": "정인격",
+"label_zh": "印綬格",
+"family": "CORE",
+"core": {
+"rule_id": "GK-YINSHOU-CORE",
+"conditions": [
+{ "kind": "ten_god_dominant", "ten_god": "正印", "min_proportion": 0.18, "weight": 12.0 },
+{ "kind": "month_command_support", "ten_god": "正印", "weight": 4.0 },
+{ "kind": "strength_fit", "allowed": ["weak", "balanced"], "bonus_if_perfect": 1.0 }
+],
+"notes_ko": "인성 우세, 관인상생 유리"
+},
+"bonuses": [
+{ "rule_id": "GK-YINSHOU-BONUS-01", "kind": "relation", "code": "REL-OFF-SEAL", "score": 5.0, "notes_ko": "관인상생" }
+],
+"penalties": [
+{ "rule_id": "GK-YINSHOU-PEN-01", "kind": "relation", "code": "PEN-FOOD-KE-SEAL", "score": -6.0, "notes_ko": "식상극인" }
+],
+"breakers": []
+},
+{
+"code": "PIANYIN",
+"label_ko": "편인격",
+"label_zh": "偏印格",
+"family": "CORE",
+"core": {
+"rule_id": "GK-PIANYIN-CORE",
+"conditions": [
+{ "kind": "ten_god_dominant", "ten_god": "偏印", "min_proportion": 0.18, "weight": 12.0 },
+{ "kind": "month_command_support", "ten_god": "偏印", "weight": 3.0 },
+{ "kind": "strength_fit", "allowed": ["weak", "balanced"], "bonus_if_perfect": 1.0 }
+],
+"notes_ko": "편인 우세, 관살 제화 필요 시 보조"
+},
+"bonuses": [
+{ "rule_id": "GK-PIANYIN-BONUS-01", "kind": "relation", "code": "REL-SHA-SEAL", "score": 4.0, "notes_ko": "살인상생 보조" }
+],
+"penalties": [
+{ "rule_id": "GK-PIANYIN-PEN-01", "kind": "relation", "code": "PEN-FOOD-KE-SEAL", "score": -5.0, "notes_ko": "식상극인" }
+],
+"breakers": []
+},
+{
+"code": "BIJIAN",
+"label_ko": "비견격",
+"label_zh": "比肩格",
+"family": "PEER",
+"core": {
+"rule_id": "GK-BIJIAN-CORE",
+"conditions": [
+{ "kind": "ten_god_dominant", "ten_god": "比肩", "min_proportion": 0.20, "weight": 12.0 },
+{ "kind": "strength_fit", "allowed": ["strong"], "bonus_if_perfect": 2.0 }
+],
+"notes_ko": "비견 우세, 일간 강해야 성립"
+},
+"bonuses": [
+{ "rule_id": "GK-BIJIAN-BONUS-01", "kind": "relation", "code": "REL-PEER-GUARD", "score": 3.0, "notes_ko": "호신" }
+],
+"penalties": [
+{ "rule_id": "GK-BIJIAN-PEN-01", "kind": "relation", "code": "PEN-PEER-ROB-FIN", "score": -4.0, "notes_ko": "탈재 경향" }
+],
+"breakers": []
+},
+{
+"code": "JIECAI",
+"label_ko": "겁재격",
+"label_zh": "劫財格",
+"family": "PEER",
+"core": {
+"rule_id": "GK-JIECAI-CORE",
+"conditions": [
+{ "kind": "ten_god_dominant", "ten_god": "劫財", "min_proportion": 0.20, "weight": 12.0 },
+{ "kind": "strength_fit", "allowed": ["strong"], "bonus_if_perfect": 1.0 }
+],
+"notes_ko": "겁재 우세, 리스크 관리 필요"
+},
+"bonuses": [
+{ "rule_id": "GK-JIECAI-BONUS-01", "kind": "relation", "code": "REL-PEER-GUARD", "score": 2.0, "notes_ko": "호신" }
+],
+"penalties": [
+{ "rule_id": "GK-JIECAI-PEN-01", "kind": "relation", "code": "PEN-PEER-ROB-FIN", "score": -6.0, "notes_ko": "탈재 심화" }
+],
+"breakers": []
+},
+{
+"code": "CONG_ER",
+"label_ko": "종아격(從兒)",
+"label_zh": "從兒格",
+"family": "CONG",
+"gating": {
+"rule_id": "GK-CONG-ER-GATE",
+"conditions": [
+{ "kind": "strength_score", "op": "<=", "value": 0.28 },
+{ "kind": "projection_focus", "focus": "食傷", "min_proportion": 0.50 },
+{ "kind": "month_command_support_any", "ten_gods": ["食神", "傷官"] }
+],
+"notes_ko": "극약일간 + 식상 일변도, 타오행/타십신 저조"
+},
+"core": {
+"rule_id": "GK-CONG-ER-CORE",
+"conditions": [
+{ "kind": "ten_god_dominant_group", "group": ["食神", "傷官"], "min_proportion": 0.55, "weight": 14.0 }
+],
+"notes_ko": "식상이 전면 우세"
+},
+"bonuses": [
+{ "rule_id": "GK-CONG-ER-BONUS-01", "kind": "relation", "code": "REL-FOOD-TO-FIN", "score": 4.0, "notes_ko": "식신생재 흐름" }
+],
+"penalties": [],
+"breakers": []
+},
+{
+"code": "CONG_CAI",
+"label_ko": "종재격(從財)",
+"label_zh": "從財格",
+"family": "CONG",
+"gating": {
+"rule_id": "GK-CONG-CAI-GATE",
+"conditions": [
+{ "kind": "strength_score", "op": "<=", "value": 0.28 },
+{ "kind": "projection_focus", "focus": "財", "min_proportion": 0.55 },
+{ "kind": "month_command_support_any", "ten_gods": ["正財", "偏財"] }
+],
+"notes_ko": "극약일간 + 재성 일변도"
+},
+"core": {
+"rule_id": "GK-CONG-CAI-CORE",
+"conditions": [
+{ "kind": "ten_god_dominant_group", "group": ["正財", "偏財"], "min_proportion": 0.60, "weight": 14.0 }
+],
+"notes_ko": "재성 전면 우세"
+},
+"bonuses": [
+{ "rule_id": "GK-CONG-CAI-BONUS-01", "kind": "relation", "code": "REL-FIN-TO-OFF", "score": 3.0, "notes_ko": "재생관 흐름 정합" }
+],
+"penalties": [],
+"breakers": []
+},
+{
+"code": "CONG_SHA",
+"label_ko": "종살격(從殺)",
+"label_zh": "從殺格",
+"family": "CONG",
+"gating": {
+"rule_id": "GK-CONG-SHA-GATE",
+"conditions": [
+{ "kind": "strength_score", "op": "<=", "value": 0.28 },
+{ "kind": "projection_focus", "focus": "官殺", "min_proportion": 0.55 },
+{ "kind": "month_command_support_any", "ten_gods": ["七殺", "正官"] }
+],
+"notes_ko": "극약일간 + 관살 일변도"
+},
+"core": {
+"rule_id": "GK-CONG-SHA-CORE",
+"conditions": [
+{ "kind": "ten_god_dominant_group", "group": ["七殺", "正官"], "min_proportion": 0.60, "weight": 14.0 }
+],
+"notes_ko": "관살 전면 우세"
+},
+"bonuses": [
+{ "rule_id": "GK-CONG-SHA-BONUS-01", "kind": "relation", "code": "REL-SHA-SEAL", "score": 3.0, "notes_ko": "살인상생 시 안정" }
+],
+"penalties": [],
+"breakers": []
+},
+{
+"code": "CONG_WANG",
+"label_ko": "종왕격(從旺)",
+"label_zh": "從旺格",
+"family": "CONG",
+"gating": {
+"rule_id": "GK-CONG-WANG-GATE",
+"conditions": [
+{ "kind": "strength_score", "op": ">=", "value": 0.72 },
+{ "kind": "projection_focus", "focus": "比劫", "min_proportion": 0.55 },
+{ "kind": "month_command_support_any", "ten_gods": ["比肩", "劫財"] }
+],
+"notes_ko": "극강일간 + 비겁 일변도"
+},
+"core": {
+"rule_id": "GK-CONG-WANG-CORE",
+"conditions": [
+{ "kind": "ten_god_dominant_group", "group": ["比肩", "劫財"], "min_proportion": 0.60, "weight": 14.0 }
+],
+"notes_ko": "비겁 전면 우세"
+},
+"bonuses": [
+{ "rule_id": "GK-CONG-WANG-BONUS-01", "kind": "relation", "code": "REL-PEER-GUARD", "score": 3.0, "notes_ko": "호신" }
+],
+"penalties": [],
+"breakers": []
+}
+],
+"status_logic": {
+"coverage": { "core_weight": 0.7, "bonus_weight": 0.2, "penalty_weight": 0.1 },
+"pseudo_rule": { "label_ko": "혼격/약격", "when": "score_normalized<40 && no_breakers", "family": "PSEUDO" }
+},
+"ci_checks": [
+{ "id": "CI-KO-FIRST", "desc_ko": "KO-first 라벨 존재(모든 pattern.label_ko/notes_ko)", "kind": "presence" },
+{ "id": "CI-NORM-BOUNDS", "desc_ko": "정규화 점수 [0,100] 범위", "kind": "bounds" },
+{ "id": "CI-PRIORITY-CONSISTENCY", "desc_ko": "우선순위 사전 정의와 일관", "kind": "enum-valid" },
+{ "id": "CI-CONG-GATING", "desc_ko": "從格 게이팅 조건 미충족 시 성립 금지", "kind": "gating" },
+{ "id": "CI-DET-HASH", "desc_ko": "RFC8785→SHA256 결정성 해시", "kind": "hash" }
+],
+"trace_templates": {
+"components": ["格局判定","成格條件","破格條件","扶抑","關係","조후","십신"],
+"examples": [
+{ "component": "格局判定", "label_ko": "정관격 기초", "policy_rule_id": "GK-ZHENGGUAN-CORE" },
+{ "component": "破格條件", "label_ko": "상관견관", "policy_rule_id": "GK-ZHENGGUAN-PEN-02" }
+]
+},
+"notes_ko": "본 정책은 Evidence Builder 출력(강약/십신/관계/조후 투영)을 점수화하여 격국을 결정하며, 외부 LLM 임의 추론을 금지한다."
+}

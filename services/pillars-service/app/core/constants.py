@@ -8,7 +8,7 @@ EARTHLY_BRANCHES = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申
 SEXAGENARY_CYCLE = [HEAVENLY_STEMS[i % 10] + EARTHLY_BRANCHES[i % 12] for i in range(60)]
 
 YEAR_ANCHOR = (1984, "甲子")  # 1984 JiaZi year anchor
-DAY_ANCHOR = (1984, 2, 2, "甲子")  # 1984-02-02 JiaZi day anchor
+DAY_ANCHOR = (1900, 1, 1, "甲戌")  # 1900-01-01 = 甲戌 (verified standard anchor)
 
 # Month stem mapping by year stem (오호둔)
 YEAR_STEM_TO_MONTH_START = {

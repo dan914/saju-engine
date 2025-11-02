@@ -1,0 +1,94 @@
+{
+  "version": "1.1",
+  "generated_on": "2025-10-05T00:00:00+09:00",
+  "source_refs": [
+    "子平真詮",
+    "三命通會",
+    "Modern Bazi practice"
+  ],
+  "disclaimer": "본 정책은 대운(十年大運) 계산에 관한 현대 실무 기준을 정형화합니다. 학파마다 차이가 있을 수 있으며, 본 정책은 기본적으로 3일=1년과 월주 다음 갑자부터의 진행을 채택하되, 절기 기준은 type(jie/qi)로 일반화합니다.",
+  "dependencies": {
+    "sixty_jiazi": {
+      "name": "sixty_jiazi",
+      "version": "1.0",
+      "signature": "34b9825fcca720918db2af1307ffd7d5be083cb97dea49f4ddc762081cff8945"
+    },
+    "lifecycle_stages": {
+      "name": "lifecycle_stages",
+      "version": "1.0",
+      "signature": "56d369cbc6df590f40abb0993f65e310e061b2cb239fefe45075c1ae08c0ccf0"
+    },
+    "tengods_logic": {
+      "name": "branch_tengods_policy",
+      "version": "1.1",
+      "signature": "40bbfbf8450db45fe8a2da9c9be74c3a8ccce834ee7a547576f7bbd131e3aa73",
+      "use": "logic_only_for_stem_relations"
+    }
+  },
+  "direction": {
+    "rule": "year_stem_yinyang_x_gender",
+    "matrix": {
+      "male": {
+        "yang": "forward",
+        "yin": "backward"
+      },
+      "female": {
+        "yang": "backward",
+        "yin": "forward"
+      }
+    },
+    "labels": {
+      "ko": {
+        "forward": "순행",
+        "backward": "역행"
+      },
+      "en": {
+        "forward": "Forward",
+        "backward": "Reverse"
+      }
+    }
+  },
+  "start_age": {
+    "method": "solar_term_interval",
+    "reference": {
+      "type": "jie",
+      "forward": "next",
+      "backward": "prev"
+    },
+    "conversion": {
+      "days_per_year": 3.0,
+      "hours_per_day": 24.0
+    },
+    "rounding": {
+      "decimals": 1,
+      "mode": "half_up"
+    }
+  },
+  "generation": {
+    "start_from_next_after_month": true,
+    "age_series": {
+      "step_years": 10,
+      "count": 10,
+      "display_decimals": 0,
+      "display_round": "floor"
+    },
+    "emit": {
+      "ten_god_for_stem": true,
+      "lifecycle_for_branch": true
+    }
+  },
+  "labels": {
+    "ko": {
+      "luck_pillar": "대운",
+      "age": "시작나이",
+      "ten_god": "십신",
+      "lifecycle": "12운성"
+    },
+    "en": {
+      "luck_pillar": "Decade Luck",
+      "age": "StartAge",
+      "ten_god": "TenGod",
+      "lifecycle": "Lifecycle"
+    }
+  }
+}

@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.saju.engine/policies/shensha_v2_policy.schema.json",
+  "title": "Shensha v2 Policy Schema (KO-first)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version","generated_on","engine_name_ko","source_refs","disclaimer","signature_mode","signature","options","dependencies","pillars","shensha_catalog","rule_groups","aggregation","ui_labels","ci_checks"],
+  "properties": {
+    "version": { "type": "string" },
+    "generated_on": { "type": "string", "format": "date-time" },
+    "engine_name_ko": { "type": "string" },
+    "source_refs": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "disclaimer": { "type": "string" },
+    "signature_mode": { "enum": ["sha256_auto_injected"] },
+    "signature": { "type": "string" },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["default_locale"],
+      "properties": { "default_locale": { "const": "ko-KR" } }
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sixty_jiazi","branch_tengods_policy","elements_distribution","lifecycle_stages","localization_ko","localization_en"],
+      "properties": {
+        "sixty_jiazi": { "$ref": "#/$defs/depRef" },
+        "branch_tengods_policy": { "$ref": "#/$defs/depRef" },
+        "elements_distribution": { "$ref": "#/$defs/depRef" },
+        "lifecycle_stages": { "$ref": "#/$defs/depRef" },
+        "localization_ko": { "$ref": "#/$defs/depRef" },
+        "localization_en": { "$ref": "#/$defs/depRef" }
+      }
+    },
+    "pillars": { "type": "array", "items": { "enum": ["year","month","day","hour"] }, "minItems": 4, "maxItems": 4 },
+    "shensha_catalog": {
+      "type": "array",
+      "minItems": 18,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["key","labels","type","score_hint"],
+        "properties": {
+          "key": { "type": "string" },
+          "labels": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["ko","zh","en"],
+            "properties": { "ko": { "type": "string" }, "zh": { "type": "string" }, "en": { "type": "string" } }
+          },
+          "type": { "enum": ["吉","中","烈","凶"] },
+          "score_hint": { "type": "integer", "minimum": -5, "maximum": 5 }
+        }
+      }
+    },
+    "rule_groups": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["day_stem_based","year_branch_based","pair_conflict_based","literacy_based"],
+      "properties": {
+        "day_stem_based": { "$ref": "#/$defs/ruleGroup" },
+        "year_branch_based": { "$ref": "#/$defs/ruleGroup" },
+        "pair_conflict_based": { "$ref": "#/$defs/ruleGroup" },
+        "literacy_based": { "$ref": "#/$defs/ruleGroup" }
+      }
+    },
+    "aggregation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["per_pillar_mode","score_hint_mode","score_hint_formula","score_hint_note_ko","tie_breaker","type_priority"],
+      "properties": {
+        "per_pillar_mode": { "enum": ["set"] },
+        "score_hint_mode": { "enum": ["sum_by_type"] },
+        "score_hint_formula": { "type": "string", "minLength": 1 },
+        "score_hint_note_ko": { "type": "string", "minLength": 1 },
+        "tie_breaker": { "type": "array", "items": { "type": "string" }, "minItems": 2 },
+        "type_priority": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["吉","中","烈","凶"],
+          "properties": { "吉": { "type": "integer" }, "中": { "type": "integer" }, "烈": { "type": "integer" }, "凶": { "type": "integer" } }
+        }
+      }
+    },
+    "ui_labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ko"],
+      "properties": {
+        "ko": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["disclaimer","type_explain"],
+          "properties": {
+            "disclaimer": { "type": "string" },
+            "type_explain": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["吉","中","烈","凶"],
+              "properties": { "吉": { "type": "string" }, "中": { "type": "string" }, "烈": { "type": "string" }, "凶": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "ci_checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "on_fail": { "enum": ["fail_build","warn"] },
+        "assertions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id","expr"],
+            "properties": { "id": { "type": "string" }, "expr": { "type": "string" } }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "depRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name","version","signature"],
+      "properties": { "name": { "type": "string" }, "version": { "type": "string" }, "signature": { "type": "string" } }
+    },
+    "ruleGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description_ko","rules"],
+      "properties": {
+        "description_ko": { "type": "string" },
+        "rules": { "type": "array", "items": { "type": "object" } }
+      }
+    }
+  },
+  "description": "Schema for KO-first Shensha v2 policy; complex pair/group invariants are validated by property tests/CI."
+}

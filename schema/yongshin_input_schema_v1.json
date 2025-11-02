@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/yongshin_input_v1.json",
+  "title": "Yongshin Selector Input v1.0",
+  "type": "object",
+  "required": ["day_master_gan","day_master_element","strength","elements_distribution","relation_summary","climate","context"],
+  "properties": {
+    "day_master_gan": { "type": "string", "minLength": 1 },
+    "day_master_element": { "type": "string", "enum": ["목","화","토","금","수"] },
+    "strength": {
+      "type": "object",
+      "required": ["score","type"],
+      "properties": {
+        "score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "type":  { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "elements_distribution": {
+      "type": "object",
+      "properties": {
+        "목": { "type": "number", "minimum": 0, "maximum": 1 },
+        "화": { "type": "number", "minimum": 0, "maximum": 1 },
+        "토": { "type": "number", "minimum": 0, "maximum": 1 },
+        "금": { "type": "number", "minimum": 0, "maximum": 1 },
+        "수": { "type": "number", "minimum": 0, "maximum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "relation_summary": {
+      "type": "object",
+      "properties": {
+        "sanhe": { "type": "number", "minimum": 0, "maximum": 1 },
+        "sanhe_element": { "type": "string", "enum": ["목","화","토","금","수", ""] },
+        "ganhe": { "type": "number", "minimum": 0, "maximum": 1 },
+        "ganhe_result": { "type": "string", "enum": ["목","화","토","금","수", ""] },
+        "liuhe": { "type": "number", "minimum": 0, "maximum": 1 },
+        "chong": { "type": "number", "minimum": 0, "maximum": 1 },
+        "xing":  { "type": "number", "minimum": 0, "maximum": 1 },
+        "hai":   { "type": "number", "minimum": 0, "maximum": 1 },
+        "yuanjin":{ "type": "number", "minimum": 0, "maximum": 1 },
+        "relation_hits": { "type": "integer", "minimum": 0 },
+        "relation_misses": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "climate": {
+      "type": "object",
+      "required": ["season_element","support"],
+      "properties": {
+        "season_element": { "type": "string", "enum": ["목","화","토","금","수"] },
+        "support": { "type": "string", "enum": ["강함","보통","약함"] }
+      }
+    },
+    "shensha": { "type": "array", "items": { "type": "string" } },
+    "context": {
+      "type": "object",
+      "properties": {
+        "month_branch": { "type": "string", "minLength": 1 },
+        "strict": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

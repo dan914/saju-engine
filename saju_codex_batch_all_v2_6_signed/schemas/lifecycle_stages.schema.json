@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Lifecycle Stages Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "Stage": {
+      "type": "string",
+      "enum": [
+        "長生",
+        "沐浴",
+        "冠帶",
+        "臨官",
+        "帝旺",
+        "衰",
+        "病",
+        "死",
+        "墓",
+        "絕",
+        "胎",
+        "養"
+      ]
+    },
+    "BranchStageMap": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "子": { "$ref": "#/$defs/Stage" },
+        "丑": { "$ref": "#/$defs/Stage" },
+        "寅": { "$ref": "#/$defs/Stage" },
+        "卯": { "$ref": "#/$defs/Stage" },
+        "辰": { "$ref": "#/$defs/Stage" },
+        "巳": { "$ref": "#/$defs/Stage" },
+        "午": { "$ref": "#/$defs/Stage" },
+        "未": { "$ref": "#/$defs/Stage" },
+        "申": { "$ref": "#/$defs/Stage" },
+        "酉": { "$ref": "#/$defs/Stage" },
+        "戌": { "$ref": "#/$defs/Stage" },
+        "亥": { "$ref": "#/$defs/Stage" }
+      },
+      "required": [
+        "子",
+        "丑",
+        "寅",
+        "卯",
+        "辰",
+        "巳",
+        "午",
+        "未",
+        "申",
+        "酉",
+        "戌",
+        "亥"
+      ]
+    }
+  },
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "generated_on": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "mappings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "甲": { "$ref": "#/$defs/BranchStageMap" },
+        "乙": { "$ref": "#/$defs/BranchStageMap" },
+        "丙": { "$ref": "#/$defs/BranchStageMap" },
+        "丁": { "$ref": "#/$defs/BranchStageMap" },
+        "戊": { "$ref": "#/$defs/BranchStageMap" },
+        "己": { "$ref": "#/$defs/BranchStageMap" },
+        "庚": { "$ref": "#/$defs/BranchStageMap" },
+        "辛": { "$ref": "#/$defs/BranchStageMap" },
+        "壬": { "$ref": "#/$defs/BranchStageMap" },
+        "癸": { "$ref": "#/$defs/BranchStageMap" }
+      },
+      "required": [
+        "甲",
+        "乙",
+        "丙",
+        "丁",
+        "戊",
+        "己",
+        "庚",
+        "辛",
+        "壬",
+        "癸"
+      ]
+    },
+    "labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "zh": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Stage" },
+          "minItems": 12,
+          "maxItems": 12
+        },
+        "ko": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 12,
+          "maxItems": 12
+        },
+        "en": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 12,
+          "maxItems": 12
+        }
+      },
+      "required": ["zh", "ko", "en"]
+    }
+  },
+  "required": ["version", "generated_on", "source_refs", "mappings", "labels"]
+}
