@@ -1,0 +1,77 @@
+name: latency-probe
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "fastapi>=0.111,<0.115" "uvicorn[standard]>=0.30,<0.31"
+          sudo apt-get update
+          sudo apt-get install -y jq
+      - name: Run latency probe
+        run: |
+          python scripts/probe_analysis.py \
+            --iterations 25 \
+            --warmup 3 \
+            --output "baselines/analysis_latency_latest.json" \
+            --history "baselines/analysis_latency_history.csv" \
+            --baseline-path "baselines/analysis_latency_baseline.json" \
+            --regression-threshold 1.1
+      - name: Extract probe metrics
+        if: always()
+        id: probe_metrics
+        run: |
+          LATEST_FILE="baselines/analysis_latency_latest.json"
+          BASELINE_FILE="baselines/analysis_latency_baseline.json"
+          if [ -f "$LATEST_FILE" ]; then
+            latest_p95=$(jq '.p95_ms' "$LATEST_FILE")
+            latest_mean=$(jq '.mean_ms' "$LATEST_FILE")
+            echo "p95_ms=$latest_p95" >> "$GITHUB_OUTPUT"
+            echo "mean_ms=$latest_mean" >> "$GITHUB_OUTPUT"
+          else
+            echo "p95_ms=" >> "$GITHUB_OUTPUT"
+            echo "mean_ms=" >> "$GITHUB_OUTPUT"
+          fi
+          if [ -f "$BASELINE_FILE" ]; then
+            baseline_p95=$(jq '.p95_ms' "$BASELINE_FILE")
+            echo "baseline_p95_ms=$baseline_p95" >> "$GITHUB_OUTPUT"
+          else
+            echo "baseline_p95_ms=" >> "$GITHUB_OUTPUT"
+          fi
+          echo "threshold_multiplier=1.1" >> "$GITHUB_OUTPUT"
+      - name: Upload latency artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: analysis-latency-baselines
+          path: 'baselines'
+      - name: Notify Slack on regression
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          GITHUB_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          P95: ${{ steps.probe_metrics.outputs.p95_ms }}
+          BASELINE: ${{ steps.probe_metrics.outputs.baseline_p95_ms }}
+          THRESHOLD: ${{ steps.probe_metrics.outputs.threshold_multiplier }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK_URL" ]; then
+            echo "SLACK_WEBHOOK_URL not set; skipping Slack notification."
+            exit 0
+          fi
+          latest_msg=${P95:-"unknown"}
+          baseline_msg=${BASELINE:-"unknown"}
+          threshold_msg=${THRESHOLD:-"unknown"}
+          text="⚠️ Analysis latency probe failed. Latest p95=${latest_msg} ms (baseline ${baseline_msg} ms, threshold ${threshold_msg}x). Details: ${GITHUB_RUN_URL}"
+          payload=$(jq -n --arg text "$text" '{text: $text}')
+          curl -X POST -H 'Content-type: application/json' --data "$payload" "$SLACK_WEBHOOK_URL"
