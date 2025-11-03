@@ -9,9 +9,6 @@ from datetime import datetime
 from pathlib import Path
 
 # Add paths
-sys.path.insert(0, str(Path(__file__).parent / "services" / "analysis-service"))
-sys.path.insert(0, str(Path(__file__).parent / "services" / "common"))
-
 print("=" * 80)
 print("FULL ORCHESTRATOR TEST - 2000-09-14 10:00 AM Seoul (Male)")
 print("=" * 80)
@@ -56,9 +53,13 @@ except Exception as e:
 print("STEP 2: Run Full Orchestrator")
 print("-" * 80)
 
-try:
-    from app.core.saju_orchestrator import SajuOrchestrator
+# Use Poetry-based imports via script loader
+from scripts._script_loader import get_analysis_module
 
+# Load required classes/functions from services
+SajuOrchestrator = get_analysis_module("saju_orchestrator", "SajuOrchestrator")
+
+try:
     orchestrator = SajuOrchestrator()
     print("✅ Orchestrator initialized")
     print()

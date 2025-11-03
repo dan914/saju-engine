@@ -10,11 +10,12 @@ from pathlib import Path
 
 # Setup paths
 project_root = Path(__file__).parent
-sys.path.insert(0, str(project_root))
-sys.path.insert(0, str(project_root / "services" / "analysis-service"))
-sys.path.insert(0, str(project_root / "services" / "common"))
 
-from app.core.saju_orchestrator import SajuOrchestrator
+# Use Poetry-based imports via script loader
+from scripts._script_loader import get_analysis_module
+
+# Load required classes/functions from services
+SajuOrchestrator = get_analysis_module("saju_orchestrator", "SajuOrchestrator")
 
 from scripts.calculate_pillars_traditional import calculate_four_pillars
 
@@ -90,7 +91,7 @@ def main():
         print("Metadata:")
         print(f"  LMT offset: {metadata.get('lmt_offset', 'MISSING')} minutes")
         print(f"  DST applied: {metadata.get('dst_applied', 'MISSING')}")
-        print(f"  Zi transition: {metadata.get('zi_transition', 'MISSING')}")
+        print(f"  Zi transition: {metadata.get('zi_transition_applied', 'MISSING')}")
         print()
 
         # Check for issues in pillars
@@ -115,18 +116,22 @@ def main():
     try:
         orchestrator = SajuOrchestrator()
 
-        # Build request
+        pillars_payload = {
+            "year": pillars_result["year"],
+            "month": pillars_result["month"],
+            "day": pillars_result["day"],
+            "hour": pillars_result["hour"],
+        }
+        birth_context = {
+            "birth_dt": "2000-09-14T10:00:00+09:00",
+            "timezone": "Asia/Seoul",
+            "gender": "male",
+        }
+
         request_data = {
-            "pillars": {
-                "year": {"pillar": pillars_result["year"]},
-                "month": {"pillar": pillars_result["month"]},
-                "day": {"pillar": pillars_result["day"]},
-                "hour": {"pillar": pillars_result["hour"]},
-            },
+            "pillars": {slot: {"pillar": value} for slot, value in pillars_payload.items()},
             "options": {
-                "birth_dt": "2000-09-14T10:00:00+09:00",
-                "timezone": "Asia/Seoul",
-                "gender": "male",
+                **birth_context,
                 "calendar": "solar",
             },
         }
@@ -134,7 +139,7 @@ def main():
         print(f"Request: {json.dumps(request_data, indent=2, ensure_ascii=False)}")
         print()
 
-        result = orchestrator.orchestrate(request_data)
+        result = orchestrator.analyze(pillars_payload, birth_context)
 
         print("✅ Orchestrator completed successfully")
         print()
@@ -146,7 +151,7 @@ def main():
         # Strength
         strength = result.get("strength", {})
         print(
-            f"Strength: {strength.get('grade_code', 'MISSING')} (score: {strength.get('total', 'MISSING')})"
+            f"Strength: {strength.get('grade_code', 'MISSING')} (score: {strength.get('score', 'MISSING')})"
         )
 
         # Yongshin

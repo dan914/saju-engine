@@ -9,9 +9,6 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 # Add paths
-sys.path.insert(0, str(Path(__file__).parent / "services" / "analysis-service"))
-sys.path.insert(0, str(Path(__file__).parent / "services" / "common"))
-
 print("=" * 80)
 print("SAJU ANALYSIS: 1963-12-13 8:30 PM Seoul (Male)")
 print("=" * 80)
@@ -38,7 +35,12 @@ print(f"  時柱: {pillars_result['hour']}")
 print()
 
 # Step 2: Run orchestrator
-from app.core.saju_orchestrator import SajuOrchestrator
+
+# Use Poetry-based imports via script loader
+from scripts._script_loader import get_analysis_module
+
+# Load required classes/functions from services
+SajuOrchestrator = get_analysis_module("saju_orchestrator", "SajuOrchestrator")
 
 orchestrator = SajuOrchestrator()
 

@@ -3,21 +3,19 @@
 from __future__ import annotations
 
 import csv
-import sys
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
-PILLARS_SRC = REPO_ROOT / "services" / "pillars-service"
-for candidate in (REPO_ROOT, PILLARS_SRC):
-    candidate_str = str(candidate)
-    if candidate_str not in sys.path:
-        sys.path.append(candidate_str)
+# Use Poetry-based imports via script loader
+from scripts._script_loader import get_pillars_module
 
-from app.core.month import MonthBranchResolver, SimpleSolarTermLoader
-from app.core.pillars import PillarsCalculator
-from app.core.resolve import DayBoundaryCalculator, TimeResolver
+# Load required classes/functions from pillars-service
+MonthBranchResolver = get_pillars_module("month", "MonthBranchResolver")
+SimpleSolarTermLoader = get_pillars_module("month", "SimpleSolarTermLoader")
+PillarsCalculator = get_pillars_module("pillars", "PillarsCalculator")
+DayBoundaryCalculator = get_pillars_module("resolve", "DayBoundaryCalculator")
+TimeResolver = get_pillars_module("resolve", "TimeResolver")
 
 OUTPUT_PATH = Path("data/canonical/pillars_generated_2021_2050.csv")
 TIMEZONE = "Asia/Seoul"

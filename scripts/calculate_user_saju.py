@@ -3,27 +3,26 @@
 Calculate complete Saju analysis for user birth data.
 Birth: 2000-09-14 10:00 (양력, 오전 10시)
 Location: Seoul, Korea (Asia/Seoul timezone)
+
+Usage:
+    poetry run python scripts/calculate_user_saju.py
 """
 
 import json
-import sys
 from datetime import datetime
-from pathlib import Path
 
-# Add services to path
-repo_root = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(repo_root / "services" / "pillars-service"))
-sys.path.insert(0, str(repo_root / "services" / "analysis-service"))
+# Use Poetry-based imports via script loader
+from scripts._script_loader import (
+    get_analysis_module,
+    get_pillars_module,
+)
 
-# Import after path setup
-from app.core.engine import PillarsEngine as PillarsEngineClass
-from app.models.pillars import ComputeRequest
-
-# Switch to analysis-service imports
-sys.path.insert(0, str(repo_root / "services" / "analysis-service"))
-from app.core.engine import AnalysisEngine
-from app.core.korean_enricher import KoreanLabelEnricher
-from app.models import AnalysisRequest
+# Load required classes from services
+PillarsEngineClass = get_pillars_module("engine", "PillarsEngine")
+PillarsComputeRequest = get_pillars_module("pillars", "PillarsComputeRequest")
+AnalysisEngine = get_analysis_module("engine", "AnalysisEngine")
+KoreanLabelEnricher = get_analysis_module("korean_enricher", "KoreanLabelEnricher")
+AnalysisRequest = get_analysis_module("analysis", "AnalysisRequest")
 
 
 def main():
@@ -42,7 +41,11 @@ def main():
     birth_dt = datetime(2000, 9, 14, 10, 0, 0)
     timezone = "Asia/Seoul"
 
-    request = ComputeRequest(birth_dt=birth_dt, timezone=timezone, zi_hour_mode="default")
+    request = PillarsComputeRequest(
+        localDateTime=birth_dt,
+        timezone=timezone,
+        zi_hour_mode="default",
+    )
 
     print(f"입력 정보:")
     print(f"  생년월일시: {birth_dt}")
@@ -96,56 +99,73 @@ def main():
     # Print Relations
     print("🔗 관계(關係) - Relations:")
     print("-" * 80)
-    if analysis_result.relations.he6:
-        print(f"  육합(六合): {analysis_result.relations.he6}")
-    if analysis_result.relations.sanhe:
-        print(f"  삼합(三合): {analysis_result.relations.sanhe}")
-    if analysis_result.relations.chong:
-        print(f"  충(沖): {analysis_result.relations.chong}")
-    if analysis_result.relations.xing:
-        print(f"  형(刑): {analysis_result.relations.xing}")
-    if analysis_result.relations.po:
-        print(f"  파(破): {analysis_result.relations.po}")
-    if analysis_result.relations.hai:
-        print(f"  해(害): {analysis_result.relations.hai}")
-    if not any(
-        [
-            analysis_result.relations.he6,
-            analysis_result.relations.sanhe,
-            analysis_result.relations.chong,
-            analysis_result.relations.xing,
-            analysis_result.relations.po,
-            analysis_result.relations.hai,
-        ]
-    ):
+    relations = analysis_result.relations
+    priority_hit = relations.priority_hit or "(우선순위 없음)"
+    print(f"  우선순위 패턴: {priority_hit}")
+    if relations.boosts:
+        print("  주요 작용:")
+        for boost in relations.boosts[:5]:
+            label = boost.get("type") or boost.get("id") or boost.get("name") or "패턴"
+            formed = boost.get("formed")
+            element = boost.get("element")
+            details = ", ".join(
+                f"{k}={v}" for k, v in boost.items() if k not in {"type", "id", "name", "formed", "element"}
+            )
+            status = "성립" if formed else "미성립"
+            element_note = f" ({element})" if element else ""
+            extra = f" [{details}]" if details else ""
+            print(f"    - {label}{element_note}: {status}{extra}")
+    elif relations.notes:
+        for note in relations.notes:
+            print(f"    - {note}")
+    else:
         print("  (관계 없음)")
     print()
 
     # Print Strength
     print("💪 강약(強弱) - Strength:")
     print("-" * 80)
-    print(f"  일간 세력: {analysis_result.strength.level}")
-    print(f"  근거:")
-    for key, value in analysis_result.strength.basis.items():
-        print(f"    {key}: {value}")
+    strength = analysis_result.strength
+    grade = strength.grade_code or "알 수 없음"
+    bucket = strength.bin or "unknown"
+    print(f"  등급: {grade} ({bucket})")
+    if strength.score is not None:
+        print(f"  점수: {strength.score:.2f}")
+    if strength.score_normalized is not None:
+        print(f"  정규화 점수: {strength.score_normalized:.2f}")
+    if strength.details:
+        print("  근거:")
+        for key, value in strength.details.model_dump(exclude_none=True).items():
+            print(f"    {key}: {value}")
     print()
 
     # Print Structure
     print("🏛️ 격국(格局) - Structure:")
     print("-" * 80)
-    print(f"  주격국: {analysis_result.structure.primary}")
-    print(f"  신뢰도: {analysis_result.structure.confidence}")
-    if analysis_result.structure.candidates:
-        print(f"  후보:")
-        for candidate in analysis_result.structure.candidates[:3]:
-            print(f"    - {candidate}")
+    structure = analysis_result.structure
+    if structure:
+        print(f"  주격국: {structure.primary}")
+        if structure.confidence is not None:
+            print(f"  신뢰도: {structure.confidence}")
+        if structure.candidates:
+            print("  후보:")
+            for candidate in structure.candidates[:3]:
+                print(f"    - {candidate}")
+    else:
+        print("  (격국 정보 없음)")
     print()
 
     # Print Luck
     print("🔮 대운(大運) - Luck:")
     print("-" * 80)
-    print(f"  대운 시작 나이: {analysis_result.luck.start_age}세")
-    print(f"  대운 방향: {analysis_result.luck_direction.direction}")
+    if analysis_result.luck.start_age is not None:
+        print(f"  대운 시작 나이: {analysis_result.luck.start_age}세")
+    luck_direction = (
+        analysis_result.luck_direction.direction
+        if analysis_result.luck_direction and analysis_result.luck_direction.direction
+        else "알 수 없음"
+    )
+    print(f"  대운 방향: {luck_direction}")
     print()
 
     # Print Shensha
@@ -186,36 +206,53 @@ def main():
     # Show enriched Strength
     print("강약 (한국어 보강):")
     print("-" * 80)
-    if "level_ko" in enriched.get("strength", {}):
-        print(f"  일간 세력: {enriched['strength']['level']} → {enriched['strength']['level_ko']}")
+    strength_enriched = enriched.get("strength", {})
+    if strength_enriched:
+        grade = strength_enriched.get("grade_code")
+        grade_ko = strength_enriched.get("grade_code_ko")
+        bin_label = strength_enriched.get("bin")
+        if grade and grade_ko:
+            print(f"  등급: {grade} → {grade_ko}")
+        elif grade:
+            print(f"  등급: {grade}")
+        if bin_label:
+            print(f"  강약 구간: {bin_label}")
     else:
-        print(f"  일간 세력: {enriched['strength']['level']}")
+        print("  (강약 데이터 없음)")
     print()
 
     # Show enriched Structure
     print("격국 (한국어 보강):")
     print("-" * 80)
-    if "primary_ko" in enriched.get("structure", {}):
+    structure_enriched = enriched.get("structure", {})
+    if "primary_ko" in structure_enriched:
         print(
-            f"  주격국: {enriched['structure']['primary']} → {enriched['structure']['primary_ko']}"
+            f"  주격국: {structure_enriched['primary']} → {structure_enriched['primary_ko']}"
         )
+    elif structure_enriched.get("primary"):
+        print(f"  주격국: {structure_enriched['primary']}")
     else:
-        print(f"  주격국: {enriched['structure']['primary']}")
-    if "confidence_ko" in enriched.get("structure", {}):
+        print("  (주격국 데이터 없음)")
+    if "confidence_ko" in structure_enriched:
         print(
-            f"  신뢰도: {enriched['structure']['confidence']} → {enriched['structure']['confidence_ko']}"
+            f"  신뢰도: {structure_enriched['confidence']} → {structure_enriched['confidence_ko']}"
         )
+    elif structure_enriched.get("confidence") is not None:
+        print(f"  신뢰도: {structure_enriched['confidence']}")
     print()
 
     # Show enriched Luck Direction
     print("대운 방향 (한국어 보강):")
     print("-" * 80)
-    if "direction_ko" in enriched.get("luck_direction", {}):
+    luck_dir_enriched = enriched.get("luck_direction", {})
+    if "direction_ko" in luck_dir_enriched:
         print(
-            f"  방향: {enriched['luck_direction']['direction']} → {enriched['luck_direction']['direction_ko']}"
+            f"  방향: {luck_dir_enriched['direction']} → {luck_dir_enriched['direction_ko']}"
         )
+    elif luck_dir_enriched.get("direction"):
+        print(f"  방향: {luck_dir_enriched['direction']}")
     else:
-        print(f"  방향: {enriched['luck_direction']['direction']}")
+        print("  (대운 방향 데이터 없음)")
     print()
 
     print("=" * 80)

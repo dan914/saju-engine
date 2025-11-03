@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Test user-provided Ten Gods engine"""
-import json
-import sys
+"""Test user-provided Ten Gods engine
 
-sys.path.insert(0, "services/analysis-service")
+Usage:
+    poetry run python run_user_ten_gods.py
+"""
+import json
 
 # User's engine code
 import copy

@@ -8,7 +8,7 @@ Tests 3 scenarios representing key strength buckets:
 3. 신강 (strong day master) - should pass with suppress strategy
 
 Usage:
-    python3 tools/e2e_smoke_v1_1.py
+    poetry run python tools/e2e_smoke_v1_1.py
 
 Output:
     Compact summary to stdout + detailed report to reports/e2e_smoke_log.md
@@ -18,10 +18,9 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-# Add services to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "services" / "analysis-service"))
+from scripts._script_loader import get_analysis_module
 
-from app.guard.llm_guard_v1_1 import LLMGuardV11
+LLMGuardV11 = get_analysis_module("guard.llm_guard_v1_1", "LLMGuardV11")
 
 
 def build_scenario_1_신약():

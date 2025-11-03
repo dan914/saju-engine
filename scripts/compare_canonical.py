@@ -5,23 +5,22 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import sys
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
 from typing import Iterable
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-PILLARS_SRC = REPO_ROOT / "services" / "pillars-service"
 
-for candidate in (REPO_ROOT, PILLARS_SRC):
-    candidate_str = str(candidate)
-    if candidate_str not in sys.path:
-        sys.path.append(candidate_str)
+# Use Poetry-based imports via script loader
+from scripts._script_loader import get_pillars_module
 
-from app.core.month import MonthBranchResolver, SimpleSolarTermLoader
-from app.core.pillars import PillarsCalculator
-from app.core.resolve import DayBoundaryCalculator, TimeResolver
+# Load required classes/functions from pillars-service
+MonthBranchResolver = get_pillars_module("month", "MonthBranchResolver")
+SimpleSolarTermLoader = get_pillars_module("month", "SimpleSolarTermLoader")
+PillarsCalculator = get_pillars_module("pillars", "PillarsCalculator")
+DayBoundaryCalculator = get_pillars_module("resolve", "DayBoundaryCalculator")
+TimeResolver = get_pillars_module("resolve", "TimeResolver")
 
 CANONICAL_ROOT = Path(__file__).resolve().parents[1] / "data" / "canonical"
 TERMS_ROOT = Path(__file__).resolve().parents[1] / "data"

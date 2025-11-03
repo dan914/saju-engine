@@ -4,21 +4,18 @@ from __future__ import annotations
 
 import csv
 import json
-import sys
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Iterable
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-if str(REPO_ROOT) not in sys.path:
-    sys.path.append(str(REPO_ROOT))
 
-SERVICE_PATH = REPO_ROOT / "services" / "pillars-service"
-if str(SERVICE_PATH) not in sys.path:
-    sys.path.append(str(SERVICE_PATH))
+# Use Poetry-based imports via script loader
+from scripts._script_loader import get_pillars_module
 
-from app.core.pillars import month_pillar
+# Load required classes/functions from services
+month_pillar = get_pillars_module("pillars", "month_pillar")
 
 CANONICAL_DIR = REPO_ROOT / "data" / "canonical"
 MANSE_MASTER = CANONICAL_DIR / "manse_master.csv"

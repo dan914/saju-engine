@@ -9,12 +9,15 @@ from pathlib import Path
 
 # Setup path
 repo_root = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(repo_root / "services" / "analysis-service"))
 
-from app.core.engine import AnalysisEngine
-from app.core.korean_enricher import KoreanLabelEnricher
-from app.models import AnalysisRequest
-from app.models.analysis import PillarInput
+# Use Poetry-based imports via script loader
+from scripts._script_loader import get_analysis_module
+
+# Load required classes/functions from services
+AnalysisEngine = get_analysis_module("engine", "AnalysisEngine")
+KoreanLabelEnricher = get_analysis_module("korean_enricher", "KoreanLabelEnricher")
+AnalysisRequest = get_analysis_module("models", "AnalysisRequest")
+PillarInput = get_analysis_module("analysis", "PillarInput")
 
 
 def main():

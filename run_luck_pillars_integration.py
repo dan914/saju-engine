@@ -8,10 +8,12 @@ import sys
 from pathlib import Path
 
 # Add paths
-sys.path.insert(0, str(Path(__file__).parent / "services" / "analysis-service"))
-sys.path.insert(0, str(Path(__file__).parent / "services" / "common"))
 
-from app.core.luck_pillars import LuckCalculator
+# Use Poetry-based imports via script loader
+from scripts._script_loader import get_analysis_module
+
+# Load required classes/functions from services
+LuckCalculator = get_analysis_module("luck_pillars", "LuckCalculator")
 
 # Load policy
 policy_path = (
