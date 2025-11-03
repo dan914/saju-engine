@@ -144,23 +144,22 @@ poetry run python tools/migrate_script_imports.py --apply --all
    - LLM Guard tests passed and report written
 ```
 
-### Test Suite Results (reference)
+### Test Suite Results
 
 ```bash
 ✅ tests/test_stage3_golden_cases.py
    - Current run: 43 passed, 59 skipped (expected)
    - 100% pass rate on active golden cases
 
-⚠️ services/analysis-service/tests/ (full suite)
-   - Status: Cannot run due to pre-existing conftest.py import issue
-   - Error: ModuleNotFoundError: No module named 'services'
-   - Last full run: original migration session (711/711 passing)
-   - Issue: Unrelated to script migration (test infrastructure problem)
+✅ services/analysis-service/tests/ (full suite) - RESOLVED
+   - Status: 711/711 tests passing (6.79s)
+   - Resolution: pytest.ini configuration added
+   - Zero regressions from script migration
    - Details: See docs/TEST_INFRASTRUCTURE_HANDOFF.md
 ```
 
-**Note on Test Infrastructure:**
-The analysis-service test suite has a pre-existing `conftest.py` import configuration issue that prevents it from running under Poetry. This is **not a regression** from the script migration - scripts themselves work correctly as validated by spot checks. The test infrastructure issue is documented separately for future resolution.
+**Test Infrastructure Resolution:**
+The analysis-service test suite conftest.py import issue has been **resolved** by adding a `pytest.ini` configuration file at repo root. All 711 tests now pass successfully, confirming zero regressions from the script migration.
 
 ### Health Check
 
@@ -402,13 +401,14 @@ Co-authored-by: Claude <noreply@anthropic.com>
 
 ## Sign-Off
 
-**Phase 2 Script Migration:** ✅ COMPLETE (with critical fix)
+**Phase 2 Script Migration:** ✅ COMPLETE (all issues resolved)
 
 **Completion Date:** 2025-11-03
-**Execution Time:** ~3.5 hours (1.5 initial + 2 fix)
-**Test Results:** ALL SCRIPTS WORKING
+**Execution Time:** ~4 hours (1.5 initial + 2 fix + 0.5 test infrastructure)
+**Test Results:** 711/711 passing, zero regressions
 **Critical Fix Applied:** sys.modules collision resolved
-**Ready for:** Final commit + CI/CD Updates
+**Test Infrastructure:** pytest.ini configuration added
+**Ready for:** CI/CD Updates
 
 **Next Phase:** Provider Refactor (DI pattern implementation)
 
