@@ -7,7 +7,21 @@ __pycache__/
 .env
 .venv/
 .env.local
+.env.*.local
 mcp-config.json
+
+# Secrets & Credentials
+*.key
+*.pem
+*_rsa
+*_dsa
+*_ecdsa
+*.p12
+*.pfx
+credentials.json
+secrets.yaml
+secrets.yml
+.claude/**/*.local.json
 
 # Generated artifacts
 *.sha256
