@@ -1,0 +1,368 @@
+# saju-common
+
+Shared utilities and infrastructure for 사주 앱 v1.4 microservices.
+
+## Features
+
+### 🚨 RFC7807 Error Handling
+- Standardized error responses with Problem Details JSON
+- 13 domain-specific exceptions covering all API scenarios
+- Automatic correlation IDs for distributed tracing
+- Extension fields for additional context
+
+### 🔍 Correlation ID Middleware
+- Extract or generate correlation IDs from request headers
+- Propagate correlation IDs through service call chain
+- Add X-Correlation-ID to all responses
+
+### 📊 Request Logging Middleware
+- Structured logging with JSON or text format
+- Request/response timing metrics (X-Response-Time header)
+- Configurable path exclusions (e.g., /health)
+- Correlation ID integration
+
+### 🏭 Application Factory
+- Standardized FastAPI app creation
+- Automatic middleware and handler registration
+- Configurable logging and error handling
+- Health and metadata endpoints
+
+## Installation
+
+### Editable Install (Development)
+
+From the repository root:
+
+```bash
+pip install -e services/common
+```
+
+### Regular Install
+
+```bash
+pip install services/common
+```
+
+### With Development Dependencies
+
+```bash
+pip install -e "services/common[dev]"
+```
+
+## Quick Start
+
+### Basic Usage
+
+```python
+from saju_common.app_factory import create_service_app
+
+# Create FastAPI app with all error handling and middleware
+app = create_service_app(
+    app_name="my-service",
+    version="1.0.0",
+    rule_id="v1",
+    json_logging=False,  # Use JSON logging in production
+)
+
+# Add your routes
+@app.get("/api/example")
+def example():
+    return {"message": "Hello, World!"}
+```
+
+### Raising Domain Exceptions
+
+```python
+from saju_common.exceptions import (
+    ValidationError,
+    NotFoundError,
+    PolicyLoadError,
+)
+
+@app.get("/api/users/{user_id}")
+def get_user(user_id: str):
+    if not user_id:
+        raise ValidationError("User ID is required")
+
+    user = db.get_user(user_id)
+    if not user:
+        raise NotFoundError(f"User {user_id} not found")
+
+    return user
+
+@app.get("/api/policy/{policy_name}")
+def get_policy(policy_name: str):
+    try:
+        policy = load_policy(policy_name)
+        return policy
+    except FileNotFoundError:
+        raise PolicyLoadError(f"Policy {policy_name} not found")
+```
+
+### Custom Middleware Configuration
+
+```python
+from saju_common.app_factory import create_service_app
+
+app = create_service_app(
+    app_name="my-service",
+    version="1.0.0",
+    rule_id="v1",
+    enable_middleware=True,
+    enable_handlers=True,
+    json_logging=True,  # Production mode
+    exclude_logging_paths=["/health", "/metrics", "/"],
+)
+```
+
+### Manual Middleware Setup
+
+```python
+from fastapi import FastAPI
+from saju_common.handlers import register_exception_handlers
+from saju_common.middleware import add_middleware, configure_logging
+
+app = FastAPI(title="My Service")
+
+# Configure logging
+configure_logging(json_format=True)
+
+# Register exception handlers
+register_exception_handlers(app)
+
+# Add middleware
+add_middleware(app, exclude_logging_paths=["/health"])
+```
+
+## Available Exceptions
+
+### Client Errors (4xx)
+
+| Exception | Status | Use Case |
+|-----------|--------|----------|
+| `ValidationError` | 400 | Invalid input, missing fields, business rule violations |
+| `UnauthorizedError` | 401 | Authentication required or failed |
+| `ForbiddenError` | 403 | Authenticated but not authorized |
+| `NotFoundError` | 404 | Resource doesn't exist |
+| `ConflictError` | 409 | Resource already exists, version conflict |
+| `RateLimitError` | 429 | API rate limit exceeded |
+
+### Server Errors (5xx)
+
+| Exception | Status | Use Case |
+|-----------|--------|----------|
+| `InternalError` | 500 | Unexpected exceptions, system errors |
+| `DependencyError` | 502 | Upstream service failures |
+| `ServiceUnavailableError` | 503 | Service temporarily unavailable |
+
+### Domain-Specific Exceptions
+
+| Exception | Status | Use Case |
+|-----------|--------|----------|
+| `PolicyLoadError` | 502 | Policy file loading/validation failed |
+| `CalculationError` | 500 | Calculation engine errors |
+| `LLMGuardError` | 422 | LLM Guard policy violations |
+| `TokenQuotaError` | 402 | Token/entitlement quota exceeded |
+
+## RFC7807 Response Format
+
+All exceptions return RFC7807-compliant Problem Details JSON:
+
+```json
+{
+  "type": "https://api.saju.app/errors/validation_error",
+  "title": "Validation Error",
+  "status": 400,
+  "detail": "User ID is required",
+  "correlation_id": "550e8400-e29b-41d4-a716-446655440000",
+  "instance": "/api/users/",
+  "errors": [
+    {
+      "loc": ["body", "user_id"],
+      "msg": "field required",
+      "type": "value_error.missing"
+    }
+  ]
+}
+```
+
+### Required Fields
+
+- `type`: URI identifying the problem type
+- `title`: Short, human-readable summary
+- `status`: HTTP status code
+- `detail`: Human-readable explanation
+
+### Extension Fields
+
+- `correlation_id`: Request correlation ID (always present)
+- `instance`: URI reference to specific occurrence (optional)
+- Custom fields via `**kwargs` in exception constructor
+
+## Correlation IDs
+
+### Automatic Generation
+
+If no correlation ID is provided in the request, one is automatically generated:
+
+```python
+# Request without X-Correlation-ID
+GET /api/users/123
+
+# Response includes generated ID
+X-Correlation-ID: 550e8400-e29b-41d4-a716-446655440000
+```
+
+### Header Propagation
+
+Correlation IDs are extracted from either:
+- `X-Correlation-ID` header (preferred)
+- `X-Request-ID` header (fallback)
+
+And added to:
+- Response `X-Correlation-ID` header
+- All log entries
+- RFC7807 error envelopes
+
+### Usage in Logs
+
+```python
+import logging
+
+logger = logging.getLogger(__name__)
+
+@app.get("/api/example")
+def example(request: Request):
+    correlation_id = request.state.correlation_id
+    logger.info("Processing request", extra={"correlation_id": correlation_id})
+    return {"status": "ok"}
+```
+
+## Logging
+
+### Text Logging (Development)
+
+```python
+from saju_common.middleware import configure_logging
+
+configure_logging(json_format=False)
+
+# Output:
+# 2025-11-06 01:00:00 - app.routes - INFO - GET /api/users/123
+```
+
+### JSON Logging (Production)
+
+```python
+configure_logging(json_format=True)
+
+# Output:
+# {"timestamp": "2025-11-06T01:00:00", "level": "INFO", "logger": "app.routes",
+#  "message": "GET /api/users/123", "correlation_id": "550e8400-...",
+#  "method": "GET", "path": "/api/users/123", "duration_ms": 45.2}
+```
+
+## Request Metrics
+
+All responses include timing information:
+
+```
+X-Response-Time: 45.23ms
+```
+
+Log entries include structured metrics:
+
+```json
+{
+  "event": "request_complete",
+  "method": "GET",
+  "path": "/api/users/123",
+  "status_code": 200,
+  "duration_ms": 45.23,
+  "correlation_id": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+## Testing
+
+### Running Tests
+
+```bash
+# All tests
+pytest services/common/tests/
+
+# Specific test file
+pytest services/common/tests/test_error_handling.py
+
+# With coverage
+pytest services/common/tests/ --cov=services/common --cov-report=html
+```
+
+### Contract Tests
+
+The package includes comprehensive contract tests for RFC7807 compliance:
+
+```bash
+pytest services/common/tests/test_error_handling.py -v
+```
+
+## Development
+
+### Install Development Dependencies
+
+```bash
+pip install -e "services/common[dev]"
+```
+
+### Code Quality Tools
+
+```bash
+# Format code
+black services/common/
+
+# Sort imports
+isort services/common/
+
+# Lint
+ruff check services/common/
+
+# Type check
+mypy services/common/
+```
+
+## Architecture
+
+```
+services/common/
+├── __init__.py              # Package exports
+├── pyproject.toml           # Package configuration
+├── README.md                # This file
+├── exceptions.py            # Domain exceptions + RFC7807
+├── handlers.py              # FastAPI exception handlers
+├── middleware.py            # Correlation ID + logging
+├── app_factory.py           # Application factory
+├── policy_loader.py         # Policy file loading
+├── trace.py                 # Trace metadata helpers
+├── saju_common/             # Domain-specific utilities
+│   ├── builtins.py
+│   ├── engines/
+│   ├── interfaces.py
+│   └── ...
+└── tests/
+    ├── test_error_handling.py
+    └── test_saju_common.py
+```
+
+## References
+
+- [RFC7807: Problem Details for HTTP APIs](https://datatracker.ietf.org/doc/html/rfc7807)
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [Phase 3 Remediation Plan](../../grand%20audit/phase3_remediation_plan.md)
+
+## License
+
+MIT
+
+## Maintainers
+
+Codex Team - codex@saju.app

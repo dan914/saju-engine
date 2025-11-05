@@ -1,29 +1,63 @@
-"""
-Saju Common Package - Shared Interfaces and Implementations
+"""Common utilities and infrastructure for 사주 앱 v1.4 services.
 
-Provides cross-service abstractions to avoid circular dependencies
-and hyphened module name issues.
+This package provides:
+- RFC7807 error handling with correlation IDs
+- Request logging and timing middleware
+- Application factory for standardized FastAPI apps
+- Domain-specific exceptions
+- Policy file loading utilities
+- Shared interfaces and implementations (Protocols)
+- Mapping tables and utilities
 
-Public API:
-- Protocols: TimeResolver, SolarTermLoader, DeltaTPolicy
-- Implementations: BasicTimeResolver, TableSolarTermLoader, SimpleDeltaT
-- Tables: SEASON_ELEMENT_BOOST, BRANCH_TO_SEASON, etc.
-- Factories: get_default_*()
-
-Version: 1.0.0
-Date: 2025-10-09 KST
-
-Usage:
-    >>> from services.common.saju_common import BasicTimeResolver, TableSolarTermLoader
-    >>> from services.common.saju_common import BRANCH_TO_SEASON
+Example:
+    >>> from saju_common import create_service_app, ValidationError
+    >>> app = create_service_app(
+    ...     app_name="my-service",
+    ...     version="1.0.0",
+    ...     rule_id="v1"
+    ... )
     >>>
-    >>> # Use protocol-based dependencies
+    >>> # Use domain-specific utilities
+    >>> from saju_common import BasicTimeResolver, BRANCH_TO_SEASON
     >>> time_resolver = BasicTimeResolver()
-    >>> utc_dt = time_resolver.to_utc(local_dt, "Asia/Seoul")
-    >>>
-    >>> # Access mapping tables
     >>> season = BRANCH_TO_SEASON["寅"]  # "spring"
 """
+
+# Application factory
+from .app_factory import create_service_app
+
+# Exceptions (RFC7807)
+from .exceptions import (
+    SajuBaseException,
+    ValidationError,
+    UnauthorizedError,
+    ForbiddenError,
+    NotFoundError,
+    ConflictError,
+    RateLimitError,
+    InternalError,
+    ServiceUnavailableError,
+    DependencyError,
+    PolicyLoadError,
+    CalculationError,
+    LLMGuardError,
+    TokenQuotaError,
+)
+
+# Middleware
+from .middleware import (
+    CorrelationIDMiddleware,
+    RequestLoggingMiddleware,
+    configure_logging,
+    add_middleware,
+)
+
+# Handlers
+from .handlers import register_exception_handlers
+
+# Legacy utilities (preserved for backward compatibility)
+from .policy_loader import resolve_policy_path
+from .trace import TraceMetadata
 
 # Protocols
 # Built-in implementations
@@ -62,6 +96,38 @@ from .timezone_handler import (
 )
 
 __all__ = [
+    # Version
+    "__version__",
+    # Application factory
+    "create_service_app",
+    # Exceptions (4xx)
+    "ValidationError",
+    "UnauthorizedError",
+    "ForbiddenError",
+    "NotFoundError",
+    "ConflictError",
+    "RateLimitError",
+    # Exceptions (5xx)
+    "InternalError",
+    "ServiceUnavailableError",
+    "DependencyError",
+    # Domain exceptions
+    "PolicyLoadError",
+    "CalculationError",
+    "LLMGuardError",
+    "TokenQuotaError",
+    # Base exception
+    "SajuBaseException",
+    # Middleware
+    "CorrelationIDMiddleware",
+    "RequestLoggingMiddleware",
+    "configure_logging",
+    "add_middleware",
+    # Handlers
+    "register_exception_handlers",
+    # Legacy
+    "TraceMetadata",
+    "resolve_policy_path",
     # Protocols
     "TimeResolver",
     "SolarTermLoader",
@@ -94,4 +160,4 @@ __all__ = [
     "TimezoneWarning",
 ]
 
-__version__ = "1.0.0"
+__version__ = "1.4.0"
