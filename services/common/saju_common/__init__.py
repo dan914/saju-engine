@@ -58,6 +58,9 @@ from .middleware import (
 # Handlers
 from .handlers import register_exception_handlers
 
+# Settings (centralized configuration)
+from .settings import SajuSettings, get_repo_root, settings
+
 # Legacy utilities (preserved for backward compatibility)
 from .policy_loader import resolve_policy_path
 from .trace import TraceMetadata
@@ -103,6 +106,10 @@ __all__ = [
     "__version__",
     # Application factory
     "create_service_app",
+    # Settings
+    "SajuSettings",
+    "get_repo_root",
+    "settings",
     # Dependency injection
     "Container",
     "get_default_container",
