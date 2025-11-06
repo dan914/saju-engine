@@ -3,17 +3,11 @@
 from __future__ import annotations
 
 import json
-import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Optional
 
-# Add services/common to path for policy_loader
-_COMMON_PATH = Path(__file__).resolve().parents[4] / "services" / "common"
-if str(_COMMON_PATH) not in sys.path:
-    sys.path.insert(0, str(_COMMON_PATH))
-
-from policy_loader import resolve_policy_path
+from saju_common.policy_loader import resolve_policy_path
 
 # Use policy_loader for flexible policy resolution
 POLICY_PATH = resolve_policy_path("climate_map_v1.json")

@@ -6,41 +6,61 @@ Works with actual engine APIs - no wrappers, no adapters.
 
 from __future__ import annotations
 
-from datetime import datetime
-from typing import Any, Dict, List, Tuple
+import logging
+import time
+from dataclasses import asdict
+from datetime import date, datetime, timedelta
+from pathlib import Path
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 from zoneinfo import ZoneInfo
 
-from app.core.climate import ClimateContext, ClimateEvaluator
+MODULE_ROOT = Path(__file__).resolve()
+PROJECT_ROOT = MODULE_ROOT.parents[4]
+DATA_PATH = PROJECT_ROOT / "data"
+
+from saju_common.policy_loader import load_policy_json
+from saju_common import BasicTimeResolver, FileSolarTermLoader
+
+LOGGER = logging.getLogger(__name__)
+
+from .climate import ClimateContext, ClimateEvaluator
+from .compat_layer import build_compat_view, resolve_branch_stem
 
 # Stage-3 engines (MVP policy-driven engines)
-from app.core.climate_advice import ClimateAdvice
-from app.core.combination_element import normalize_distribution, transform_wuxing
-from app.core.engine_summaries import EngineSummariesBuilder
-from app.core.evidence_builder import build_evidence  # Function-based API
-from app.core.gyeokguk_classifier import GyeokgukClassifier
-from app.core.korean_enricher import KoreanLabelEnricher
-from app.core.llm_guard import LLMGuard
-from app.core.luck import ShenshaCatalog
-from app.core.luck_flow import LuckFlow
-from app.core.luck_pillars import LuckCalculator
-from app.core.pattern_profiler import PatternProfiler
-from app.core.recommendation import RecommendationGuard
-from app.core.relation_weight import RelationWeightEvaluator
-from app.core.relations import RelationContext, RelationTransformer
-from app.core.relations_extras import RelationAnalyzer
-from app.core.relations_extras import RelationContext as RelationsExtrasContext
-from app.core.school import SchoolProfileManager
+from .climate_advice import ClimateAdvice
+from .combination_element import normalize_distribution, transform_wuxing
+from .engine_summaries import EngineSummariesBuilder
+from .evidence_builder import build_evidence  # Function-based API
+from .gyeokguk_classifier import GyeokgukClassifier
+from .korean_enricher import KoreanLabelEnricher
+from .llm_guard import LLMGuard
+from .luck import ShenshaCatalog
+from .luck_flow import LuckFlow
+from .luck_seed_builder import LuckSeedBuilder, compute_strength_scalar
+from .luck_pillars import LuckCalculator
+from .pattern_profiler import PatternProfiler
+from .recommendation import RecommendationGuard
+from .relation_weight import RelationWeightEvaluator
+from .relations import RelationContext, RelationTransformer
+from .relations_extras import RelationAnalyzer
+from .relations_extras import RelationContext as RelationsExtrasContext
+from .school import SchoolProfileManager
 
 # Core engines
-from app.core.strength_v2 import StrengthEvaluator
-from app.core.ten_gods import TenGodsCalculator
-from app.core.text_guard import TextGuard
-from app.core.twelve_stages import TwelveStagesCalculator
+from .strength_v2 import StrengthEvaluator
+from .ten_gods import TenGodsCalculator
+from .text_guard import TextGuard
+from .twelve_stages import TwelveStagesCalculator
 
 # Meta engines
-from app.core.void import apply_void_flags, explain_void
-from app.core.yongshin_selector_v2 import YongshinSelector
-from app.core.yuanjin import apply_yuanjin_flags, explain_yuanjin
+from .void import apply_void_flags, explain_void
+from .yongshin_selector_v2 import YongshinSelector
+from .yuanjin import apply_yuanjin_flags, explain_yuanjin
+from saju_common.engines import (
+    AnnualLuckCalculator,
+    DailyLuckCalculator,
+    MonthlyLuckCalculator,
+)
 
 # Season mapping from branch
 BRANCH_TO_SEASON = {
@@ -165,28 +185,21 @@ class SajuOrchestrator:
         self.shensha = ShenshaCatalog()
 
         # Ten Gods calculator
-        import json
-        from pathlib import Path
-
-        policy_path = Path("saju_codex_batch_all_v2_6_signed/policies/branch_tengods_policy.json")
-        with open(policy_path, encoding="utf-8") as f:
-            ten_gods_policy = json.load(f)
+        ten_gods_policy = load_policy_json("branch_tengods_policy.json")
         self.ten_gods = TenGodsCalculator(ten_gods_policy, output_policy_version="ten_gods_v1.0")
+        self.luck_seed_builder = LuckSeedBuilder(self.ten_gods)
+        self.annual_luck_engine = AnnualLuckCalculator()
+        self.monthly_luck_engine = MonthlyLuckCalculator()
+        self.daily_luck_engine = DailyLuckCalculator()
 
         # Twelve Stages calculator
-        lifecycle_path = Path("saju_codex_batch_all_v2_6_signed/policies/lifecycle_stages.json")
-        with open(lifecycle_path, encoding="utf-8") as f:
-            lifecycle_policy = json.load(f)
+        lifecycle_policy = load_policy_json("lifecycle_stages.json")
         self.twelve_stages = TwelveStagesCalculator(
             lifecycle_policy, output_policy_version="twelve_stages_v1.0"
         )
 
         # Luck Pillars calculator
-        luck_pillars_path = Path(
-            "saju_codex_batch_all_v2_6_signed/policies/luck_pillars_policy.json"
-        )
-        with open(luck_pillars_path, encoding="utf-8") as f:
-            luck_pillars_policy = json.load(f)
+        luck_pillars_policy = load_policy_json("luck_pillars_policy.json")
         self.luck = LuckCalculator(luck_pillars_policy)
 
         # Stage-3 engines (4 MVP policy-driven engines)
@@ -203,6 +216,29 @@ class SajuOrchestrator:
         self.reco = RecommendationGuard.from_file()
         self.llm_guard = LLMGuard.default()
         self.text_guard = TextGuard.from_file()
+        self._stage_timings: Dict[str, float] = {}
+        self._solar_term_loader = FileSolarTermLoader(DATA_PATH)
+        self._time_resolver = BasicTimeResolver()
+
+    # ------------------------------------------------------------------
+    # Logging / metrics helpers
+    # ------------------------------------------------------------------
+
+    def _record_stage_timing(self, stage: str, start: float) -> None:
+        """Store elapsed time for a given stage for later logging."""
+
+        elapsed = time.perf_counter() - start
+        self._stage_timings[stage] = elapsed
+
+    def _log_engine_failure(self, component: str, error: Exception, *, fallback: str) -> None:
+        """Emit structured warning when an engine falls back."""
+
+        LOGGER.warning(
+            "component_failure",
+            extra={"component": component, "fallback": fallback, "error": str(error)},
+            exc_info=(type(error), error, error.__traceback__),
+        )
+
 
     def analyze(self, pillars: Dict[str, str], birth_context: Dict[str, Any]) -> Dict[str, Any]:
         """Run complete Saju analysis.
@@ -216,6 +252,7 @@ class SajuOrchestrator:
         """
         try:
             # 1. Parse and validate inputs
+            self._stage_timings = {}
             self._validate_inputs(pillars, birth_context)
 
             # 2. Decompose pillars
@@ -223,18 +260,26 @@ class SajuOrchestrator:
             season = BRANCH_TO_SEASON.get(branches[1], "unknown")  # month branch
 
             # 3. Call StrengthEvaluator
+            stage_start = time.perf_counter()
             strength_result = self._call_strength(pillars, stems, branches)
+            self._record_stage_timing("strength", stage_start)
 
             # 4. Call RelationTransformer
+            stage_start = time.perf_counter()
             relations_result = self._call_relations(pillars, branches)
+            self._record_stage_timing("relations", stage_start)
 
             # 5. Call RelationWeightEvaluator (add weights to relations)
+            stage_start = time.perf_counter()
             weighted_relations = self._call_relation_weight(
                 relations_result, pillars, stems, branches
             )
+            self._record_stage_timing("relation_weight", stage_start)
 
             # 6. Call RelationsExtras (detect banhe_groups)
+            stage_start = time.perf_counter()
             banhe_groups = self._call_relations_extras(branches)
+            self._record_stage_timing("relations_extras", stage_start)
 
             # 6.5. Call TenGodsCalculator
             ten_gods_result = self._call_ten_gods(pillars)
@@ -242,8 +287,20 @@ class SajuOrchestrator:
             # 6.6. Call TwelveStagesCalculator
             twelve_stages_result = self._call_twelve_stages(pillars)
 
+            strength_scalar = compute_strength_scalar(strength_result)
+            sibsin_breakdown = self.luck_seed_builder.aggregate_tengod_breakdown(ten_gods_result)
+            relation_events, axis_patterns = self.luck_seed_builder.build_relation_events(
+                weighted_relations.get("items", []) if isinstance(weighted_relations, Mapping) else [],
+                relations_result.get("notes", []),
+            )
+
             # 7. Calculate raw elements distribution
-            elements_raw = self._calculate_elements(stems, branches, strength_result)
+            elements_raw = self._calculate_elements(
+                pillars,
+                stems,
+                branches,
+                birth_context,
+            )
 
             # 8. Call CombinationElement (transform elements based on weighted relations)
             elements, combination_trace = self._call_combination_element(
@@ -264,7 +321,9 @@ class SajuOrchestrator:
             )
 
             # 11. Call LuckCalculator
+            stage_start = time.perf_counter()
             luck_result = self._call_luck(pillars, birth_context, stems[2])
+            self._record_stage_timing("luck", stage_start)
 
             # 12. Call ShenshaCatalog
             shensha_result = self._call_shensha()
@@ -311,7 +370,59 @@ class SajuOrchestrator:
                 "ten_gods": ten_gods_result,  # NEW: Ten Gods analysis
                 "twelve_stages": twelve_stages_result,  # NEW: Twelve Stages analysis
                 "stage3": stage3_result,
+                "luck_seed_sources": {
+                    "strength_scalar": strength_scalar,
+                    "strength_profile": strength_result.get("bin"),
+                    "sibsin_breakdown": asdict(sibsin_breakdown),
+                    "relation_events": [
+                        {
+                            "kind": event.kind,
+                            "magnitude": event.magnitude,
+                            "participants": list(event.participants),
+                            "bonus_keys": list(event.bonus_keys),
+                            "confidence": event.confidence,
+                            "formed": event.formed,
+                            "original_type": event.original_type,
+                        }
+                        for event in relation_events
+                    ],
+                    "axis_patterns": [
+                        {
+                            "pattern": pattern.pattern,
+                            "state": pattern.state,
+                            "emit_flag": pattern.emit_flag,
+                        }
+                        for pattern in axis_patterns
+                    ],
+                },
             }
+
+            luck_v112 = self._build_luck_v112(
+                pillars=pillars,
+                birth_context=birth_context,
+                strength_scalar=strength_scalar,
+                strength_result=strength_result,
+                relations_result=relations_result,
+                sibsin_breakdown=sibsin_breakdown,
+                relation_events=relation_events,
+                axis_patterns=axis_patterns,
+                ten_gods_result=ten_gods_result,
+                elements_raw=elements_raw,
+                stage3_result=stage3_result,
+                luck_result=luck_result,
+                twelve_stages_result=twelve_stages_result,
+            )
+            if luck_v112:
+                combined["luck_v1_1_2"] = luck_v112
+
+            # Compatibility layer view (equal-slot elements, 5-step strength, multi-role Yongshin)
+            combined["compat_view"] = build_compat_view(
+                pillars,
+                strength_result,
+                yongshin_result,
+                season,
+                birth_context.get("birth_dt") if birth_context else None,
+            )
 
             # 17. Call EvidenceBuilder (collect evidence for all engines)
             evidence_result = self._call_evidence_builder(combined, pillars, birth_context)
@@ -336,11 +447,15 @@ class SajuOrchestrator:
             enriched["engine_summaries"] = summaries_result
 
             # 23. Call LLMGuard (pre-validation if LLM will be used)
+            stage_start = time.perf_counter()
             llm_guard_result = self._call_llm_guard(enriched, summaries_result)
+            self._record_stage_timing("llm_guard", stage_start)
             enriched["llm_guard"] = llm_guard_result
 
             # 24. Call TextGuard (filter any forbidden content)
+            stage_start = time.perf_counter()
             text_guard_result = self._call_text_guard(enriched)
+            self._record_stage_timing("text_guard", stage_start)
             enriched["text_guard"] = text_guard_result
 
             # 25. Add meta information
@@ -372,6 +487,38 @@ class SajuOrchestrator:
                     "TextGuard",  # NEW
                 ],
             }
+            if luck_v112:
+                enriched["meta"]["luck_v1_1_2"] = {
+                    "annual_count": len(luck_v112.get("annual", [])),
+                    "monthly_count": len(luck_v112.get("monthly", [])),
+                    "daily_count": len(luck_v112.get("daily", [])),
+                }
+
+            LOGGER.info(
+                "analysis_stage_timings",
+                extra={"timings": {k: round(v, 4) for k, v in self._stage_timings.items()}},
+            )
+
+            guard_verdict = llm_guard_result.get("verdict") if isinstance(llm_guard_result, dict) else None
+            LOGGER.info(
+                "llm_guard_verdict",
+                extra={
+                    "verdict": guard_verdict,
+                    "guard_version": llm_guard_result.get("meta", {}).get("guard_version")
+                    if isinstance(llm_guard_result, dict)
+                    else None,
+                    "policy_signatures": {
+                        "ten_gods": ten_gods_result.get("policy_signature"),
+                        "twelve_stages": twelve_stages_result.get("policy_signature")
+                        if isinstance(twelve_stages_result, Mapping)
+                        else None,
+                        "luck": luck_result.get("policy_signature"),
+                        "relations_weighted": weighted_relations.get("policy_signature")
+                        if isinstance(weighted_relations, Mapping)
+                        else None,
+                    },
+                },
+            )
 
             return enriched
 
@@ -420,30 +567,46 @@ class SajuOrchestrator:
         return counts
 
     def _calculate_elements(
-        self, stems: List[str], branches: List[str], strength_result: Dict
+        self,
+        pillars: Dict[str, str],
+        stems: List[str],
+        branches: List[str],
+        birth_context: Dict[str, Any],
     ) -> Dict[str, float]:
-        """Calculate element distribution from stems and branches."""
-        # Start with basic counts
+        """Calculate element distribution with hidden stem selection."""
+
+        birth_dt = self._parse_birth_dt(birth_context.get("birth_dt")) if birth_context else None
+
         element_counts = {"木": 0.0, "火": 0.0, "土": 0.0, "金": 0.0, "水": 0.0}
 
-        # Count from stems (weight: 1.0 each)
         for stem in stems:
             element = STEM_TO_ELEMENT.get(stem)
             if element:
                 element_counts[element] += 1.0
 
-        # Count from branches (weight: 0.5 each)
-        for branch in branches:
-            element = BRANCH_TO_ELEMENT.get(branch)
+        slots = ["year", "month", "day", "hour"]
+        for slot, branch in zip(slots, branches):
+            hidden_stem = resolve_branch_stem(branch, slot, birth_dt)
+            element = STEM_TO_ELEMENT.get(hidden_stem) if hidden_stem else None
+            if not element:
+                element = BRANCH_TO_ELEMENT.get(branch)
             if element:
-                element_counts[element] += 0.5
+                element_counts[element] += 1.0
 
-        # Normalize to percentages
-        total = sum(element_counts.values())
-        if total > 0:
-            element_counts = {k: v / total for k, v in element_counts.items()}
+        total = sum(element_counts.values()) or 1.0
+        return {k: v / total for k, v in element_counts.items()}
 
-        return element_counts
+    def _parse_birth_dt(self, value: Any) -> Optional[datetime]:
+        if isinstance(value, datetime):
+            return value
+        if isinstance(value, str):
+            try:
+                if value.endswith("Z"):
+                    value = value.replace("Z", "+00:00")
+                return datetime.fromisoformat(value)
+            except ValueError:
+                return None
+        return None
 
     # Engine-specific call methods
 
@@ -576,16 +739,6 @@ class SajuOrchestrator:
                 - current_luck: dict or null
                 - policy_signature: SHA-256 hex
         """
-        import sys
-        from pathlib import Path as _Path
-
-        # Add services/common to path for saju_common import
-        common_path = str(_Path(__file__).resolve().parents[4] / "services" / "common")
-        if common_path not in sys.path:
-            sys.path.insert(0, common_path)
-
-        from saju_common import BasicTimeResolver, FileSolarTermLoader
-
         # 1. Parse birth_dt to datetime with timezone
         birth_dt_str = birth_context.get("birth_dt")
         tz = birth_context.get("timezone", "Asia/Seoul")
@@ -609,14 +762,17 @@ class SajuOrchestrator:
                 "policy_signature": "",
             }
 
-        # 2. Calculate solar terms for start_age (reuse FileSolarTermLoader)
-        term_data_path = _Path(__file__).resolve().parents[4] / "data"
-        term_loader = FileSolarTermLoader(term_data_path)
-        resolver = BasicTimeResolver()
-
-        birth_utc = resolver.to_utc(birth_dt, tz)
+        # 2. Calculate solar terms for start_age (reuse cached loader)
+        birth_utc = self._time_resolver.to_utc(birth_dt, tz)
         year = birth_utc.year
-        terms = list(term_loader.load_year(year)) + list(term_loader.load_year(year + 1))
+        terms: List[Any] = []
+        for target_year in (year, year + 1):
+            try:
+                terms.extend(self._solar_term_loader.load_year(target_year))
+            except FileNotFoundError as err:
+                self._log_engine_failure(
+                    "SolarTermLoader", err, fallback="partial_terms"
+                )
 
         next_term = next((e for e in terms if e.utc_time > birth_utc), None)
         prev_term = None
@@ -666,7 +822,9 @@ class SajuOrchestrator:
             result = self.luck.evaluate(birth_ctx, pillars_formatted)
             return result
         except Exception as e:
-            print(f"LuckCalculator.evaluate() failed: {e}, returning empty structure")
+            self._log_engine_failure(
+                "LuckCalculator", e, fallback="empty_structure"
+            )
             return {
                 "policy_version": "luck_pillars_v1",
                 "direction": "forward",
@@ -851,7 +1009,9 @@ class SajuOrchestrator:
             return weighted_result
         except Exception as e:
             # Fallback to unweighted relations if evaluation fails
-            print(f"RelationWeightEvaluator failed: {e}, using unweighted relations")
+            self._log_engine_failure(
+                "RelationWeightEvaluator", e, fallback="unweighted_relations"
+            )
             return relations_result
 
     def _call_relations_extras(self, branches: List[str]) -> Dict[str, Any]:
@@ -861,7 +1021,9 @@ class SajuOrchestrator:
             result = self.relations_analyzer.run(ctx)
             return result
         except Exception as e:
-            print(f"RelationsExtras failed: {e}, returning empty dict")
+            self._log_engine_failure(
+                "RelationsExtras", e, fallback="empty_dict"
+            )
             return {"five_he": {}, "zixing": {}, "banhe": []}
 
     def _call_ten_gods(self, pillars: Dict[str, str]) -> Dict[str, Any]:
@@ -879,7 +1041,9 @@ class SajuOrchestrator:
             result = self.ten_gods.evaluate(formatted_pillars)
             return result
         except Exception as e:
-            print(f"TenGodsCalculator failed: {e}, returning empty result")
+            self._log_engine_failure(
+                "TenGodsCalculator", e, fallback="empty_result"
+            )
             return {
                 "policy_version": "ten_gods_v1.0",
                 "by_pillar": {},
@@ -888,6 +1052,223 @@ class SajuOrchestrator:
                 "missing": [],
                 "policy_signature": "",
             }
+
+    def _build_luck_v112(
+        self,
+        *,
+        pillars: Dict[str, str],
+        birth_context: Dict[str, Any],
+        strength_scalar: float,
+        strength_result: Dict[str, Any],
+        relations_result: Dict[str, Any],
+        sibsin_breakdown,
+        relation_events,
+        axis_patterns,
+        ten_gods_result: Dict[str, Any],
+        elements_raw: Dict[str, float],
+        stage3_result: Dict[str, Any],
+        luck_result: Dict[str, Any],
+        twelve_stages_result: Dict[str, Any],
+    ) -> Optional[Dict[str, Any]]:
+        day_pillar = pillars.get("day", "")
+        month_pillar = pillars.get("month", "")
+        if len(day_pillar) < 2 or len(month_pillar) < 2:
+            return None
+
+        day_stem = day_pillar[0]
+        day_branch = day_pillar[1]
+        natal_month_branch = month_pillar[1]
+
+        strength_profile = strength_result.get("bin", "neutral")
+        day_element = self.luck_seed_builder.stem_to_element_key(day_stem)
+        if not day_element:
+            return None
+
+        transit_info = self.luck_seed_builder.compute_transit_pillars(
+            birth_context=birth_context or {},
+        )
+        year_transit = transit_info["year"]
+        month_transit = transit_info["month"]
+        day_transit = transit_info["day"]
+        taese_branch = year_transit["branch"]
+
+        season_branch = self.luck_seed_builder.branch_to_policy_key(month_transit["branch"]) or self.luck_seed_builder.branch_to_policy_key(natal_month_branch)
+
+        transform_effects: List[Dict[str, object]] = []
+        transform_to = relations_result.get("transform_to") if isinstance(relations_result, Mapping) else None
+        if transform_to:
+            transform_effects.append({"to": transform_to, "confidence": 1.0})
+        for boost in relations_result.get("boosts", []) if isinstance(relations_result, Mapping) else []:
+            if isinstance(boost, Mapping):
+                transform_effects.append(dict(boost))
+
+        unseong_stage = None
+        if isinstance(twelve_stages_result, Mapping):
+            day_stage = twelve_stages_result.get("by_pillar", {}).get("day", {})
+            if isinstance(day_stage, Mapping):
+                unseong_stage = day_stage.get("stage_en") or day_stage.get("stage_zh")
+
+        breakdown_year = self.luck_seed_builder.build_transit_breakdown(day_stem, year_transit["pillar"])
+        breakdown_month = self.luck_seed_builder.build_transit_breakdown(day_stem, month_transit["pillar"])
+        breakdown_day = self.luck_seed_builder.build_transit_breakdown(day_stem, day_transit["pillar"])
+
+        frame_seed_year = self.luck_seed_builder.build_frame_seed(
+            breakdown=breakdown_year,
+            relation_events=relation_events,
+            axis_patterns=axis_patterns,
+            season_branch=season_branch,
+            day_element=day_element,
+            taese_events=[],
+            gates={"daewoon_norm": 0.0},
+            unseong_stage=unseong_stage,
+            transform_effects=transform_effects,
+        )
+
+        frame_seed_month = self.luck_seed_builder.build_frame_seed(
+            breakdown=breakdown_month,
+            relation_events=relation_events,
+            axis_patterns=axis_patterns,
+            season_branch=season_branch,
+            day_element=day_element,
+            taese_events=self.luck_seed_builder.build_taise_events(
+                taese_branch=taese_branch,
+                frame_branch=month_transit["branch"],
+                frame_level="month",
+                strength_profile=strength_profile,
+                day_branch=day_branch,
+            ),
+            gates={"daewoon_norm": 0.0, "year_norm": 0.0},
+            unseong_stage=unseong_stage,
+            transform_effects=transform_effects,
+        )
+
+        frame_seed_day = self.luck_seed_builder.build_frame_seed(
+            breakdown=breakdown_day,
+            relation_events=relation_events,
+            axis_patterns=axis_patterns,
+            season_branch=season_branch,
+            day_element=day_element,
+            taese_events=self.luck_seed_builder.build_taise_events(
+                taese_branch=taese_branch,
+                frame_branch=day_transit["branch"],
+                frame_level="day",
+                strength_profile=strength_profile,
+                day_branch=day_branch,
+            ),
+            gates={"daewoon_norm": 0.0, "year_norm": 0.0, "month_norm": 0.0},
+            unseong_stage=unseong_stage,
+            transform_effects=transform_effects,
+        )
+
+        frame_seeds = {
+            "year": frame_seed_year,
+            "month": frame_seed_month,
+            "day": frame_seed_day,
+        }
+
+        birth_dt = self._parse_birth_dt(birth_context.get("birth_dt")) if birth_context else None
+        tz_name = birth_context.get("timezone", "Asia/Seoul") if birth_context else "Asia/Seoul"
+        tz = ZoneInfo(tz_name)
+        if birth_dt is None:
+            return None
+        if birth_dt.tzinfo is None:
+            birth_dt = birth_dt.replace(tzinfo=tz)
+        birth_dt_utc = birth_dt.astimezone(ZoneInfo("UTC"))
+
+        element_balance = self.luck_seed_builder.element_balance_from_raw(elements_raw or {})
+        hidden_stems = self.luck_seed_builder.hidden_stems_map(ten_gods_result)
+
+        chart_context = {
+            "birth_dt_utc": birth_dt_utc,
+            "birth_tz": tz_name,
+            "natal_pillars": self._format_pillars_for_chart(pillars),
+            "day_master": day_stem,
+            "strength_index": float(strength_result.get("score_raw", 0.0) or 0.0),
+            "hidden_stems": hidden_stems,
+            "element_balance": element_balance,
+            "strength_profile": strength_profile,
+            "strength_scalar": strength_scalar,
+            "frame_seeds": frame_seeds,
+            "transits": transit_info,
+        }
+
+        if isinstance(stage3_result, Mapping):
+            chart_context["geokguk_detect"] = stage3_result.get("gyeokguk")
+
+        transit_timestamp = transit_info.get("meta", {}).get("timestamp")
+        if transit_timestamp:
+            try:
+                chart_context["transit_reference"] = transit_timestamp
+                transit_dt_local = datetime.fromisoformat(transit_timestamp)
+            except ValueError:
+                transit_dt_local = datetime.now(tz)
+        else:
+            transit_dt_local = datetime.now(tz)
+
+        current_year = transit_dt_local.year
+        current_date = transit_dt_local.date()
+
+        daewoon_norm = 0.0
+        if isinstance(luck_result, Mapping):
+            current_luck = luck_result.get("current_luck")
+            if isinstance(current_luck, Mapping):
+                daewoon_norm = float(current_luck.get("score", 0.0) or 0.0)
+        frame_seed_year["gates"]["daewoon_norm"] = daewoon_norm
+        frame_seed_month["gates"]["daewoon_norm"] = daewoon_norm
+        frame_seed_day["gates"]["daewoon_norm"] = daewoon_norm
+
+        try:
+            annual_frames = self.annual_luck_engine.compute(chart_context, years=[current_year])
+            if annual_frames:
+                year_norm = float(annual_frames[0].get("score", 0.0) or 0.0)
+                frame_seed_month["gates"]["year_norm"] = year_norm
+                frame_seed_day["gates"]["year_norm"] = year_norm
+            monthly_frames = self.monthly_luck_engine.compute(chart_context, year=current_year)
+            if monthly_frames:
+                month_norm = self._resolve_active_frame_score(monthly_frames, transit_dt_local)
+                frame_seed_day["gates"]["month_norm"] = month_norm
+            daily_frames = self.daily_luck_engine.compute(
+                chart_context,
+                start_date=current_date,
+                end_date=current_date,
+            )
+        except Exception as exc:  # pragma: no cover - defensive guard
+            self._log_engine_failure(
+                "LuckV1_1_2", exc, fallback="skip_transit_frames"
+            )
+            return None
+
+        return {
+            "policy_version": "luck_policy_v1.1.2",
+            "annual": annual_frames,
+            "monthly": monthly_frames,
+            "daily": daily_frames,
+            "transits": transit_info,
+        }
+
+    @staticmethod
+    def _resolve_active_frame_score(frames: Sequence[Mapping[str, Any]], reference_dt: datetime) -> float:
+        """Return the score for the frame covering the reference datetime."""
+
+        for frame in frames or []:
+            try:
+                start_dt = datetime.fromisoformat(str(frame.get("start_dt")))
+                end_dt = datetime.fromisoformat(str(frame.get("end_dt")))
+            except Exception:
+                continue
+            if start_dt <= reference_dt < end_dt:
+                return float(frame.get("score", 0.0) or 0.0)
+        if frames:
+            return float(frames[0].get("score", 0.0) or 0.0)
+        return 0.0
+
+    @staticmethod
+    def _format_pillars_for_chart(pillars: Mapping[str, str]) -> Dict[str, Dict[str, str]]:
+        formatted: Dict[str, Dict[str, str]] = {}
+        for slot, value in pillars.items():
+            if isinstance(value, str) and len(value) >= 2:
+                formatted[slot] = {"stem": value[0], "branch": value[1]}
+        return formatted
 
     def _call_twelve_stages(self, pillars: Dict[str, str]) -> Dict[str, Any]:
         """Call TwelveStagesCalculator to determine lifecycle stage for each position."""
@@ -904,7 +1285,9 @@ class SajuOrchestrator:
             result = self.twelve_stages.evaluate(formatted_pillars)
             return result
         except Exception as e:
-            print(f"TwelveStagesCalculator failed: {e}, returning empty result")
+            self._log_engine_failure(
+                "TwelveStagesCalculator", e, fallback="empty_result"
+            )
             return {
                 "policy_version": "twelve_stages_v1.0",
                 "by_pillar": {},
@@ -935,7 +1318,9 @@ class SajuOrchestrator:
 
             return elements_final, trace
         except Exception as e:
-            print(f"CombinationElement failed: {e}, using raw elements")
+            self._log_engine_failure(
+                "CombinationElement", e, fallback="raw_elements"
+            )
             return elements_raw, []
 
     def _call_evidence_builder(
@@ -965,7 +1350,9 @@ class SajuOrchestrator:
             evidence = build_evidence(inputs)
             return evidence
         except Exception as e:
-            print(f"build_evidence failed: {e}, returning empty evidence")
+            self._log_engine_failure(
+                "EvidenceBuilder", e, fallback="empty_evidence"
+            )
             return {"evidence_version": "evidence_v1.0.0", "sections": [], "error": str(e)}
 
     def _call_engine_summaries(
@@ -1027,7 +1414,9 @@ class SajuOrchestrator:
             )
             return summaries
         except Exception as e:
-            print(f"EngineSummariesBuilder.build() failed: {e}, returning minimal summaries")
+            self._log_engine_failure(
+                "EngineSummariesBuilder", e, fallback="minimal_summaries"
+            )
             return {"error": str(e)}
 
     def _call_llm_guard(
@@ -1044,7 +1433,9 @@ class SajuOrchestrator:
             # Not applicable until we add LLM enhancement to the workflow
             return {"enabled": True, "ready_for_llm": True, "summaries_available": bool(summaries)}
         except Exception as e:
-            print(f"LLM Guard setup failed: {e}")
+            self._log_engine_failure(
+                "LLMGuardSetup", e, fallback="disabled"
+            )
             return {"enabled": False, "error": str(e)}
 
     def _call_text_guard(self, enriched: Dict[str, Any]) -> Dict[str, Any]:
@@ -1063,5 +1454,7 @@ class SajuOrchestrator:
                 "forbidden_terms_count": len(self.text_guard.forbidden_terms),
             }
         except Exception as e:
-            print(f"Text Guard setup failed: {e}")
+            self._log_engine_failure(
+                "TextGuardSetup", e, fallback="disabled"
+            )
             return {"enabled": False, "error": str(e)}

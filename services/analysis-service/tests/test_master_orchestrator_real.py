@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from app.core.master_orchestrator_real import MasterOrchestrator
+from .master_orchestrator_real import MasterOrchestrator
 
 
 class _StrengthOK:
@@ -51,6 +51,16 @@ class _Reco:
         return []
 
 
+class _Stage3OK:
+    def analyze(self, context):
+        return {
+            "luck_flow": {"trend": "stable"},
+            "gyeokguk": {"classification": "정관"},
+            "climate_advice": {"primary": "수"},
+            "pattern": {"key": "포괄"},
+        }
+
+
 def test_master_orchestrator_real_integration_with_injected_engines():
     orch = MasterOrchestrator(
         strength_engine=_StrengthOK(),
@@ -61,6 +71,7 @@ def test_master_orchestrator_real_integration_with_injected_engines():
         korean_enricher=_Korean(),
         school_manager=_School(),
         recommendation_guard=_Reco(),
+        stage3_engine=_Stage3OK(),
     )
     out = orch.analyze(
         {"year": "庚辰", "month": "丙午", "day": "甲午", "hour": "庚午"},

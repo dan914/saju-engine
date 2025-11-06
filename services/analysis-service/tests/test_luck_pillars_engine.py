@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 
-from app.core.luck_pillars import LuckCalculator, index_to_pillar, pillar_to_index
+from .luck_pillars import LuckCalculator, index_to_pillar, pillar_to_index
 from jsonschema import validate
 
 # 제공된 Policy(JSON)의 핵심 필드만 사용 (그대로 주입)

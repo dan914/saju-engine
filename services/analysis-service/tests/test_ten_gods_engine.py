@@ -11,7 +11,7 @@ Validates:
 import json
 from pathlib import Path
 
-from app.core.ten_gods import TenGodsCalculator
+from .ten_gods import TenGodsCalculator
 from jsonschema import validate
 
 BASE = Path(__file__).resolve().parents[3]

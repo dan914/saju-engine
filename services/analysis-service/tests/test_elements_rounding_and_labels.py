@@ -4,7 +4,7 @@ Test elements distribution rounding and labeling rules.
 Validates that labels are assigned BEFORE rounding, preventing edge case errors.
 """
 
-from app.core.policy_guards import normalize_and_label
+from .policy_guards import normalize_and_label
 
 
 def test_labeling_before_rounding_developed_boundary():

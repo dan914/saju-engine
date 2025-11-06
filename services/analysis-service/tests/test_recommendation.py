@@ -1,4 +1,4 @@
-from app.core.recommendation import RecommendationGuard
+from .recommendation import RecommendationGuard
 
 
 def build_guard() -> RecommendationGuard:

@@ -1,4 +1,4 @@
-from app.core.climate import ClimateContext, ClimateEvaluator
+from .climate import ClimateContext, ClimateEvaluator
 
 
 def test_climate_bias_lookup() -> None:

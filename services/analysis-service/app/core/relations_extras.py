@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
-from services.common.policy_loader import load_policy_json
+from saju_common.policy_loader import load_policy_json
 
 
 @dataclass

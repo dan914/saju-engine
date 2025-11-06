@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 try:
-    from services.common.policy_loader import load_policy_json, resolve_policy_path  # noqa: F401
+    from saju_common.policy_loader import load_policy_json, resolve_policy_path  # noqa: F401
 except ImportError:
     from policy_loader import load_policy_json, resolve_policy_path  # noqa: F401
 

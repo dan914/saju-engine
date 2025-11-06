@@ -10,43 +10,27 @@ This engine:
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Dict, List
 
-try:
-    from ..models.analysis import (
-        AnalysisRequest,
-        AnalysisResponse,
-        LuckDirectionResult,
-        LuckResult,
-        RecommendationResult,
-        RelationsExtras,
-        RelationsResult,
-        SchoolProfileResult,
-        ShenshaResult,
-        StrengthDetails,
-        StrengthResult,
-        StructureResultModel,
-        TenGodsResult,
-    )
-    from .saju_orchestrator import SajuOrchestrator
-except ImportError:
-    # Fallback for sys.path-based imports
-    from models.analysis import (
-        AnalysisRequest,
-        AnalysisResponse,
-        LuckDirectionResult,
-        LuckResult,
-        RecommendationResult,
-        RelationsExtras,
-        RelationsResult,
-        SchoolProfileResult,
-        ShenshaResult,
-        StrengthDetails,
-        StrengthResult,
-        StructureResultModel,
-        TenGodsResult,
-    )
-    from saju_orchestrator import SajuOrchestrator
+from ..models.analysis import (
+    AnalysisRequest,
+    AnalysisResponse,
+    LuckDirectionResult,
+    LuckResult,
+    LuckV112Result,
+    RecommendationResult,
+    RelationsExtras,
+    RelationsResult,
+    RelationsWeightedResult,
+    SchoolProfileResult,
+    ShenshaResult,
+    StrengthDetails,
+    StrengthResult,
+    StructureResultModel,
+    TenGodsResult,
+    TwelveStagesResult,
+)
+from .saju_orchestrator import SajuOrchestrator
 
 
 class AnalysisEngine:
@@ -75,7 +59,7 @@ class AnalysisEngine:
         orchestrator_result = self.orchestrator.analyze(pillars, birth_context)
 
         # 4. Map orchestrator output to AnalysisResponse
-        response = self._map_to_response(orchestrator_result, pillars)
+        response = self._map_to_response(orchestrator_result, pillars, request)
 
         return response
 
@@ -110,7 +94,12 @@ class AnalysisEngine:
             "timezone": getattr(options, "timezone", "Asia/Seoul"),
         }
 
-    def _map_to_response(self, result: Dict[str, Any], pillars: Dict[str, str]) -> AnalysisResponse:
+    def _map_to_response(
+        self,
+        result: Dict[str, Any],
+        pillars: Dict[str, str],
+        request: AnalysisRequest,
+    ) -> AnalysisResponse:
         """Map orchestrator output to AnalysisResponse.
 
         Args:
@@ -120,139 +109,141 @@ class AnalysisEngine:
         Returns:
             AnalysisResponse with all fields populated
         """
-        # Extract ten_gods (from pillars stem analysis - generate from pillars if not present)
-        ten_gods_data = result.get("ten_gods", {})
-        if not ten_gods_data or "summary" not in ten_gods_data:
-            # Generate basic ten_gods mapping from pillars
-            ten_gods_data = {"summary": self._generate_ten_gods_summary(pillars)}
-
-        # Extract relations
-        relations_data = result.get("relations", {})
-
-        # Extract relations_extras
-        relations_extras_data = result.get("relations_extras", {})
-
-        # Extract strength
-        strength_data = result.get("strength", {})
-
-        # Extract strength_details
-        strength_details_data = result.get("strength_details", {})
-
-        # Extract structure
-        structure_data = result.get("structure", {})
-
-        # Extract luck
-        luck_data = result.get("luck", {})
-
-        # Extract luck_direction
-        luck_direction_data = result.get("luck_direction", {})
-
-        # Extract shensha
-        shensha_data = result.get("shensha", {})
-
-        # Extract school_profile
-        school_profile_data = result.get("school_profile", {})
-
-        # Extract recommendation
-        recommendation_data = result.get("recommendation", {})
-
-        # Build trace
-        trace = result.get("trace", {})
-        if not trace:
-            trace = {
-                "orchestrator_keys": list(result.keys()),
-                "pillars": pillars,
-            }
-
-        # Construct AnalysisResponse
-        return AnalysisResponse(
-            ten_gods=TenGodsResult(summary=ten_gods_data.get("summary", {})),
-            relations=RelationsResult(
-                he6=relations_data.get("he6", []),
-                sanhe=relations_data.get("sanhe", []),
-                chong=relations_data.get("chong", []),
-                hai=relations_data.get("hai", []),
-                po=relations_data.get("po", []),
-                xing=relations_data.get("xing", []),
-            ),
-            relation_extras=RelationsExtras(
-                priority_hit=relations_extras_data.get("priority_hit"),
-                transform_to=relations_extras_data.get("transform_to"),
-                boosts=relations_extras_data.get("boosts", []),
-                extras=relations_extras_data.get("extras", {}),
-            ),
-            strength=StrengthResult(
-                level=strength_data.get("level", "unknown"),
-                basis=strength_data.get("basis", {}),
-            ),
-            strength_details=StrengthDetails(
-                month_state=strength_details_data.get("month_state", 0),
-                branch_root=strength_details_data.get("branch_root", 0),
-                stem_visible=strength_details_data.get("stem_visible", 0),
-                combo_clash=strength_details_data.get("combo_clash", 0),
-                season_adjust=strength_details_data.get("season_adjust", 0),
-                month_stem_effect=strength_details_data.get("month_stem_effect", 0),
-                wealth_location_bonus_total=strength_details_data.get(
-                    "wealth_location_bonus_total", 0.0
-                ),
-                wealth_location_hits=strength_details_data.get("wealth_location_hits", []),
-                total=strength_details_data.get("total", 0.0),
-                grade_code=strength_details_data.get("grade_code", "unknown"),
-                grade=strength_details_data.get("grade", "unknown"),
-                seal_validity=strength_details_data.get("seal_validity", {}),
-            ),
-            structure=StructureResultModel(
-                primary=structure_data.get("primary"),
-                confidence=structure_data.get("confidence", "low"),
-                candidates=structure_data.get("candidates", []),
-            ),
-            luck=LuckResult(
-                prev_term=luck_data.get("prev_term"),
-                next_term=luck_data.get("next_term"),
-                interval_days=luck_data.get("interval_days"),
-                days_from_prev=luck_data.get("days_from_prev"),
-                start_age=luck_data.get("start_age"),
-            ),
-            luck_direction=LuckDirectionResult(
-                direction=luck_direction_data.get("direction"),
-                method=luck_direction_data.get("method"),
-                sex_at_birth=luck_direction_data.get("sex_at_birth"),
-            ),
-            shensha=ShenshaResult(
-                enabled=shensha_data.get("enabled", False),
-                list=shensha_data.get("list", []),
-            ),
-            school_profile=SchoolProfileResult(
-                id=school_profile_data.get("id", "unknown"),
-                notes=school_profile_data.get("notes"),
-            ),
-            recommendation=RecommendationResult(
-                enabled=recommendation_data.get("enabled", False),
-                action=recommendation_data.get("action", "none"),
-                copy=recommendation_data.get("copy"),
-            ),
-            trace=trace,
+        ten_gods = TenGodsResult.model_validate(result.get("ten_gods", {}))
+        twelve_stages_data = result.get("twelve_stages")
+        twelve_stages = (
+            TwelveStagesResult.model_validate(twelve_stages_data)
+            if isinstance(twelve_stages_data, dict)
+            else None
         )
 
-    def _generate_ten_gods_summary(self, pillars: Dict[str, str]) -> Dict[str, str]:
-        """Generate a basic ten_gods summary from pillars.
+        relations = RelationsResult.model_validate(result.get("relations", {}))
+        relations_weighted_data = result.get("relations_weighted")
+        relations_weighted = (
+            RelationsWeightedResult.model_validate(relations_weighted_data)
+            if isinstance(relations_weighted_data, dict)
+            else None
+        )
+        relations_extras = RelationsExtras.model_validate(result.get("relations_extras", {}))
 
-        This is a fallback in case orchestrator doesn't provide ten_gods.
-        In production, the orchestrator should always provide this.
+        strength = StrengthResult.model_validate(result.get("strength", {}))
+        strength_details = strength.details
+        if strength_details is None:
+            strength_details_data = result.get("strength", {}).get("details")
+            if isinstance(strength_details_data, dict):
+                strength_details = StrengthDetails.model_validate(strength_details_data)
 
-        Args:
-            pillars: Dict with year/month/day/hour pillars
+        structure = self._resolve_structure(result)
+        climate = result.get("climate", {})
+        yongshin = result.get("yongshin", {})
 
-        Returns:
-            Dict mapping pillar positions to placeholder values
-        """
-        return {
-            "year_stem": "placeholder",
-            "year_branch": "placeholder",
-            "month_stem": "placeholder",
-            "month_branch": "placeholder",
-            "day_stem": "日主",  # Day stem is always 日主 (self)
-            "day_branch": "placeholder",
-            "hour_stem": "placeholder",
-            "hour_branch": "placeholder",
-        }
+        luck = LuckResult.model_validate(result.get("luck", {}))
+        luck_v112_data = result.get("luck_v1_1_2")
+        luck_v112 = (
+            LuckV112Result.model_validate(luck_v112_data)
+            if isinstance(luck_v112_data, dict)
+            else None
+        )
+        luck_direction = None
+        if luck.direction or luck.method:
+            luck_direction = LuckDirectionResult(
+                direction=luck.direction,
+                method=luck.method,
+                sex_at_birth=request.options.gender,
+            )
+
+        shensha = ShenshaResult.model_validate(result.get("shensha", {}))
+        school_profile = SchoolProfileResult.model_validate(result.get("school_profile", {}))
+        recommendation = RecommendationResult.model_validate(result.get("recommendations", {}))
+
+        trace = self._build_trace(result, pillars, request)
+
+        return AnalysisResponse(
+            status=result.get("status", "success"),
+            season=result.get("season"),
+            ten_gods=ten_gods,
+            twelve_stages=twelve_stages,
+            relations=relations,
+            relations_weighted=relations_weighted,
+            relations_extras=relations_extras,
+            strength=strength,
+            strength_details=strength_details,
+            structure=structure,
+            climate=climate,
+            yongshin=yongshin,
+            luck=luck,
+            luck_v1_1_2=luck_v112,
+            luck_direction=luck_direction,
+            shensha=shensha,
+            void=result.get("void"),
+            yuanjin=result.get("yuanjin"),
+            stage3=result.get("stage3", {}),
+            elements_distribution_raw=result.get("elements_distribution_raw", {}),
+            elements_distribution=result.get("elements_distribution", {}),
+            elements_distribution_transformed=result.get(
+                "elements_distribution_transformed", {}
+            ),
+            combination_trace=result.get("combination_trace", []),
+            evidence=result.get("evidence", {}),
+            engine_summaries=result.get("engine_summaries", {}),
+            school_profile=school_profile,
+            recommendation=recommendation,
+            llm_guard=result.get("llm_guard", {}),
+            text_guard=result.get("text_guard", {}),
+            meta=result.get("meta", {}),
+            trace=trace,
+            compat_view=result.get("compat_view", {}),
+        )
+
+    def _resolve_structure(self, result: Dict[str, Any]) -> StructureResultModel | None:
+        stage3 = result.get("stage3")
+        if not isinstance(stage3, dict):
+            return None
+
+        gyeokguk = stage3.get("gyeokguk")
+        if not isinstance(gyeokguk, dict):
+            return None
+
+        primary = gyeokguk.get("type") or gyeokguk.get("classification")
+        confidence = gyeokguk.get("confidence")
+
+        candidates: List[Dict[str, Any]] = []
+        if primary is not None:
+            candidate = {
+                "id": primary,
+                "score": confidence,
+                "notes": gyeokguk.get("notes"),
+            }
+            candidates.append(candidate)
+
+        if primary is None and not candidates:
+            return None
+
+        return StructureResultModel(primary=primary, confidence=confidence, candidates=candidates)
+
+    def _build_trace(
+        self,
+        result: Dict[str, Any],
+        pillars: Dict[str, str],
+        request: AnalysisRequest,
+    ) -> Dict[str, Any]:
+        existing = result.get("trace")
+        if isinstance(existing, dict):
+            trace = dict(existing)
+        else:
+            trace = {}
+
+        meta = result.get("meta", {})
+
+        trace.setdefault("rule_id", meta.get("rule_id", "KR_classic_v1.4"))
+        trace.setdefault("orchestrator_version", meta.get("orchestrator_version"))
+        trace["pillars"] = pillars
+        trace["options"] = request.options.model_dump()
+        trace["orchestrator_keys"] = sorted(result.keys())
+
+        if "timestamp" in meta:
+            trace["timestamp"] = meta["timestamp"]
+        if "engines_used" in meta:
+            trace["engines_used"] = meta["engines_used"]
+
+        return trace

@@ -1,4 +1,4 @@
-from app.core.text_guard import TextGuard
+from .text_guard import TextGuard
 
 
 def build_guard() -> TextGuard:

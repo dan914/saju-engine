@@ -7,6 +7,13 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List
 
+from saju_common import (
+    BRANCH_TO_SEASON,
+    ELEMENT_CONTROLS,
+    ELEMENT_GENERATES,
+    SEASON_ELEMENT_BOOST,
+)
+
 # Policy file paths
 ZANGGAN_PATH = Path(__file__).resolve().parents[4] / "rulesets" / "zanggan_table.json"
 STRENGTH_ADJUST_PATH = (
@@ -436,12 +443,6 @@ class StrengthEvaluator:
 
         Uses common package's SEASON_ELEMENT_BOOST mapping.
         """
-        import sys
-        from pathlib import Path
-
-        sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "services" / "common"))
-        from saju_common import BRANCH_TO_SEASON, SEASON_ELEMENT_BOOST, STEM_TO_ELEMENT
-
         # Get season from month branch
         season = BRANCH_TO_SEASON.get(month_branch)
         if not season:
@@ -495,12 +496,6 @@ class StrengthEvaluator:
 
         Returns Korean label (비견, 겁재, 정인, etc.)
         """
-        import sys
-        from pathlib import Path
-
-        sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "services" / "common"))
-        from saju_common import ELEMENT_CONTROLS, ELEMENT_GENERATES, STEM_TO_ELEMENT
-
         day_elem = STEM_TO_ELEMENT.get(day_stem)
         other_elem = STEM_TO_ELEMENT.get(other_stem)
 

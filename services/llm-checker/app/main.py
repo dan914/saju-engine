@@ -17,7 +17,7 @@ See: services/llm-checker/README.md and LLM_GUARD_V1_ANALYSIS_AND_PLAN.md
 
 from __future__ import annotations
 
-from services.common import create_service_app
+from saju_common import create_service_app
 
 APP_META = {
     "app": "saju-llm-checker",

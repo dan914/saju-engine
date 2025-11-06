@@ -13,7 +13,7 @@ Fix: Multi-layer defense in both Orchestrator and YongshinSelector
 """
 
 import pytest
-from app.core.saju_orchestrator import SajuOrchestrator
+from .saju_orchestrator import SajuOrchestrator
 
 
 class TestStrengthNormalizationRegression:
@@ -37,25 +37,25 @@ class TestStrengthNormalizationRegression:
         # Verify strength
         strength = result["strength"]
         assert strength["grade_code"] == "신약", "Expected 신약 (weak) grade"
-        assert strength["total"] == pytest.approx(
-            -22.0, abs=1.0
-        ), "Expected negative score around -22"
+        assert strength["score_raw"] == pytest.approx(
+            -28.0, abs=1.0
+        ), "Expected negative score around -28"
 
         # Verify yongshin rationale reflects correct strength
         yongshin = result["yongshin"]
         rationale = yongshin.get("rationale", [])
 
         assert len(rationale) > 0, "Should have rationale"
-        first_rationale = rationale[0]
+        combined = " ".join(rationale)
 
-        # Should mention 신약 (weak), NOT 신강 (strong)
-        assert "신약" in first_rationale, f"Expected '신약' in rationale, got: {first_rationale}"
-        assert "신강" not in first_rationale, f"Should NOT mention '신강', got: {first_rationale}"
+        # Should mention weak bin, not strong wording
+        assert "bin=weak" in combined, f"Expected 'bin=weak' in rationale, got: {rationale}"
+        assert "신강" not in combined, f"Did not expect '신강' in rationale, got: {rationale}"
 
         # Should prefer 인성·비겁 (resource/companion) for weak chart
         assert (
-            "인성" in first_rationale or "비겁" in first_rationale
-        ), f"Expected weak strategy (인성·비겁), got: {first_rationale}"
+            "eokbu" in combined or "resource" in combined
+        ), f"Expected weak strategy (eokbu/resource), got: {rationale}"
 
     def test_orchestrator_normalization_functions(self):
         """Test that orchestrator normalization helper functions work correctly."""

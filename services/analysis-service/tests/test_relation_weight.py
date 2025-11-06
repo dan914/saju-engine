@@ -5,7 +5,7 @@ Tests impact_weight and confidence calculation based on contextual conditions.
 """
 
 import pytest
-from app.core.relation_weight import RelationWeightEvaluator, evaluate_relation_weights
+from .relation_weight import RelationWeightEvaluator, evaluate_relation_weights
 
 # Sample input from specification
 SPEC_SAMPLE_INPUT = {

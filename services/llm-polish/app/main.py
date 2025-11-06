@@ -18,7 +18,7 @@ See: services/llm-polish/README.md
 
 from __future__ import annotations
 
-from services.common import create_service_app
+from saju_common import create_service_app
 
 APP_META = {
     "app": "saju-llm-polish",

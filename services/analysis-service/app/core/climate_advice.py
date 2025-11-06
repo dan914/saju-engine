@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import Tuple
 
-try:
-    from services.common.policy_loader import load_policy_json, resolve_policy_path  # noqa: F401
-except ImportError:
-    # Fallback for sys.path-based imports
-    from policy_loader import load_policy_json, resolve_policy_path  # noqa: F401
+from saju_common.policy_loader import load_policy_json, resolve_policy_path  # noqa: F401
 
 
 def _get(d, path, default=None):

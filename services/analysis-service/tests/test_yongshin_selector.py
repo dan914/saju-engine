@@ -10,22 +10,9 @@ Runs all test cases from yongshin_cases_v1.jsonl and validates:
 """
 
 import json
-import sys
 from pathlib import Path
 
-# Add parent directory to import yongshin_selector directly
-sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
-
-# Import directly to avoid triggering full app imports
-import importlib.util
-
-spec = importlib.util.spec_from_file_location(
-    "yongshin_selector",
-    str(Path(__file__).resolve().parents[1] / "app" / "core" / "yongshin_selector.py"),
-)
-yongshin_module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(yongshin_module)
-YongshinSelector = yongshin_module.YongshinSelector
+from .yongshin_selector import YongshinSelector
 
 
 def load_test_cases(jsonl_path: str):

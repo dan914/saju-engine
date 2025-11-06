@@ -10,7 +10,7 @@ Tests verify:
 """
 
 import pytest
-from app.core.engine_summaries import EngineSummariesBuilder
+from .engine_summaries import EngineSummariesBuilder
 
 
 class TestEngineSummariesBuilder:

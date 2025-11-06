@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Iterable
 
 from ..models import AnalysisResponse
+from .korean_enricher import KoreanLabelEnricher
 from .recommendation import RecommendationGuard
 from .text_guard import TextGuard
 
@@ -16,19 +17,24 @@ class LLMGuard:
 
     text_guard: TextGuard
     recommendation_guard: RecommendationGuard
+    korean_enricher: KoreanLabelEnricher | None = None
 
     @classmethod
     def default(cls) -> "LLMGuard":
         return cls(
             text_guard=TextGuard.from_file(),
             recommendation_guard=RecommendationGuard.from_file(),
+            korean_enricher=KoreanLabelEnricher.from_files(),
         )
 
     def prepare_payload(self, response: AnalysisResponse) -> dict:
         """Convert response to plain dict before giving it to an LLM."""
         # Pydantic ensures structure; raising early if invalid.
-        AnalysisResponse.model_validate(response.model_dump())
-        return response.model_dump()
+        payload = response.model_dump()
+        AnalysisResponse.model_validate(payload)
+        if self.korean_enricher is not None:
+            return self.korean_enricher.enrich(payload)
+        return payload
 
     def postprocess(
         self,
@@ -39,7 +45,9 @@ class LLMGuard:
         topic_tags: Iterable[str] | None = None,
     ) -> AnalysisResponse:
         """Validate LLM output and enforce guards."""
-        candidate = AnalysisResponse.model_validate(llm_payload)
+        payload = dict(llm_payload)
+        payload.pop("_enrichment", None)
+        candidate = AnalysisResponse.model_validate(payload)
 
         # Trace must remain identical (LLM은 수정 불가).
         if candidate.trace != original.trace:

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from app.core.luck import LuckCalculator, LuckContext, ShenshaCatalog
+from .luck import LuckCalculator, LuckContext, ShenshaCatalog
 
 
 def test_compute_luck_start_age() -> None:

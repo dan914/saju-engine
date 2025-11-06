@@ -2,13 +2,9 @@
 """StrengthEvaluator v2.0 - Five-tier grading with bin/normalization
 Implements 극신강/신강/중화/신약/극신약 classification with dual approach support.
 """
-import sys
-from pathlib import Path
 from typing import Any, Dict, Iterable, Tuple
 
-# Add common to path for policy loader
-sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "services" / "common"))
-from policy_loader import load_policy_json
+from saju_common.policy_loader import load_policy_json
 
 from .utils_strength_yongshin import elem_of_stem, parse_pillar, ten_god_bucket
 

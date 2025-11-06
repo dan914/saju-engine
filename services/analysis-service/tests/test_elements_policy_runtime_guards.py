@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 
 import pytest
-from app.core.policy_guards import (
+from .policy_guards import (
     DependencySignature,
     PolicyValidationError,
     validate_dependencies,

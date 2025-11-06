@@ -12,13 +12,9 @@ Policy: strength_policy_v2.json > deukse
 """
 from __future__ import annotations
 
-import sys
-from pathlib import Path
 from typing import Any, Dict
 
-# Add common to path for policy loader
-sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "services" / "common"))
-from policy_loader import load_policy_json
+from saju_common.policy_loader import load_policy_json
 
 
 class DeukseEvaluator:

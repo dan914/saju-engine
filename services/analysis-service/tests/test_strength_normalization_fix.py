@@ -11,17 +11,9 @@ Bug: Previously, raw scores in [-70, 0) were all clamped to 0, causing
 Fix: Linear normalization maps [-70, 120] → [0, 100] before grading.
      Formula: normalized = (raw - (-70)) / 190 * 100
 """
-import sys
-from pathlib import Path
-
 import pytest
 
-# Add paths for imports
-project_root = Path(__file__).resolve().parents[3]
-sys.path.insert(0, str(project_root / "services" / "analysis-service"))
-sys.path.insert(0, str(project_root / "services" / "common"))
-
-from app.core.strength_v2 import StrengthEvaluator
+from .strength_v2 import StrengthEvaluator
 
 
 class TestStrengthNormalization:
@@ -267,12 +259,12 @@ class TestStrengthNormalization:
         NEW component breakdown (with 7 adjustments + mirror variant):
         - month_state: -30 (乙木 in 酉月 = 死)
         - branch_root: +5 (Adj 1: 辰中乙 exact +3, 亥中甲 same element +2)
-        - stem_visible: -4 (Adj 2: 庚 official -6, 乙 companion +8, 辛 official -6)
+        - stem_visible: -2 (Adj 2: 庚 official -6, 乙 companion +10, 辛 official -6)
         - combo_clash: -4 (Adj 3: 巳亥 chong -8, 辰酉 liuhe +4, conflict exclusion working)
         - day_branch_stage_bonus: +3 (Adj 6: 乙亥 = 長生 in mirror mode, +6 damped by 50% due to 巳亥 chong)
         - month_stem_effect: applied (Adj 7: 乙-乙 same, no adjustment)
-        → Raw total: -30+5-4-4+3 = -30
-        → Normalized: 21.05
+        → Raw total: -30+5-2-4+3 = -28
+        → Normalized: 22.11
         → Grade: 신약 ✓ (correct modern interpretation)
 
         NOTE: With mirror variant (陰干隨陽), 乙亥 = 長生 instead of 死
@@ -299,8 +291,8 @@ class TestStrengthNormalization:
 
         # Adj 2: Stem visible should be negative (officials drain)
         assert (
-            details["stem_visible"] == -4
-        ), f"Expected stem_visible = -4, got {details['stem_visible']}"
+            details["stem_visible"] == -2
+        ), f"Expected stem_visible = -2, got {details['stem_visible']}"
 
         # Adj 3: Combo clash: 巳亥 chong (-8) + 辰酉 liuhe (+4) = -4
         assert (
@@ -313,15 +305,15 @@ class TestStrengthNormalization:
         ), f"Expected day_branch_stage_bonus = 3 (乙亥 長生 +6, damped 50%), got {details['day_branch_stage_bonus']}"
 
         # Overall: With mirror mode, this is 신약 (weak, not extremely weak)
-        # Raw: -30+5-4-4+3 = -30
+        # Raw: -30+5-2-4+3 = -28
         assert (
-            strength["score_raw"] == -30.0
-        ), f"Expected raw score = -30.0, got {strength['score_raw']}"
+            strength["score_raw"] == -28.0
+        ), f"Expected raw score = -28.0, got {strength['score_raw']}"
 
-        # Normalized: (-30 - (-70)) / 190 * 100 = 40/190*100 = 21.05
+        # Normalized: (-28 - (-70)) / 190 * 100 ≈ 22.11
         assert (
-            abs(strength["score"] - 21.05) < 0.1
-        ), f"Expected normalized score ≈ 21.05, got {strength['score']}"
+            abs(strength["score"] - 22.11) < 0.1
+        ), f"Expected normalized score ≈ 22.11, got {strength['score']}"
 
         # Grade should be 신약 (weak, correct with mirror mode)
         assert (

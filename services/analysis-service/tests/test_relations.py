@@ -1,4 +1,4 @@
-from app.core.relations import RelationContext, RelationTransformer
+from .relations import RelationContext, RelationTransformer
 
 
 def build_transformer() -> RelationTransformer:

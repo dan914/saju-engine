@@ -12,7 +12,7 @@ import json
 from pathlib import Path
 
 import pytest
-from app.core.policy_guards_luck import (
+from .policy_guards_luck import (
     LuckPolicyError,
     validate_age_series,
     validate_direction_matrix,

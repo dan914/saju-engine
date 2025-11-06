@@ -8,7 +8,7 @@ Test suite for KoreanLabelEnricher class covering all 141 mappings.
 from pathlib import Path
 
 import pytest
-from app.core.korean_enricher import KoreanLabelEnricher
+from .korean_enricher import KoreanLabelEnricher
 
 # Test data paths
 REPO_ROOT = Path(__file__).parent.parent.parent.parent
@@ -401,11 +401,12 @@ class TestLLMGuardIntegration:
         """Test that LLMGuard.prepare_payload() enriches with Korean labels."""
         from app.core.engine import AnalysisEngine
         from app.core.llm_guard import LLMGuard
-        from app.models import AnalysisRequest
+
+        from .helpers import build_sample_request
 
         # Use real engine to create a valid AnalysisResponse
         engine = AnalysisEngine()
-        request = AnalysisRequest(pillars={}, options={})
+        request = build_sample_request()
         response = engine.analyze(request)
 
         guard = LLMGuard.default()

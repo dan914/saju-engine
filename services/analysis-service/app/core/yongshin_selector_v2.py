@@ -2,13 +2,9 @@
 """YongshinSelector v2.0 - Dualized Yongshin
 Implements both traditional dual approach (조후/억부) and integrated recommendation.
 """
-import sys
-from pathlib import Path
 from typing import Any, Dict
 
-# Add common to path for policy loader
-sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "services" / "common"))
-from policy_loader import load_policy_json
+from saju_common.policy_loader import load_policy_json
 
 from .utils_strength_yongshin import ELEM_TO_KO, GEN, KE, STEM_TO_ELEM
 
