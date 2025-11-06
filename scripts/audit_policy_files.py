@@ -8,19 +8,21 @@ Features:
 - Catalogs all policy files with metadata
 - Detects duplicates by content hash
 - Identifies actively used files
-- Generates comprehensive audit report
+- Generates comprehensive audit report with ISO audit timestamp
 
 Usage:
     python scripts/audit_policy_files.py
     python scripts/audit_policy_files.py --output policy_audit.json
+    python scripts/audit_policy_files.py --audit-date 2024-01-02
 """
 
 import argparse
 import hashlib
 import json
 from collections import defaultdict
+from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Set
+from typing import Dict, List, Optional
 
 
 def compute_file_hash(file_path: Path) -> str:
@@ -106,7 +108,25 @@ def detect_duplicates(all_files: List[Dict]) -> Dict[str, List[Dict]]:
     return {h: files for h, files in hash_groups.items() if len(files) > 1}
 
 
-def generate_audit_report(repo_root: Path, output_file: str = None) -> Dict:
+def _resolve_audit_date(value: Optional[str]) -> str:
+    """Return ISO-formatted audit date, validating overrides."""
+
+    if not value:
+        return datetime.utcnow().date().isoformat()
+
+    try:
+        parsed = datetime.fromisoformat(value)
+    except ValueError as exc:
+        raise ValueError("audit_date must be ISO 8601 (YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS)") from exc
+
+    return parsed.date().isoformat()
+
+
+def generate_audit_report(
+    repo_root: Path,
+    output_file: str = None,
+    audit_date: Optional[str] = None,
+) -> Dict:
     """Generate comprehensive audit report."""
 
     print("📊 Policy Files Audit Report")
@@ -174,7 +194,7 @@ def generate_audit_report(repo_root: Path, output_file: str = None) -> Dict:
 
     # Step 5: Compile report
     report = {
-        "audit_date": "2025-11-06",
+        "audit_date": _resolve_audit_date(audit_date),
         "repo_root": str(repo_root),
         "summary": {
             "total_directories": len(policy_dirs),
@@ -231,13 +251,21 @@ def main():
         default=Path(__file__).parent.parent,
         help="Repository root directory"
     )
+    parser.add_argument(
+        "--audit-date",
+        type=str,
+        help="Override audit date (ISO 8601). Defaults to current UTC date.",
+    )
 
     args = parser.parse_args()
 
     repo_root = args.repo_root.resolve()
     print(f"Repository root: {repo_root}\n")
 
-    generate_audit_report(repo_root, args.output)
+    try:
+        generate_audit_report(repo_root, args.output, audit_date=args.audit_date)
+    except ValueError as exc:
+        parser.error(str(exc))
 
 
 if __name__ == "__main__":
