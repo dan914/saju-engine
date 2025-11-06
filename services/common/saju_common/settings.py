@@ -128,6 +128,17 @@ class SajuSettings(BaseSettings):
         description="Service name for tracing (auto-detected if None)"
     )
 
+    # Rate limiting configuration
+    enable_rate_limiting: bool = Field(
+        default=False,
+        description="Enable API rate limiting"
+    )
+
+    redis_url: Optional[str] = Field(
+        default=None,
+        description="Redis URL for distributed rate limiting (e.g., redis://localhost:6379)"
+    )
+
     # Service-specific overrides (can be extended by individual services)
     analysis_service_enabled: bool = Field(
         default=True,

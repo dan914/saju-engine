@@ -72,6 +72,15 @@ from .tracing import (
     record_exception,
 )
 
+# Rate limiting
+from .rate_limit import (
+    RateLimitMiddleware,
+    TokenBucketRateLimiter,
+    RateLimitExceeded,
+    setup_rate_limiting,
+    DEFAULT_RATE_LIMITS,
+)
+
 # Legacy utilities (preserved for backward compatibility)
 from .policy_loader import resolve_policy_path
 from .trace import TraceMetadata
@@ -158,6 +167,12 @@ __all__ = [
     "add_span_attribute",
     "add_span_event",
     "record_exception",
+    # Rate limiting
+    "RateLimitMiddleware",
+    "TokenBucketRateLimiter",
+    "RateLimitExceeded",
+    "setup_rate_limiting",
+    "DEFAULT_RATE_LIMITS",
     # Legacy
     "TraceMetadata",
     "resolve_policy_path",
