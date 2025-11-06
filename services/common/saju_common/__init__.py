@@ -26,6 +26,9 @@ Example:
 # Application factory
 from .app_factory import create_service_app
 
+# Dependency injection
+from .container import Container, get_default_container, reset_default_container
+
 # Exceptions (RFC7807)
 from .exceptions import (
     SajuBaseException,
@@ -100,6 +103,10 @@ __all__ = [
     "__version__",
     # Application factory
     "create_service_app",
+    # Dependency injection
+    "Container",
+    "get_default_container",
+    "reset_default_container",
     # Exceptions (4xx)
     "ValidationError",
     "UnauthorizedError",
