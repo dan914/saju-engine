@@ -18,12 +18,8 @@ from fastapi import FastAPI, Request
 from fastapi.testclient import TestClient
 
 # Direct imports from services.common
-import sys
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from app_factory import create_service_app
-from exceptions import (
+from saju_common.app_factory import create_service_app
+from saju_common.exceptions import (
     CalculationError,
     ConflictError,
     ForbiddenError,

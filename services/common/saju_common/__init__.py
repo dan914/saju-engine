@@ -61,6 +61,17 @@ from .handlers import register_exception_handlers
 # Settings (centralized configuration)
 from .settings import SajuSettings, get_repo_root, settings
 
+# Observability (OpenTelemetry tracing)
+from .tracing import (
+    setup_tracing,
+    get_tracer,
+    trace_span,
+    trace_function,
+    add_span_attribute,
+    add_span_event,
+    record_exception,
+)
+
 # Legacy utilities (preserved for backward compatibility)
 from .policy_loader import resolve_policy_path
 from .trace import TraceMetadata
@@ -139,6 +150,14 @@ __all__ = [
     "add_middleware",
     # Handlers
     "register_exception_handlers",
+    # Observability (OpenTelemetry)
+    "setup_tracing",
+    "get_tracer",
+    "trace_span",
+    "trace_function",
+    "add_span_attribute",
+    "add_span_event",
+    "record_exception",
     # Legacy
     "TraceMetadata",
     "resolve_policy_path",
