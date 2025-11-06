@@ -13,9 +13,13 @@ Every response processed by `RateLimitMiddleware` exposes the following RFC
 | --- | --- |
 | `X-RateLimit-Limit` | Tier-specific configured limit (requests per minute). Unknown tiers fall back to `anonymous`. |
 | `X-RateLimit-Remaining` | Tokens remaining after the current request. Derived from the updated token balance, not capacity. |
-| `X-RateLimit-Reset` | Epoch seconds until the bucket is considered replenished (next minute boundary). |
+| `X-RateLimit-Reset` | Epoch seconds when the bucket will refill to capacity: `now + ceil((capacity - remaining)/refill_rate)`. |
 | `Retry-After` | Only set on 429 responses; indicates seconds until another request is allowed. |
 
+
+`X-RateLimit-Remaining` is derived from the current token counter (floored to an integer).
+`X-RateLimit-Reset` advances by the exact refill horizon, so a half-empty bucket will report only the
+seconds required to regain full capacity rather than the next minute boundary.
 ## Logging Hygiene
 
 To prevent accidental leakage of Redis credentials, log messages now flow

@@ -31,6 +31,7 @@ References:
 from __future__ import annotations
 
 import logging
+import math
 import re
 import time
 from pathlib import Path
@@ -396,6 +397,20 @@ class TokenBucketRateLimiter:
         return self._last_remaining_tokens.get(key, float(self.capacity))
 
 
+    def get_reset_after_seconds(self, key: str) -> int:
+        """Return seconds until the bucket refills to capacity for a key."""
+
+        if self.refill_rate <= 0:
+            return 0
+
+        remaining = self.get_last_remaining_tokens(key)
+        tokens_needed = max(0.0, self.capacity - remaining)
+        if tokens_needed <= 0:
+            return 0
+
+        return int(math.ceil(tokens_needed / self.refill_rate))
+
+
 class RateLimitMiddleware(BaseHTTPMiddleware):
     """Middleware for API rate limiting.
 
@@ -532,7 +547,8 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         # Add rate limit headers
         limit = self.rate_limits.get(effective_tier, self.rate_limits.get("anonymous", 0))
         remaining_tokens = limiter.get_last_remaining_tokens(key)
-        remaining = int(max(0, remaining_tokens)) if allowed else 0
+        remaining = int(max(0, math.floor(remaining_tokens))) if allowed else 0
+        reset_after = limiter.get_reset_after_seconds(key)
 
         if not allowed:
             # Rate limit exceeded - return 429
@@ -564,9 +580,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         # Add rate limit headers to successful response
         response.headers["X-RateLimit-Limit"] = str(limit)
         response.headers["X-RateLimit-Remaining"] = str(remaining)
-        response.headers["X-RateLimit-Reset"] = str(
-            int(time.time() + (60 - (time.time() % 60)))
-        )
+        response.headers["X-RateLimit-Reset"] = str(int(time.time()) + reset_after)
 
         return response
 

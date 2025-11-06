@@ -20,6 +20,17 @@ from saju_common.rate_limit import (
 )
 
 
+class _FixedClock:
+    def __init__(self, start=1000.0):
+        self.current = start
+
+    def time(self):
+        return self.current
+
+    def advance(self, seconds):
+        self.current += seconds
+
+
 class ScriptableRedis:
     """In-memory Redis stub that simulates Lua execution for tests."""
 
@@ -236,6 +247,55 @@ def test_setup_rate_limiting_no_redis():
     """Test rate limiting setup without Redis."""
     client = setup_rate_limiting(redis_url=None)
     assert client is None
+
+
+def test_rate_limit_headers_reflect_remaining_tokens(monkeypatch):
+    """Remaining tokens and reset headers should match post-consumption state."""
+
+    clock = _FixedClock(1000.0)
+    monkeypatch.setattr("saju_common.rate_limit.time.time", clock.time)
+
+    app = FastAPI()
+
+    @app.get("/test")
+    def test_endpoint():
+        return {"message": "success"}
+
+    app.add_middleware(
+        RateLimitMiddleware,
+        rate_limits={"anonymous": 60},
+    )
+
+    with TestClient(app) as client:
+        response = client.get("/test")
+
+    assert response.headers["X-RateLimit-Remaining"] == "9"
+    assert response.headers["X-RateLimit-Reset"] == "1001"
+
+
+def test_rate_limit_headers_near_empty(monkeypatch):
+    """Near-empty buckets should report reset based on refill math."""
+
+    clock = _FixedClock(2000.0)
+    monkeypatch.setattr("saju_common.rate_limit.time.time", clock.time)
+
+    app = FastAPI()
+
+    @app.get("/test")
+    def test_endpoint():
+        return {"message": "success"}
+
+    app.add_middleware(
+        RateLimitMiddleware,
+        rate_limits={"anonymous": 12},
+    )
+
+    with TestClient(app) as client:
+        for _ in range(4):
+            response = client.get("/test")
+
+    assert response.headers["X-RateLimit-Remaining"] == "1"
+    assert response.headers["X-RateLimit-Reset"] == "2020"
 
 
 def test_rate_limit_middleware_basic():
