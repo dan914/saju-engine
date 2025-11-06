@@ -9,15 +9,9 @@ Tests all the edge cases mentioned:
 - Type errors
 """
 
-import sys
-from pathlib import Path
+from scripts._script_loader import get_pillars_module
 
-# Add path
-sys.path.insert(
-    0, str(Path(__file__).parent.parent / "services" / "pillars-service" / "app" / "core")
-)
-
-import input_validator as iv
+validate_birth_input = get_pillars_module("input_validator", "validate_birth_input")
 
 
 def test_input_validation():
@@ -197,7 +191,7 @@ def test_input_validation():
         expect_valid = case["expect_valid"]
 
         # Run validation
-        result = iv.validate_birth_input(year, month, day, hour, minute, second, strict=True)
+        result = validate_birth_input(year, month, day, hour, minute, second, strict=True)
 
         # Check result
         if result["valid"] == expect_valid:
@@ -231,7 +225,7 @@ def test_input_validation():
     print("NON-STRICT MODE TESTS (24:00 auto-correction)")
     print("=" * 120)
 
-    result = iv.validate_birth_input(2020, 10, 10, 24, 0, 0, strict=False)
+    result = validate_birth_input(2020, 10, 10, 24, 0, 0, strict=False)
     if result["valid"] and result["corrected"]:
         print(
             f"✅ PASS      | 24:00 auto-convert    | Converted to {result['datetime'].strftime('%Y-%m-%d %H:%M:%S')}"

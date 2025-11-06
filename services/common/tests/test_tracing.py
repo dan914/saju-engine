@@ -1,7 +1,11 @@
 """Tests for OpenTelemetry tracing module."""
 
+import sys
+import types
+
 import pytest
 
+from saju_common import tracing as tracing_module
 from saju_common.tracing import (
     add_span_attribute,
     add_span_event,
@@ -11,6 +15,131 @@ from saju_common.tracing import (
     trace_function,
     trace_span,
 )
+
+
+def _install_fake_otel(monkeypatch, captured):
+    class FakeTracerProvider:
+        def __init__(self, resource=None):
+            captured["resource"] = resource
+            self.processors = []
+
+        def add_span_processor(self, processor):
+            self.processors.append(processor)
+            captured.setdefault("processors", []).append(processor)
+
+    class FakeResource:
+        def __init__(self, attributes):
+            self.attributes = attributes
+
+    class FakeBatchSpanProcessor:
+        def __init__(self, exporter):
+            self.exporter = exporter
+            captured.setdefault("batch_exporters", []).append(exporter)
+
+    class FakeConsoleSpanExporter:
+        pass
+
+    class FakeFastAPIInstrumentor:
+        instrumented = False
+
+        @classmethod
+        def instrument(cls):
+            cls.instrumented = True
+            captured["instrumented"] = True
+
+    class FakeGRPCExporter:
+        def __init__(self, **kwargs):
+            captured["grpc_exporter_kwargs"] = kwargs
+            captured["grpc_exporter"] = self
+
+    class FakeHTTPExporter:
+        def __init__(self, **kwargs):
+            captured["http_exporter_kwargs"] = kwargs
+            captured["http_exporter"] = self
+
+    class FakeTraceModule(types.SimpleNamespace):
+        def __init__(self):
+            super().__init__()
+            self.provider = None
+
+        def set_tracer_provider(self, provider):
+            captured["provider"] = provider
+
+        def get_tracer(self, name):
+            captured["tracer_name"] = name
+            return object()
+
+    fake_trace = FakeTraceModule()
+
+    otel_module = types.ModuleType("opentelemetry")
+    otel_module.trace = fake_trace
+
+    grpc_module = types.ModuleType("opentelemetry.exporter.otlp.proto.grpc.trace_exporter")
+    grpc_module.OTLPSpanExporter = FakeGRPCExporter
+
+    http_module = types.ModuleType("opentelemetry.exporter.otlp.proto.http.trace_exporter")
+    http_module.OTLPSpanExporter = FakeHTTPExporter
+
+    instrumentation_module = types.ModuleType("opentelemetry.instrumentation.fastapi")
+    instrumentation_module.FastAPIInstrumentor = FakeFastAPIInstrumentor
+
+    sdk_resources_module = types.ModuleType("opentelemetry.sdk.resources")
+    sdk_resources_module.SERVICE_NAME = "service.name"
+    sdk_resources_module.Resource = FakeResource
+
+    sdk_trace_module = types.ModuleType("opentelemetry.sdk.trace")
+    sdk_trace_module.TracerProvider = FakeTracerProvider
+
+    sdk_export_module = types.ModuleType("opentelemetry.sdk.trace.export")
+    sdk_export_module.BatchSpanProcessor = FakeBatchSpanProcessor
+    sdk_export_module.ConsoleSpanExporter = FakeConsoleSpanExporter
+
+    # Register modules required for imports
+    monkeypatch.setitem(sys.modules, "opentelemetry", otel_module)
+    monkeypatch.setitem(sys.modules, "opentelemetry.trace", fake_trace)
+    monkeypatch.setitem(sys.modules, "opentelemetry.exporter", types.ModuleType("opentelemetry.exporter"))
+    monkeypatch.setitem(sys.modules, "opentelemetry.exporter.otlp", types.ModuleType("opentelemetry.exporter.otlp"))
+    monkeypatch.setitem(
+        sys.modules,
+        "opentelemetry.exporter.otlp.proto",
+        types.ModuleType("opentelemetry.exporter.otlp.proto"),
+    )
+    monkeypatch.setitem(
+        sys.modules,
+        "opentelemetry.exporter.otlp.proto.grpc",
+        types.ModuleType("opentelemetry.exporter.otlp.proto.grpc"),
+    )
+    monkeypatch.setitem(
+        sys.modules,
+        "opentelemetry.exporter.otlp.proto.grpc.trace_exporter",
+        grpc_module,
+    )
+    monkeypatch.setitem(
+        sys.modules,
+        "opentelemetry.exporter.otlp.proto.http",
+        types.ModuleType("opentelemetry.exporter.otlp.proto.http"),
+    )
+    monkeypatch.setitem(
+        sys.modules,
+        "opentelemetry.exporter.otlp.proto.http.trace_exporter",
+        http_module,
+    )
+    monkeypatch.setitem(
+        sys.modules,
+        "opentelemetry.instrumentation",
+        types.ModuleType("opentelemetry.instrumentation"),
+    )
+    monkeypatch.setitem(
+        sys.modules,
+        "opentelemetry.instrumentation.fastapi",
+        instrumentation_module,
+    )
+    monkeypatch.setitem(sys.modules, "opentelemetry.sdk", types.ModuleType("opentelemetry.sdk"))
+    monkeypatch.setitem(sys.modules, "opentelemetry.sdk.resources", sdk_resources_module)
+    monkeypatch.setitem(sys.modules, "opentelemetry.sdk.trace", sdk_trace_module)
+    monkeypatch.setitem(sys.modules, "opentelemetry.sdk.trace.export", sdk_export_module)
+
+    return fake_trace
 
 
 def test_tracing_disabled_by_default():
@@ -196,8 +325,58 @@ def test_settings_service_name_override(monkeypatch):
     assert settings.service_name == "custom-service"
 
 
+def test_setup_tracing_env_grpc(monkeypatch):
+    """Tracing uses gRPC exporter when endpoint hints grpc protocol."""
+
+    captured: dict[str, object] = {}
+    _install_fake_otel(monkeypatch, captured)
+
+    dummy_settings = types.SimpleNamespace(enable_tracing=True, service_name="svc", log_level="INFO")
+    monkeypatch.setattr(tracing_module, "settings", dummy_settings, raising=False)
+    monkeypatch.setenv("OTEL_EXPORTER_OTLP_ENDPOINT", "grpc://collector:4317")
+    monkeypatch.setenv("OTEL_EXPORTER_OTLP_HEADERS", "authorization=Bearer 123")
+
+    tracing_module._tracer = None
+    tracing_module._tracing_enabled = False
+
+    result = setup_tracing()
+
+    assert result is True
+    assert "grpc_exporter" in captured
+    assert captured["grpc_exporter_kwargs"]["endpoint"] == "grpc://collector:4317"
+    assert captured["grpc_exporter_kwargs"]["headers"] == {"authorization": "Bearer 123"}
+    assert "http_exporter" not in captured
+
+
+def test_setup_tracing_env_http(monkeypatch):
+    """Tracing uses HTTP exporter when protocol hint specifies HTTP."""
+
+    captured: dict[str, object] = {}
+    _install_fake_otel(monkeypatch, captured)
+
+    dummy_settings = types.SimpleNamespace(enable_tracing=True, service_name="svc", log_level="INFO")
+    monkeypatch.setattr(tracing_module, "settings", dummy_settings, raising=False)
+    monkeypatch.setenv("OTEL_EXPORTER_OTLP_ENDPOINT", "https://collector:4318/v1/traces")
+    monkeypatch.setenv("OTEL_EXPORTER_OTLP_PROTOCOL", "http/protobuf")
+    monkeypatch.setenv("OTEL_EXPORTER_OTLP_HEADERS", "api-key=abc123,env=staging")
+
+    tracing_module._tracer = None
+    tracing_module._tracing_enabled = False
+
+    result = setup_tracing()
+
+    assert result is True
+    assert "http_exporter" in captured
+    assert captured["http_exporter_kwargs"]["endpoint"] == "https://collector:4318/v1/traces"
+    assert captured["http_exporter_kwargs"]["headers"] == {"api-key": "abc123", "env": "staging"}
+    assert "grpc_exporter" not in captured
+
+
 def test_trace_function_with_complex_return_types():
     """Test that trace_function works with various return types."""
+    # Reset tracer state (cleanup after previous tests that set fake tracers)
+    tracing_module._tracer = None
+    tracing_module._tracing_enabled = False
 
     @trace_function()
     def return_dict() -> dict:

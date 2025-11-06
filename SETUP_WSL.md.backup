@@ -1,0 +1,185 @@
+# Saju Engine WSL Setup Guide
+
+## 🎯 Setup Complete!
+
+The Saju Engine has been successfully configured for your WSL environment. All macOS-specific code has been reviewed and the project is now cross-platform compatible.
+
+## 📋 Prerequisites
+
+- **Python 3.11+** ✅ (Available on your system)
+- **WSL/Linux environment** ✅
+- **Git** ✅
+
+## 🚀 Quick Start
+
+```bash
+# Quick setup (minimal dependencies)
+./quickstart.sh
+
+# Or full setup (all dependencies)
+./setup_env.sh
+
+# Run a service
+./run_service.sh api-gateway
+```
+
+## 📦 Project Structure
+
+```
+saju-engine/
+├── services/           # Microservices
+│   ├── api-gateway/    # Main API gateway
+│   ├── analysis-service/   # Analysis engine
+│   ├── astro-service/      # Astronomical calculations
+│   ├── pillars-service/    # Four Pillars calculations
+│   ├── tz-time-service/    # Timezone conversions
+│   ├── llm-checker/        # LLM validation
+│   ├── llm-polish/         # LLM text polish
+│   └── common/             # Shared utilities
+├── data/               # Data files
+│   └── sample/         # Sample CSV data
+├── setup_env.sh        # Full environment setup
+├── quickstart.sh       # Quick minimal setup
+├── run_service.sh      # Service runner
+├── test_setup.sh       # Setup validation
+└── requirements.txt    # Python dependencies
+```
+
+## 🔧 Available Scripts
+
+### setup_env.sh
+- Creates Python 3.11 virtual environment
+- Installs all dependencies
+- Sets up directories and permissions
+- Configures environment variables
+
+### quickstart.sh
+- Minimal setup for fast start
+- Installs only essential packages
+- Quick way to get services running
+
+### run_service.sh
+- Runs individual services
+- Supports all microservices
+- Automatic port assignment
+- Example: `./run_service.sh api-gateway [port]`
+
+### test_setup.sh
+- Validates environment setup
+- Checks dependencies
+- Tests imports
+- Runs sample tests
+
+## 🌐 Available Services
+
+| Service | Default Port | Description |
+|---------|-------------|-------------|
+| api-gateway | 8000 | Main API gateway |
+| analysis-service | 8001 | Saju analysis engine |
+| astro-service | 8002 | Solar term calculations |
+| pillars-service | 8003 | Four Pillars calculations |
+| tz-time-service | 8004 | Timezone conversions |
+| llm-checker | 8005 | LLM validation service |
+| llm-polish | 8006 | LLM text polishing |
+
+## 🚦 Running Services
+
+### Single Service
+```bash
+# Run with default port
+./run_service.sh api-gateway
+
+# Run with custom port
+./run_service.sh api-gateway 3000
+
+# Or directly with uvicorn
+source venv/bin/activate
+uvicorn services.api_gateway.app.main:app --reload
+```
+
+### All Services (with tmux)
+```bash
+# Install tmux if not available
+sudo apt install tmux
+
+# Run all services
+./run_service.sh all
+
+# Attach to tmux session
+tmux attach-session -t saju-engine
+```
+
+## 🧪 Testing
+
+```bash
+# Activate environment
+source venv/bin/activate
+
+# Run tests
+pytest
+
+# Test specific service
+pytest services/api-gateway/tests/
+
+# Check service health
+curl http://localhost:8000/health
+```
+
+## 📝 Environment Variables
+
+Create `.env.local` for custom settings:
+```bash
+PYTHONPATH=${PYTHONPATH}:$(pwd)
+SAJU_ENV=development
+LOG_LEVEL=INFO
+SERVICE_HOST=0.0.0.0
+SERVICE_PORT=8000
+```
+
+## ✅ What Was Fixed for WSL
+
+1. **No macOS-specific paths found** - Project uses Python's pathlib for cross-platform paths
+2. **File permissions** - Scripts set proper executable permissions
+3. **Python environment** - Configured for Python 3.11
+4. **Service scripts** - Created WSL-compatible startup scripts
+5. **Dependencies** - All packages compatible with Linux
+
+## 🐛 Troubleshooting
+
+### Permission Issues
+```bash
+chmod +x *.sh
+find . -type f -name "*.py" -exec chmod 644 {} \;
+```
+
+### Python Path Issues
+```bash
+export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+```
+
+### Virtual Environment Not Found
+```bash
+python3.11 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Port Already in Use
+```bash
+# Find process using port
+lsof -i :8000
+# Or use different port
+./run_service.sh api-gateway 8001
+```
+
+## 📊 Next Steps
+
+1. **Run the setup**: `./quickstart.sh` or `./setup_env.sh`
+2. **Start a service**: `./run_service.sh api-gateway`
+3. **Check health**: `curl http://localhost:8000/health`
+4. **View API docs**: Open http://localhost:8000/docs in browser
+5. **Run tests**: `pytest`
+
+## 🎉 Success!
+
+Your Saju Engine is now ready to run on WSL/Linux! All services are configured and ready to use.

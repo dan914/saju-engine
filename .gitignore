@@ -52,3 +52,4 @@ logs/
 data/canonical/
 data/*_backup/
 data/*_backup_*/
+.poetry-1.8/

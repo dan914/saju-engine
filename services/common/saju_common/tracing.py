@@ -37,10 +37,71 @@ from __future__ import annotations
 
 import functools
 import logging
+import os
 from contextlib import contextmanager
 from typing import Any, Callable, Iterator, Optional
+from urllib.parse import urlparse
+
+from .settings import settings
 
 logger = logging.getLogger(__name__)
+
+
+def _parse_otlp_headers(raw_headers: Optional[str]) -> dict[str, str]:
+    if not raw_headers:
+        return {}
+
+    parsed: dict[str, str] = {}
+    for entry in raw_headers.split(","):
+        if not entry:
+            continue
+        if "=" not in entry:
+            continue
+        key, value = entry.split("=", 1)
+        key = key.strip()
+        if not key:
+            continue
+        parsed[key] = value.strip()
+    return parsed
+
+
+def _infer_otlp_protocol(endpoint: str, protocol_hint: Optional[str]) -> str:
+    if protocol_hint:
+        hint = protocol_hint.lower()
+        if hint in {"http", "http/protobuf", "http/proto"}:
+            return "http"
+        if hint in {"grpc", "grpc/protobuf"}:
+            return "grpc"
+
+    parsed = urlparse(endpoint)
+
+    if parsed.scheme in {"grpc", "grpcs"}:
+        return "grpc"
+
+    if parsed.port == 4318 or parsed.path.rstrip("/") == "/v1/traces":
+        return "http"
+
+    return "grpc"
+
+
+def _create_otlp_exporter(
+    *,
+    endpoint: str,
+    headers: dict[str, str],
+    protocol_hint: Optional[str],
+    grpc_exporter_cls,
+    http_exporter_cls,
+):
+    protocol = _infer_otlp_protocol(endpoint, protocol_hint)
+
+    exporter_kwargs = {"endpoint": endpoint}
+    if headers:
+        exporter_kwargs["headers"] = headers
+
+    if protocol == "http":
+        return http_exporter_cls(**exporter_kwargs), "http"
+
+    return grpc_exporter_cls(**exporter_kwargs), "grpc"
 
 # Type stubs for when OpenTelemetry is not installed
 TracerProvider = Any
@@ -84,8 +145,6 @@ def setup_tracing(
     global _tracer, _tracing_enabled
 
     # Check if tracing is enabled in settings
-    from .settings import settings
-
     if not settings.enable_tracing:
         logger.info("OpenTelemetry tracing disabled (SAJU_ENABLE_TRACING=false)")
         _tracing_enabled = False
@@ -95,7 +154,10 @@ def setup_tracing(
     try:
         from opentelemetry import trace
         from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
-            OTLPSpanExporter,
+            OTLPSpanExporter as OTLPGRPCSpanExporter,
+        )
+        from opentelemetry.exporter.otlp.proto.http.trace_exporter import (
+            OTLPSpanExporter as OTLPHTTPSpanExporter,
         )
         from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
         from opentelemetry.sdk.resources import SERVICE_NAME, Resource
@@ -117,14 +179,31 @@ def setup_tracing(
     # Create and set tracer provider
     provider = TracerProvider(resource=resource)
 
-    # Add OTLP exporter if endpoint provided
-    if endpoint:
+    otlp_endpoint = endpoint or os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
+    otlp_headers = _parse_otlp_headers(os.getenv("OTEL_EXPORTER_OTLP_HEADERS"))
+    otlp_protocol_hint = os.getenv("OTEL_EXPORTER_OTLP_PROTOCOL")
+
+    if otlp_endpoint:
         try:
-            otlp_exporter = OTLPSpanExporter(endpoint=endpoint)
-            provider.add_span_processor(BatchSpanProcessor(otlp_exporter))
-            logger.info(f"OpenTelemetry OTLP exporter configured: {endpoint}")
-        except Exception as e:
-            logger.warning(f"Failed to configure OTLP exporter: {e}")
+            exporter, protocol = _create_otlp_exporter(
+                endpoint=otlp_endpoint,
+                headers=otlp_headers,
+                protocol_hint=otlp_protocol_hint,
+                grpc_exporter_cls=OTLPGRPCSpanExporter,
+                http_exporter_cls=OTLPHTTPSpanExporter,
+            )
+            provider.add_span_processor(BatchSpanProcessor(exporter))
+            logger.info(
+                "OpenTelemetry OTLP %s exporter configured: %s",
+                protocol.upper(),
+                otlp_endpoint,
+            )
+        except Exception as exc:
+            logger.warning(
+                "Failed to configure OTLP exporter (%s): %s",
+                otlp_endpoint,
+                exc,
+            )
 
     # Add console exporter for development (only if log level is DEBUG)
     if settings.log_level == "DEBUG":

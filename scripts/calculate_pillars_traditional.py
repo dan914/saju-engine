@@ -14,6 +14,8 @@ from pathlib import Path
 from typing import Optional
 from zoneinfo import ZoneInfo
 
+from scripts._script_loader import get_pillars_module
+
 # Constants
 SEXAGENARY_CYCLE = [
     "甲子",
@@ -161,12 +163,19 @@ def hanja_to_korean(pillar: str) -> str:
 
 def load_terms_for_year(year: int, use_refined: bool = True) -> list:
     """Load solar terms for a given year."""
+    base_dir = Path(__file__).resolve().parents[1] / "data"
+    data_dir = base_dir
+
     if use_refined:
-        data_dir = Path(__file__).resolve().parents[1] / "data" / "canonical" / "canonical_v1"
-    else:
-        data_dir = Path(__file__).resolve().parents[1] / "data"
+        refined_dir = base_dir / "canonical" / "canonical_v1"
+        if refined_dir.exists():
+            data_dir = refined_dir
 
     terms_file = data_dir / f"terms_{year}.csv"
+
+    if not terms_file.exists() and data_dir != base_dir:
+        # Fallback to legacy location when refined payloads are unavailable
+        terms_file = base_dir / f"terms_{year}.csv"
 
     if not terms_file.exists():
         return []
@@ -467,17 +476,9 @@ def calculate_four_pillars(
     """
     # Input validation
     if validate_input:
-        # Import validator
-        import sys
-        from pathlib import Path
-
-        sys.path.insert(
-            0, str(Path(__file__).parent.parent / "services" / "pillars-service" / "app" / "core")
-        )
         try:
-            import input_validator as iv
-
-            valid, error = iv.BirthDateTimeValidator.validate_datetime_object(birth_dt)
+            validator = get_pillars_module("input_validator", "BirthDateTimeValidator")
+            valid, error = validator.validate_datetime_object(birth_dt)
             if not valid:
                 return {"error": f"Invalid input: {error}"}
         except ImportError:

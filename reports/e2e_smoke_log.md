@@ -1,6 +1,6 @@
 # E2E Smoke Test Log — LLM Guard v1.1
 
-**Date:** 2025-10-09 17:39:45 KST
+**Date:** 2025-11-03 12:51:11 KST
 **Policy:** policy/llm_guard_policy_v1.1.json
 **Scenarios:** 3 (신약/중화/신강)
 
@@ -18,7 +18,7 @@
 
 **Risk Score:** 0
 **Risk Level:** LOW
-**Evaluation Time:** 0.82ms
+**Evaluation Time:** 1.08ms
 
 **Rules Triggered:** None (clean)
 
@@ -121,7 +121,7 @@
 
 **Risk Score:** 0
 **Risk Level:** LOW
-**Evaluation Time:** 0.02ms
+**Evaluation Time:** 0.03ms
 
 **Rules Triggered:** None (clean)
 
@@ -224,7 +224,7 @@
 
 **Risk Score:** 0
 **Risk Level:** LOW
-**Evaluation Time:** 0.01ms
+**Evaluation Time:** 0.02ms
 
 **Rules Triggered:** None (clean)
 

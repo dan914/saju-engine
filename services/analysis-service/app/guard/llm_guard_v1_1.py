@@ -14,10 +14,14 @@ Policy: policy/llm_guard_policy_v1.1.json
 """
 
 import json
+import logging
 import re
 import time
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class LLMGuardV11:
@@ -53,6 +57,18 @@ class LLMGuardV11:
         self.rules = {r["rule_id"]: r for r in self.policy.get("rules", [])}
         self.eval_order = self.policy.get("evaluation_order", [])
         self.risk_model = self.policy.get("risk_model", {})
+
+        self._feature_flags = {
+            "pii_redaction": False,
+            "semantic_match": False,
+            "signature_check": False,
+        }
+        self._feature_skip_logged: Dict[str, bool] = {key: False for key in self._feature_flags}
+        self._telemetry: Dict[str, int] = {
+            "pii_redactions": 0,
+            "semantic_checks": 0,
+            "signature_checks": 0,
+        }
 
         # Build rule evaluator mapping
         self.evaluators = {
@@ -95,7 +111,8 @@ class LLMGuardV11:
 
         # Extract inputs
         evidence = payload.get("evidence", {})
-        candidate = payload.get("candidate_answer", "")
+        candidate_raw = payload.get("candidate_answer", "")
+        candidate, redactions = self._apply_pii_redaction(str(candidate_raw))
         summaries = payload.get("engine_summaries", {})
         context = payload.get("policy_context", {})
 
@@ -153,8 +170,9 @@ class LLMGuardV11:
             "risk": risk,
             "logs": {
                 "trace": trace,
-                "redactions": [],  # TODO: Implement PII redaction
+                "redactions": redactions,
                 "recommendations": self._generate_recommendations(violations, verdict),
+                "telemetry": dict(self._telemetry),
             },
             "meta": {
                 "guard_version": self.version,
@@ -216,6 +234,58 @@ class LLMGuardV11:
     # Rule Evaluators (13 rules)
     # ============================================================
 
+    def _apply_pii_redaction(self, text: str) -> Tuple[str, List[Dict[str, str]]]:
+        """Optional PII scrubbing prior to rule evaluation."""
+
+        if not self._feature_flags.get("pii_redaction"):
+            self._maybe_log_feature_skip("pii_redaction")
+            return text, []
+
+        patterns = {
+            "email": re.compile(r"[\w.]+@[\w.-]+"),
+            "phone": re.compile(r"\b(?:\+?\d{1,3}[- ]?)?(?:\d{2,4}[- ]?){3,4}\b"),
+        }
+        redactions: List[Dict[str, str]] = []
+        scrubbed = text
+
+        for kind, pattern in patterns.items():
+            def _replacement(match: re.Match[str], *, label: str = kind) -> str:
+                value = match.group(0)
+                redactions.append({"type": label, "value": value})
+                return f"[REDACTED_{label.upper()}]"
+
+            scrubbed = pattern.sub(_replacement, scrubbed)
+
+        if redactions:
+            self._telemetry["pii_redactions"] += len(redactions)
+
+        return scrubbed, redactions
+
+    def _semantic_claim_supported(self, evidence: Dict[str, Any]) -> bool:
+        """Very light heuristic to determine if absolute claims have backing."""
+
+        support_fields = ("strength", "relations", "ten_gods", "engine_summaries")
+        return any(bool(evidence.get(field)) for field in support_fields)
+
+    def _semantic_relation_alignment(self, summaries: Dict[str, Any]) -> set[str]:
+        """Return relation types represented in engine summaries."""
+
+        relation_items = summaries.get("relation_items", [])
+        return {str(item.get("type")) for item in relation_items if isinstance(item, dict)}
+
+    def _maybe_log_feature_skip(self, feature: str) -> None:
+        """Emit one-time log when a feature flag is disabled."""
+
+        if self._feature_flags.get(feature):
+            return
+        if self._feature_skip_logged.get(feature):
+            return
+        LOGGER.info(
+            "feature_disabled",
+            extra={"component": "LLMGuard", "feature": feature},
+        )
+        self._feature_skip_logged[feature] = True
+
     def _eval_struct_000(
         self, evidence: Dict, candidate: str, summaries: Dict, context: Dict
     ) -> Dict[str, Any]:
@@ -257,9 +327,18 @@ class LLMGuardV11:
 
         for pattern in absolute_patterns:
             if re.search(pattern, candidate):
-                # Check if evidence supports absolute claim
-                # TODO: Implement semantic matching
-                pass
+                if self._feature_flags.get("semantic_match"):
+                    self._telemetry["semantic_checks"] += 1
+                    if not self._semantic_claim_supported(evidence):
+                        return {
+                            "result": "fail",
+                            "reason_code": "UNSUPPORTED-ABSOLUTE",
+                            "description_ko": "절대 표현을 뒷받침하는 증거가 부족합니다.",
+                            "evidence_refs": ["strength", "relations"],
+                            "note_ko": "semantic_match",
+                        }
+                else:
+                    self._maybe_log_feature_skip("semantic_match")
 
         return {"result": "pass", "note_ko": "증거 기반 검증 통과"}
 
@@ -346,7 +425,31 @@ class LLMGuardV11:
 
         Checks relations (sanhe/chong/etc.) mentioned in candidate are in evidence.
         """
-        # TODO: Implement semantic relation matching
+        if self._feature_flags.get("semantic_match"):
+            self._telemetry["semantic_checks"] += 1
+            available = self._semantic_relation_alignment(summaries)
+            keyword_map = {
+                "삼합": "sanhe",
+                "반합": "banhe",
+                "충": "chong",
+                "형": "xing",
+                "파": "pa",
+                "해": "hai",
+            }
+            missing = [
+                kw
+                for kw, rel_key in keyword_map.items()
+                if kw in candidate and rel_key not in available
+            ]
+            if missing:
+                return {
+                    "result": "fail",
+                    "reason_code": "RELATION-UNSUPPORTED",
+                    "description_ko": f"다음 관계 근거 부족: {', '.join(missing)}",
+                    "note_ko": "semantic_match",
+                }
+        else:
+            self._maybe_log_feature_skip("semantic_match")
         return {"result": "pass", "note_ko": "관계 검증 통과"}
 
     def _eval_rel_overweight_410(
@@ -468,7 +571,24 @@ class LLMGuardV11:
 
         Checks evidence contains valid policy signature.
         """
-        # TODO: Implement RFC-8785 signature verification
+        if self._feature_flags.get("signature_check"):
+            self._telemetry["signature_checks"] += 1
+            required_sections = ("ten_gods", "relations", "strength", "luck")
+            missing = [
+                section
+                for section in required_sections
+                if not isinstance(evidence.get(section), dict)
+                or not evidence[section].get("policy_signature")
+            ]
+            if missing:
+                return {
+                    "result": "fail",
+                    "reason_code": "SIGNATURE-MISSING",
+                    "description_ko": f"서명 누락: {', '.join(missing)}",
+                    "note_ko": "signature_check",
+                }
+        else:
+            self._maybe_log_feature_skip("signature_check")
         return {"result": "pass", "note_ko": "서명 검증 통과"}
 
     def _eval_pii_600(

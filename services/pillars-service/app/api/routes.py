@@ -6,13 +6,9 @@ from fastapi import APIRouter, Depends, status
 
 from ..core import PillarsEngine
 from ..models import PillarsComputeRequest, PillarsComputeResponse
+from .dependencies import get_pillars_engine
 
 router = APIRouter(tags=["pillars"])
-
-
-def get_engine() -> PillarsEngine:
-    """Provide a pillars engine instance."""
-    return PillarsEngine()
 
 
 @router.post(
@@ -22,7 +18,7 @@ def get_engine() -> PillarsEngine:
 )
 def compute_pillars(
     payload: PillarsComputeRequest,
-    engine: PillarsEngine = Depends(get_engine),
+    engine: PillarsEngine = Depends(get_pillars_engine),
 ) -> PillarsComputeResponse:
     """Compute the four pillars for the given birth details."""
     return engine.compute(payload)

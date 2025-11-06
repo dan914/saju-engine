@@ -1,0 +1,30 @@
+Found 19 known vulnerabilities in 10 packages
+Name         Version    ID                  Fix Versions
+------------ ---------- ------------------- ------------
+certifi      2023.11.17 PYSEC-2024-230      2024.7.4
+configobj    5.0.8      GHSA-c33w-24p9-8m24 5.0.9
+cryptography 41.0.7     PYSEC-2024-225      42.0.4
+cryptography 41.0.7     GHSA-3ww4-gg4f-jr7f 42.0.0
+cryptography 41.0.7     GHSA-9v9h-cgj8-h64p 42.0.2
+cryptography 41.0.7     GHSA-h4gh-qq45-vh27 43.0.1
+idna         3.6        PYSEC-2024-60       3.7
+jinja2       3.1.2      GHSA-h5c8-rqwp-cp95 3.1.3
+jinja2       3.1.2      GHSA-h75v-3vvj-5mfj 3.1.4
+jinja2       3.1.2      GHSA-q2x7-8rv6-6q7h 3.1.5
+jinja2       3.1.2      GHSA-gmj6-6f8f-6699 3.1.5
+jinja2       3.1.2      GHSA-cpwx-vrp4-4pq7 3.1.6
+pip          24.0       GHSA-4xh5-x5gv-qwph 25.3
+requests     2.31.0     GHSA-9wx4-h78v-vm56 2.32.0
+requests     2.31.0     GHSA-9hjg-9r4m-mvj7 2.32.4
+setuptools   68.1.2     PYSEC-2025-49       78.1.1
+twisted      24.3.0     PYSEC-2024-75       24.7.0rc1
+twisted      24.3.0     GHSA-c8m8-j448-xjx7 24.7.0rc1
+urllib3      1.26.20    GHSA-pq67-6m6q-mj2v 2.5.0
+Name                Skip Reason
+------------------- ---------------------------------------------------------------------------------
+cloud-init          Dependency not found on PyPI and could not be audited: cloud-init (25.1.4)
+command-not-found   Dependency not found on PyPI and could not be audited: command-not-found (0.3)
+distro-info         Dependency not found on PyPI and could not be audited: distro-info (1.7+build1)
+python-apt          Dependency not found on PyPI and could not be audited: python-apt (2.7.7+ubuntu4)
+ubuntu-pro-client   Dependency not found on PyPI and could not be audited: ubuntu-pro-client (8001)
+unattended-upgrades Dependency not found on PyPI and could not be audited: unattended-upgrades (0.1)

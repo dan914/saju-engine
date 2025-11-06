@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "LLM checker service"
 requires-python = ">=3.11"
 dependencies = [
-  "fastapi>=0.111,<0.115",
+  "fastapi>=0.120,<0.121",
   "uvicorn[standard]>=0.30,<0.31",
 ]
 
@@ -21,7 +21,6 @@ build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["app", "../.."]
 
 [tool.coverage.run]
 source = ["app"]

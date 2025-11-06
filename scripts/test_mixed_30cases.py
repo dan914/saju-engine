@@ -10,14 +10,9 @@ Test categories:
 """
 
 import csv
-import sys
 from datetime import datetime
-from pathlib import Path
 
-# Add parent directory to path to import calculate_pillars_traditional
-sys.path.insert(0, str(Path(__file__).parent))
-
-from calculate_pillars_traditional import calculate_four_pillars
+from scripts.calculate_pillars_traditional import calculate_four_pillars
 
 
 def parse_time(time_str):

@@ -14,14 +14,21 @@ from __future__ import annotations
 
 import logging
 import time
-from typing import Callable
+from typing import Callable, Optional
 from uuid import uuid4
 
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.types import ASGIApp
 
+from .settings import settings
+
 logger = logging.getLogger(__name__)
+try:
+    from .client_identity import ProxyConfig, extract_client_ip
+except Exception:  # pragma: no cover
+    ProxyConfig = None  # type: ignore
+    extract_client_ip = None  # type: ignore
 
 
 class CorrelationIDMiddleware(BaseHTTPMiddleware):
@@ -92,15 +99,18 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
         app: ASGIApp,
         *,
         exclude_paths: list[str] | None = None,
+        proxy_config: Optional[ProxyConfig] = None,
     ) -> None:
         """Initialize logging middleware.
 
         Args:
             app: ASGI application
             exclude_paths: Paths to exclude from logging (e.g., /health)
+            proxy_config: Optional proxy header/CIDR configuration
         """
         super().__init__(app)
         self.exclude_paths = set(exclude_paths or ["/health", "/"])
+        self._proxy_config = proxy_config
 
     async def dispatch(
         self, request: Request, call_next: Callable
@@ -123,6 +133,14 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
 
         # Log incoming request
         start_time = time.time()
+        client_host = request.client.host if request.client else None
+        if self._proxy_config and extract_client_ip:
+            client_host = extract_client_ip(
+                request.headers,
+                client_host,
+                self._proxy_config,
+            )
+
         logger.info(
             f"{request.method} {request.url.path}",
             extra={
@@ -131,7 +149,7 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
                 "path": request.url.path,
                 "query_params": dict(request.query_params),
                 "correlation_id": correlation_id,
-                "client_host": request.client.host if request.client else None,
+                "client_host": client_host,
             },
         )
 
@@ -273,8 +291,16 @@ def add_middleware(
         >>> add_middleware(app, exclude_logging_paths=["/health", "/metrics"])
     """
     # Add middleware in reverse order (they wrap each other)
+    proxy_config = None
+    if ProxyConfig and extract_client_ip:
+        try:
+            proxy_config = ProxyConfig.from_settings(settings)
+        except Exception:
+            proxy_config = None
+
     app.add_middleware(
         RequestLoggingMiddleware,
         exclude_paths=exclude_logging_paths,
+        proxy_config=proxy_config,
     )
     app.add_middleware(CorrelationIDMiddleware)

@@ -31,7 +31,9 @@ References:
 from __future__ import annotations
 
 import logging
+import re
 import time
+from pathlib import Path
 from typing import Callable, Optional
 
 from fastapi import Request, Response
@@ -39,6 +41,27 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.types import ASGIApp
 
 logger = logging.getLogger(__name__)
+
+# Match redis://username:password@ or rediss:// equivalents
+_REDIS_USERINFO_RE = re.compile(r"(redis(?:s)?://)([^@\s]+)@")
+
+
+def _redact_redis_credentials(value: str) -> str:
+    """Mask the userinfo portion of Redis URLs within the provided string."""
+
+    if not value:
+        return value
+
+    return _REDIS_USERINFO_RE.sub(lambda match: f"{match.group(1)}***@", value)
+
+
+def _sanitize_log_value(value: object) -> str:
+    """Convert arbitrary values to strings with Redis credentials redacted."""
+
+    return _redact_redis_credentials(str(value))
+
+
+_TOKEN_BUCKET_SCRIPT_PATH = Path(__file__).with_name("token_bucket.lua")
 
 # Rate limit defaults (requests per minute)
 DEFAULT_RATE_LIMITS = {
@@ -92,6 +115,8 @@ class TokenBucketRateLimiter:
         capacity: int,
         refill_rate: float,
         redis_client: Optional[object] = None,
+        *,
+        use_atomic_redis: bool = False,
     ):
         """Initialize token bucket rate limiter.
 
@@ -99,13 +124,17 @@ class TokenBucketRateLimiter:
             capacity: Maximum tokens (allows burst of this many requests)
             refill_rate: Tokens refilled per second (average rate limit)
             redis_client: Optional Redis client for distributed limiting
+            use_atomic_redis: Enable Lua-based atomic token updates when Redis is available
         """
         self.capacity = capacity
         self.refill_rate = refill_rate
         self.redis_client = redis_client
+        self._use_atomic_redis = bool(use_atomic_redis and redis_client)
+        self._lua_script = None
 
         # In-memory fallback when Redis unavailable
         self._local_buckets: dict[str, dict] = {}
+        self._last_remaining_tokens: dict[str, float] = {}
 
     def _get_bucket_redis(self, key: str) -> tuple[float, float]:
         """Get bucket state from Redis.
@@ -151,7 +180,7 @@ class TokenBucketRateLimiter:
         time_key = f"ratelimit:{key}:time"
 
         # Set with expiry (2x the refill time for full bucket)
-        expiry = int(self.capacity / self.refill_rate * 2)
+        expiry = self._bucket_ttl_seconds()
 
         pipeline.setex(tokens_key, expiry, str(tokens))
         pipeline.setex(time_key, expiry, str(last_update))
@@ -185,6 +214,112 @@ class TokenBucketRateLimiter:
             "last_update": last_update,
         }
 
+    def _bucket_ttl_seconds(self) -> int:
+        """Compute TTL used for Redis keys storing bucket state."""
+
+        if self.refill_rate <= 0:
+            return max(int(self.capacity), 1)
+
+        ttl = int((self.capacity / self.refill_rate) * 2)
+        return max(ttl, 1)
+
+    def _ensure_lua_script(self):
+        """Load the Lua script that performs atomic token updates."""
+
+        if not self.redis_client or not self._use_atomic_redis:
+            return None
+
+        if self._lua_script is not None:
+            return self._lua_script
+
+        try:
+            lua_source = _TOKEN_BUCKET_SCRIPT_PATH.read_text(encoding="utf-8")
+        except OSError as exc:
+            logger.warning(
+                "Rate limiting: Unable to load Lua token bucket script: %s",
+                _sanitize_log_value(exc),
+            )
+            self._use_atomic_redis = False
+            return None
+
+        register_script = getattr(self.redis_client, "register_script", None)
+        if callable(register_script):
+            try:
+                self._lua_script = register_script(lua_source)
+                return self._lua_script
+            except Exception as exc:  # pragma: no cover - fallback path
+                logger.warning(
+                    "Rate limiting: Redis script registration failed, falling back to evalsha: %s",
+                    _sanitize_log_value(exc),
+                )
+
+        try:
+            sha = self.redis_client.script_load(lua_source)
+        except Exception as exc:
+            logger.warning(
+                "Rate limiting: Failed to prepare Lua script: %s",
+                _sanitize_log_value(exc),
+            )
+            self._use_atomic_redis = False
+            return None
+
+        def _evalsha_callable(*, keys, args, client=self.redis_client, script_sha=sha):
+            num_keys = len(keys)
+            payload = list(keys) + [str(arg) for arg in args]
+            return client.evalsha(script_sha, num_keys, *payload)
+
+        self._lua_script = _evalsha_callable
+        return self._lua_script
+
+    def _check_rate_limit_redis_atomic(
+        self, key: str, cost: int
+    ) -> Optional[tuple[bool, int, float]]:
+        """Perform atomic token bucket update via Lua script.
+
+        Returns:
+            Tuple of (allowed flag, retry_after seconds, remaining tokens) or None on fallback.
+        """
+
+        script = self._ensure_lua_script()
+        if script is None:
+            return None
+
+        now = time.time()
+        ttl = self._bucket_ttl_seconds()
+        keys = [f"ratelimit:{key}:tokens", f"ratelimit:{key}:time"]
+        args = [
+            str(self.capacity),
+            str(self.refill_rate),
+            str(cost),
+            str(now),
+            str(ttl),
+        ]
+
+        try:
+            result = script(keys=keys, args=args)
+        except Exception as exc:
+            logger.warning(
+                "Rate limiting: Lua script execution failed, reverting to pipeline: %s",
+                _sanitize_log_value(exc),
+            )
+            self._use_atomic_redis = False
+            return None
+
+        try:
+            allowed_flag = int(result[0])
+            retry_after = int(result[1])
+            remaining = float(result[2])
+        except (TypeError, ValueError, IndexError) as exc:
+            logger.warning(
+                "Rate limiting: Unexpected Lua response %s: %s",
+                result,
+                _sanitize_log_value(exc),
+            )
+            self._use_atomic_redis = False
+            return None
+
+        return bool(allowed_flag), retry_after, remaining
+
     def check_rate_limit(self, key: str, cost: int = 1) -> tuple[bool, int]:
         """Check if request is allowed under rate limit.
 
@@ -204,6 +339,13 @@ class TokenBucketRateLimiter:
             >>>     raise RateLimitExceeded(10, 60, retry_after)
         """
         try:
+            if self.redis_client and self._use_atomic_redis:
+                atomic_result = self._check_rate_limit_redis_atomic(key, cost)
+                if atomic_result is not None:
+                    allowed, retry_after, remaining = atomic_result
+                    self._last_remaining_tokens[key] = remaining
+                    return allowed, retry_after
+
             # Try Redis first
             if self.redis_client:
                 tokens, last_update = self._get_bucket_redis(key)
@@ -226,18 +368,32 @@ class TokenBucketRateLimiter:
                 else:
                     self._set_bucket_local(key, new_tokens, now)
 
+                self._last_remaining_tokens[key] = new_tokens
                 return True, 0
 
             # Not enough tokens - calculate retry time
             tokens_needed = cost - new_tokens
-            retry_after = int(tokens_needed / self.refill_rate) + 1
+            if self.refill_rate <= 0:
+                retry_after = 0
+            else:
+                retry_after = int(tokens_needed / self.refill_rate) + 1
+            self._last_remaining_tokens[key] = new_tokens
 
             return False, retry_after
 
-        except Exception as e:
-            logger.error(f"Rate limit check failed: {e}")
+        except Exception as exc:
+            logger.error(
+                "Rate limit check failed: %s",
+                _sanitize_log_value(exc),
+            )
+            self._last_remaining_tokens[key] = float(self.capacity)
             # Fail open - allow request if rate limiting fails
             return True, 0
+
+    def get_last_remaining_tokens(self, key: str) -> float:
+        """Return the most recently observed token balance for a key."""
+
+        return self._last_remaining_tokens.get(key, float(self.capacity))
 
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
@@ -264,6 +420,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         redis_client: Optional[object] = None,
         rate_limits: Optional[dict[str, int]] = None,
         exclude_paths: Optional[list[str]] = None,
+        use_atomic_redis: Optional[bool] = None,
     ):
         """Initialize rate limiting middleware.
 
@@ -272,11 +429,24 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             redis_client: Optional Redis client for distributed limiting
             rate_limits: Optional custom rate limits (requests per minute)
             exclude_paths: Paths to exclude from rate limiting (e.g., /health)
+            use_atomic_redis: Enable Lua-based atomic Redis operations (default from settings)
         """
         super().__init__(app)
         self.redis_client = redis_client
         self.rate_limits = rate_limits or DEFAULT_RATE_LIMITS
         self.exclude_paths = set(exclude_paths or ["/health", "/metrics", "/"])
+
+        if use_atomic_redis is None:
+            try:
+                from .settings import settings as _settings  # type: ignore
+            except Exception:  # pragma: no cover - settings import fallback
+                _settings = None
+
+            use_atomic_redis = bool(
+                _settings and getattr(_settings, "enable_atomic_rate_limiter", False)
+            )
+
+        self._use_atomic_redis = bool(use_atomic_redis and redis_client is not None)
 
         # Create rate limiters for each tier
         self._limiters: dict[str, TokenBucketRateLimiter] = {}
@@ -289,6 +459,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 capacity=capacity,
                 refill_rate=refill_rate,
                 redis_client=redis_client,
+                use_atomic_redis=self._use_atomic_redis,
             )
 
     def _get_user_tier(self, request: Request) -> str:
@@ -351,15 +522,17 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         tier = self._get_user_tier(request)
         key = self._get_rate_limit_key(request)
 
-        # Get limiter for this tier
-        limiter = self._limiters.get(tier, self._limiters["anonymous"])
+        # Resolve effective tier; unknown tiers fall back to anonymous defaults
+        effective_tier = tier if tier in self._limiters else "anonymous"
+        limiter = self._limiters.get(effective_tier, self._limiters["anonymous"])
 
         # Check rate limit
         allowed, retry_after = limiter.check_rate_limit(key)
 
         # Add rate limit headers
-        limit = self.rate_limits[tier]
-        remaining = int(limiter.capacity) if allowed else 0
+        limit = self.rate_limits.get(effective_tier, self.rate_limits.get("anonymous", 0))
+        remaining_tokens = limiter.get_last_remaining_tokens(key)
+        remaining = int(max(0, remaining_tokens)) if allowed else 0
 
         if not allowed:
             # Rate limit exceeded - return 429
@@ -425,7 +598,10 @@ def setup_rate_limiting(
         client = redis.from_url(redis_url, decode_responses=True)
         # Test connection
         client.ping()
-        logger.info(f"Rate limiting: Connected to Redis at {redis_url}")
+        logger.info(
+            "Rate limiting: Connected to Redis at %s",
+            _redact_redis_credentials(redis_url),
+        )
         return client
 
     except ImportError:
@@ -435,8 +611,11 @@ def setup_rate_limiting(
         )
         return None
 
-    except Exception as e:
-        logger.warning(f"Rate limiting: Failed to connect to Redis: {e}")
+    except Exception as exc:
+        logger.warning(
+            "Rate limiting: Failed to connect to Redis: %s",
+            _sanitize_log_value(exc),
+        )
         return None
 
 

@@ -1,0 +1,30 @@
+#!/bin/bash
+# Quick Start for Saju Engine - Minimal setup for fast start
+
+echo "🚀 Saju Engine Quick Start"
+echo "========================="
+
+# Check if virtual environment exists
+if [ ! -d "venv" ]; then
+    echo "Creating virtual environment..."
+    python3.11 -m venv venv
+fi
+
+# Activate virtual environment
+source venv/bin/activate
+
+# Install only essential packages for running
+echo "Installing essential packages..."
+pip install -q fastapi uvicorn httpx python-dateutil
+
+# Set Python path
+export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+
+echo ""
+echo "✅ Quick setup complete!"
+echo ""
+echo "To run a service:"
+echo "  uvicorn services.api_gateway.app.main:app --reload"
+echo ""
+echo "Or run with the service script:"
+echo "  ./run_service.sh api-gateway"

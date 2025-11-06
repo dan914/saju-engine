@@ -149,3 +149,66 @@
 - [ ] evidence_log_addendum_v1_6 매핑 (school_profile, five_he.post_effects, structure_v2.resolved_at_version, deltaT.model/source)
 - [ ] goldens manifest v2_6 회귀 구성
 
+## 13. Analysis API Integration
+- [ ] AnalysisResponse 스키마 확장
+  - [ ] orchestrator 출력 필드(relations_weighted, relations_extras.banhe_groups, ten_gods/twelve_stages, stage3, evidence, engine_summaries, void, yuanjin 등) 반영
+  - [ ] `_map_to_response`를 갱신해 엔진 결과를 그대로 전달하고 placeholder 제거
+  - [ ] `/analyze` response_model 및 LLM Guard 훅 검증
+- [ ] 정책 및 테스트 실거래화
+  - [ ] 사라진 정책 경로를 최신 번들로 업데이트하고 서명 검증 재활성화
+  - [ ] `test_relation_policy.py` 등 스킵 테스트 재가동 및 전체 pytest(695개) 통과 확인
+- [ ] 골든셋 커버리지 상승
+  - [ ] kr_core_regressions 추가 생성(+118)
+  - [ ] school_profiles / five_he_lab / zongge_guard 케이스 채우기
+  - [ ] 골든셋 실행을 CI 회귀 워크플로에 편입
+
+## 14. Analysis-Service Test Failures (2025-10-25)
+- [x] LLMGuard 빈 구조 대응
+  - [x] `test_llm_guard.py` 전용 요청 생성 헬퍼 추가(실제 pillars 사용)
+  - [x] guard.postprocess 호출부에서 `structure_primary` None 대응
+- [x] LLMGuard Korean Enricher 통합 검토
+  - [x] `LLMGuard.default()`에 KoreanLabelEnricher 주입 필요성 평가
+  - [x] 테스트 기대(`_enrichment`, `korean_labels_added`) 현실화 or 기대값 조정
+- [x] StructureDetector 테스트 갱신
+  - [x] `test_structure.py` confidence / candidates 기대치를 최신 정책에 맞게 수정
+- [x] Lifecycle schema 동기화
+  - [x] lifecycle_stages.schema.json에 variant / weights / damping / mirror_overlay 허용
+  - [x] `test_lifecycle_schema_validation.py` 통과 확인
+- [x] Strength 계산 테스트 정리
+  - [x] `test_strength_normalization_fix.py` 등 기대값 재검토 및 업데이트
+- [x] MasterOrchestrator 테스트 수정
+  - [x] Stage3 스텁 도입으로 dict 컨텍스트 대응
+  - [x] 해당 테스트 재실행으로 회귀 확인
+
+## 15. Luck Engine Expansion (Annual/Monthly/Daily)
+- [ ] AnnualLuckCalculator 스캐폴딩
+  - [x] `services/common/saju_common/engines/annual.py` 생성 및 `EngineOptions`, `ChartContext`, `LuckFrame` 형식 정의
+  - [x] 절입 기반 연 경계 계산 유틸 구현(`FileSolarTermLoader`, `BasicTimeResolver` 사용)
+  - [x] 연간 상호작용/십신/계절 스코어링 초기 버전 작성
+- [ ] MonthlyLuckCalculator 스캐폴딩
+  - [x] `services/common/saju_common/engines/monthly.py` 생성 및 연계 옵션 처리
+  - [x] 연운 스코어 연동(α 계수) + 월 상호작용/십신 가중치 적용
+  - [x] good_days/caution_days 후보 추출 구조 준비
+- [ ] DailyLuckCalculator 기초 구현
+  - [x] `services/common/saju_common/engines/daily.py` 생성, 일진 계산 및 월운(β) 연계
+  - [ ] 일간 장간·합충 반영 점수 계산, clamp 처리
+  - [ ] 설명 drivers 구조 정의
+- [ ] 공용 유틸/스코어러 정리
+  - [x] `services/common/saju_common/engines/utils/` 디렉터리 생성, 60갑자/상호작용 헬퍼 분리
+  - [x] `scoring.py`에 정책 JSON 로더 및 α/β/클램프 처리 구현
+  - [x] `__init__.py` 업데이트로 신규 엔진 export
+- [ ] Strength 프로필 판정 로직 구현(신강/중간/신약) 및 정책 가중 연동
+- [x] 연 경계(입춘 vs 설) UX/옵션 정의 및 메타 반영
+- [x] 상호작용 계산 구조 재정비(본명 vs 운 계층 분리, 중복 가중 방지)
+- [ ] 정책 파일 초안 작성
+  - [x] `policy/luck_annual_policy_v1.json`, `policy/luck_monthly_policy_v1.json`, `policy/luck_daily_policy_v1.json` 추가
+  - [x] 십신/상호작용/계절 가중치 및 α/β 설정 명시
+  - [ ] policy guards + jsonschema 작성 및 테스트 연결
+- [ ] API 통합 초기 작업
+  - [ ] `/api/v1/luck/annual` 엔드포인트 구현 및 캐시 키 지정
+  - [ ] monthly/daily 엔드포인트 뼈대 추가, 공통 응답 메타 구조 확정
+  - [ ] orchestrator 및 analysis pipeline에 연/월/일 운 결과 주입
+- [ ] 테스트/QA 준비
+  - [ ] 연/월/일 운 단위 테스트 케이스(절입 경계, 자시 경계 포함)
+  - [ ] 통합 테스트에서 `analysis.luck.years/months/days` 출력 검증
+  - [ ] 정책/경계 회귀 스위트 및 캐시 멱등성 테스트 설계

@@ -1,10 +1,10 @@
-"""Data models for ten gods / relations / strength analysis."""
+"""Data models for analysis pipeline responses."""
 
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import Any, Dict, List, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class PillarInput(BaseModel):
@@ -24,86 +24,158 @@ class AnalysisOptions(BaseModel):
     timezone: str = "Asia/Seoul"  # IANA timezone
 
 
-class TenGodsResult(BaseModel):
-    """Mapping of stem relationships (placeholder structure)."""
+class TenGodsPillar(BaseModel):
+    stem: str | None = None
+    branch: str | None = None
+    vs_day: str | None = None
+    hidden: Dict[str, str] = Field(default_factory=dict)
 
-    summary: dict[str, str]
+
+class TenGodsResult(BaseModel):
+    policy_version: str | None = None
+    policy_signature: str | None = None
+    by_pillar: Dict[str, TenGodsPillar] = Field(default_factory=dict)
+    summary: Dict[str, int] = Field(default_factory=dict)
+    dominant: List[str] = Field(default_factory=list)
+    missing: List[str] = Field(default_factory=list)
+
+
+class TwelveStagesPillar(BaseModel):
+    stem: str | None = None
+    branch: str | None = None
+    stage_zh: str | None = None
+    stage_ko: str | None = None
+    stage_en: str | None = None
+
+
+class TwelveStagesResult(BaseModel):
+    policy_version: str | None = None
+    policy_signature: str | None = None
+    by_pillar: Dict[str, TwelveStagesPillar] = Field(default_factory=dict)
+    summary: Dict[str, int] = Field(default_factory=dict)
+    dominant: List[str] = Field(default_factory=list)
+    weakest: List[str] = Field(default_factory=list)
 
 
 class RelationsResult(BaseModel):
-    """Grouped relations (六合/三合/冲/害/破/刑)."""
+    priority_hit: str | None = None
+    transform_to: str | None = None
+    boosts: List[Dict[str, Any]] = Field(default_factory=list)
+    notes: List[str] = Field(default_factory=list)
+    extras: Dict[str, Any] = Field(default_factory=dict)
 
-    he6: List[List[str]]
-    sanhe: List[List[str]]
-    chong: List[List[str]]
-    hai: List[List[str]]
-    po: List[List[str]]
-    xing: List[List[str]]
+
+class BanheGroups(BaseModel):
+    five_he: Dict[str, Any] = Field(default_factory=dict)
+    zixing: Dict[str, Any] = Field(default_factory=dict)
+    banhe: List[Any] = Field(default_factory=list)
 
 
 class RelationsExtras(BaseModel):
-    priority_hit: str | None = None
-    transform_to: str | None = None
-    boosts: List[Dict[str, str]] = Field(default_factory=list)
-    extras: dict[str, object] = Field(default_factory=dict)
+    banhe_groups: BanheGroups | None = None
 
 
-class StrengthResult(BaseModel):
-    """Qualitative strength evaluation."""
-
-    level: str
-    basis: dict[str, str]
+class RelationsWeightedResult(BaseModel):
+    policy_version: str | None = None
+    policy_signature: str | None = None
+    items: List[Dict[str, Any]] = Field(default_factory=list)
+    summary: Dict[str, Any] = Field(default_factory=dict)
 
 
 class StrengthDetails(BaseModel):
-    month_state: int
-    branch_root: int
-    stem_visible: int
-    combo_clash: int
-    season_adjust: int
-    month_stem_effect: int
-    wealth_location_bonus_total: float = 0.0
-    wealth_location_hits: List[Dict[str, object]] = Field(default_factory=list)
-    total: float
-    grade_code: str
-    grade: str
-    seal_validity: Dict[str, object] = Field(default_factory=dict)
+    month_state: int | None = None
+    branch_root: int | None = None
+    stem_visible: int | None = None
+    combo_clash: int | None = None
+    season_adjust: int | None = None
+    month_stem_effect_applied: bool | None = None
+    wealth_location_bonus_total: float | None = None
+    wealth_location_hits: List[Dict[str, Any]] = Field(default_factory=list)
+
+
+class StrengthResult(BaseModel):
+    score_raw: float | None = None
+    score: float | None = None
+    score_normalized: float | None = None
+    grade_code: str | None = None
+    bin: str | None = None
+    phase: str | None = None
+    details: StrengthDetails | None = None
+    policy: Dict[str, Any] = Field(default_factory=dict)
+
+
+class StructureCandidate(BaseModel):
+    id: str | None = None
+    score: float | None = None
+    notes: str | None = None
 
 
 class StructureResultModel(BaseModel):
-    primary: str | None
-    confidence: str
-    candidates: List[Dict[str, object]]
+    primary: str | None = None
+    confidence: float | None = None
+    candidates: List[StructureCandidate] = Field(default_factory=list)
+
+
+class LuckPillar(BaseModel):
+    pillar: str | None = None
+    start_age: float | None = None
+    end_age: float | None = None
+    index: int | None = None
+    label: str | None = None
+    clues: List[Any] = Field(default_factory=list)
 
 
 class LuckResult(BaseModel):
-    prev_term: str | None
-    next_term: str | None
-    interval_days: float | None
-    days_from_prev: float | None
-    start_age: float | None
+    policy_version: str | None = None
+    policy_signature: str | None = None
+    direction: str | None = None
+    start_age: float | None = None
+    method: str | None = None
+    pillars: List[LuckPillar] = Field(default_factory=list)
+    current_luck: Dict[str, Any] | None = None
 
 
 class LuckDirectionResult(BaseModel):
-    direction: str | None
-    method: str | None
-    sex_at_birth: str | None
+    direction: str | None = None
+    method: str | None = None
+    sex_at_birth: str | None = None
 
 
 class ShenshaResult(BaseModel):
-    enabled: bool
-    list: List[object]
+    enabled: bool = False
+    list: List[Any] = Field(default_factory=list)
 
 
 class SchoolProfileResult(BaseModel):
-    id: str
+    id: str = "unknown"
     notes: str | None = None
 
 
 class RecommendationResult(BaseModel):
-    enabled: bool
-    action: str
-    copy: str | None = None
+    model_config = ConfigDict(populate_by_name=True)
+
+    enabled: bool = False
+    action: str = "none"
+    copy_text: str | None = Field(default=None, alias="copy")
+
+
+class LuckV112Frame(BaseModel):
+    kind: Literal["year", "month", "day"] | None = None
+    pillar: str | None = None
+    start_dt: str | None = None
+    end_dt: str | None = None
+    score: float | None = None
+    drivers: List[Dict[str, Any]] = Field(default_factory=list)
+    tags: Dict[str, Any] = Field(default_factory=dict)
+    explain: Dict[str, Any] = Field(default_factory=dict)
+
+
+class LuckV112Result(BaseModel):
+    policy_version: str | None = None
+    annual: List[LuckV112Frame] = Field(default_factory=list)
+    monthly: List[LuckV112Frame] = Field(default_factory=list)
+    daily: List[LuckV112Frame] = Field(default_factory=list)
+    transits: Dict[str, Any] = Field(default_factory=dict)
 
 
 class AnalysisRequest(BaseModel):
@@ -114,17 +186,37 @@ class AnalysisRequest(BaseModel):
 
 
 class AnalysisResponse(BaseModel):
-    """Analysis output aligned with requirements."""
+    """Canonical response returned by the analysis API."""
 
-    ten_gods: TenGodsResult
-    relations: RelationsResult
-    relation_extras: RelationsExtras
-    strength: StrengthResult
-    strength_details: StrengthDetails
-    structure: StructureResultModel
-    luck: LuckResult
-    luck_direction: LuckDirectionResult
-    shensha: ShenshaResult
-    school_profile: SchoolProfileResult
-    recommendation: RecommendationResult
-    trace: dict[str, object]
+    status: str = "success"
+    season: str | None = None
+    ten_gods: TenGodsResult = Field(default_factory=TenGodsResult)
+    twelve_stages: TwelveStagesResult | None = None
+    relations: RelationsResult = Field(default_factory=RelationsResult)
+    relations_weighted: RelationsWeightedResult | None = None
+    relations_extras: RelationsExtras = Field(default_factory=RelationsExtras)
+    strength: StrengthResult = Field(default_factory=StrengthResult)
+    strength_details: StrengthDetails | None = None
+    structure: StructureResultModel | None = None
+    climate: Dict[str, Any] = Field(default_factory=dict)
+    yongshin: Dict[str, Any] = Field(default_factory=dict)
+    luck: LuckResult = Field(default_factory=LuckResult)
+    luck_v1_1_2: LuckV112Result | None = None
+    luck_direction: LuckDirectionResult | None = None
+    shensha: ShenshaResult = Field(default_factory=ShenshaResult)
+    void: Dict[str, Any] | None = None
+    yuanjin: Dict[str, Any] | None = None
+    stage3: Dict[str, Any] = Field(default_factory=dict)
+    elements_distribution_raw: Dict[str, float] = Field(default_factory=dict)
+    elements_distribution: Dict[str, float] = Field(default_factory=dict)
+    elements_distribution_transformed: Dict[str, float] = Field(default_factory=dict)
+    combination_trace: List[Any] = Field(default_factory=list)
+    evidence: Dict[str, Any] = Field(default_factory=dict)
+    engine_summaries: Dict[str, Any] = Field(default_factory=dict)
+    school_profile: SchoolProfileResult = Field(default_factory=SchoolProfileResult)
+    recommendation: RecommendationResult = Field(default_factory=RecommendationResult)
+    llm_guard: Dict[str, Any] = Field(default_factory=dict)
+    text_guard: Dict[str, Any] = Field(default_factory=dict)
+    meta: Dict[str, Any] = Field(default_factory=dict)
+    trace: Dict[str, Any] = Field(default_factory=dict)
+    compat_view: Dict[str, Any] = Field(default_factory=dict)

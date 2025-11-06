@@ -1,17 +1,18 @@
 {
   "season": "가을",
   "strength": {
-    "score_raw": -11.0,
-    "score": 31.05,
-    "score_normalized": 0.3105,
+    "score_raw": -28.0,
+    "score": 22.11,
+    "score_normalized": 0.2211,
     "grade_code": "신약",
     "bin": "weak",
     "phase": "死",
     "details": {
       "month_state": -30,
-      "branch_root": 3,
-      "stem_visible": 20,
+      "branch_root": 5,
+      "stem_visible": -2,
       "combo_clash": -4,
+      "day_branch_stage_bonus": 3,
       "month_stem_effect_applied": true
     },
     "policy": {
@@ -102,18 +103,18 @@
     "advice_bucket": []
   },
   "elements_distribution_raw": {
-    "木": 0.3333333333333333,
-    "火": 0.08333333333333333,
-    "土": 0.08333333333333333,
-    "金": 0.4166666666666667,
-    "水": 0.08333333333333333
+    "木": 0.25,
+    "火": 0.0,
+    "土": 0.125,
+    "金": 0.5,
+    "水": 0.125
   },
   "elements_distribution": {
-    "木": 0.3333333333333333,
-    "火": 0.08333333333333333,
-    "土": 0.08333333333333333,
-    "金": 0.4166666666666667,
-    "水": 0.08333333333333333
+    "木": 0.25,
+    "火": 0.0,
+    "土": 0.125,
+    "金": 0.5,
+    "水": 0.125
   },
   "elements_distribution_transformed": {
     "wood": 0.2,
@@ -256,9 +257,9 @@
     "current_luck": {
       "pillar": "丁亥",
       "decade": 2,
-      "years_into_decade": 7.08
+      "years_into_decade": 7.14
     },
-    "policy_signature": "ee0c627fc4f756ccc0204b4f55032e1b68cb4429036298ff70c1930669f1cc86"
+    "policy_signature": "133ecb1f51ea7d91e65babf324745b33e3968a7be8ee5d472e2aca5485aa711b"
   },
   "shensha": {
     "enabled": true,
@@ -461,6 +462,2711 @@
       "evidence_ref": "pattern_profiler/stable/정격"
     }
   },
+  "luck_seed_sources": {
+    "strength_scalar": -0.995578,
+    "strength_profile": "weak",
+    "sibsin_breakdown": {
+      "totals": {
+        "jeonggwan": 1.0,
+        "bi": 2.0,
+        "pyeongwan": 1.0
+      },
+      "hidden": {
+        "main": {
+          "jeongjae": 1.0,
+          "pyeongwan": 1.0,
+          "jeongin": 1.0,
+          "sang": 1.0
+        },
+        "middle": {
+          "bi": 1.0,
+          "jeok": 1.0,
+          "jeonggwan": 1.0
+        },
+        "minor": {
+          "pyeonin": 1.0,
+          "jeongjae": 1.0
+        }
+      },
+      "per_pillar": {
+        "year": {
+          "jeonggwan": 1.0,
+          "jeongjae": 1.0,
+          "bi": 1.0,
+          "pyeonin": 1.0
+        },
+        "month": {
+          "bi": 1.0,
+          "pyeongwan": 1.0
+        },
+        "day": {
+          "bi": 1.0,
+          "jeongin": 1.0,
+          "jeok": 1.0
+        },
+        "hour": {
+          "pyeongwan": 1.0,
+          "sang": 1.0,
+          "jeonggwan": 1.0,
+          "jeongjae": 1.0
+        }
+      }
+    },
+    "relation_events": [
+      {
+        "kind": "chung",
+        "magnitude": 0.55,
+        "participants": [
+          "巳",
+          "亥"
+        ],
+        "bonus_keys": [],
+        "confidence": 0.9,
+        "formed": true,
+        "original_type": "chong"
+      },
+      {
+        "kind": "chung",
+        "magnitude": 1.0,
+        "participants": [
+          "巳",
+          "亥"
+        ],
+        "bonus_keys": [],
+        "confidence": null,
+        "formed": null,
+        "original_type": "chong"
+      }
+    ],
+    "axis_patterns": []
+  },
+  "luck_v1_1_2": {
+    "policy_version": "luck_policy_v1.1.2",
+    "annual": [
+      {
+        "kind": "year",
+        "pillar": "",
+        "start_dt": "2025-02-03T23:07:30+09:00",
+        "end_dt": "2026-02-04T04:54:35+09:00",
+        "score": -71.50985439032226,
+        "drivers": [
+          {
+            "component": "sibsin",
+            "key": "bi",
+            "delta": 1.143588,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "sang",
+            "delta": -0.646241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "jeonggwan",
+            "delta": -0.843146,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:main:sang",
+            "delta": -0.646241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:middle:jeonggwan",
+            "delta": -0.505888,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.6,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:minor:jeongjae",
+            "delta": -0.163342,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.3,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -4.95,
+            "metadata": {
+              "magnitude": 0.55
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -9.0,
+            "metadata": {
+              "magnitude": 1.0
+            }
+          }
+        ],
+        "tags": {
+          "year": 2025,
+          "calendar_mode": "solar_terms",
+          "year_boundary": "ipchun",
+          "month_boundary": "jie",
+          "time_mode": "local_standard",
+          "strength_profile": "weak",
+          "policy_version": "luck_policy_v1.1.2",
+          "raw_total": -16.155742189999998,
+          "gate_total": 1.0,
+          "gates": {
+            "daewoon": 1.0
+          },
+          "categories": {
+            "wealth": 3.6405274999999997,
+            "officer": 2.4638471400000004,
+            "study": 2.79,
+            "output": -4.70199304,
+            "network": -4.4364119,
+            "health": 8.37,
+            "move": -8.370000000000001
+          },
+          "recommendations": [
+            "health",
+            "wealth",
+            "study"
+          ],
+          "geokguk": {
+            "mode": "two_stage",
+            "info": {
+              "engine": "gyeokguk_classifier",
+              "policy_version": "gyeokguk_policy_v1",
+              "type": "정격",
+              "basis": [
+                "월령득기"
+              ],
+              "confidence": 0.6,
+              "notes": "기본 규칙 적용(디폴트).",
+              "evidence_ref": "gyeokguk/정격"
+            },
+            "modifiers": {}
+          },
+          "events": [
+            "chong",
+            "chong"
+          ]
+        },
+        "explain": {
+          "raw_components": {
+            "sibsin": -2.2057421899999996,
+            "relations": -13.95,
+            "unseong12": 0.0,
+            "taese": 0.0,
+            "season": 0.0
+          },
+          "gates": {
+            "daewoon": 1.0,
+            "total": 1.0
+          },
+          "tracks": {
+            "state": -2.2057421899999996,
+            "event": -13.95
+          },
+          "frame_contrib": {
+            "raw": -16.155742189999998,
+            "normalized": -71.50985439032226,
+            "frame_kind": "year"
+          }
+        }
+      }
+    ],
+    "monthly": [
+      {
+        "kind": "month",
+        "pillar": "",
+        "start_dt": "2025-01-05T11:30:27+09:00",
+        "end_dt": "2025-02-03T23:07:30+09:00",
+        "score": -59.77833923772805,
+        "drivers": [
+          {
+            "component": "sibsin",
+            "key": "sang",
+            "delta": -0.646241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "pyeongwan",
+            "delta": -0.695578,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "sik",
+            "delta": -0.246241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:main:jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:middle:pyeongwan",
+            "delta": -0.417347,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.6,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:minor:sik",
+            "delta": -0.073872,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.3,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -4.95,
+            "metadata": {
+              "magnitude": 0.55
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -9.0,
+            "metadata": {
+              "magnitude": 1.0
+            }
+          },
+          {
+            "component": "season",
+            "key": "xu:wood",
+            "delta": -2.199116,
+            "metadata": {
+              "strength_scalar": -0.995578
+            }
+          }
+        ],
+        "tags": {
+          "year": 2025,
+          "month_index": 1,
+          "term": "小寒",
+          "calendar_mode": "solar_terms",
+          "year_boundary": "ipchun",
+          "month_boundary": "jie",
+          "time_mode": "local_standard",
+          "strength_profile": "weak",
+          "policy_version": "luck_policy_v1.1.2",
+          "day_candidates": {
+            "good": [],
+            "caution": []
+          },
+          "raw_total": -19.31734039,
+          "gate_total": 0.7854704368290333,
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333
+          },
+          "categories": {
+            "wealth": 3.5666551099999997,
+            "officer": 2.6114150400000002,
+            "study": 2.71612761,
+            "output": -4.94823434,
+            "network": -5.58,
+            "health": 8.37,
+            "move": -8.370000000000001
+          },
+          "recommendations": [
+            "health",
+            "wealth",
+            "study"
+          ],
+          "geokguk": {
+            "mode": "two_stage",
+            "info": {
+              "engine": "gyeokguk_classifier",
+              "policy_version": "gyeokguk_policy_v1",
+              "type": "정격",
+              "basis": [
+                "월령득기"
+              ],
+              "confidence": 0.6,
+              "notes": "기본 규칙 적용(디폴트).",
+              "evidence_ref": "gyeokguk/정격"
+            },
+            "modifiers": {}
+          },
+          "events": [
+            "chong",
+            "chong"
+          ]
+        },
+        "explain": {
+          "raw_components": {
+            "sibsin": -3.1682247899999996,
+            "relations": -13.95,
+            "unseong12": 0.0,
+            "taese": 0.0,
+            "season": -2.1991156000000003
+          },
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333,
+            "total": 0.7854704368290333
+          },
+          "tracks": {
+            "state": -5.36734039,
+            "event": -13.95
+          },
+          "frame_contrib": {
+            "raw": -19.31734039,
+            "normalized": -59.77833923772805,
+            "frame_kind": "month"
+          }
+        }
+      },
+      {
+        "kind": "month",
+        "pillar": "",
+        "start_dt": "2025-02-03T23:07:30+09:00",
+        "end_dt": "2025-03-05T17:01:58+09:00",
+        "score": -59.77833923772805,
+        "drivers": [
+          {
+            "component": "sibsin",
+            "key": "sang",
+            "delta": -0.646241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "pyeongwan",
+            "delta": -0.695578,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "sik",
+            "delta": -0.246241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:main:jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:middle:pyeongwan",
+            "delta": -0.417347,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.6,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:minor:sik",
+            "delta": -0.073872,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.3,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -4.95,
+            "metadata": {
+              "magnitude": 0.55
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -9.0,
+            "metadata": {
+              "magnitude": 1.0
+            }
+          },
+          {
+            "component": "season",
+            "key": "xu:wood",
+            "delta": -2.199116,
+            "metadata": {
+              "strength_scalar": -0.995578
+            }
+          }
+        ],
+        "tags": {
+          "year": 2025,
+          "month_index": 2,
+          "term": "立春",
+          "calendar_mode": "solar_terms",
+          "year_boundary": "ipchun",
+          "month_boundary": "jie",
+          "time_mode": "local_standard",
+          "strength_profile": "weak",
+          "policy_version": "luck_policy_v1.1.2",
+          "day_candidates": {
+            "good": [],
+            "caution": []
+          },
+          "raw_total": -19.31734039,
+          "gate_total": 0.7854704368290333,
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333
+          },
+          "categories": {
+            "wealth": 3.5666551099999997,
+            "officer": 2.6114150400000002,
+            "study": 2.71612761,
+            "output": -4.94823434,
+            "network": -5.58,
+            "health": 8.37,
+            "move": -8.370000000000001
+          },
+          "recommendations": [
+            "health",
+            "wealth",
+            "study"
+          ],
+          "geokguk": {
+            "mode": "two_stage",
+            "info": {
+              "engine": "gyeokguk_classifier",
+              "policy_version": "gyeokguk_policy_v1",
+              "type": "정격",
+              "basis": [
+                "월령득기"
+              ],
+              "confidence": 0.6,
+              "notes": "기본 규칙 적용(디폴트).",
+              "evidence_ref": "gyeokguk/정격"
+            },
+            "modifiers": {}
+          },
+          "events": [
+            "chong",
+            "chong"
+          ]
+        },
+        "explain": {
+          "raw_components": {
+            "sibsin": -3.1682247899999996,
+            "relations": -13.95,
+            "unseong12": 0.0,
+            "taese": 0.0,
+            "season": -2.1991156000000003
+          },
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333,
+            "total": 0.7854704368290333
+          },
+          "tracks": {
+            "state": -5.36734039,
+            "event": -13.95
+          },
+          "frame_contrib": {
+            "raw": -19.31734039,
+            "normalized": -59.77833923772805,
+            "frame_kind": "month"
+          }
+        }
+      },
+      {
+        "kind": "month",
+        "pillar": "",
+        "start_dt": "2025-03-05T17:01:58+09:00",
+        "end_dt": "2025-04-04T21:40:44+09:00",
+        "score": -59.77833923772805,
+        "drivers": [
+          {
+            "component": "sibsin",
+            "key": "sang",
+            "delta": -0.646241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "pyeongwan",
+            "delta": -0.695578,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "sik",
+            "delta": -0.246241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:main:jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:middle:pyeongwan",
+            "delta": -0.417347,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.6,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:minor:sik",
+            "delta": -0.073872,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.3,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -4.95,
+            "metadata": {
+              "magnitude": 0.55
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -9.0,
+            "metadata": {
+              "magnitude": 1.0
+            }
+          },
+          {
+            "component": "season",
+            "key": "xu:wood",
+            "delta": -2.199116,
+            "metadata": {
+              "strength_scalar": -0.995578
+            }
+          }
+        ],
+        "tags": {
+          "year": 2025,
+          "month_index": 3,
+          "term": "驚蟄",
+          "calendar_mode": "solar_terms",
+          "year_boundary": "ipchun",
+          "month_boundary": "jie",
+          "time_mode": "local_standard",
+          "strength_profile": "weak",
+          "policy_version": "luck_policy_v1.1.2",
+          "day_candidates": {
+            "good": [],
+            "caution": []
+          },
+          "raw_total": -19.31734039,
+          "gate_total": 0.7854704368290333,
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333
+          },
+          "categories": {
+            "wealth": 3.5666551099999997,
+            "officer": 2.6114150400000002,
+            "study": 2.71612761,
+            "output": -4.94823434,
+            "network": -5.58,
+            "health": 8.37,
+            "move": -8.370000000000001
+          },
+          "recommendations": [
+            "health",
+            "wealth",
+            "study"
+          ],
+          "geokguk": {
+            "mode": "two_stage",
+            "info": {
+              "engine": "gyeokguk_classifier",
+              "policy_version": "gyeokguk_policy_v1",
+              "type": "정격",
+              "basis": [
+                "월령득기"
+              ],
+              "confidence": 0.6,
+              "notes": "기본 규칙 적용(디폴트).",
+              "evidence_ref": "gyeokguk/정격"
+            },
+            "modifiers": {}
+          },
+          "events": [
+            "chong",
+            "chong"
+          ]
+        },
+        "explain": {
+          "raw_components": {
+            "sibsin": -3.1682247899999996,
+            "relations": -13.95,
+            "unseong12": 0.0,
+            "taese": 0.0,
+            "season": -2.1991156000000003
+          },
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333,
+            "total": 0.7854704368290333
+          },
+          "tracks": {
+            "state": -5.36734039,
+            "event": -13.95
+          },
+          "frame_contrib": {
+            "raw": -19.31734039,
+            "normalized": -59.77833923772805,
+            "frame_kind": "month"
+          }
+        }
+      },
+      {
+        "kind": "month",
+        "pillar": "",
+        "start_dt": "2025-04-04T21:40:44+09:00",
+        "end_dt": "2025-05-05T14:49:10+09:00",
+        "score": -59.77833923772805,
+        "drivers": [
+          {
+            "component": "sibsin",
+            "key": "sang",
+            "delta": -0.646241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "pyeongwan",
+            "delta": -0.695578,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "sik",
+            "delta": -0.246241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:main:jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:middle:pyeongwan",
+            "delta": -0.417347,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.6,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:minor:sik",
+            "delta": -0.073872,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.3,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -4.95,
+            "metadata": {
+              "magnitude": 0.55
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -9.0,
+            "metadata": {
+              "magnitude": 1.0
+            }
+          },
+          {
+            "component": "season",
+            "key": "xu:wood",
+            "delta": -2.199116,
+            "metadata": {
+              "strength_scalar": -0.995578
+            }
+          }
+        ],
+        "tags": {
+          "year": 2025,
+          "month_index": 4,
+          "term": "清明",
+          "calendar_mode": "solar_terms",
+          "year_boundary": "ipchun",
+          "month_boundary": "jie",
+          "time_mode": "local_standard",
+          "strength_profile": "weak",
+          "policy_version": "luck_policy_v1.1.2",
+          "day_candidates": {
+            "good": [],
+            "caution": []
+          },
+          "raw_total": -19.31734039,
+          "gate_total": 0.7854704368290333,
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333
+          },
+          "categories": {
+            "wealth": 3.5666551099999997,
+            "officer": 2.6114150400000002,
+            "study": 2.71612761,
+            "output": -4.94823434,
+            "network": -5.58,
+            "health": 8.37,
+            "move": -8.370000000000001
+          },
+          "recommendations": [
+            "health",
+            "wealth",
+            "study"
+          ],
+          "geokguk": {
+            "mode": "two_stage",
+            "info": {
+              "engine": "gyeokguk_classifier",
+              "policy_version": "gyeokguk_policy_v1",
+              "type": "정격",
+              "basis": [
+                "월령득기"
+              ],
+              "confidence": 0.6,
+              "notes": "기본 규칙 적용(디폴트).",
+              "evidence_ref": "gyeokguk/정격"
+            },
+            "modifiers": {}
+          },
+          "events": [
+            "chong",
+            "chong"
+          ]
+        },
+        "explain": {
+          "raw_components": {
+            "sibsin": -3.1682247899999996,
+            "relations": -13.95,
+            "unseong12": 0.0,
+            "taese": 0.0,
+            "season": -2.1991156000000003
+          },
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333,
+            "total": 0.7854704368290333
+          },
+          "tracks": {
+            "state": -5.36734039,
+            "event": -13.95
+          },
+          "frame_contrib": {
+            "raw": -19.31734039,
+            "normalized": -59.77833923772805,
+            "frame_kind": "month"
+          }
+        }
+      },
+      {
+        "kind": "month",
+        "pillar": "",
+        "start_dt": "2025-05-05T14:49:10+09:00",
+        "end_dt": "2025-06-05T18:50:45+09:00",
+        "score": -59.77833923772805,
+        "drivers": [
+          {
+            "component": "sibsin",
+            "key": "sang",
+            "delta": -0.646241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "pyeongwan",
+            "delta": -0.695578,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "sik",
+            "delta": -0.246241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:main:jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:middle:pyeongwan",
+            "delta": -0.417347,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.6,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:minor:sik",
+            "delta": -0.073872,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.3,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -4.95,
+            "metadata": {
+              "magnitude": 0.55
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -9.0,
+            "metadata": {
+              "magnitude": 1.0
+            }
+          },
+          {
+            "component": "season",
+            "key": "xu:wood",
+            "delta": -2.199116,
+            "metadata": {
+              "strength_scalar": -0.995578
+            }
+          }
+        ],
+        "tags": {
+          "year": 2025,
+          "month_index": 5,
+          "term": "立夏",
+          "calendar_mode": "solar_terms",
+          "year_boundary": "ipchun",
+          "month_boundary": "jie",
+          "time_mode": "local_standard",
+          "strength_profile": "weak",
+          "policy_version": "luck_policy_v1.1.2",
+          "day_candidates": {
+            "good": [],
+            "caution": []
+          },
+          "raw_total": -19.31734039,
+          "gate_total": 0.7854704368290333,
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333
+          },
+          "categories": {
+            "wealth": 3.5666551099999997,
+            "officer": 2.6114150400000002,
+            "study": 2.71612761,
+            "output": -4.94823434,
+            "network": -5.58,
+            "health": 8.37,
+            "move": -8.370000000000001
+          },
+          "recommendations": [
+            "health",
+            "wealth",
+            "study"
+          ],
+          "geokguk": {
+            "mode": "two_stage",
+            "info": {
+              "engine": "gyeokguk_classifier",
+              "policy_version": "gyeokguk_policy_v1",
+              "type": "정격",
+              "basis": [
+                "월령득기"
+              ],
+              "confidence": 0.6,
+              "notes": "기본 규칙 적용(디폴트).",
+              "evidence_ref": "gyeokguk/정격"
+            },
+            "modifiers": {}
+          },
+          "events": [
+            "chong",
+            "chong"
+          ]
+        },
+        "explain": {
+          "raw_components": {
+            "sibsin": -3.1682247899999996,
+            "relations": -13.95,
+            "unseong12": 0.0,
+            "taese": 0.0,
+            "season": -2.1991156000000003
+          },
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333,
+            "total": 0.7854704368290333
+          },
+          "tracks": {
+            "state": -5.36734039,
+            "event": -13.95
+          },
+          "frame_contrib": {
+            "raw": -19.31734039,
+            "normalized": -59.77833923772805,
+            "frame_kind": "month"
+          }
+        }
+      },
+      {
+        "kind": "month",
+        "pillar": "",
+        "start_dt": "2025-06-05T18:50:45+09:00",
+        "end_dt": "2025-07-07T05:03:01+09:00",
+        "score": -59.77833923772805,
+        "drivers": [
+          {
+            "component": "sibsin",
+            "key": "sang",
+            "delta": -0.646241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "pyeongwan",
+            "delta": -0.695578,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "sik",
+            "delta": -0.246241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:main:jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:middle:pyeongwan",
+            "delta": -0.417347,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.6,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:minor:sik",
+            "delta": -0.073872,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.3,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -4.95,
+            "metadata": {
+              "magnitude": 0.55
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -9.0,
+            "metadata": {
+              "magnitude": 1.0
+            }
+          },
+          {
+            "component": "season",
+            "key": "xu:wood",
+            "delta": -2.199116,
+            "metadata": {
+              "strength_scalar": -0.995578
+            }
+          }
+        ],
+        "tags": {
+          "year": 2025,
+          "month_index": 6,
+          "term": "芒種",
+          "calendar_mode": "solar_terms",
+          "year_boundary": "ipchun",
+          "month_boundary": "jie",
+          "time_mode": "local_standard",
+          "strength_profile": "weak",
+          "policy_version": "luck_policy_v1.1.2",
+          "day_candidates": {
+            "good": [],
+            "caution": []
+          },
+          "raw_total": -19.31734039,
+          "gate_total": 0.7854704368290333,
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333
+          },
+          "categories": {
+            "wealth": 3.5666551099999997,
+            "officer": 2.6114150400000002,
+            "study": 2.71612761,
+            "output": -4.94823434,
+            "network": -5.58,
+            "health": 8.37,
+            "move": -8.370000000000001
+          },
+          "recommendations": [
+            "health",
+            "wealth",
+            "study"
+          ],
+          "geokguk": {
+            "mode": "two_stage",
+            "info": {
+              "engine": "gyeokguk_classifier",
+              "policy_version": "gyeokguk_policy_v1",
+              "type": "정격",
+              "basis": [
+                "월령득기"
+              ],
+              "confidence": 0.6,
+              "notes": "기본 규칙 적용(디폴트).",
+              "evidence_ref": "gyeokguk/정격"
+            },
+            "modifiers": {}
+          },
+          "events": [
+            "chong",
+            "chong"
+          ]
+        },
+        "explain": {
+          "raw_components": {
+            "sibsin": -3.1682247899999996,
+            "relations": -13.95,
+            "unseong12": 0.0,
+            "taese": 0.0,
+            "season": -2.1991156000000003
+          },
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333,
+            "total": 0.7854704368290333
+          },
+          "tracks": {
+            "state": -5.36734039,
+            "event": -13.95
+          },
+          "frame_contrib": {
+            "raw": -19.31734039,
+            "normalized": -59.77833923772805,
+            "frame_kind": "month"
+          }
+        }
+      },
+      {
+        "kind": "month",
+        "pillar": "",
+        "start_dt": "2025-07-07T05:03:01+09:00",
+        "end_dt": "2025-08-07T14:53:07+09:00",
+        "score": -59.77833923772805,
+        "drivers": [
+          {
+            "component": "sibsin",
+            "key": "sang",
+            "delta": -0.646241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "pyeongwan",
+            "delta": -0.695578,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "sik",
+            "delta": -0.246241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:main:jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:middle:pyeongwan",
+            "delta": -0.417347,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.6,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:minor:sik",
+            "delta": -0.073872,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.3,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -4.95,
+            "metadata": {
+              "magnitude": 0.55
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -9.0,
+            "metadata": {
+              "magnitude": 1.0
+            }
+          },
+          {
+            "component": "season",
+            "key": "xu:wood",
+            "delta": -2.199116,
+            "metadata": {
+              "strength_scalar": -0.995578
+            }
+          }
+        ],
+        "tags": {
+          "year": 2025,
+          "month_index": 7,
+          "term": "小暑",
+          "calendar_mode": "solar_terms",
+          "year_boundary": "ipchun",
+          "month_boundary": "jie",
+          "time_mode": "local_standard",
+          "strength_profile": "weak",
+          "policy_version": "luck_policy_v1.1.2",
+          "day_candidates": {
+            "good": [],
+            "caution": []
+          },
+          "raw_total": -19.31734039,
+          "gate_total": 0.7854704368290333,
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333
+          },
+          "categories": {
+            "wealth": 3.5666551099999997,
+            "officer": 2.6114150400000002,
+            "study": 2.71612761,
+            "output": -4.94823434,
+            "network": -5.58,
+            "health": 8.37,
+            "move": -8.370000000000001
+          },
+          "recommendations": [
+            "health",
+            "wealth",
+            "study"
+          ],
+          "geokguk": {
+            "mode": "two_stage",
+            "info": {
+              "engine": "gyeokguk_classifier",
+              "policy_version": "gyeokguk_policy_v1",
+              "type": "정격",
+              "basis": [
+                "월령득기"
+              ],
+              "confidence": 0.6,
+              "notes": "기본 규칙 적용(디폴트).",
+              "evidence_ref": "gyeokguk/정격"
+            },
+            "modifiers": {}
+          },
+          "events": [
+            "chong",
+            "chong"
+          ]
+        },
+        "explain": {
+          "raw_components": {
+            "sibsin": -3.1682247899999996,
+            "relations": -13.95,
+            "unseong12": 0.0,
+            "taese": 0.0,
+            "season": -2.1991156000000003
+          },
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333,
+            "total": 0.7854704368290333
+          },
+          "tracks": {
+            "state": -5.36734039,
+            "event": -13.95
+          },
+          "frame_contrib": {
+            "raw": -19.31734039,
+            "normalized": -59.77833923772805,
+            "frame_kind": "month"
+          }
+        }
+      },
+      {
+        "kind": "month",
+        "pillar": "",
+        "start_dt": "2025-08-07T14:53:07+09:00",
+        "end_dt": "2025-09-07T17:54:26+09:00",
+        "score": -59.77833923772805,
+        "drivers": [
+          {
+            "component": "sibsin",
+            "key": "sang",
+            "delta": -0.646241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "pyeongwan",
+            "delta": -0.695578,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "sik",
+            "delta": -0.246241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:main:jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:middle:pyeongwan",
+            "delta": -0.417347,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.6,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:minor:sik",
+            "delta": -0.073872,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.3,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -4.95,
+            "metadata": {
+              "magnitude": 0.55
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -9.0,
+            "metadata": {
+              "magnitude": 1.0
+            }
+          },
+          {
+            "component": "season",
+            "key": "xu:wood",
+            "delta": -2.199116,
+            "metadata": {
+              "strength_scalar": -0.995578
+            }
+          }
+        ],
+        "tags": {
+          "year": 2025,
+          "month_index": 8,
+          "term": "立秋",
+          "calendar_mode": "solar_terms",
+          "year_boundary": "ipchun",
+          "month_boundary": "jie",
+          "time_mode": "local_standard",
+          "strength_profile": "weak",
+          "policy_version": "luck_policy_v1.1.2",
+          "day_candidates": {
+            "good": [],
+            "caution": []
+          },
+          "raw_total": -19.31734039,
+          "gate_total": 0.7854704368290333,
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333
+          },
+          "categories": {
+            "wealth": 3.5666551099999997,
+            "officer": 2.6114150400000002,
+            "study": 2.71612761,
+            "output": -4.94823434,
+            "network": -5.58,
+            "health": 8.37,
+            "move": -8.370000000000001
+          },
+          "recommendations": [
+            "health",
+            "wealth",
+            "study"
+          ],
+          "geokguk": {
+            "mode": "two_stage",
+            "info": {
+              "engine": "gyeokguk_classifier",
+              "policy_version": "gyeokguk_policy_v1",
+              "type": "정격",
+              "basis": [
+                "월령득기"
+              ],
+              "confidence": 0.6,
+              "notes": "기본 규칙 적용(디폴트).",
+              "evidence_ref": "gyeokguk/정격"
+            },
+            "modifiers": {}
+          },
+          "events": [
+            "chong",
+            "chong"
+          ]
+        },
+        "explain": {
+          "raw_components": {
+            "sibsin": -3.1682247899999996,
+            "relations": -13.95,
+            "unseong12": 0.0,
+            "taese": 0.0,
+            "season": -2.1991156000000003
+          },
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333,
+            "total": 0.7854704368290333
+          },
+          "tracks": {
+            "state": -5.36734039,
+            "event": -13.95
+          },
+          "frame_contrib": {
+            "raw": -19.31734039,
+            "normalized": -59.77833923772805,
+            "frame_kind": "month"
+          }
+        }
+      },
+      {
+        "kind": "month",
+        "pillar": "",
+        "start_dt": "2025-09-07T17:54:26+09:00",
+        "end_dt": "2025-10-08T09:42:19+09:00",
+        "score": -59.77833923772805,
+        "drivers": [
+          {
+            "component": "sibsin",
+            "key": "sang",
+            "delta": -0.646241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "pyeongwan",
+            "delta": -0.695578,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "sik",
+            "delta": -0.246241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:main:jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:middle:pyeongwan",
+            "delta": -0.417347,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.6,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:minor:sik",
+            "delta": -0.073872,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.3,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -4.95,
+            "metadata": {
+              "magnitude": 0.55
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -9.0,
+            "metadata": {
+              "magnitude": 1.0
+            }
+          },
+          {
+            "component": "season",
+            "key": "xu:wood",
+            "delta": -2.199116,
+            "metadata": {
+              "strength_scalar": -0.995578
+            }
+          }
+        ],
+        "tags": {
+          "year": 2025,
+          "month_index": 9,
+          "term": "白露",
+          "calendar_mode": "solar_terms",
+          "year_boundary": "ipchun",
+          "month_boundary": "jie",
+          "time_mode": "local_standard",
+          "strength_profile": "weak",
+          "policy_version": "luck_policy_v1.1.2",
+          "day_candidates": {
+            "good": [],
+            "caution": []
+          },
+          "raw_total": -19.31734039,
+          "gate_total": 0.7854704368290333,
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333
+          },
+          "categories": {
+            "wealth": 3.5666551099999997,
+            "officer": 2.6114150400000002,
+            "study": 2.71612761,
+            "output": -4.94823434,
+            "network": -5.58,
+            "health": 8.37,
+            "move": -8.370000000000001
+          },
+          "recommendations": [
+            "health",
+            "wealth",
+            "study"
+          ],
+          "geokguk": {
+            "mode": "two_stage",
+            "info": {
+              "engine": "gyeokguk_classifier",
+              "policy_version": "gyeokguk_policy_v1",
+              "type": "정격",
+              "basis": [
+                "월령득기"
+              ],
+              "confidence": 0.6,
+              "notes": "기본 규칙 적용(디폴트).",
+              "evidence_ref": "gyeokguk/정격"
+            },
+            "modifiers": {}
+          },
+          "events": [
+            "chong",
+            "chong"
+          ]
+        },
+        "explain": {
+          "raw_components": {
+            "sibsin": -3.1682247899999996,
+            "relations": -13.95,
+            "unseong12": 0.0,
+            "taese": 0.0,
+            "season": -2.1991156000000003
+          },
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333,
+            "total": 0.7854704368290333
+          },
+          "tracks": {
+            "state": -5.36734039,
+            "event": -13.95
+          },
+          "frame_contrib": {
+            "raw": -19.31734039,
+            "normalized": -59.77833923772805,
+            "frame_kind": "month"
+          }
+        }
+      },
+      {
+        "kind": "month",
+        "pillar": "",
+        "start_dt": "2025-10-08T09:42:19+09:00",
+        "end_dt": "2025-11-07T13:02:46+09:00",
+        "score": -59.77833923772805,
+        "drivers": [
+          {
+            "component": "sibsin",
+            "key": "sang",
+            "delta": -0.646241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "pyeongwan",
+            "delta": -0.695578,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "sik",
+            "delta": -0.246241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:main:jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:middle:pyeongwan",
+            "delta": -0.417347,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.6,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:minor:sik",
+            "delta": -0.073872,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.3,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -4.95,
+            "metadata": {
+              "magnitude": 0.55
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -9.0,
+            "metadata": {
+              "magnitude": 1.0
+            }
+          },
+          {
+            "component": "season",
+            "key": "xu:wood",
+            "delta": -2.199116,
+            "metadata": {
+              "strength_scalar": -0.995578
+            }
+          }
+        ],
+        "tags": {
+          "year": 2025,
+          "month_index": 10,
+          "term": "寒露",
+          "calendar_mode": "solar_terms",
+          "year_boundary": "ipchun",
+          "month_boundary": "jie",
+          "time_mode": "local_standard",
+          "strength_profile": "weak",
+          "policy_version": "luck_policy_v1.1.2",
+          "day_candidates": {
+            "good": [],
+            "caution": []
+          },
+          "raw_total": -19.31734039,
+          "gate_total": 0.7854704368290333,
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333
+          },
+          "categories": {
+            "wealth": 3.5666551099999997,
+            "officer": 2.6114150400000002,
+            "study": 2.71612761,
+            "output": -4.94823434,
+            "network": -5.58,
+            "health": 8.37,
+            "move": -8.370000000000001
+          },
+          "recommendations": [
+            "health",
+            "wealth",
+            "study"
+          ],
+          "geokguk": {
+            "mode": "two_stage",
+            "info": {
+              "engine": "gyeokguk_classifier",
+              "policy_version": "gyeokguk_policy_v1",
+              "type": "정격",
+              "basis": [
+                "월령득기"
+              ],
+              "confidence": 0.6,
+              "notes": "기본 규칙 적용(디폴트).",
+              "evidence_ref": "gyeokguk/정격"
+            },
+            "modifiers": {}
+          },
+          "events": [
+            "chong",
+            "chong"
+          ]
+        },
+        "explain": {
+          "raw_components": {
+            "sibsin": -3.1682247899999996,
+            "relations": -13.95,
+            "unseong12": 0.0,
+            "taese": 0.0,
+            "season": -2.1991156000000003
+          },
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333,
+            "total": 0.7854704368290333
+          },
+          "tracks": {
+            "state": -5.36734039,
+            "event": -13.95
+          },
+          "frame_contrib": {
+            "raw": -19.31734039,
+            "normalized": -59.77833923772805,
+            "frame_kind": "month"
+          }
+        }
+      },
+      {
+        "kind": "month",
+        "pillar": "",
+        "start_dt": "2025-11-07T13:02:46+09:00",
+        "end_dt": "2025-12-07T06:01:11+09:00",
+        "score": -59.77833923772805,
+        "drivers": [
+          {
+            "component": "sibsin",
+            "key": "sang",
+            "delta": -0.646241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "pyeongwan",
+            "delta": -0.695578,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "sik",
+            "delta": -0.246241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:main:jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:middle:pyeongwan",
+            "delta": -0.417347,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.6,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:minor:sik",
+            "delta": -0.073872,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.3,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -4.95,
+            "metadata": {
+              "magnitude": 0.55
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -9.0,
+            "metadata": {
+              "magnitude": 1.0
+            }
+          },
+          {
+            "component": "season",
+            "key": "xu:wood",
+            "delta": -2.199116,
+            "metadata": {
+              "strength_scalar": -0.995578
+            }
+          }
+        ],
+        "tags": {
+          "year": 2025,
+          "month_index": 11,
+          "term": "立冬",
+          "calendar_mode": "solar_terms",
+          "year_boundary": "ipchun",
+          "month_boundary": "jie",
+          "time_mode": "local_standard",
+          "strength_profile": "weak",
+          "policy_version": "luck_policy_v1.1.2",
+          "day_candidates": {
+            "good": [],
+            "caution": []
+          },
+          "raw_total": -19.31734039,
+          "gate_total": 0.7854704368290333,
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333
+          },
+          "categories": {
+            "wealth": 3.5666551099999997,
+            "officer": 2.6114150400000002,
+            "study": 2.71612761,
+            "output": -4.94823434,
+            "network": -5.58,
+            "health": 8.37,
+            "move": -8.370000000000001
+          },
+          "recommendations": [
+            "health",
+            "wealth",
+            "study"
+          ],
+          "geokguk": {
+            "mode": "two_stage",
+            "info": {
+              "engine": "gyeokguk_classifier",
+              "policy_version": "gyeokguk_policy_v1",
+              "type": "정격",
+              "basis": [
+                "월령득기"
+              ],
+              "confidence": 0.6,
+              "notes": "기본 규칙 적용(디폴트).",
+              "evidence_ref": "gyeokguk/정격"
+            },
+            "modifiers": {}
+          },
+          "events": [
+            "chong",
+            "chong"
+          ]
+        },
+        "explain": {
+          "raw_components": {
+            "sibsin": -3.1682247899999996,
+            "relations": -13.95,
+            "unseong12": 0.0,
+            "taese": 0.0,
+            "season": -2.1991156000000003
+          },
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333,
+            "total": 0.7854704368290333
+          },
+          "tracks": {
+            "state": -5.36734039,
+            "event": -13.95
+          },
+          "frame_contrib": {
+            "raw": -19.31734039,
+            "normalized": -59.77833923772805,
+            "frame_kind": "month"
+          }
+        }
+      },
+      {
+        "kind": "month",
+        "pillar": "",
+        "start_dt": "2025-12-07T06:01:11+09:00",
+        "end_dt": "2026-01-05T17:17:47+09:00",
+        "score": -59.77833923772805,
+        "drivers": [
+          {
+            "component": "sibsin",
+            "key": "sang",
+            "delta": -0.646241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "pyeongwan",
+            "delta": -0.695578,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "sik",
+            "delta": -0.246241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:main:jeongjae",
+            "delta": -0.544473,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:middle:pyeongwan",
+            "delta": -0.417347,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.6,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:minor:sik",
+            "delta": -0.073872,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 0.3,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -4.95,
+            "metadata": {
+              "magnitude": 0.55
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -9.0,
+            "metadata": {
+              "magnitude": 1.0
+            }
+          },
+          {
+            "component": "season",
+            "key": "xu:wood",
+            "delta": -2.199116,
+            "metadata": {
+              "strength_scalar": -0.995578
+            }
+          }
+        ],
+        "tags": {
+          "year": 2025,
+          "month_index": 12,
+          "term": "大雪",
+          "calendar_mode": "solar_terms",
+          "year_boundary": "ipchun",
+          "month_boundary": "jie",
+          "time_mode": "local_standard",
+          "strength_profile": "weak",
+          "policy_version": "luck_policy_v1.1.2",
+          "day_candidates": {
+            "good": [],
+            "caution": []
+          },
+          "raw_total": -19.31734039,
+          "gate_total": 0.7854704368290333,
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333
+          },
+          "categories": {
+            "wealth": 3.5666551099999997,
+            "officer": 2.6114150400000002,
+            "study": 2.71612761,
+            "output": -4.94823434,
+            "network": -5.58,
+            "health": 8.37,
+            "move": -8.370000000000001
+          },
+          "recommendations": [
+            "health",
+            "wealth",
+            "study"
+          ],
+          "geokguk": {
+            "mode": "two_stage",
+            "info": {
+              "engine": "gyeokguk_classifier",
+              "policy_version": "gyeokguk_policy_v1",
+              "type": "정격",
+              "basis": [
+                "월령득기"
+              ],
+              "confidence": 0.6,
+              "notes": "기본 규칙 적용(디폴트).",
+              "evidence_ref": "gyeokguk/정격"
+            },
+            "modifiers": {}
+          },
+          "events": [
+            "chong",
+            "chong"
+          ]
+        },
+        "explain": {
+          "raw_components": {
+            "sibsin": -3.1682247899999996,
+            "relations": -13.95,
+            "unseong12": 0.0,
+            "taese": 0.0,
+            "season": -2.1991156000000003
+          },
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333,
+            "total": 0.7854704368290333
+          },
+          "tracks": {
+            "state": -5.36734039,
+            "event": -13.95
+          },
+          "frame_contrib": {
+            "raw": -19.31734039,
+            "normalized": -59.77833923772805,
+            "frame_kind": "month"
+          }
+        }
+      }
+    ],
+    "daily": [
+      {
+        "kind": "day",
+        "pillar": "",
+        "start_dt": "2025-11-03T00:00:00",
+        "end_dt": "2025-11-04T00:00:00",
+        "score": -36.316744342754795,
+        "drivers": [
+          {
+            "component": "sibsin",
+            "key": "sang",
+            "delta": -0.646241,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "pyeonin",
+            "delta": 1.244472,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "sibsin",
+            "key": "hidden:main:pyeonin",
+            "delta": 1.244472,
+            "metadata": {
+              "exposure": 1.0,
+              "base": 1.0,
+              "tier_multiplier": 1.0,
+              "strength_scalar": -0.995578
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -4.95,
+            "metadata": {
+              "magnitude": 0.55
+            }
+          },
+          {
+            "component": "relations",
+            "key": "chung",
+            "delta": -9.0,
+            "metadata": {
+              "magnitude": 1.0
+            }
+          },
+          {
+            "component": "season",
+            "key": "xu:wood",
+            "delta": -2.199116,
+            "metadata": {
+              "strength_scalar": -0.995578
+            }
+          }
+        ],
+        "tags": {
+          "date": "2025-11-03",
+          "calendar_mode": "solar_terms",
+          "year_boundary": "ipchun",
+          "month_boundary": "jie",
+          "time_mode": "local_standard",
+          "strength_profile": "weak",
+          "policy_version": "luck_policy_v1.1.2",
+          "policy_suffix": "v1_1_2",
+          "signals": {
+            "ten_god": null,
+            "interactions": []
+          },
+          "raw_total": -14.3064119,
+          "gate_total": 0.6915622003610885,
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333,
+            "month": 0.8804433215245439
+          },
+          "categories": {
+            "wealth": 4.185,
+            "officer": 3.55588754,
+            "study": 4.0344725,
+            "output": -4.70199304,
+            "network": -5.58,
+            "health": 8.37,
+            "move": -8.370000000000001
+          },
+          "recommendations": [
+            "health",
+            "wealth",
+            "study"
+          ],
+          "geokguk": {
+            "mode": "two_stage",
+            "info": {
+              "engine": "gyeokguk_classifier",
+              "policy_version": "gyeokguk_policy_v1",
+              "type": "정격",
+              "basis": [
+                "월령득기"
+              ],
+              "confidence": 0.6,
+              "notes": "기본 규칙 적용(디폴트).",
+              "evidence_ref": "gyeokguk/정격"
+            },
+            "modifiers": {}
+          },
+          "alerts": {
+            "level1": [
+              "caution"
+            ]
+          },
+          "events": [
+            "chong",
+            "chong"
+          ]
+        },
+        "explain": {
+          "raw_components": {
+            "sibsin": 1.8427036999999997,
+            "relations": -13.95,
+            "unseong12": 0.0,
+            "taese": 0.0,
+            "season": -2.1991156000000003
+          },
+          "gates": {
+            "daewoon": 1.0,
+            "year": 0.7854704368290333,
+            "month": 0.8804433215245439,
+            "total": 0.6915622003610885
+          },
+          "tracks": {
+            "state": -0.35641190000000056,
+            "event": -13.95
+          },
+          "frame_contrib": {
+            "raw": -14.3064119,
+            "normalized": -36.316744342754795,
+            "frame_kind": "day"
+          }
+        }
+      }
+    ],
+    "transits": {
+      "year": {
+        "pillar": "乙巳",
+        "stem": "乙",
+        "branch": "巳"
+      },
+      "month": {
+        "pillar": "丙戌",
+        "stem": "丙",
+        "branch": "戌"
+      },
+      "day": {
+        "pillar": "丙子",
+        "stem": "丙",
+        "branch": "子"
+      },
+      "meta": {
+        "timezone": "Asia/Seoul",
+        "timestamp": "2025-11-03T12:45:15.041149+09:00"
+      }
+    }
+  },
+  "compat_view": {
+    "strength": {
+      "label": "신약",
+      "bin": "weak",
+      "score_normalized": 0.2211,
+      "score": 22.11,
+      "boundary": false
+    },
+    "five_elements": {
+      "木": {
+        "pct": 25.0,
+        "label": "발달"
+      },
+      "火": {
+        "pct": 0.0,
+        "label": "부족"
+      },
+      "土": {
+        "pct": 12.5,
+        "label": "적정"
+      },
+      "金": {
+        "pct": 50.0,
+        "label": "과다"
+      },
+      "水": {
+        "pct": 12.5,
+        "label": "적정"
+      }
+    },
+    "yongshin": {
+      "primary": {
+        "element": "수",
+        "roles": [
+          "억부",
+          "조후"
+        ],
+        "level": "Medium",
+        "score": 0.42,
+        "why": "억부, 조후"
+      },
+      "items": [
+        {
+          "element": "수",
+          "roles": [
+            "억부",
+            "조후"
+          ],
+          "level": "Medium",
+          "score": 0.42,
+          "why": "억부, 조후"
+        },
+        {
+          "element": "목",
+          "roles": [
+            "억부"
+          ],
+          "level": "Low",
+          "score": 0.15,
+          "why": "억부"
+        },
+        {
+          "element": "금",
+          "roles": [],
+          "level": "Low",
+          "score": 0.06,
+          "why": ""
+        },
+        {
+          "element": "토",
+          "roles": [],
+          "level": "Low",
+          "score": 0.06,
+          "why": ""
+        },
+        {
+          "element": "화",
+          "roles": [],
+          "level": "Low",
+          "score": 0.06,
+          "why": ""
+        }
+      ],
+      "confidence": 0.87,
+      "season": "가을"
+    }
+  },
   "_enrichment": {
     "korean_labels_added": true,
     "locale": "ko-KR",
@@ -492,8 +3198,8 @@
           "day_index": 11,
           "xun_start": 10
         },
-        "created_at": "2025-10-12T08:39:33Z",
-        "section_signature": "05e69f03252abf8310f21a3b9a2ff3e2341b551a1989b36c36ee6abf6b2f4d91"
+        "created_at": "2025-11-03T03:45:15Z",
+        "section_signature": "6cbd54427df4aff4f97c9f84d89a7c3dc61fa1fa0d1d3c2ac37b04cfb9c02989"
       },
       {
         "type": "wuxing_adjust",
@@ -502,16 +3208,16 @@
         "source": "services/analysis-service/app/core/combination_element.py",
         "payload": {
           "dist": {
-            "木": 0.3333333333333333,
-            "火": 0.08333333333333333,
-            "土": 0.08333333333333333,
-            "金": 0.4166666666666667,
-            "水": 0.08333333333333333
+            "木": 0.25,
+            "火": 0.0,
+            "土": 0.125,
+            "金": 0.5,
+            "水": 0.125
           },
           "trace": []
         },
-        "created_at": "2025-10-12T08:39:33Z",
-        "section_signature": "1e4ef0874b361a8575d162d62e0d7b73da073d3af29b68357f586bbec2b33f7b"
+        "created_at": "2025-11-03T03:45:15Z",
+        "section_signature": "ffe690c16f8fd41f0410145093dd6cbcb9345915a3452f299cfbf1b24e07e69e"
       },
       {
         "type": "yuanjin",
@@ -528,11 +3234,11 @@
           "hits": [],
           "pair_count": 0
         },
-        "created_at": "2025-10-12T08:39:33Z",
-        "section_signature": "db25745e508d0ed2809b5f8ba668b58f978e0af337e4159bc1a05e197ed5d089"
+        "created_at": "2025-11-03T03:45:15Z",
+        "section_signature": "d12e1aad9286708a0479073525f369109a4e0bde3a6e85741c991f97f06e44f7"
       }
     ],
-    "evidence_signature": "5111f0326d047c8fe2acac5ec9782fe382604a5778db576eb5b09887e196e391"
+    "evidence_signature": "84b95377dcb133323073885da1c2fa23ccfcdb0e3db887d067193b06d1db1fc5"
   },
   "engine_summaries": {
     "strength": {
@@ -579,7 +3285,7 @@
   "status": "success",
   "meta": {
     "orchestrator_version": "1.2.0",
-    "timestamp": "2025-10-12T08:39:33.443874+00:00",
+    "timestamp": "2025-11-03T03:45:15.070340+00:00",
     "engines_used": [
       "StrengthEvaluator",
       "RelationTransformer",
@@ -602,6 +3308,11 @@
       "RecommendationGuard",
       "LLMGuard",
       "TextGuard"
-    ]
+    ],
+    "luck_v1_1_2": {
+      "annual_count": 1,
+      "monthly_count": 12,
+      "daily_count": 1
+    }
   }
 }

@@ -1,0 +1,295 @@
+{
+  "policy_version": "luck_policy_v1.1.2",
+  "sect_profile": {
+    "earth_policy": "moist_dry",
+    "ten_god_baseline_mode": "uniform",
+    "clash_semantics": "event_neutral",
+    "use_geokguk_plugin": false
+  },
+  "policy_assumptions": [
+    "uses_strength_based_yongxi",
+    "treats_clash_as_event_not_inherently_bad",
+    "no_full_geokguk_inference_v1"
+  ],
+  "weights": {
+    "sibsin": {
+      "ten_gods": {
+        "bi": 1.0,
+        "jeok": 1.0,
+        "sik": 1.0,
+        "sang": 1.0,
+        "pyeonjae": 1.0,
+        "jeongjae": 1.0,
+        "pyeongwan": 1.0,
+        "jeonggwan": 1.0,
+        "pyeonin": 1.0,
+        "jeongin": 1.0
+      },
+      "multipliers": {
+        "hidden_stem": {
+          "main": 1.0,
+          "middle": 0.6,
+          "minor": 0.3
+        },
+        "by_strength_anchors": {
+          "weak_end": {
+            "bi": 1.15,
+            "jeok": 1.10,
+            "sik": -0.25,
+            "sang": -0.65,
+            "pyeonjae": -0.50,
+            "jeongjae": -0.55,
+            "pyeongwan": -0.70,
+            "jeonggwan": -0.85,
+            "pyeonin": 1.25,
+            "jeongin": 1.20
+          },
+          "neutral": {
+            "bi": -0.30,
+            "jeok": -0.20,
+            "sik": 0.60,
+            "sang": 0.20,
+            "pyeonjae": 0.60,
+            "jeongjae": 0.70,
+            "pyeongwan": 0.30,
+            "jeonggwan": 0.70,
+            "pyeonin": 0.00,
+            "jeongin": 0.00
+          },
+          "strong_end": {
+            "bi": -1.25,
+            "jeok": -1.10,
+            "sik": 1.25,
+            "sang": 1.35,
+            "pyeonjae": 1.25,
+            "jeongjae": 1.35,
+            "pyeongwan": 1.10,
+            "jeonggwan": 1.20,
+            "pyeonin": -1.30,
+            "jeongin": -1.10
+          }
+        }
+      }
+    },
+    "relations": {
+      "hap": 4.0,
+      "chung": -9.0,
+      "hyeong": -5.0,
+      "pa": -4.0,
+      "hae": -3.0,
+      "bonuses": {
+        "sam_hap_complete": 2.0,
+        "bang_hap_complete": 2.0,
+        "stem_hap": 3.0,
+        "stem_hap_transform_bonus": 2.0,
+        "double_chung_same_axis": -2.0,
+        "synergy_taise_plus_day_branch_chung": -3.0,
+        "synergy_taise_plus_other_branch_chung": -2.0
+      }
+    },
+    "axis_patterns": {
+      "sajeong_chung": {
+        "complete": -5.0,
+        "partial": -2.0,
+        "emit_flag": true
+      },
+      "sam_hyeong": {
+        "complete": -4.0,
+        "partial": -1.5,
+        "emit_flag": true
+      }
+    },
+    "pilar_overlap": {
+      "same_pillar_bonus": 1.5,
+      "reverse_pillar_penalty": -1.5,
+      "emit_flag": true
+    },
+    "unseong12": {
+      "changsheng": 5,
+      "guan_dai": 2,
+      "lin_guan": 4,
+      "di_wang": 5,
+      "shuai": -1,
+      "bing": -3,
+      "si": -4,
+      "mu": -2,
+      "jue": -3,
+      "tai": -1,
+      "yang": 1,
+      "bath": -2
+    },
+    "unseong12_role_coeff": {
+      "di_wang": {"wealth": 0.8, "officer": 0.5, "output": 0.7, "resource": 0.4, "peer": 0.3, "health": -0.2},
+      "lin_guan": {"wealth": 0.6, "officer": 0.6, "output": 0.5, "resource": 0.3, "peer": 0.2, "health": -0.1},
+      "changsheng": {"wealth": 0.4, "officer": 0.3, "output": 0.5, "resource": 0.8, "peer": 0.2, "health": 0.1},
+      "mu": {"wealth": -0.3, "officer": -0.2, "output": -0.2, "resource": 0.0, "peer": 0.0, "health": -0.4},
+      "si": {"wealth": -0.4, "officer": -0.3, "output": -0.3, "resource": -0.1, "peer": -0.1, "health": -0.5},
+      "jue": {"wealth": -0.3, "officer": -0.3, "output": -0.2, "resource": -0.1, "peer": -0.1, "health": -0.4},
+      "shuai": {"wealth": -0.1, "officer": -0.1, "output": -0.1, "resource": 0.0, "peer": 0.0, "health": -0.2},
+      "yang": {"wealth": 0.2, "officer": 0.2, "output": 0.2, "resource": 0.2, "peer": 0.1, "health": 0.0},
+      "guan_dai": {"wealth": 0.3, "officer": 0.3, "output": 0.2, "resource": 0.2, "peer": 0.1, "health": 0.0},
+      "tai": {"wealth": -0.1, "officer": -0.1, "output": -0.1, "resource": 0.0, "peer": 0.0, "health": -0.1},
+      "bath": {"wealth": -0.2, "officer": -0.1, "output": -0.1, "resource": 0.0, "peer": 0.0, "health": -0.2}
+    },
+    "taese": {
+      "hap_taese": 3.0,
+      "chung_taese": -14.0,
+      "hyeong_taese": -10.0,
+      "pa_taese": -8.0,
+      "hae_taese": -7.0
+    },
+    "season": {
+      "by_branch": {
+        "yin": {"wood": 3, "fire": 1, "earth": 0, "metal": -2, "water": -1},
+        "mao": {"wood": 3, "fire": 1, "earth": 0, "metal": -2, "water": -1},
+        "chen": {"wood": 2, "fire": 1, "earth": 0.5, "metal": -1, "water": -1},
+        "si": {"wood": -1, "fire": 3, "earth": 1, "metal": -2, "water": -3},
+        "wu": {"wood": -1, "fire": 3, "earth": 1, "metal": -2, "water": -3},
+        "wei": {"wood": -1, "fire": 2, "earth": 2.0, "metal": -1, "water": -2},
+        "shen": {"wood": -3, "fire": -2, "earth": 1, "metal": 3, "water": 1},
+        "you": {"wood": -3, "fire": -2, "earth": 1, "metal": 3, "water": 1},
+        "xu": {"wood": -2, "fire": -2, "earth": 1.5, "metal": 2, "water": 1},
+        "hai": {"wood": 1, "fire": -3, "earth": 0, "metal": -1, "water": 3},
+        "zi": {"wood": 1, "fire": -3, "earth": 0, "metal": -1, "water": 3},
+        "chou": {"wood": 1, "fire": -3, "earth": 1.0, "metal": -1, "water": 2}
+      },
+      "by_strength": {"strong": 0.90, "neutral": 1.00, "weak": 1.10},
+      "apply_levels": {"year": false, "month": true, "day": true}
+    }
+  },
+  "hierarchy": {
+    "mode": "multiplicative_gate",
+    "gates": {"alpha": 0.40, "beta": 0.30, "gamma": 0.20},
+    "gate_clip": [0.60, 1.40],
+    "compound_floor_daily": 0.55,
+    "breakthrough": {
+      "month_relief_threshold": 60,
+      "month_relief_floor_daily": 0.75,
+      "year_relief_threshold": 60,
+      "year_relief_floor_month": 0.70
+    }
+  },
+  "normalization": {
+    "method": "tanh",
+    "scale": {"daewoon": 14, "year": 18, "month": 22, "day": 26},
+    "clip": 95
+  },
+  "options": {
+    "include_hidden_stems": true,
+    "count_sambw": true,
+    "exclude_taise_from_relations": "same_axis_only",
+    "season_earth_policy": "moist_dry",
+    "what_if_enabled": true
+  },
+  "attribution": {
+    "生_relation_attribution": "sink_only",
+    "clash_vs_12unseong": "unseong_only",
+    "kong_mang": {"enabled": true, "factor": 0.30},
+    "shinsal": {"score": "none", "emit_event_flags": true}
+  },
+  "geokguk": {
+    "detector": {"mode": "two_stage"},
+    "effects": {
+      "pseudo": {"raw_multiplier": 0.95},
+      "strong": {
+        "scope": "category_only",
+        "flip_map": {
+          "cong_wealth": {"wealth": 1.20, "resource": 0.85, "output": 0.95},
+          "cong_officer": {"officer": 1.20, "output": 0.85, "network": 0.90, "resource": 0.90},
+          "cong_resource": {"resource": 1.20, "wealth": 0.85, "output": 0.90},
+          "cong_output": {"output": 1.20, "officer": 0.90, "wealth": 0.95}
+        },
+        "confidence_scaling": true,
+        "caps": {"max_boost": 1.25, "min_drop": 0.80}
+      }
+    }
+  },
+  "hap_transform_model": {
+    "enabled": true,
+    "base_k": {"ke": 2.0, "sheng": 1.5, "bi": 1.2, "xie": 1.2},
+    "daymaster_strength_coeff": {
+      "weak": {"ke": -1.3, "sheng": 1.2, "bi": 1.0, "xie": -1.2},
+      "neutral": {"ke": -1.0, "sheng": 1.0, "bi": 1.0, "xie": 1.0},
+      "strong": {"ke": -0.8, "sheng": -0.8, "bi": -0.8, "xie": 1.2}
+    },
+    "season_support_bounds": [0.5, 1.2],
+    "caps": {"min": -3.0, "max": 3.0}
+  },
+  "category_overlays": {
+    "officer": {
+      "guards": [
+        {
+          "id": "sgjg_guard",
+          "when": {
+            "co_presence": ["sang", "jeonggwan"],
+            "dominance_ratio": {
+              "numerator": ["sang", "sik"],
+              "denominator": ["jeonggwan", "pyeongwan"],
+              "threshold": 1.20
+            },
+            "levels": ["monthly", "daily"]
+          },
+          "effect": {"type": "multiplier", "value": 0.60, "scope": "category_only"},
+          "spillover": {"network_mult": 0.90, "health_mult": 0.90},
+          "emit_flag": "event.sang_gwan_meets_gwan"
+        }
+      ]
+    }
+  },
+  "transformation_role_coeff": {
+    "to_fire": {"output": 0.6, "network": 0.3, "wealth": -0.4, "health": -0.2},
+    "to_water": {"wealth": 0.5, "officer": -0.3, "output": -0.1, "health": -0.1},
+    "to_wood": {"study": 0.4, "network": 0.3, "officer": -0.2},
+    "to_metal": {"wealth": 0.4, "officer": 0.2, "output": -0.2},
+    "to_earth": {"health": 0.3, "officer": 0.1, "move": -0.2}
+  },
+  "profile": {
+    "life_stage": "mid_career",
+    "category_weights": {
+      "wealth": 1.0,
+      "officer": 1.0,
+      "study": 1.0,
+      "output": 1.0,
+      "network": 1.0,
+      "health": 1.0,
+      "move": 1.0
+    }
+  },
+  "reco": {
+    "cat_base_weights": {
+      "wealth": 1.0,
+      "officer": 1.0,
+      "study": 1.0,
+      "output": 1.0,
+      "network": 1.0,
+      "health": 1.0,
+      "move": 1.0
+    },
+    "event_weights": {
+      "taese_plus_day_chung": 1.6,
+      "suiyun_binglin": 2.0,
+      "sam_hyeong_complete": 1.2,
+      "sgjg_guard": 1.4,
+      "fu_yin": 1.2,
+      "fan_yin": 1.4
+    },
+    "critical_events": ["taese_plus_day_chung", "suiyun_binglin", "fan_yin"],
+    "top_k": 3
+  },
+  "alerts": {
+    "level1_thresholds": {
+      "day": {"good": 25, "caution": -30}
+    },
+    "level2_triggers": [
+      {"id": "suiyun_binglin", "when": {"year_pillar_eq_daewoon": true}},
+      {"id": "fu_yin", "when": {"transit_pillar_eq_natal": true}},
+      {"id": "fan_yin", "when": {"transit_pillar_eq_natal_reverse": true}}
+    ]
+  },
+  "ui": {
+    "cross_level_compare": "discouraged",
+    "weak_frame_hint": true,
+    "weak_frame_text": "대운/연운 게이트로 감쇄된 국면입니다. 오늘은 규모를 줄이고 준비·정비에 초점을."
+  },
+  "disclaimer": "이 점수는 참고용이며, 중대 결정은 전문가 상담을 권장합니다."
+}

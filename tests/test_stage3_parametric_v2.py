@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 import json
-import sys
 from pathlib import Path
 
-# Handle hyphenated directory name
-sys.path.insert(
-    0, str(Path(__file__).parent.parent / "services" / "analysis-service" / "app" / "core")
-)
+from tests._analysis_loader import get_core_attr, get_model_attr, load_app_module
 
-from climate_advice import ClimateAdvice
-from engine import AnalysisEngine
-from gyeokguk_classifier import GyeokgukClassifier
-from luck_flow import LuckFlow
-from pattern_profiler import PatternProfiler
+ClimateAdvice = get_core_attr("climate_advice", "ClimateAdvice")
+LuckFlow = get_core_attr("luck_flow", "LuckFlow")
+GyeokgukClassifier = get_core_attr("gyeokguk_classifier", "GyeokgukClassifier")
+PatternProfiler = get_core_attr("pattern_profiler", "PatternProfiler")
+AnalysisEngine = load_app_module("core.engine").AnalysisEngine
+AnalysisRequest = get_model_attr("analysis", "AnalysisRequest")
+AnalysisOptions = get_model_attr("analysis", "AnalysisOptions")
+AnalysisResponse = get_model_attr("analysis", "AnalysisResponse")
+PillarInput = get_model_attr("analysis", "PillarInput")
 
 CASES = sorted((Path(__file__).parent / "golden_cases").glob("case_*.json"))
 
@@ -63,6 +63,13 @@ def test_engine_wrapper_smoke():
         "daewoon": case.get("daewoon", {}),
         "sewoon": case.get("sewoon", {}),
     }
-    out = AnalysisEngine().analyze(ctx)
-    for k in ["luck_flow", "gyeokguk", "climate_advice", "pattern"]:
-        assert k in out and isinstance(out[k], dict)
+    request = AnalysisRequest(
+        pillars={pos: PillarInput(pillar="甲子") for pos in ["year", "month", "day", "hour"]},
+        options=AnalysisOptions(
+            birth_dt="2000-01-01T00:00:00+09:00",
+            gender="F",
+            timezone="Asia/Seoul",
+        ),
+    )
+    response = AnalysisEngine().analyze(request)
+    assert isinstance(response, AnalysisResponse)

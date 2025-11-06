@@ -1,0 +1,278 @@
+{
+  "policy_version": "luck_annual_policy_v1.1.1",
+  "weights": {
+    "sibsin": {
+      "ten_gods": {
+        "bi": 1.0,
+        "jeok": 0.9,
+        "sik": 1.0,
+        "sang": 0.8,
+        "pyeonjae": 0.96,
+        "jeongjae": 1.12,
+        "pyeongwan": 0.9,
+        "jeonggwan": 1.1,
+        "pyeonin": 0.88,
+        "jeongin": 1.18
+      },
+      "multipliers": {
+        "by_strength": {
+          "strong": {
+            "bi": -1.2,
+            "jeok": -1.1,
+            "sik": 1.2,
+            "sang": 1.3,
+            "pyeonjae": 1.2,
+            "jeongjae": 1.3,
+            "pyeongwan": 1.1,
+            "jeonggwan": 1.2,
+            "pyeonin": -1.3,
+            "jeongin": -1.1
+          },
+          "neutral": {
+            "bi": -0.3,
+            "jeok": -0.2,
+            "sik": 0.6,
+            "sang": 0.2,
+            "pyeonjae": 0.6,
+            "jeongjae": 0.7,
+            "pyeongwan": 0.3,
+            "jeonggwan": 0.7,
+            "pyeonin": 0.0,
+            "jeongin": 0.0
+          },
+          "weak": {
+            "bi": 1.0,
+            "jeok": 1.1,
+            "sik": -0.2,
+            "sang": -0.6,
+            "pyeonjae": -0.5,
+            "jeongjae": -0.6,
+            "pyeongwan": -0.7,
+            "jeonggwan": -0.8,
+            "pyeonin": 1.25,
+            "jeongin": 1.2
+          }
+        },
+        "hidden_stem": {
+          "main": 1.0,
+          "middle": 0.6,
+          "minor": 0.3
+        }
+      }
+    },
+    "relations": {
+      "hap": 4.0,
+      "chung": -9.0,
+      "hyeong": -5.0,
+      "pa": -4.0,
+      "hae": -3.0,
+      "bonuses": {
+        "sam_hap_complete": 2.0,
+        "bang_hap_complete": 2.0,
+        "stem_hap": 3.0,
+        "stem_hap_transform_bonus": 2.0,
+        "double_chung_same_axis": -2.0,
+        "synergy_taise_plus_day_branch_chung": -4.0,
+        "synergy_taise_plus_other_branch_chung": -2.5
+      }
+    },
+    "unseong12": {
+      "changsheng": 5,
+      "guan_dai": 2,
+      "lin_guan": 4,
+      "di_wang": 5,
+      "shuai": -1,
+      "bing": -3,
+      "si": -4,
+      "mu": -2,
+      "jue": -3,
+      "tai": -1,
+      "yang": 1,
+      "bath": -2
+    },
+    "taese": {
+      "hap_taese": 3.0,
+      "chung_taese": -14.0,
+      "hyeong_taese": -10.0,
+      "pa_taese": -8.0,
+      "hae_taese": -7.0
+    },
+    "season": {
+      "by_branch": {
+        "yin": {
+          "wood": 3,
+          "fire": 1,
+          "earth": 0,
+          "metal": -2,
+          "water": -1
+        },
+        "mao": {
+          "wood": 3,
+          "fire": 1,
+          "earth": 0,
+          "metal": -2,
+          "water": -1
+        },
+        "chen": {
+          "wood": 2,
+          "fire": 1,
+          "earth": 0.5,
+          "metal": -1,
+          "water": -1
+        },
+        "si": {
+          "wood": -1,
+          "fire": 3,
+          "earth": 1,
+          "metal": -2,
+          "water": -3
+        },
+        "wu": {
+          "wood": -1,
+          "fire": 3,
+          "earth": 1,
+          "metal": -2,
+          "water": -3
+        },
+        "wei": {
+          "wood": -1,
+          "fire": 2,
+          "earth": 2.0,
+          "metal": -1,
+          "water": -2
+        },
+        "shen": {
+          "wood": -3,
+          "fire": -2,
+          "earth": 1,
+          "metal": 3,
+          "water": 1
+        },
+        "you": {
+          "wood": -3,
+          "fire": -2,
+          "earth": 1,
+          "metal": 3,
+          "water": 1
+        },
+        "xu": {
+          "wood": -2,
+          "fire": -2,
+          "earth": 1.5,
+          "metal": 2,
+          "water": 1
+        },
+        "hai": {
+          "wood": 1,
+          "fire": -3,
+          "earth": 0,
+          "metal": -1,
+          "water": 3
+        },
+        "zi": {
+          "wood": 1,
+          "fire": -3,
+          "earth": 0,
+          "metal": -1,
+          "water": 3
+        },
+        "chou": {
+          "wood": 1,
+          "fire": -3,
+          "earth": 1.0,
+          "metal": -1,
+          "water": 2
+        }
+      },
+      "by_strength": {
+        "strong": 0.9,
+        "neutral": 1.0,
+        "weak": 1.1
+      },
+      "apply_levels": {
+        "year": false,
+        "month": true,
+        "day": true
+      }
+    }
+  },
+  "hierarchy": {
+    "mode": "multiplicative_gate",
+    "gates": {
+      "alpha": 0.4,
+      "beta": 0.3,
+      "gamma": 0.2
+    },
+    "gate_clip": [
+      0.6,
+      1.4
+    ],
+    "compound_floor_daily": 0.55
+  },
+  "normalization": {
+    "method": "tanh",
+    "scale": {
+      "daewoon": 14,
+      "year": 18,
+      "month": 22,
+      "day": 26
+    },
+    "clip": 95
+  },
+  "options": {
+    "include_hidden_stems": true,
+    "count_sambw": true,
+    "exclude_taise_from_relations": "same_axis_only",
+    "season_earth_policy": "moist_dry",
+    "conflict_resolution_priority": [
+      "stem_hap",
+      "branch_hap",
+      "trine",
+      "square",
+      "punish",
+      "harm",
+      "clash"
+    ],
+    "what_if_enabled": true
+  },
+  "ui_messages": {
+    "weak_frame_hint": true,
+    "weak_frame_text": "대운/월운이 약한 흐름입니다. 오늘은 '소규모 시도·준비'에 초점을 맞추세요."
+  },
+  "category_overlays": {
+    "officer": {
+      "guards": [
+        {
+          "id": "sgjg_guard",
+          "when": {
+            "co_presence": [
+              "sang",
+              "jeonggwan"
+            ],
+            "dominance_ratio": {
+              "numerator": [
+                "sang",
+                "sik"
+              ],
+              "denominator": [
+                "jeonggwan",
+                "pyeongwan"
+              ],
+              "threshold": 1.2
+            },
+            "levels": [
+              "monthly",
+              "daily"
+            ]
+          },
+          "effect": {
+            "type": "multiplier",
+            "value": 0.6,
+            "scope": "category_only"
+          },
+          "notes": "상관견관 충돌 보정"
+        }
+      ]
+    }
+  }
+}

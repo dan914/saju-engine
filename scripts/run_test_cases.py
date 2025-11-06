@@ -1,24 +1,18 @@
 """Run test cases against the Saju engine."""
 
 import csv
-import sys
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-# Add service to path
-sys.path.insert(
-    0, str(Path(__file__).resolve().parents[1] / "services" / "pillars-service" / "app")
-)
+from scripts._script_loader import get_pillars_module
 
-from core.constants import (
-    DAY_STEM_TO_HOUR_START,
-    EARTHLY_BRANCHES,
-    HEAVENLY_STEMS,
-    HOUR_BRANCHES,
-    SEXAGENARY_CYCLE,
-    YEAR_STEM_TO_MONTH_START,
-)
+DAY_STEM_TO_HOUR_START = get_pillars_module("constants", "DAY_STEM_TO_HOUR_START")
+EARTHLY_BRANCHES = get_pillars_module("constants", "EARTHLY_BRANCHES")
+HEAVENLY_STEMS = get_pillars_module("constants", "HEAVENLY_STEMS")
+HOUR_BRANCHES = get_pillars_module("constants", "HOUR_BRANCHES")
+SEXAGENARY_CYCLE = get_pillars_module("constants", "SEXAGENARY_CYCLE")
+YEAR_STEM_TO_MONTH_START = get_pillars_module("constants", "YEAR_STEM_TO_MONTH_START")
 
 TEST_CASES_FILE = "/Users/yujumyeong/Downloads/saju_test_cases_v1.csv"
 

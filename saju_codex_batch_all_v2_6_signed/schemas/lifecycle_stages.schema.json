@@ -97,6 +97,42 @@
         "癸"
       ]
     },
+    "variant": {
+      "type": "string",
+      "enum": ["mirror", "orthodox"]
+    },
+    "note": {
+      "type": "string"
+    },
+    "weights": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(長生|沐浴|冠帶|臨官|帝旺|衰|病|死|墓|絕|胎|養)$": {
+          "type": "number"
+        }
+      }
+    },
+    "damping": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "mirror_overlay": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "甲": { "$ref": "#/$defs/BranchStageMap" },
+        "乙": { "$ref": "#/$defs/BranchStageMap" },
+        "丙": { "$ref": "#/$defs/BranchStageMap" },
+        "丁": { "$ref": "#/$defs/BranchStageMap" },
+        "戊": { "$ref": "#/$defs/BranchStageMap" },
+        "己": { "$ref": "#/$defs/BranchStageMap" },
+        "庚": { "$ref": "#/$defs/BranchStageMap" },
+        "辛": { "$ref": "#/$defs/BranchStageMap" },
+        "壬": { "$ref": "#/$defs/BranchStageMap" },
+        "癸": { "$ref": "#/$defs/BranchStageMap" }
+      }
+    },
     "labels": {
       "type": "object",
       "additionalProperties": false,

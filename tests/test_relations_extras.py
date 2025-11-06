@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
-import sys
-from pathlib import Path
+from tests._analysis_loader import get_core_attr
 
-sys.path.insert(
-    0, str(Path(__file__).parent.parent / "services" / "analysis-service" / "app" / "core")
-)
-
-from relations_extras import RelationAnalyzer, RelationContext
+RelationAnalyzer = get_core_attr("relations_extras", "RelationAnalyzer")
+RelationContext = get_core_attr("relations_extras", "RelationContext")
 
 
 def test_five_he_conditions_and_conflict():

@@ -1,0 +1,92 @@
+name: dependency-audit
+
+on:
+  schedule:
+    - cron: '0 2 * * 1'  # Monday 2 AM UTC
+  pull_request:
+    paths:
+      - 'saju-engine/requirements/**'
+      - '.github/workflows/dependency-audit.yml'
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install pip-audit
+        run: python -m pip install pip-audit
+
+      - name: Run pip-audit (dev dependencies)
+        id: audit
+        continue-on-error: true
+        run: |
+          python -m pip install -r saju-engine/requirements/dev.txt
+          python -m pip-audit --skip-editable --format json --output pip-audit-results.json || echo "vulnerabilities_found=true" >> $GITHUB_OUTPUT
+
+      - name: Parse audit results
+        if: always()
+        id: parse
+        run: |
+          if [ -f pip-audit-results.json ]; then
+            vuln_count=$(jq '[.dependencies[].vulns | length] | add // 0' pip-audit-results.json)
+            echo "vuln_count=$vuln_count" >> $GITHUB_OUTPUT
+
+            # Extract vulnerable packages for reporting
+            vulnerable_pkgs=$(jq -r '[.dependencies[] | select(.vulns | length > 0) | "\(.name)@\(.version)"] | join(", ")' pip-audit-results.json)
+            echo "vulnerable_packages=$vulnerable_pkgs" >> $GITHUB_OUTPUT
+          else
+            echo "vuln_count=0" >> $GITHUB_OUTPUT
+            echo "vulnerable_packages=none" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload audit results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pip-audit-results-${{ github.run_number }}
+          path: pip-audit-results.json
+          retention-days: 90
+
+      - name: Generate audit summary
+        if: always()
+        run: |
+          echo "## Dependency Audit Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.parse.outputs.vuln_count }}" = "0" ]; then
+            echo "✅ **No vulnerabilities detected**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **Found ${{ steps.parse.outputs.vuln_count }} vulnerabilities**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Affected packages:** ${{ steps.parse.outputs.vulnerable_packages }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Review the full report in the artifacts section." >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Notify Slack on failure
+        if: steps.parse.outputs.vuln_count != '0'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          GITHUB_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          VULN_COUNT: ${{ steps.parse.outputs.vuln_count }}
+          VULNERABLE_PKGS: ${{ steps.parse.outputs.vulnerable_packages }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK_URL" ]; then
+            echo "⚠️ SLACK_WEBHOOK_URL not set; skipping notification."
+            exit 0
+          fi
+          text="🚨 Dependency Audit Alert: Found ${VULN_COUNT} vulnerabilities in Python dependencies (${VULNERABLE_PKGS}). Review and remediate: ${GITHUB_RUN_URL}"
+          payload=$(jq -n --arg text "$text" '{text: $text, attachments: [{color: "danger", fields: [{title: "Priority", value: "High - Security Issue", short: true}, {title: "Action Required", value: "Review within 24 hours", short: true}]}]}')
+          curl -X POST -H 'Content-type: application/json' --data "$payload" "$SLACK_WEBHOOK_URL"
+
+      - name: Fail workflow if vulnerabilities found
+        if: steps.parse.outputs.vuln_count != '0'
+        run: |
+          echo "❌ Dependency audit failed: ${{ steps.parse.outputs.vuln_count }} vulnerabilities detected"
+          exit 1

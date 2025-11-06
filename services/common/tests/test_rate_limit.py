@@ -1,7 +1,11 @@
 """Tests for rate limiting module - optimized to avoid hangs."""
 
+import concurrent.futures
+import math
+import threading
 import time
-from unittest.mock import Mock, patch
+from typing import Any, Callable
+from unittest.mock import patch
 
 import pytest
 from fastapi import FastAPI
@@ -14,6 +18,96 @@ from saju_common.rate_limit import (
     TokenBucketRateLimiter,
     setup_rate_limiting,
 )
+
+
+class ScriptableRedis:
+    """In-memory Redis stub that simulates Lua execution for tests."""
+
+    def __init__(self) -> None:
+        self._store: dict[str, str] = {}
+        self._scripts: dict[str, Callable[[list[str], list[str]], Any]] = {}
+        self._sha_counter = 0
+
+    def get(self, key: str) -> str | None:
+        return self._store.get(key)
+
+    def setex(self, key: str, ttl: int, value: str) -> None:  # noqa: ARG002
+        self._store[key] = str(value)
+
+    class _Pipeline:
+        def __init__(self, redis: "ScriptableRedis") -> None:
+            self._redis = redis
+            self._operations: list[tuple[str, tuple[Any, ...]]] = []
+
+        def get(self, key: str) -> None:
+            self._operations.append(("get", (key,)))
+
+        def setex(self, key: str, ttl: int, value: str) -> None:
+            self._operations.append(("setex", (key, ttl, value)))
+
+        def execute(self) -> list[Any]:
+            results: list[Any] = []
+            for op, args in self._operations:
+                if op == "get":
+                    results.append(self._redis.get(*args))
+                elif op == "setex":
+                    self._redis.setex(*args)
+                    results.append(True)
+            self._operations.clear()
+            return results
+
+    def pipeline(self) -> "ScriptableRedis._Pipeline":
+        return ScriptableRedis._Pipeline(self)
+
+    def register_script(self, script_text: str) -> Callable[..., Any]:  # noqa: ARG002
+        return lambda *, keys, args: self._execute_script(list(keys), list(args))
+
+    def script_load(self, script_text: str) -> str:  # noqa: ARG002
+        self._sha_counter += 1
+        sha = f"sha{self._sha_counter}"
+        self._scripts[sha] = lambda keys, args: self._execute_script(keys, args)
+        return sha
+
+    def evalsha(self, sha: str, num_keys: int, *payload: str) -> Any:
+        script = self._scripts[sha]
+        keys = list(payload[:num_keys])
+        args = list(payload[num_keys:])
+        return script(keys, args)
+
+    def _execute_script(self, keys: list[str], args: list[str]) -> list[Any]:
+        capacity = float(args[0])
+        refill_rate = float(args[1])
+        cost = float(args[2])
+        now = float(args[3])
+
+        tokens_raw = self._store.get(keys[0])
+        tokens_value = float(tokens_raw) if tokens_raw is not None else capacity
+
+        last_update_raw = self._store.get(keys[1])
+        last_update_value = float(last_update_raw) if last_update_raw is not None else now
+
+        elapsed = max(0.0, now - last_update_value)
+        new_tokens = min(capacity, tokens_value + (elapsed * refill_rate))
+
+        allowed = 0
+        remaining = new_tokens
+
+        if new_tokens >= cost:
+            allowed = 1
+            remaining = new_tokens - cost
+
+        remaining = max(0.0, remaining)
+
+        self._store[keys[0]] = str(remaining)
+        self._store[keys[1]] = str(now)
+
+        retry_after = 0
+        if allowed == 0:
+            tokens_needed = cost - remaining
+            if refill_rate > 0:
+                retry_after = int(math.ceil(tokens_needed / refill_rate))
+
+        return [allowed, retry_after, remaining]
 
 
 def test_default_rate_limits():
@@ -219,6 +313,7 @@ def test_rate_limit_middleware_headers():
         assert "X-RateLimit-Limit" in response.headers
         assert response.headers["X-RateLimit-Limit"] == "60"
         assert "X-RateLimit-Remaining" in response.headers
+        assert response.headers["X-RateLimit-Remaining"] == "9"
         assert "X-RateLimit-Reset" in response.headers
 
 
@@ -292,6 +387,44 @@ def test_rate_limit_middleware_user_tier():
         assert "Retry-After" in response.headers
 
 
+def test_rate_limit_middleware_unknown_tier_fallback():
+    """Unknown tiers should mirror anonymous defaults for limits and headers."""
+
+    app = FastAPI()
+
+    class DummyUser:
+        def __init__(self, tier: str) -> None:
+            self.id = "u123"
+            self.tier = tier
+
+    @app.middleware("http")
+    async def attach_user(request, call_next):  # type: ignore[override]
+        request.state.user = DummyUser("mystery")
+        return await call_next(request)
+
+    @app.get("/test")
+    def test_endpoint():
+        return {"message": "success"}
+
+    app.add_middleware(
+        RateLimitMiddleware,
+        rate_limits={
+            "anonymous": 10,  # fallback tier
+            "free": 30,
+        },
+    )
+
+    with TestClient(app) as client:
+        for i in range(5):
+            response = client.get("/test")
+            assert response.status_code == 200, f"Request {i+1} should succeed"
+            assert response.headers["X-RateLimit-Limit"] == "10"
+
+        blocked = client.get("/test")
+        assert blocked.status_code == 429
+        assert blocked.headers["X-RateLimit-Limit"] == "10"
+
+
 def test_settings_integration():
     """Test rate limiting settings integration."""
     from saju_common.settings import SajuSettings
@@ -300,6 +433,7 @@ def test_settings_integration():
 
     # Default should be disabled
     assert settings.enable_rate_limiting is False
+    assert settings.enable_atomic_rate_limiter is False
 
     # Redis URL should be optional
     assert settings.redis_url is None
@@ -309,12 +443,14 @@ def test_settings_rate_limiting_override(monkeypatch):
     """Test rate limiting can be enabled via environment."""
     monkeypatch.setenv("SAJU_ENABLE_RATE_LIMITING", "true")
     monkeypatch.setenv("SAJU_REDIS_URL", "redis://localhost:6379")
+    monkeypatch.setenv("SAJU_ENABLE_ATOMIC_RATE_LIMITER", "true")
 
     from saju_common.settings import SajuSettings
 
     settings = SajuSettings()
     assert settings.enable_rate_limiting is True
     assert settings.redis_url == "redis://localhost:6379"
+    assert settings.enable_atomic_rate_limiter is True
 
 
 @patch('time.time')
@@ -342,3 +478,38 @@ def test_token_bucket_max_capacity(mock_time):
     # But 5 tokens should work
     allowed, _ = limiter.check_rate_limit("test_key", cost=5)
     assert allowed is True
+
+
+def test_atomic_rate_limiter_handles_concurrent_requests():
+    """Lua-backed limiter should allow only one concurrent consumer per bucket."""
+
+    redis_client = ScriptableRedis()
+    limiter = TokenBucketRateLimiter(
+        capacity=1,
+        refill_rate=0.25,  # four seconds to refill one token
+        redis_client=redis_client,
+        use_atomic_redis=True,
+    )
+
+    # Warm up to register script before concurrency begins
+    limiter.check_rate_limit("warmup", cost=0)
+
+    barrier = threading.Barrier(2)
+    results: list[tuple[bool, int]] = []
+
+    def worker() -> None:
+        barrier.wait()
+        results.append(limiter.check_rate_limit("shared"))
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        futures = [executor.submit(worker) for _ in range(2)]
+        for future in futures:
+            future.result()
+
+    allowed_count = sum(1 for allowed, _ in results if allowed)
+    blocked = [retry for allowed, retry in results if not allowed]
+
+    assert allowed_count == 1
+    assert len(blocked) == 1
+    assert blocked[0] > 0
+    assert limiter.get_last_remaining_tokens("shared") <= 1e-4

@@ -1,0 +1,87 @@
+#!/bin/bash
+# Saju Engine Environment Setup for WSL/Linux
+# Auto-generated setup script for cross-platform compatibility
+
+set -e  # Exit on error
+
+echo "🚀 Saju Engine Setup Script v1.0"
+echo "================================"
+
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Check Python version
+echo -e "${YELLOW}Checking Python requirements...${NC}"
+if ! command -v python3.11 &> /dev/null; then
+    echo -e "${RED}Error: Python 3.11 is required but not found${NC}"
+    echo "Please install Python 3.11: sudo apt update && sudo apt install python3.11 python3.11-venv"
+    exit 1
+fi
+echo -e "${GREEN}✓ Python 3.11 found${NC}"
+
+# Create virtual environment
+echo -e "${YELLOW}Creating virtual environment...${NC}"
+if [ -d "venv" ]; then
+    echo "Virtual environment already exists. Removing old one..."
+    rm -rf venv
+fi
+python3.11 -m venv venv
+echo -e "${GREEN}✓ Virtual environment created${NC}"
+
+# Activate virtual environment
+echo -e "${YELLOW}Activating virtual environment...${NC}"
+source venv/bin/activate
+
+# Upgrade pip
+echo -e "${YELLOW}Upgrading pip...${NC}"
+pip install --upgrade pip setuptools wheel
+
+# Install dependencies
+echo -e "${YELLOW}Installing project dependencies...${NC}"
+pip install -e ".[dev]"
+echo -e "${GREEN}✓ Dependencies installed${NC}"
+
+# Fix WSL permissions if needed
+echo -e "${YELLOW}Setting file permissions for WSL...${NC}"
+find . -type f -name "*.py" -exec chmod 644 {} \;
+find . -type f -name "*.sh" -exec chmod 755 {} \;
+echo -e "${GREEN}✓ Permissions set${NC}"
+
+# Create necessary directories
+echo -e "${YELLOW}Creating required directories...${NC}"
+mkdir -p logs
+mkdir -p tmp
+mkdir -p .pytest_cache
+echo -e "${GREEN}✓ Directories created${NC}"
+
+# Set Python path
+echo -e "${YELLOW}Setting up environment variables...${NC}"
+cat > .env.local << EOF
+# Saju Engine Local Environment Configuration
+PYTHONPATH=\${PYTHONPATH}:\$(pwd)
+SAJU_ENV=development
+LOG_LEVEL=INFO
+SERVICE_HOST=0.0.0.0
+SERVICE_PORT=8000
+EOF
+echo -e "${GREEN}✓ Environment variables configured${NC}"
+
+echo ""
+echo -e "${GREEN}================================${NC}"
+echo -e "${GREEN}✅ Setup Complete!${NC}"
+echo ""
+echo "To activate the environment, run:"
+echo -e "${YELLOW}  source venv/bin/activate${NC}"
+echo ""
+echo "To run services:"
+echo -e "${YELLOW}  ./run_service.sh <service-name>${NC}"
+echo ""
+echo "Available services:"
+echo "  - api-gateway"
+echo "  - analysis-service"
+echo "  - astro-service"
+echo "  - pillars-service"
+echo "  - tz-time-service"

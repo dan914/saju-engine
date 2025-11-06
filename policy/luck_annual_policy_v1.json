@@ -1,0 +1,38 @@
+{
+  "version": "luck_annual_policy_v1",
+  "weights": {
+    "ten_god": {
+      "비견": -1,
+      "겁재": -2,
+      "식신": 3,
+      "상관": 2,
+      "편재": 4,
+      "정재": 5,
+      "편관": 3,
+      "정관": 4,
+      "편인": 1,
+      "정인": 2
+    },
+    "interactions": {
+      "천간합": 2,
+      "충": -5,
+      "형": -3,
+      "파": -2,
+      "해": -2,
+      "삼합완결": 4,
+      "방합완결": 3
+    },
+    "season": {
+      "spring": 1.0,
+      "summer": 1.0,
+      "long_summer": 0.5,
+      "autumn": 0.8,
+      "winter": 0.6
+    }
+  },
+  "aggregation": {
+    "alpha_year_to_month": 0.3,
+    "beta_month_to_day": 0.2,
+    "day_score_cap": 12
+  }
+}

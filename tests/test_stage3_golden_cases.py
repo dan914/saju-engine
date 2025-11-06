@@ -10,22 +10,17 @@ Usage:
     pytest tests/test_stage3_golden_cases.py -v
 """
 import json
-
-# Import Stage-3 engines
-# Note: analysis-service directory has hyphen, so we need to import from app.core directly
-import sys
 from pathlib import Path
 
 import pytest
 
-sys.path.insert(
-    0, str(Path(__file__).parent.parent / "services" / "analysis-service" / "app" / "core")
-)
+from tests._analysis_loader import get_core_attr
 
-from climate_advice import ClimateAdvice
-from gyeokguk_classifier import GyeokgukClassifier
-from luck_flow import LuckFlow
-from pattern_profiler import PatternProfiler
+
+ClimateAdvice = get_core_attr("climate_advice", "ClimateAdvice")
+LuckFlow = get_core_attr("luck_flow", "LuckFlow")
+GyeokgukClassifier = get_core_attr("gyeokguk_classifier", "GyeokgukClassifier")
+PatternProfiler = get_core_attr("pattern_profiler", "PatternProfiler")
 
 # Load all golden cases
 GOLDEN_CASES_DIR = Path(__file__).parent / "golden_cases"

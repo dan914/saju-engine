@@ -9,7 +9,7 @@ import json
 from dataclasses import dataclass
 from typing import Dict
 
-from policy_loader import resolve_policy_path
+from saju_common.policy_loader import resolve_policy_path
 
 POLICY_PATH = resolve_policy_path("school_profiles_v1.json")
 

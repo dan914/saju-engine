@@ -11,20 +11,12 @@ Tests 20+ edge cases including:
 - North Korean timezone changes
 """
 
-import sys
 from datetime import datetime
-from pathlib import Path
 
-# Add timezone handler path
-sys.path.insert(
-    0, str(Path(__file__).parent.parent / "services" / "pillars-service" / "app" / "core")
-)
+from scripts._script_loader import get_pillars_module
 
-# Direct import without package
-import timezone_handler
-
-KoreanTimezoneHandler = timezone_handler.KoreanTimezoneHandler
-TimezoneWarning = timezone_handler.TimezoneWarning
+KoreanTimezoneHandler = get_pillars_module("timezone_handler", "KoreanTimezoneHandler")
+TimezoneWarning = get_pillars_module("timezone_handler", "TimezoneWarning")
 
 
 def test_edge_cases():

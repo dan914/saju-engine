@@ -1,0 +1,2718 @@
+[
+  {
+    "datetime_kst": "2000-02-29 00:00",
+    "gender_ko": "남자",
+    "pillars": {
+      "year": "庚辰",
+      "month": "戊寅",
+      "day": "丁巳",
+      "hour": "庚子"
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.4205
+    },
+    "elements_distribution": {
+      "金": 33.3,
+      "土": 25.0,
+      "火": 25.0,
+      "木": 8.3,
+      "水": 8.3
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "토",
+          "elem": "earth",
+          "score": 0.3
+        },
+        "secondary": {
+          "elem_ko": "목",
+          "elem": "wood",
+          "score": 0.1
+        },
+        "scores": {
+          "wood": 0.1,
+          "fire": 0.06,
+          "earth": 0.3,
+          "metal": 0.08,
+          "water": 0.08
+        },
+        "confidence": 0.8
+      },
+      "split": {
+        "climate": {
+          "primary": "토",
+          "candidates": [
+            "토",
+            "화"
+          ],
+          "rule_id": "climate_봄"
+        },
+        "eokbu": {
+          "primary": "목",
+          "secondary": "토",
+          "basis": [
+            "resource",
+            "output",
+            "official",
+            "companion",
+            "wealth"
+          ],
+          "scored": [
+            "resource:0.1",
+            "output:0.1",
+            "official:0.08"
+          ],
+          "bin": "balanced",
+          "day_elem": "화"
+        }
+      },
+      "rationale": [
+        "season=봄, climate→토",
+        "bin=balanced, eokbu→목/토"
+      ],
+      "yongshin": [
+        "토"
+      ],
+      "bojosin": [
+        "목"
+      ],
+      "gisin": [],
+      "confidence": 0.8,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "2003-06-20 11:59",
+    "gender_ko": "여자",
+    "pillars": {
+      "year": "癸未",
+      "month": "戊午",
+      "day": "甲子",
+      "hour": "庚午"
+    },
+    "strength": {
+      "grade_code": "신약",
+      "bin": "weak",
+      "score_normalized": 0.2534
+    },
+    "elements_distribution": {
+      "土": 25.0,
+      "水": 25.0,
+      "木": 16.7,
+      "火": 16.7,
+      "金": 16.7
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "수",
+          "elem": "water",
+          "score": 0.47
+        },
+        "secondary": {
+          "elem_ko": "목",
+          "elem": "wood",
+          "score": 0.15
+        },
+        "scores": {
+          "wood": 0.15,
+          "fire": 0.06,
+          "earth": 0.06,
+          "metal": 0.06,
+          "water": 0.47
+        },
+        "confidence": 0.92
+      },
+      "split": {
+        "climate": {
+          "primary": "수",
+          "candidates": [
+            "수"
+          ],
+          "rule_id": "climate_여름"
+        },
+        "eokbu": {
+          "primary": "수",
+          "secondary": "목",
+          "basis": [
+            "resource",
+            "companion",
+            "output",
+            "wealth",
+            "official"
+          ],
+          "scored": [
+            "resource:0.22",
+            "companion:0.15",
+            "output:0.06"
+          ],
+          "bin": "weak",
+          "day_elem": "목"
+        }
+      },
+      "rationale": [
+        "season=여름, climate→수",
+        "bin=weak, eokbu→수/목"
+      ],
+      "yongshin": [
+        "수"
+      ],
+      "bojosin": [
+        "목"
+      ],
+      "gisin": [],
+      "confidence": 0.92,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1984-06-21 12:00",
+    "gender_ko": "남자",
+    "pillars": {
+      "year": "甲子",
+      "month": "庚午",
+      "day": "丙戌",
+      "hour": "甲午"
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.5934
+    },
+    "elements_distribution": {
+      "木": 33.3,
+      "火": 33.3,
+      "金": 16.7,
+      "土": 8.3,
+      "水": 8.3
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "수",
+          "elem": "water",
+          "score": 0.33
+        },
+        "secondary": {
+          "elem_ko": "목",
+          "elem": "wood",
+          "score": 0.1
+        },
+        "scores": {
+          "wood": 0.1,
+          "fire": 0.06,
+          "earth": 0.1,
+          "metal": 0.08,
+          "water": 0.33
+        },
+        "confidence": 0.83
+      },
+      "split": {
+        "climate": {
+          "primary": "수",
+          "candidates": [
+            "수"
+          ],
+          "rule_id": "climate_여름"
+        },
+        "eokbu": {
+          "primary": "목",
+          "secondary": "토",
+          "basis": [
+            "resource",
+            "output",
+            "official",
+            "companion",
+            "wealth"
+          ],
+          "scored": [
+            "resource:0.1",
+            "output:0.1",
+            "official:0.08"
+          ],
+          "bin": "balanced",
+          "day_elem": "화"
+        }
+      },
+      "rationale": [
+        "season=여름, climate→수",
+        "bin=balanced, eokbu→목/토"
+      ],
+      "yongshin": [
+        "수"
+      ],
+      "bojosin": [
+        "목"
+      ],
+      "gisin": [],
+      "confidence": 0.83,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "2004-08-20 23:00",
+    "gender_ko": "남자",
+    "pillars": {
+      "year": "甲申",
+      "month": "壬申",
+      "day": "辛未",
+      "hour": "戊子"
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.5626
+    },
+    "elements_distribution": {
+      "金": 33.3,
+      "土": 25.0,
+      "水": 25.0,
+      "木": 16.7,
+      "火": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "수",
+          "elem": "water",
+          "score": 0.3
+        },
+        "secondary": {
+          "elem_ko": "토",
+          "elem": "earth",
+          "score": 0.1
+        },
+        "scores": {
+          "wood": 0.08,
+          "fire": 0.08,
+          "earth": 0.1,
+          "metal": 0.06,
+          "water": 0.3
+        },
+        "confidence": 0.8
+      },
+      "split": {
+        "climate": {
+          "primary": "수",
+          "candidates": [
+            "수"
+          ],
+          "rule_id": "climate_가을"
+        },
+        "eokbu": {
+          "primary": "토",
+          "secondary": "수",
+          "basis": [
+            "resource",
+            "output",
+            "official",
+            "companion",
+            "wealth"
+          ],
+          "scored": [
+            "resource:0.1",
+            "output:0.1",
+            "official:0.08"
+          ],
+          "bin": "balanced",
+          "day_elem": "금"
+        }
+      },
+      "rationale": [
+        "season=가을, climate→수",
+        "bin=balanced, eokbu→토/수"
+      ],
+      "yongshin": [
+        "수"
+      ],
+      "bojosin": [
+        "토"
+      ],
+      "gisin": [],
+      "confidence": 0.8,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1990-12-22 23:30",
+    "gender_ko": "여자",
+    "pillars": {
+      "year": "庚午",
+      "month": "戊子",
+      "day": "辛酉",
+      "hour": "戊子"
+    },
+    "strength": {
+      "grade_code": "신약",
+      "bin": "weak",
+      "score_normalized": 0.3974
+    },
+    "elements_distribution": {
+      "金": 41.7,
+      "土": 33.3,
+      "水": 16.7,
+      "火": 8.3,
+      "木": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "화",
+          "elem": "fire",
+          "score": 0.31
+        },
+        "secondary": {
+          "elem_ko": "토",
+          "elem": "earth",
+          "score": 0.22
+        },
+        "scores": {
+          "wood": 0.06,
+          "fire": 0.31,
+          "earth": 0.22,
+          "metal": 0.15,
+          "water": 0.06
+        },
+        "confidence": 0.69
+      },
+      "split": {
+        "climate": {
+          "primary": "화",
+          "candidates": [
+            "화"
+          ],
+          "rule_id": "climate_겨울"
+        },
+        "eokbu": {
+          "primary": "토",
+          "secondary": "금",
+          "basis": [
+            "resource",
+            "companion",
+            "output",
+            "wealth",
+            "official"
+          ],
+          "scored": [
+            "resource:0.22",
+            "companion:0.15",
+            "output:0.06"
+          ],
+          "bin": "weak",
+          "day_elem": "금"
+        }
+      },
+      "rationale": [
+        "season=겨울, climate→화",
+        "bin=weak, eokbu→토/금"
+      ],
+      "yongshin": [
+        "화"
+      ],
+      "bojosin": [
+        "토"
+      ],
+      "gisin": [],
+      "confidence": 0.69,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1998-03-20 00:30",
+    "gender_ko": "여자",
+    "pillars": {
+      "year": "戊寅",
+      "month": "乙卯",
+      "day": "丙寅",
+      "hour": "戊子"
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.5479
+    },
+    "elements_distribution": {
+      "木": 41.7,
+      "土": 33.3,
+      "火": 16.7,
+      "水": 8.3,
+      "金": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "토",
+          "elem": "earth",
+          "score": 0.3
+        },
+        "secondary": {
+          "elem_ko": "목",
+          "elem": "wood",
+          "score": 0.1
+        },
+        "scores": {
+          "wood": 0.1,
+          "fire": 0.06,
+          "earth": 0.3,
+          "metal": 0.08,
+          "water": 0.08
+        },
+        "confidence": 0.8
+      },
+      "split": {
+        "climate": {
+          "primary": "토",
+          "candidates": [
+            "토",
+            "화"
+          ],
+          "rule_id": "climate_봄"
+        },
+        "eokbu": {
+          "primary": "목",
+          "secondary": "토",
+          "basis": [
+            "resource",
+            "output",
+            "official",
+            "companion",
+            "wealth"
+          ],
+          "scored": [
+            "resource:0.1",
+            "output:0.1",
+            "official:0.08"
+          ],
+          "bin": "balanced",
+          "day_elem": "화"
+        }
+      },
+      "rationale": [
+        "season=봄, climate→토",
+        "bin=balanced, eokbu→목/토"
+      ],
+      "yongshin": [
+        "토"
+      ],
+      "bojosin": [
+        "목"
+      ],
+      "gisin": [],
+      "confidence": 0.8,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "2007-09-23 01:00",
+    "gender_ko": "남자",
+    "pillars": {
+      "year": "丁亥",
+      "month": "己酉",
+      "day": "庚申",
+      "hour": "丁丑"
+    },
+    "strength": {
+      "grade_code": "신강",
+      "bin": "strong",
+      "score_normalized": 0.6116
+    },
+    "elements_distribution": {
+      "火": 33.3,
+      "金": 33.3,
+      "土": 25.0,
+      "水": 8.3,
+      "木": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "수",
+          "elem": "water",
+          "score": 0.38
+        },
+        "secondary": {
+          "elem_ko": "목",
+          "elem": "wood",
+          "score": 0.15
+        },
+        "scores": {
+          "wood": 0.15,
+          "fire": 0.1,
+          "earth": 0.06,
+          "metal": 0.06,
+          "water": 0.38
+        },
+        "confidence": 0.83
+      },
+      "split": {
+        "climate": {
+          "primary": "수",
+          "candidates": [
+            "수"
+          ],
+          "rule_id": "climate_가을"
+        },
+        "eokbu": {
+          "primary": "수",
+          "secondary": "목",
+          "basis": [
+            "output",
+            "wealth",
+            "official",
+            "resource",
+            "companion"
+          ],
+          "scored": [
+            "output:0.18",
+            "wealth:0.15",
+            "official:0.1"
+          ],
+          "bin": "strong",
+          "day_elem": "금"
+        }
+      },
+      "rationale": [
+        "season=가을, climate→수",
+        "bin=strong, eokbu→수/목"
+      ],
+      "yongshin": [
+        "수"
+      ],
+      "bojosin": [
+        "목"
+      ],
+      "gisin": [],
+      "confidence": 0.83,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1990-12-20 02:59",
+    "gender_ko": "남자",
+    "pillars": {
+      "year": "庚午",
+      "month": "戊子",
+      "day": "己未",
+      "hour": "乙丑"
+    },
+    "strength": {
+      "grade_code": "신약",
+      "bin": "weak",
+      "score_normalized": 0.3053
+    },
+    "elements_distribution": {
+      "土": 50.0,
+      "木": 16.7,
+      "金": 16.7,
+      "水": 8.3,
+      "火": 8.3
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "화",
+          "elem": "fire",
+          "score": 0.47
+        },
+        "secondary": {
+          "elem_ko": "토",
+          "elem": "earth",
+          "score": 0.15
+        },
+        "scores": {
+          "wood": 0.06,
+          "fire": 0.47,
+          "earth": 0.15,
+          "metal": 0.06,
+          "water": 0.06
+        },
+        "confidence": 0.92
+      },
+      "split": {
+        "climate": {
+          "primary": "화",
+          "candidates": [
+            "화"
+          ],
+          "rule_id": "climate_겨울"
+        },
+        "eokbu": {
+          "primary": "화",
+          "secondary": "토",
+          "basis": [
+            "resource",
+            "companion",
+            "output",
+            "wealth",
+            "official"
+          ],
+          "scored": [
+            "resource:0.22",
+            "companion:0.15",
+            "output:0.06"
+          ],
+          "bin": "weak",
+          "day_elem": "토"
+        }
+      },
+      "rationale": [
+        "season=겨울, climate→화",
+        "bin=weak, eokbu→화/토"
+      ],
+      "yongshin": [
+        "화"
+      ],
+      "bojosin": [
+        "토"
+      ],
+      "gisin": [],
+      "confidence": 0.92,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "2000-02-04 03:00",
+    "gender_ko": "여자",
+    "pillars": {
+      "year": "庚辰",
+      "month": "己丑",
+      "day": "壬辰",
+      "hour": "壬寅"
+    },
+    "strength": {
+      "grade_code": "신약",
+      "bin": "weak",
+      "score_normalized": 0.3058
+    },
+    "elements_distribution": {
+      "土": 41.7,
+      "水": 33.3,
+      "金": 16.7,
+      "木": 8.3,
+      "火": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "금",
+          "elem": "metal",
+          "score": 0.22
+        },
+        "secondary": {
+          "elem_ko": "수",
+          "elem": "water",
+          "score": 0.15
+        },
+        "scores": {
+          "wood": 0.06,
+          "fire": 0.06,
+          "earth": 0.06,
+          "metal": 0.22,
+          "water": 0.15
+        },
+        "confidence": 0.67
+      },
+      "split": {
+        "climate": {
+          "primary": null,
+          "candidates": [],
+          "rule_id": "climate_장하"
+        },
+        "eokbu": {
+          "primary": "금",
+          "secondary": "수",
+          "basis": [
+            "resource",
+            "companion",
+            "output",
+            "wealth",
+            "official"
+          ],
+          "scored": [
+            "resource:0.22",
+            "companion:0.15",
+            "output:0.06"
+          ],
+          "bin": "weak",
+          "day_elem": "수"
+        }
+      },
+      "rationale": [
+        "season=장하, climate→None",
+        "bin=weak, eokbu→금/수"
+      ],
+      "yongshin": [
+        "금"
+      ],
+      "bojosin": [
+        "수"
+      ],
+      "gisin": [],
+      "confidence": 0.67,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1989-01-20 05:00",
+    "gender_ko": "여자",
+    "pillars": {
+      "year": "己巳",
+      "month": "丁丑",
+      "day": "庚辰",
+      "hour": "己卯"
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.5161
+    },
+    "elements_distribution": {
+      "土": 50.0,
+      "火": 25.0,
+      "金": 16.7,
+      "木": 8.3,
+      "水": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "토",
+          "elem": "earth",
+          "score": 0.1
+        },
+        "secondary": {
+          "elem_ko": "수",
+          "elem": "water",
+          "score": 0.1
+        },
+        "scores": {
+          "wood": 0.08,
+          "fire": 0.08,
+          "earth": 0.1,
+          "metal": 0.06,
+          "water": 0.1
+        },
+        "confidence": 0.6
+      },
+      "split": {
+        "climate": {
+          "primary": null,
+          "candidates": [],
+          "rule_id": "climate_장하"
+        },
+        "eokbu": {
+          "primary": "토",
+          "secondary": "수",
+          "basis": [
+            "resource",
+            "output",
+            "official",
+            "companion",
+            "wealth"
+          ],
+          "scored": [
+            "resource:0.1",
+            "output:0.1",
+            "official:0.08"
+          ],
+          "bin": "balanced",
+          "day_elem": "금"
+        }
+      },
+      "rationale": [
+        "season=장하, climate→None",
+        "bin=balanced, eokbu→토/수"
+      ],
+      "yongshin": [
+        "토"
+      ],
+      "bojosin": [
+        "수"
+      ],
+      "gisin": [],
+      "confidence": 0.6,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1997-05-06 05:59",
+    "gender_ko": "여자",
+    "pillars": {
+      "year": "丁丑",
+      "month": "乙巳",
+      "day": "戊申",
+      "hour": "乙卯"
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.4892
+    },
+    "elements_distribution": {
+      "木": 41.7,
+      "土": 25.0,
+      "火": 25.0,
+      "金": 8.3,
+      "水": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "수",
+          "elem": "water",
+          "score": 0.33
+        },
+        "secondary": {
+          "elem_ko": "화",
+          "elem": "fire",
+          "score": 0.1
+        },
+        "scores": {
+          "wood": 0.08,
+          "fire": 0.1,
+          "earth": 0.06,
+          "metal": 0.1,
+          "water": 0.33
+        },
+        "confidence": 0.83
+      },
+      "split": {
+        "climate": {
+          "primary": "수",
+          "candidates": [
+            "수"
+          ],
+          "rule_id": "climate_여름"
+        },
+        "eokbu": {
+          "primary": "화",
+          "secondary": "금",
+          "basis": [
+            "resource",
+            "output",
+            "official",
+            "companion",
+            "wealth"
+          ],
+          "scored": [
+            "resource:0.1",
+            "output:0.1",
+            "official:0.08"
+          ],
+          "bin": "balanced",
+          "day_elem": "토"
+        }
+      },
+      "rationale": [
+        "season=여름, climate→수",
+        "bin=balanced, eokbu→화/금"
+      ],
+      "yongshin": [
+        "수"
+      ],
+      "bojosin": [
+        "화"
+      ],
+      "gisin": [],
+      "confidence": 0.83,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1993-07-20 07:00",
+    "gender_ko": "남자",
+    "pillars": {
+      "year": "癸酉",
+      "month": "己未",
+      "day": "壬寅",
+      "hour": "甲辰"
+    },
+    "strength": {
+      "grade_code": "신약",
+      "bin": "weak",
+      "score_normalized": 0.2432
+    },
+    "elements_distribution": {
+      "土": 33.3,
+      "水": 33.3,
+      "木": 25.0,
+      "金": 8.3,
+      "火": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "금",
+          "elem": "metal",
+          "score": 0.22
+        },
+        "secondary": {
+          "elem_ko": "수",
+          "elem": "water",
+          "score": 0.15
+        },
+        "scores": {
+          "wood": 0.06,
+          "fire": 0.06,
+          "earth": 0.06,
+          "metal": 0.22,
+          "water": 0.15
+        },
+        "confidence": 0.67
+      },
+      "split": {
+        "climate": {
+          "primary": null,
+          "candidates": [],
+          "rule_id": "climate_장하"
+        },
+        "eokbu": {
+          "primary": "금",
+          "secondary": "수",
+          "basis": [
+            "resource",
+            "companion",
+            "output",
+            "wealth",
+            "official"
+          ],
+          "scored": [
+            "resource:0.22",
+            "companion:0.15",
+            "output:0.06"
+          ],
+          "bin": "weak",
+          "day_elem": "수"
+        }
+      },
+      "rationale": [
+        "season=장하, climate→None",
+        "bin=weak, eokbu→금/수"
+      ],
+      "yongshin": [
+        "금"
+      ],
+      "bojosin": [
+        "수"
+      ],
+      "gisin": [],
+      "confidence": 0.67,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1986-12-07 08:59",
+    "gender_ko": "남자",
+    "pillars": {
+      "year": "丙寅",
+      "month": "己亥",
+      "day": "乙酉",
+      "hour": "庚辰"
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.4784
+    },
+    "elements_distribution": {
+      "土": 25.0,
+      "木": 25.0,
+      "金": 25.0,
+      "火": 16.7,
+      "水": 8.3
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "화",
+          "elem": "fire",
+          "score": 0.35
+        },
+        "secondary": {
+          "elem_ko": "수",
+          "elem": "water",
+          "score": 0.1
+        },
+        "scores": {
+          "wood": 0.06,
+          "fire": 0.35,
+          "earth": 0.08,
+          "metal": 0.08,
+          "water": 0.1
+        },
+        "confidence": 0.85
+      },
+      "split": {
+        "climate": {
+          "primary": "화",
+          "candidates": [
+            "화"
+          ],
+          "rule_id": "climate_겨울"
+        },
+        "eokbu": {
+          "primary": "수",
+          "secondary": "화",
+          "basis": [
+            "resource",
+            "output",
+            "official",
+            "companion",
+            "wealth"
+          ],
+          "scored": [
+            "resource:0.1",
+            "output:0.1",
+            "official:0.08"
+          ],
+          "bin": "balanced",
+          "day_elem": "목"
+        }
+      },
+      "rationale": [
+        "season=겨울, climate→화",
+        "bin=balanced, eokbu→수/화"
+      ],
+      "yongshin": [
+        "화"
+      ],
+      "bojosin": [
+        "수"
+      ],
+      "gisin": [],
+      "confidence": 0.85,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1994-05-20 09:00",
+    "gender_ko": "여자",
+    "pillars": {
+      "year": "甲戌",
+      "month": "己巳",
+      "day": "丙午",
+      "hour": "癸巳"
+    },
+    "strength": {
+      "grade_code": "신강",
+      "bin": "strong",
+      "score_normalized": 0.6526
+    },
+    "elements_distribution": {
+      "火": 41.7,
+      "土": 25.0,
+      "木": 16.7,
+      "水": 16.7,
+      "金": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "수",
+          "elem": "water",
+          "score": 0.35
+        },
+        "secondary": {
+          "elem_ko": "토",
+          "elem": "earth",
+          "score": 0.18
+        },
+        "scores": {
+          "wood": 0.06,
+          "fire": 0.06,
+          "earth": 0.18,
+          "metal": 0.15,
+          "water": 0.35
+        },
+        "confidence": 0.77
+      },
+      "split": {
+        "climate": {
+          "primary": "수",
+          "candidates": [
+            "수"
+          ],
+          "rule_id": "climate_여름"
+        },
+        "eokbu": {
+          "primary": "토",
+          "secondary": "금",
+          "basis": [
+            "output",
+            "wealth",
+            "official",
+            "resource",
+            "companion"
+          ],
+          "scored": [
+            "output:0.18",
+            "wealth:0.15",
+            "official:0.1"
+          ],
+          "bin": "strong",
+          "day_elem": "화"
+        }
+      },
+      "rationale": [
+        "season=여름, climate→수",
+        "bin=strong, eokbu→토/금"
+      ],
+      "yongshin": [
+        "수"
+      ],
+      "bojosin": [
+        "토"
+      ],
+      "gisin": [],
+      "confidence": 0.77,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1983-03-21 10:59",
+    "gender_ko": "여자",
+    "pillars": {
+      "year": "癸亥",
+      "month": "乙卯",
+      "day": "戊申",
+      "hour": "丁巳"
+    },
+    "strength": {
+      "grade_code": "신약",
+      "bin": "weak",
+      "score_normalized": 0.3326
+    },
+    "elements_distribution": {
+      "木": 25.0,
+      "水": 25.0,
+      "火": 25.0,
+      "土": 16.7,
+      "金": 8.3
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "토",
+          "elem": "earth",
+          "score": 0.35
+        },
+        "secondary": {
+          "elem_ko": "화",
+          "elem": "fire",
+          "score": 0.22
+        },
+        "scores": {
+          "wood": 0.06,
+          "fire": 0.22,
+          "earth": 0.35,
+          "metal": 0.06,
+          "water": 0.06
+        },
+        "confidence": 0.73
+      },
+      "split": {
+        "climate": {
+          "primary": "토",
+          "candidates": [
+            "토",
+            "화"
+          ],
+          "rule_id": "climate_봄"
+        },
+        "eokbu": {
+          "primary": "화",
+          "secondary": "토",
+          "basis": [
+            "resource",
+            "companion",
+            "output",
+            "wealth",
+            "official"
+          ],
+          "scored": [
+            "resource:0.22",
+            "companion:0.15",
+            "output:0.06"
+          ],
+          "bin": "weak",
+          "day_elem": "토"
+        }
+      },
+      "rationale": [
+        "season=봄, climate→토",
+        "bin=weak, eokbu→화/토"
+      ],
+      "yongshin": [
+        "토"
+      ],
+      "bojosin": [
+        "화"
+      ],
+      "gisin": [],
+      "confidence": 0.73,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1996-09-20 13:00",
+    "gender_ko": "남자",
+    "pillars": {
+      "year": "丙子",
+      "month": "丁酉",
+      "day": "庚申",
+      "hour": "癸未"
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.4937
+    },
+    "elements_distribution": {
+      "火": 33.3,
+      "金": 33.3,
+      "水": 25.0,
+      "土": 8.3,
+      "木": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "수",
+          "elem": "water",
+          "score": 0.3
+        },
+        "secondary": {
+          "elem_ko": "토",
+          "elem": "earth",
+          "score": 0.1
+        },
+        "scores": {
+          "wood": 0.08,
+          "fire": 0.08,
+          "earth": 0.1,
+          "metal": 0.06,
+          "water": 0.3
+        },
+        "confidence": 0.8
+      },
+      "split": {
+        "climate": {
+          "primary": "수",
+          "candidates": [
+            "수"
+          ],
+          "rule_id": "climate_가을"
+        },
+        "eokbu": {
+          "primary": "토",
+          "secondary": "수",
+          "basis": [
+            "resource",
+            "output",
+            "official",
+            "companion",
+            "wealth"
+          ],
+          "scored": [
+            "resource:0.1",
+            "output:0.1",
+            "official:0.08"
+          ],
+          "bin": "balanced",
+          "day_elem": "금"
+        }
+      },
+      "rationale": [
+        "season=가을, climate→수",
+        "bin=balanced, eokbu→토/수"
+      ],
+      "yongshin": [
+        "수"
+      ],
+      "bojosin": [
+        "토"
+      ],
+      "gisin": [],
+      "confidence": 0.8,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "2001-06-06 14:59",
+    "gender_ko": "여자",
+    "pillars": {
+      "year": "辛巳",
+      "month": "甲午",
+      "day": "庚子",
+      "hour": "癸未"
+    },
+    "strength": {
+      "grade_code": "극신약",
+      "bin": "weak",
+      "score_normalized": 0.1684
+    },
+    "elements_distribution": {
+      "金": 33.3,
+      "水": 25.0,
+      "木": 16.7,
+      "火": 16.7,
+      "土": 8.3
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "수",
+          "elem": "water",
+          "score": 0.31
+        },
+        "secondary": {
+          "elem_ko": "토",
+          "elem": "earth",
+          "score": 0.22
+        },
+        "scores": {
+          "wood": 0.06,
+          "fire": 0.06,
+          "earth": 0.22,
+          "metal": 0.15,
+          "water": 0.31
+        },
+        "confidence": 0.69
+      },
+      "split": {
+        "climate": {
+          "primary": "수",
+          "candidates": [
+            "수"
+          ],
+          "rule_id": "climate_여름"
+        },
+        "eokbu": {
+          "primary": "토",
+          "secondary": "금",
+          "basis": [
+            "resource",
+            "companion",
+            "output",
+            "wealth",
+            "official"
+          ],
+          "scored": [
+            "resource:0.22",
+            "companion:0.15",
+            "output:0.06"
+          ],
+          "bin": "weak",
+          "day_elem": "금"
+        }
+      },
+      "rationale": [
+        "season=여름, climate→수",
+        "bin=weak, eokbu→토/금"
+      ],
+      "yongshin": [
+        "수"
+      ],
+      "bojosin": [
+        "토"
+      ],
+      "gisin": [],
+      "confidence": 0.69,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "2002-10-20 15:00",
+    "gender_ko": "여자",
+    "pillars": {
+      "year": "壬午",
+      "month": "庚戌",
+      "day": "辛酉",
+      "hour": "丙申"
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.5316
+    },
+    "elements_distribution": {
+      "金": 50.0,
+      "火": 25.0,
+      "水": 16.7,
+      "土": 8.3,
+      "木": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "토",
+          "elem": "earth",
+          "score": 0.1
+        },
+        "secondary": {
+          "elem_ko": "수",
+          "elem": "water",
+          "score": 0.1
+        },
+        "scores": {
+          "wood": 0.08,
+          "fire": 0.08,
+          "earth": 0.1,
+          "metal": 0.06,
+          "water": 0.1
+        },
+        "confidence": 0.6
+      },
+      "split": {
+        "climate": {
+          "primary": null,
+          "candidates": [],
+          "rule_id": "climate_장하"
+        },
+        "eokbu": {
+          "primary": "토",
+          "secondary": "수",
+          "basis": [
+            "resource",
+            "output",
+            "official",
+            "companion",
+            "wealth"
+          ],
+          "scored": [
+            "resource:0.1",
+            "output:0.1",
+            "official:0.08"
+          ],
+          "bin": "balanced",
+          "day_elem": "금"
+        }
+      },
+      "rationale": [
+        "season=장하, climate→None",
+        "bin=balanced, eokbu→토/수"
+      ],
+      "yongshin": [
+        "토"
+      ],
+      "bojosin": [
+        "수"
+      ],
+      "gisin": [],
+      "confidence": 0.6,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1992-11-07 16:59",
+    "gender_ko": "남자",
+    "pillars": {
+      "year": "壬申",
+      "month": "辛亥",
+      "day": "丁亥",
+      "hour": "戊申"
+    },
+    "strength": {
+      "grade_code": "극신약",
+      "bin": "weak",
+      "score_normalized": 0.1084
+    },
+    "elements_distribution": {
+      "水": 33.3,
+      "金": 33.3,
+      "土": 16.7,
+      "火": 16.7,
+      "木": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "화",
+          "elem": "fire",
+          "score": 0.4
+        },
+        "secondary": {
+          "elem_ko": "목",
+          "elem": "wood",
+          "score": 0.22
+        },
+        "scores": {
+          "wood": 0.22,
+          "fire": 0.4,
+          "earth": 0.06,
+          "metal": 0.06,
+          "water": 0.06
+        },
+        "confidence": 0.78
+      },
+      "split": {
+        "climate": {
+          "primary": "화",
+          "candidates": [
+            "화"
+          ],
+          "rule_id": "climate_겨울"
+        },
+        "eokbu": {
+          "primary": "목",
+          "secondary": "화",
+          "basis": [
+            "resource",
+            "companion",
+            "output",
+            "wealth",
+            "official"
+          ],
+          "scored": [
+            "resource:0.22",
+            "companion:0.15",
+            "output:0.06"
+          ],
+          "bin": "weak",
+          "day_elem": "화"
+        }
+      },
+      "rationale": [
+        "season=겨울, climate→화",
+        "bin=weak, eokbu→목/화"
+      ],
+      "yongshin": [
+        "화"
+      ],
+      "bojosin": [
+        "목"
+      ],
+      "gisin": [],
+      "confidence": 0.78,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "2005-11-20 17:00",
+    "gender_ko": "남자",
+    "pillars": {
+      "year": "乙酉",
+      "month": "丁亥",
+      "day": "戊申",
+      "hour": "辛酉"
+    },
+    "strength": {
+      "grade_code": "신약",
+      "bin": "weak",
+      "score_normalized": 0.3568
+    },
+    "elements_distribution": {
+      "金": 41.7,
+      "土": 16.7,
+      "木": 16.7,
+      "火": 16.7,
+      "水": 8.3
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "화",
+          "elem": "fire",
+          "score": 0.47
+        },
+        "secondary": {
+          "elem_ko": "토",
+          "elem": "earth",
+          "score": 0.15
+        },
+        "scores": {
+          "wood": 0.06,
+          "fire": 0.47,
+          "earth": 0.15,
+          "metal": 0.06,
+          "water": 0.06
+        },
+        "confidence": 0.92
+      },
+      "split": {
+        "climate": {
+          "primary": "화",
+          "candidates": [
+            "화"
+          ],
+          "rule_id": "climate_겨울"
+        },
+        "eokbu": {
+          "primary": "화",
+          "secondary": "토",
+          "basis": [
+            "resource",
+            "companion",
+            "output",
+            "wealth",
+            "official"
+          ],
+          "scored": [
+            "resource:0.22",
+            "companion:0.15",
+            "output:0.06"
+          ],
+          "bin": "weak",
+          "day_elem": "토"
+        }
+      },
+      "rationale": [
+        "season=겨울, climate→화",
+        "bin=weak, eokbu→화/토"
+      ],
+      "yongshin": [
+        "화"
+      ],
+      "bojosin": [
+        "토"
+      ],
+      "gisin": [],
+      "confidence": 0.92,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1988-07-07 18:59",
+    "gender_ko": "여자",
+    "pillars": {
+      "year": "戊辰",
+      "month": "己未",
+      "day": "癸亥",
+      "hour": "辛酉"
+    },
+    "strength": {
+      "grade_code": "신약",
+      "bin": "weak",
+      "score_normalized": 0.3058
+    },
+    "elements_distribution": {
+      "土": 50.0,
+      "水": 25.0,
+      "金": 25.0,
+      "木": 0.0,
+      "火": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "금",
+          "elem": "metal",
+          "score": 0.22
+        },
+        "secondary": {
+          "elem_ko": "수",
+          "elem": "water",
+          "score": 0.15
+        },
+        "scores": {
+          "wood": 0.06,
+          "fire": 0.06,
+          "earth": 0.06,
+          "metal": 0.22,
+          "water": 0.15
+        },
+        "confidence": 0.67
+      },
+      "split": {
+        "climate": {
+          "primary": null,
+          "candidates": [],
+          "rule_id": "climate_장하"
+        },
+        "eokbu": {
+          "primary": "금",
+          "secondary": "수",
+          "basis": [
+            "resource",
+            "companion",
+            "output",
+            "wealth",
+            "official"
+          ],
+          "scored": [
+            "resource:0.22",
+            "companion:0.15",
+            "output:0.06"
+          ],
+          "bin": "weak",
+          "day_elem": "수"
+        }
+      },
+      "rationale": [
+        "season=장하, climate→None",
+        "bin=weak, eokbu→금/수"
+      ],
+      "yongshin": [
+        "금"
+      ],
+      "bojosin": [
+        "수"
+      ],
+      "gisin": [],
+      "confidence": 0.67,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "2010-04-20 19:00",
+    "gender_ko": "여자",
+    "pillars": {
+      "year": "庚寅",
+      "month": "庚辰",
+      "day": "庚子",
+      "hour": "丙戌"
+    },
+    "strength": {
+      "grade_code": "신약",
+      "bin": "weak",
+      "score_normalized": 0.2842
+    },
+    "elements_distribution": {
+      "金": 50.0,
+      "土": 16.7,
+      "火": 16.7,
+      "木": 8.3,
+      "水": 8.3
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "토",
+          "elem": "earth",
+          "score": 0.22
+        },
+        "secondary": {
+          "elem_ko": "금",
+          "elem": "metal",
+          "score": 0.15
+        },
+        "scores": {
+          "wood": 0.06,
+          "fire": 0.06,
+          "earth": 0.22,
+          "metal": 0.15,
+          "water": 0.06
+        },
+        "confidence": 0.67
+      },
+      "split": {
+        "climate": {
+          "primary": null,
+          "candidates": [],
+          "rule_id": "climate_장하"
+        },
+        "eokbu": {
+          "primary": "토",
+          "secondary": "금",
+          "basis": [
+            "resource",
+            "companion",
+            "output",
+            "wealth",
+            "official"
+          ],
+          "scored": [
+            "resource:0.22",
+            "companion:0.15",
+            "output:0.06"
+          ],
+          "bin": "weak",
+          "day_elem": "금"
+        }
+      },
+      "rationale": [
+        "season=장하, climate→None",
+        "bin=weak, eokbu→토/금"
+      ],
+      "yongshin": [
+        "토"
+      ],
+      "bojosin": [
+        "금"
+      ],
+      "gisin": [],
+      "confidence": 0.67,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1991-04-05 20:59",
+    "gender_ko": "남자",
+    "pillars": {
+      "year": "辛未",
+      "month": "壬辰",
+      "day": "乙巳",
+      "hour": "丙戌"
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.4437
+    },
+    "elements_distribution": {
+      "土": 25.0,
+      "火": 25.0,
+      "木": 16.7,
+      "水": 16.7,
+      "金": 16.7
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "화",
+          "elem": "fire",
+          "score": 0.1
+        },
+        "secondary": {
+          "elem_ko": "수",
+          "elem": "water",
+          "score": 0.1
+        },
+        "scores": {
+          "wood": 0.06,
+          "fire": 0.1,
+          "earth": 0.08,
+          "metal": 0.08,
+          "water": 0.1
+        },
+        "confidence": 0.6
+      },
+      "split": {
+        "climate": {
+          "primary": null,
+          "candidates": [],
+          "rule_id": "climate_장하"
+        },
+        "eokbu": {
+          "primary": "수",
+          "secondary": "화",
+          "basis": [
+            "resource",
+            "output",
+            "official",
+            "companion",
+            "wealth"
+          ],
+          "scored": [
+            "resource:0.1",
+            "output:0.1",
+            "official:0.08"
+          ],
+          "bin": "balanced",
+          "day_elem": "목"
+        }
+      },
+      "rationale": [
+        "season=장하, climate→None",
+        "bin=balanced, eokbu→수/화"
+      ],
+      "yongshin": [
+        "화"
+      ],
+      "bojosin": [
+        "수"
+      ],
+      "gisin": [],
+      "confidence": 0.6,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1978-02-20 21:20",
+    "gender_ko": "남자",
+    "pillars": {
+      "year": "戊午",
+      "month": "甲寅",
+      "day": "癸丑",
+      "hour": "癸亥"
+    },
+    "strength": {
+      "grade_code": "신약",
+      "bin": "weak",
+      "score_normalized": 0.3258
+    },
+    "elements_distribution": {
+      "水": 41.7,
+      "土": 25.0,
+      "木": 25.0,
+      "火": 8.3,
+      "金": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "토",
+          "elem": "earth",
+          "score": 0.26
+        },
+        "secondary": {
+          "elem_ko": "금",
+          "elem": "metal",
+          "score": 0.22
+        },
+        "scores": {
+          "wood": 0.06,
+          "fire": 0.06,
+          "earth": 0.26,
+          "metal": 0.22,
+          "water": 0.15
+        },
+        "confidence": 0.64
+      },
+      "split": {
+        "climate": {
+          "primary": "토",
+          "candidates": [
+            "토",
+            "화"
+          ],
+          "rule_id": "climate_봄"
+        },
+        "eokbu": {
+          "primary": "금",
+          "secondary": "수",
+          "basis": [
+            "resource",
+            "companion",
+            "output",
+            "wealth",
+            "official"
+          ],
+          "scored": [
+            "resource:0.22",
+            "companion:0.15",
+            "output:0.06"
+          ],
+          "bin": "weak",
+          "day_elem": "수"
+        }
+      },
+      "rationale": [
+        "season=봄, climate→토",
+        "bin=weak, eokbu→금/수"
+      ],
+      "yongshin": [
+        "토"
+      ],
+      "bojosin": [
+        "금"
+      ],
+      "gisin": [],
+      "confidence": 0.64,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1995-08-08 22:59",
+    "gender_ko": "여자",
+    "pillars": {
+      "year": "乙亥",
+      "month": "甲申",
+      "day": "辛未",
+      "hour": "己亥"
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.5484
+    },
+    "elements_distribution": {
+      "木": 33.3,
+      "土": 25.0,
+      "金": 25.0,
+      "水": 16.7,
+      "火": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "수",
+          "elem": "water",
+          "score": 0.3
+        },
+        "secondary": {
+          "elem_ko": "토",
+          "elem": "earth",
+          "score": 0.1
+        },
+        "scores": {
+          "wood": 0.08,
+          "fire": 0.08,
+          "earth": 0.1,
+          "metal": 0.06,
+          "water": 0.3
+        },
+        "confidence": 0.8
+      },
+      "split": {
+        "climate": {
+          "primary": "수",
+          "candidates": [
+            "수"
+          ],
+          "rule_id": "climate_가을"
+        },
+        "eokbu": {
+          "primary": "토",
+          "secondary": "수",
+          "basis": [
+            "resource",
+            "output",
+            "official",
+            "companion",
+            "wealth"
+          ],
+          "scored": [
+            "resource:0.1",
+            "output:0.1",
+            "official:0.08"
+          ],
+          "bin": "balanced",
+          "day_elem": "금"
+        }
+      },
+      "rationale": [
+        "season=가을, climate→수",
+        "bin=balanced, eokbu→토/수"
+      ],
+      "yongshin": [
+        "수"
+      ],
+      "bojosin": [
+        "토"
+      ],
+      "gisin": [],
+      "confidence": 0.8,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1981-01-20 23:59",
+    "gender_ko": "여자",
+    "pillars": {
+      "year": "辛酉",
+      "month": "辛丑",
+      "day": "戊戌",
+      "hour": "壬子"
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.4963
+    },
+    "elements_distribution": {
+      "金": 41.7,
+      "土": 33.3,
+      "水": 25.0,
+      "木": 0.0,
+      "火": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "화",
+          "elem": "fire",
+          "score": 0.1
+        },
+        "secondary": {
+          "elem_ko": "금",
+          "elem": "metal",
+          "score": 0.1
+        },
+        "scores": {
+          "wood": 0.08,
+          "fire": 0.1,
+          "earth": 0.06,
+          "metal": 0.1,
+          "water": 0.08
+        },
+        "confidence": 0.6
+      },
+      "split": {
+        "climate": {
+          "primary": null,
+          "candidates": [],
+          "rule_id": "climate_장하"
+        },
+        "eokbu": {
+          "primary": "화",
+          "secondary": "금",
+          "basis": [
+            "resource",
+            "output",
+            "official",
+            "companion",
+            "wealth"
+          ],
+          "scored": [
+            "resource:0.1",
+            "output:0.1",
+            "official:0.08"
+          ],
+          "bin": "balanced",
+          "day_elem": "토"
+        }
+      },
+      "rationale": [
+        "season=장하, climate→None",
+        "bin=balanced, eokbu→화/금"
+      ],
+      "yongshin": [
+        "화"
+      ],
+      "bojosin": [
+        "금"
+      ],
+      "gisin": [],
+      "confidence": 0.6,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1979-10-08 12:01",
+    "gender_ko": "남자",
+    "pillars": {
+      "year": "己未",
+      "month": "癸酉",
+      "day": "戊申",
+      "hour": "戊午"
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.4734
+    },
+    "elements_distribution": {
+      "土": 58.3,
+      "水": 16.7,
+      "金": 16.7,
+      "火": 8.3,
+      "木": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "수",
+          "elem": "water",
+          "score": 0.28
+        },
+        "secondary": {
+          "elem_ko": "화",
+          "elem": "fire",
+          "score": 0.1
+        },
+        "scores": {
+          "wood": 0.08,
+          "fire": 0.1,
+          "earth": 0.06,
+          "metal": 0.1,
+          "water": 0.28
+        },
+        "confidence": 0.78
+      },
+      "split": {
+        "climate": {
+          "primary": "수",
+          "candidates": [
+            "수"
+          ],
+          "rule_id": "climate_가을"
+        },
+        "eokbu": {
+          "primary": "화",
+          "secondary": "금",
+          "basis": [
+            "resource",
+            "output",
+            "official",
+            "companion",
+            "wealth"
+          ],
+          "scored": [
+            "resource:0.1",
+            "output:0.1",
+            "official:0.08"
+          ],
+          "bin": "balanced",
+          "day_elem": "토"
+        }
+      },
+      "rationale": [
+        "season=가을, climate→수",
+        "bin=balanced, eokbu→화/금"
+      ],
+      "yongshin": [
+        "수"
+      ],
+      "bojosin": [
+        "화"
+      ],
+      "gisin": [],
+      "confidence": 0.78,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1982-12-20 06:30",
+    "gender_ko": "남자",
+    "pillars": {
+      "year": "壬戌",
+      "month": "壬子",
+      "day": "丁丑",
+      "hour": "癸卯"
+    },
+    "strength": {
+      "grade_code": "신약",
+      "bin": "weak",
+      "score_normalized": 0.2208
+    },
+    "elements_distribution": {
+      "水": 58.3,
+      "土": 16.7,
+      "火": 16.7,
+      "木": 8.3,
+      "金": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "화",
+          "elem": "fire",
+          "score": 0.4
+        },
+        "secondary": {
+          "elem_ko": "목",
+          "elem": "wood",
+          "score": 0.22
+        },
+        "scores": {
+          "wood": 0.22,
+          "fire": 0.4,
+          "earth": 0.06,
+          "metal": 0.06,
+          "water": 0.06
+        },
+        "confidence": 0.78
+      },
+      "split": {
+        "climate": {
+          "primary": "화",
+          "candidates": [
+            "화"
+          ],
+          "rule_id": "climate_겨울"
+        },
+        "eokbu": {
+          "primary": "목",
+          "secondary": "화",
+          "basis": [
+            "resource",
+            "companion",
+            "output",
+            "wealth",
+            "official"
+          ],
+          "scored": [
+            "resource:0.22",
+            "companion:0.15",
+            "output:0.06"
+          ],
+          "bin": "weak",
+          "day_elem": "화"
+        }
+      },
+      "rationale": [
+        "season=겨울, climate→화",
+        "bin=weak, eokbu→목/화"
+      ],
+      "yongshin": [
+        "화"
+      ],
+      "bojosin": [
+        "목"
+      ],
+      "gisin": [],
+      "confidence": 0.78,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "2000-02-03 23:55",
+    "gender_ko": "남자",
+    "pillars": {
+      "year": "庚辰",
+      "month": "己丑",
+      "day": "辛卯",
+      "hour": "戊子"
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.5768
+    },
+    "elements_distribution": {
+      "土": 50.0,
+      "金": 33.3,
+      "木": 8.3,
+      "水": 8.3,
+      "火": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "토",
+          "elem": "earth",
+          "score": 0.1
+        },
+        "secondary": {
+          "elem_ko": "수",
+          "elem": "water",
+          "score": 0.1
+        },
+        "scores": {
+          "wood": 0.08,
+          "fire": 0.08,
+          "earth": 0.1,
+          "metal": 0.06,
+          "water": 0.1
+        },
+        "confidence": 0.6
+      },
+      "split": {
+        "climate": {
+          "primary": null,
+          "candidates": [],
+          "rule_id": "climate_장하"
+        },
+        "eokbu": {
+          "primary": "토",
+          "secondary": "수",
+          "basis": [
+            "resource",
+            "output",
+            "official",
+            "companion",
+            "wealth"
+          ],
+          "scored": [
+            "resource:0.1",
+            "output:0.1",
+            "official:0.08"
+          ],
+          "bin": "balanced",
+          "day_elem": "금"
+        }
+      },
+      "rationale": [
+        "season=장하, climate→None",
+        "bin=balanced, eokbu→토/수"
+      ],
+      "yongshin": [
+        "토"
+      ],
+      "bojosin": [
+        "수"
+      ],
+      "gisin": [],
+      "confidence": 0.6,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  },
+  {
+    "datetime_kst": "1976-08-20 04:30",
+    "gender_ko": "여자",
+    "pillars": {
+      "year": "丙辰",
+      "month": "丙申",
+      "day": "甲辰",
+      "hour": "丙寅"
+    },
+    "strength": {
+      "grade_code": "극신약",
+      "bin": "weak",
+      "score_normalized": 0.1789
+    },
+    "elements_distribution": {
+      "火": 50.0,
+      "木": 25.0,
+      "土": 16.7,
+      "金": 8.3,
+      "水": 0.0
+    },
+    "yongshin": {
+      "policy_version": "yongshin_dual_v1",
+      "integrated": {
+        "primary": {
+          "elem_ko": "수",
+          "elem": "water",
+          "score": 0.42
+        },
+        "secondary": {
+          "elem_ko": "목",
+          "elem": "wood",
+          "score": 0.15
+        },
+        "scores": {
+          "wood": 0.15,
+          "fire": 0.06,
+          "earth": 0.06,
+          "metal": 0.06,
+          "water": 0.42
+        },
+        "confidence": 0.87
+      },
+      "split": {
+        "climate": {
+          "primary": "수",
+          "candidates": [
+            "수"
+          ],
+          "rule_id": "climate_가을"
+        },
+        "eokbu": {
+          "primary": "수",
+          "secondary": "목",
+          "basis": [
+            "resource",
+            "companion",
+            "output",
+            "wealth",
+            "official"
+          ],
+          "scored": [
+            "resource:0.22",
+            "companion:0.15",
+            "output:0.06"
+          ],
+          "bin": "weak",
+          "day_elem": "목"
+        }
+      },
+      "rationale": [
+        "season=가을, climate→수",
+        "bin=weak, eokbu→수/목"
+      ],
+      "yongshin": [
+        "수"
+      ],
+      "bojosin": [
+        "목"
+      ],
+      "gisin": [],
+      "confidence": 0.87,
+      "strategy": ""
+    },
+    "shensha": [
+      "taohua",
+      "wenchang",
+      "tianyiguiren",
+      "yima"
+    ]
+  }
+]

@@ -1,0 +1,2 @@
+timestamp,iterations,warmup,p50_ms,p95_ms,min_ms,max_ms,mean_ms
+2025-11-02T02:22:56.068179+00:00,25,3,19.036,22.798,18.02,30.054,19.887

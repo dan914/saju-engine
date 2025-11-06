@@ -139,6 +139,21 @@ class SajuSettings(BaseSettings):
         description="Redis URL for distributed rate limiting (e.g., redis://localhost:6379)"
     )
 
+    enable_atomic_rate_limiter: bool = Field(
+        default=False,
+        description="Enable Lua-based atomic operations for Redis-backed rate limiting",
+    )
+
+    forwarded_for_headers: List[str] = Field(
+        default_factory=lambda: ["X-Forwarded-For"],
+        description="Headers to inspect for proxied client IPs",
+    )
+
+    trusted_proxy_cidrs: List[str] = Field(
+        default_factory=list,
+        description="CIDR ranges representing trusted proxy hops",
+    )
+
     # Service-specific overrides (can be extended by individual services)
     analysis_service_enabled: bool = Field(
         default=True,

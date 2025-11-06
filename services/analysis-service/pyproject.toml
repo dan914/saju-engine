@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Ten gods & relations analysis service"
 requires-python = ">=3.11"
 dependencies = [
-  "fastapi>=0.111,<0.115",
+  "fastapi>=0.120,<0.121",
   "uvicorn[standard]>=0.30,<0.31",
 ]
 
@@ -21,8 +21,13 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
+pythonpath = [
+  "../../",
+  "../common",
+  "."
+]
 testpaths = ["tests"]
-pythonpath = ["app", "../.."]
+addopts = "-v --tb=short --maxfail=1"
 
 [tool.coverage.run]
 source = ["app"]

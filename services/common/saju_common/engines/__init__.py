@@ -9,11 +9,26 @@ Architecture Decision:
 - Maintains same function signatures as original implementations
 """
 
+from .annual import AnnualLuckCalculator, ChartContext, EngineOptions, LuckFrame, DEFAULT_ENGINE_OPTIONS
+from .daily import DailyLuckCalculator
 from .luck import LuckCalculator, LuckContext
+from .monthly import MonthlyLuckCalculator
+from .policy_config import LuckPolicyBundle, LuckPolicyConfig, load_luck_policy, load_luck_policy_bundle
 from .school import SchoolProfileManager
 from .shensha import ShenshaCatalog
 
 __all__ = [
+    "AnnualLuckCalculator",
+    "DailyLuckCalculator",
+    "EngineOptions",
+    "DEFAULT_ENGINE_OPTIONS",
+    "ChartContext",
+    "LuckFrame",
+    "MonthlyLuckCalculator",
+    "LuckPolicyConfig",
+    "LuckPolicyBundle",
+    "load_luck_policy",
+    "load_luck_policy_bundle",
     "LuckCalculator",
     "LuckContext",
     "ShenshaCatalog",

@@ -1,11 +1,9 @@
-from app.main import app
 from fastapi.testclient import TestClient
 
-client = TestClient(app)
 
 
-def test_terms_endpoint_returns_sample_data() -> None:
-    response = client.post("/v2/terms", json={"year": 1992, "timezone": "Asia/Seoul"})
+def test_terms_endpoint_returns_sample_data(api_client: TestClient) -> None:
+    response = api_client.post("/v2/terms", json={"year": 1992, "timezone": "Asia/Seoul"})
     assert response.status_code == 200
     payload = response.json()
     assert payload["year"] == 1992
@@ -20,7 +18,8 @@ def test_terms_endpoint_returns_sample_data() -> None:
     assert trace["tz"]["iana"] == "Asia/Seoul"
 
 
-def test_meta_endpoints_available() -> None:
+
+def test_meta_endpoints_available(api_client: TestClient) -> None:
     for endpoint in ("/", "/health"):
-        response = client.get(endpoint)
+        response = api_client.get(endpoint)
         assert response.status_code == 200

@@ -7,7 +7,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from services.common import TraceMetadata
-from services.common.saju_common import SimpleDeltaT
+from saju_common import SimpleDeltaT
 
 from ..models import TimeConversionRequest, TimeConversionResponse
 from .events import TimeEventDetector

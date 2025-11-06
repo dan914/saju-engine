@@ -1,0 +1,461 @@
+[
+  {
+    "case": "T21",
+    "gender": "male",
+    "birth_ts": "1992-10-05T11:45:00+09:00",
+    "pillars": {
+      "year": "壬申",
+      "month": "己酉",
+      "day": "甲寅",
+      "hour": "庚午"
+    },
+    "elements_pct": {
+      "木": 25.0,
+      "火": 8.33,
+      "土": 16.67,
+      "金": 33.33,
+      "水": 16.67
+    },
+    "elements_transformed_pct": {
+      "목": 20.0,
+      "화": 20.0,
+      "토": 20.0,
+      "금": 20.0,
+      "수": 20.0
+    },
+    "strength": {
+      "grade_code": "신약",
+      "bin": "weak",
+      "score_normalized": 0.2184,
+      "score_raw": -28.5
+    },
+    "yongshin": {
+      "yongshin": [
+        "수"
+      ],
+      "bojosin": [
+        "목"
+      ],
+      "gisin": [],
+      "confidence": 0.87,
+      "integrated_primary": {
+        "elem_ko": "수",
+        "elem": "water",
+        "score": 0.42
+      },
+      "integrated_secondary": {
+        "elem_ko": "목",
+        "elem": "wood",
+        "score": 0.15
+      }
+    }
+  },
+  {
+    "case": "T22",
+    "gender": "female",
+    "birth_ts": "1993-05-15T14:20:00+09:00",
+    "pillars": {
+      "year": "癸酉",
+      "month": "丁巳",
+      "day": "丙申",
+      "hour": "乙未"
+    },
+    "elements_pct": {
+      "木": 16.67,
+      "火": 41.67,
+      "土": 8.33,
+      "金": 16.67,
+      "水": 16.67
+    },
+    "elements_transformed_pct": {
+      "목": 20.0,
+      "화": 20.0,
+      "토": 20.0,
+      "금": 20.0,
+      "수": 20.0
+    },
+    "strength": {
+      "grade_code": "신강",
+      "bin": "strong",
+      "score_normalized": 0.6421,
+      "score_raw": 52.0
+    },
+    "yongshin": {
+      "yongshin": [
+        "수"
+      ],
+      "bojosin": [
+        "토"
+      ],
+      "gisin": [],
+      "confidence": 0.77,
+      "integrated_primary": {
+        "elem_ko": "수",
+        "elem": "water",
+        "score": 0.35
+      },
+      "integrated_secondary": {
+        "elem_ko": "토",
+        "elem": "earth",
+        "score": 0.18
+      }
+    }
+  },
+  {
+    "case": "T23",
+    "gender": "male",
+    "birth_ts": "1994-01-30T06:45:00+09:00",
+    "pillars": {
+      "year": "癸酉",
+      "month": "乙丑",
+      "day": "丙辰",
+      "hour": "辛卯"
+    },
+    "elements_pct": {
+      "木": 25.0,
+      "火": 16.67,
+      "土": 16.67,
+      "金": 25.0,
+      "水": 16.67
+    },
+    "elements_transformed_pct": {
+      "목": 20.0,
+      "화": 20.0,
+      "토": 20.0,
+      "금": 20.0,
+      "수": 20.0
+    },
+    "strength": {
+      "grade_code": "신약",
+      "bin": "weak",
+      "score_normalized": 0.2295,
+      "score_raw": -26.4
+    },
+    "yongshin": {
+      "yongshin": [
+        "목"
+      ],
+      "bojosin": [
+        "화"
+      ],
+      "gisin": [],
+      "confidence": 0.67,
+      "integrated_primary": {
+        "elem_ko": "목",
+        "elem": "wood",
+        "score": 0.22
+      },
+      "integrated_secondary": {
+        "elem_ko": "화",
+        "elem": "fire",
+        "score": 0.15
+      }
+    }
+  },
+  {
+    "case": "T24",
+    "gender": "female",
+    "birth_ts": "1995-09-09T19:30:00+09:00",
+    "pillars": {
+      "year": "乙亥",
+      "month": "乙酉",
+      "day": "癸卯",
+      "hour": "辛酉"
+    },
+    "elements_pct": {
+      "木": 41.67,
+      "火": 0.0,
+      "土": 0.0,
+      "金": 33.33,
+      "水": 25.0
+    },
+    "elements_transformed_pct": {
+      "목": 20.0,
+      "화": 20.0,
+      "토": 20.0,
+      "금": 20.0,
+      "수": 20.0
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.4253,
+      "score_raw": 10.8
+    },
+    "yongshin": {
+      "yongshin": [
+        "수"
+      ],
+      "bojosin": [
+        "목"
+      ],
+      "gisin": [],
+      "confidence": 0.76,
+      "integrated_primary": {
+        "elem_ko": "수",
+        "elem": "water",
+        "score": 0.26
+      },
+      "integrated_secondary": {
+        "elem_ko": "목",
+        "elem": "wood",
+        "score": 0.1
+      }
+    }
+  },
+  {
+    "case": "T16",
+    "gender": "male",
+    "birth_ts": "1994-02-10T09:50:00+09:00",
+    "pillars": {
+      "year": "甲戌",
+      "month": "丙寅",
+      "day": "丁卯",
+      "hour": "乙巳"
+    },
+    "elements_pct": {
+      "木": 50.0,
+      "火": 41.67,
+      "土": 8.33,
+      "金": 0.0,
+      "水": 0.0
+    },
+    "elements_transformed_pct": {
+      "목": 20.0,
+      "화": 20.0,
+      "토": 20.0,
+      "금": 20.0,
+      "수": 20.0
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.5895,
+      "score_raw": 42.0
+    },
+    "yongshin": {
+      "yongshin": [
+        "토"
+      ],
+      "bojosin": [
+        "목"
+      ],
+      "gisin": [],
+      "confidence": 0.8,
+      "integrated_primary": {
+        "elem_ko": "토",
+        "elem": "earth",
+        "score": 0.3
+      },
+      "integrated_secondary": {
+        "elem_ko": "목",
+        "elem": "wood",
+        "score": 0.1
+      }
+    }
+  },
+  {
+    "case": "T17",
+    "gender": "male",
+    "birth_ts": "1998-12-22T15:10:00+09:00",
+    "pillars": {
+      "year": "戊寅",
+      "month": "甲子",
+      "day": "癸卯",
+      "hour": "己未"
+    },
+    "elements_pct": {
+      "木": 33.33,
+      "火": 0.0,
+      "土": 41.67,
+      "金": 0.0,
+      "水": 25.0
+    },
+    "elements_transformed_pct": {
+      "목": 20.0,
+      "화": 20.0,
+      "토": 20.0,
+      "금": 20.0,
+      "수": 20.0
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.4347,
+      "score_raw": 12.6
+    },
+    "yongshin": {
+      "yongshin": [
+        "화"
+      ],
+      "bojosin": [
+        "목"
+      ],
+      "gisin": [],
+      "confidence": 0.83,
+      "integrated_primary": {
+        "elem_ko": "화",
+        "elem": "fire",
+        "score": 0.33
+      },
+      "integrated_secondary": {
+        "elem_ko": "목",
+        "elem": "wood",
+        "score": 0.1
+      }
+    }
+  },
+  {
+    "case": "T18",
+    "gender": "male",
+    "birth_ts": "1991-07-08T23:15:00+09:00",
+    "pillars": {
+      "year": "辛未",
+      "month": "乙未",
+      "day": "己卯",
+      "hour": "乙亥"
+    },
+    "elements_pct": {
+      "木": 41.67,
+      "火": 0.0,
+      "土": 33.33,
+      "金": 16.67,
+      "水": 8.33
+    },
+    "elements_transformed_pct": {
+      "목": 20.0,
+      "화": 20.0,
+      "토": 20.0,
+      "금": 20.0,
+      "수": 20.0
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.5429,
+      "score_raw": 33.15
+    },
+    "yongshin": {
+      "yongshin": [
+        "화"
+      ],
+      "bojosin": [
+        "금"
+      ],
+      "gisin": [],
+      "confidence": 0.6,
+      "integrated_primary": {
+        "elem_ko": "화",
+        "elem": "fire",
+        "score": 0.1
+      },
+      "integrated_secondary": {
+        "elem_ko": "금",
+        "elem": "metal",
+        "score": 0.1
+      }
+    }
+  },
+  {
+    "case": "T19",
+    "gender": "male",
+    "birth_ts": "1996-03-03T05:45:00+09:00",
+    "pillars": {
+      "year": "丙子",
+      "month": "庚寅",
+      "day": "己亥",
+      "hour": "丁卯"
+    },
+    "elements_pct": {
+      "木": 16.67,
+      "火": 33.33,
+      "土": 16.67,
+      "金": 16.67,
+      "水": 16.67
+    },
+    "elements_transformed_pct": {
+      "목": 20.0,
+      "화": 20.0,
+      "토": 20.0,
+      "금": 20.0,
+      "수": 20.0
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.4347,
+      "score_raw": 12.6
+    },
+    "yongshin": {
+      "yongshin": [
+        "토"
+      ],
+      "bojosin": [
+        "화"
+      ],
+      "gisin": [],
+      "confidence": 0.76,
+      "integrated_primary": {
+        "elem_ko": "토",
+        "elem": "earth",
+        "score": 0.26
+      },
+      "integrated_secondary": {
+        "elem_ko": "화",
+        "elem": "fire",
+        "score": 0.1
+      }
+    }
+  },
+  {
+    "case": "T20",
+    "gender": "male",
+    "birth_ts": "1987-09-18T20:30:00+10:00",
+    "pillars": {
+      "year": "丁卯",
+      "month": "己酉",
+      "day": "庚午",
+      "hour": "乙酉"
+    },
+    "elements_pct": {
+      "木": 25.0,
+      "火": 25.0,
+      "土": 16.67,
+      "金": 33.33,
+      "水": 0.0
+    },
+    "elements_transformed_pct": {
+      "목": 20.0,
+      "화": 20.0,
+      "토": 20.0,
+      "금": 20.0,
+      "수": 20.0
+    },
+    "strength": {
+      "grade_code": "중화",
+      "bin": "balanced",
+      "score_normalized": 0.5711,
+      "score_raw": 38.5
+    },
+    "yongshin": {
+      "yongshin": [
+        "수"
+      ],
+      "bojosin": [
+        "토"
+      ],
+      "gisin": [],
+      "confidence": 0.8,
+      "integrated_primary": {
+        "elem_ko": "수",
+        "elem": "water",
+        "score": 0.3
+      },
+      "integrated_secondary": {
+        "elem_ko": "토",
+        "elem": "earth",
+        "score": 0.1
+      }
+    }
+  }
+]

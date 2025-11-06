@@ -8,7 +8,7 @@ from __future__ import annotations
 import json
 from typing import Dict
 
-from policy_loader import resolve_policy_path
+from saju_common.policy_loader import resolve_policy_path
 
 # Use policy loader for flexible path resolution
 SHENSHA_CATALOG_PATH = resolve_policy_path("shensha_catalog_v1.json")
