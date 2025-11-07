@@ -20,7 +20,7 @@ import argparse
 import hashlib
 import json
 from collections import defaultdict
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -51,14 +51,18 @@ def find_policy_directories(repo_root: Path) -> List[Path]:
     return sorted(policy_dirs)
 
 
-def catalog_policy_files(policy_dir: Path) -> List[Dict]:
+def catalog_policy_files(policy_dir: Path, repo_root: Path) -> List[Dict]:
     """Catalog all JSON files in a policy directory."""
     files = []
     for json_file in policy_dir.glob("*.json"):
         try:
+            try:
+                relative_path = json_file.relative_to(repo_root)
+            except ValueError:
+                relative_path = json_file
             file_info = {
                 "name": json_file.name,
-                "path": str(json_file.relative_to(policy_dir.parent.parent)),
+                "path": str(relative_path),
                 "size": json_file.stat().st_size,
                 "modified": json_file.stat().st_mtime,
                 "hash": compute_file_hash(json_file),
@@ -112,7 +116,7 @@ def _resolve_audit_date(value: Optional[str]) -> str:
     """Return ISO-formatted audit date, validating overrides."""
 
     if not value:
-        return datetime.utcnow().date().isoformat()
+        return datetime.now(UTC).date().isoformat()
 
     try:
         parsed = datetime.fromisoformat(value)
@@ -147,7 +151,7 @@ def generate_audit_report(
 
     for policy_dir in policy_dirs:
         rel_dir = str(policy_dir.relative_to(repo_root))
-        files = catalog_policy_files(policy_dir)
+        files = catalog_policy_files(policy_dir, repo_root)
         dir_inventory[rel_dir] = files
         all_files.extend(files)
         print(f"   {rel_dir}: {len(files)} files")

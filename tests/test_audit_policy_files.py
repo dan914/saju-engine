@@ -3,7 +3,11 @@ import json
 
 import pytest
 
-from scripts.audit_policy_files import _resolve_audit_date, generate_audit_report
+from scripts.audit_policy_files import (
+    _resolve_audit_date,
+    catalog_policy_files,
+    generate_audit_report,
+)
 
 
 def _create_policy_repo(tmp_path: Path) -> Path:
@@ -35,3 +39,13 @@ def test_generate_audit_report_accepts_override(tmp_path):
 def test_resolve_audit_date_rejects_invalid_format():
     with pytest.raises(ValueError):
         _resolve_audit_date("invalid-date")
+
+
+def test_catalog_policy_files_reports_repo_relative_paths(tmp_path):
+    repo_root = tmp_path
+    nested_dir = repo_root / "some" / "module" / "policies"
+    nested_dir.mkdir(parents=True)
+    (nested_dir / "foo.json").write_text("{}", encoding="utf-8")
+
+    files = catalog_policy_files(nested_dir, repo_root)
+    assert files[0]["path"] == "some/module/policies/foo.json"
